@@ -227,6 +227,7 @@ class LLResolutionFacade internal constructor(
             "`PsiClass.resolveToFirSymbol` can only resolve regular classes."
         }
 
+        @OptIn(KtNonPublicApi::class)
         require(psiClass !is KtLightClassMarker) {
             "`PsiClass.resolveToFirSymbol` can only provide non-Kotlin classes."
         }

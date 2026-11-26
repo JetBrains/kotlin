@@ -14,8 +14,6 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
@@ -25,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinModuleMappingFileProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStand
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.fir.modification.KotlinStandaloneModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.packages.KotlinStandaloneModuleMappingFileProvider
 import org.jetbrains.kotlin.analysis.api.standalone.fir.packages.KotlinStandalonePackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.fir.packages.KotlinStandalonePackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.standalone.fir.permissions.KotlinStandaloneAnalysisPermissionOptions
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainer
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironmentBase
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class StandaloneAnalysisAPISessionBuilderImpl(
@@ -108,7 +106,6 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
     private fun registerProjectServices(
         sourceKtFiles: List<KtFile>,
         libraryRoots: List<VirtualFile>,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ) {
         val project = kotlinCoreProjectEnvironment.project
         project.apply {
@@ -140,10 +137,7 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
             )
             registerService(KotlinPackageProviderMerger::class.java, KotlinStandalonePackageProviderMerger(this))
 
-            registerService(
-                KotlinPackagePartProviderFactory::class.java,
-                KotlinStaticPackagePartProviderFactory(packagePartProvider)
-            )
+            registerService(KotlinModuleMappingFileProvider::class.java, KotlinStandaloneModuleMappingFileProvider(libraryRoots))
 
             if (!isCacheCleanerEnabled) {
                 project.picoContainer.unregisterComponent(KaFirCacheCleaner::class.java.name)
@@ -181,8 +175,7 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
             kotlinCoreProjectEnvironment.environment,
         )
 
-        val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
-        registerProjectServices(sourceKtFiles, libraryRoots.map { it.file }, createPackagePartProvider)
+        registerProjectServices(sourceKtFiles, libraryRoots.map { it.file })
 
         val allModules = projectStructureProvider.allModules
         return StandaloneAnalysisAPISessionImpl(kotlinCoreProjectEnvironment, allModules) {
@@ -190,18 +183,6 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
                 if (ktModule !is KaSourceModule) return@mapNotNull null
                 ktModule to ktModule.psiRoots.filterIsInstance<PsiFile>()
             }.toMap()
-        }
-    }
-}
-
-internal class KotlinStaticPackagePartProviderFactory(
-    private val packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-) : KotlinPackagePartProviderFactory {
-    private val cache = ContainerUtil.createConcurrentSoftMap<GlobalSearchScope, PackagePartProvider>()
-
-    override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
-        return cache.getOrPut(scope) {
-            packagePartProvider(scope)
         }
     }
 }

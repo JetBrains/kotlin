@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.config
 
-@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyCompilerSettings(from: CompilerSettings, to: CompilerSettings): CompilerSettings {
     to.additionalArguments = from.additionalArguments
     to.copyJsLibraryFiles = from.copyJsLibraryFiles

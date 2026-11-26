@@ -4041,6 +4041,7 @@ public final class org/jetbrains/kotlin/psi/utils/ConstantExpressionUtils {
 	public static final fun hasUnsignedLongNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun hasUnsignedNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun parseBooleanLiteral (Ljava/lang/String;)Z
+	public static final fun parseNumericLiteral (Ljava/lang/String;Lcom/intellij/psi/tree/IElementType;)Ljava/lang/Number;
 	public static final fun parseNumericLiteral (Ljava/lang/String;Z)Ljava/lang/Number;
 }
 

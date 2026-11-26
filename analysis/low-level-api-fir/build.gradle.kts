@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":native:native.config"))
 
     implementation(project(":compiler:frontend.common"))
@@ -47,10 +48,6 @@ dependencies {
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:stubs"))
-    implementation(project(":kotlin-scripting-compiler"))
-    implementation(project(":kotlin-scripting-common"))
-    implementation(project(":kotlin-assignment-compiler-plugin.k2"))
-    implementation(project(":kotlin-assignment-compiler-plugin.cli"))
     implementation(libs.caffeine)
 
     implementation(libs.opentelemetry.api)

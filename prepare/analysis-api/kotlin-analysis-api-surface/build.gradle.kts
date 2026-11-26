@@ -21,6 +21,11 @@ analysisApiArtifact {
         projects(analysisApiSurfaceDependencies - analysisApiSyntaxSurfaceDependencies.toSet())
         projects(analysisApiSurfaceModules)
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-surface.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-surface.permitted-duplicates"),
+    )
 }
 
 registerForeignClassUsageTasks {

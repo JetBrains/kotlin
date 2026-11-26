@@ -126,10 +126,6 @@ internal class KaFirSymbolInformationProvider(
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
-    private fun FirDeprecationInfo.toKaDeprecation(): KaDeprecation {
-        return KaFirDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
-    }
-
     private fun computeAnnotationApplicableTargets(symbol: KaClassSymbol): Set<KotlinTarget>? {
         if (symbol !is KaFirNamedClassSymbolBase<*>) return null
         if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
@@ -181,11 +177,7 @@ internal class KaFirSymbolInformationProvider(
     }
 
     override fun returnValueStatus(symbol: KaNamedFunctionSymbol): KaReturnValueStatus = withValidityAssertion {
-        when (symbol.firSymbol.resolvedStatus.returnValueStatus) {
-            ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
-            ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
-            ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
-        }
+        symbol.firSymbol.resolvedStatus.returnValueStatus.toKaReturnValueStatus()
     }
 
     override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = withValidityAssertion {
@@ -206,7 +198,13 @@ internal class KaFirSymbolInformationProvider(
     }
 }
 
-private fun KotlinTarget.toKaAnnotationTarget(): KaAnnotationTarget? = when (this) {
+internal fun ReturnValueStatus.toKaReturnValueStatus(): KaReturnValueStatus = when (this) {
+    ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
+    ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
+    ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
+}
+
+internal fun KotlinTarget.toKaAnnotationTarget(): KaAnnotationTarget? = when (this) {
     KotlinTarget.CLASS -> KaAnnotationTarget.CLASS
     KotlinTarget.ANNOTATION_CLASS -> KaAnnotationTarget.ANNOTATION_CLASS
     KotlinTarget.TYPE_PARAMETER -> KaAnnotationTarget.TYPE_PARAMETER

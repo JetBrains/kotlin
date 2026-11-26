@@ -36,10 +36,13 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
 )
 
 private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(
-    K2JVMCompilerArguments::class.java.`package` to File("compiler/cli/cli-base/gen"),
+    K2JVMCompilerArguments::class.java.`package` to File("compiler/cli/cli-arguments/gen"),
     JpsPluginSettings::class.java.`package` to File("jps/jps-common/gen"),
-    CommonCompilerArguments::class.java.`package` to File("compiler/cli/cli-base/gen"),
+    CommonCompilerArguments::class.java.`package` to File("compiler/cli/cli-arguments/gen"),
 )
+
+// The functions are internal helpers of the configurators, so they are generated into the configurators' module
+private val CONFIGURE_LANGUAGE_FEATURES_DIR = File("compiler/cli/cli-base/gen")
 
 fun generateCompilerArgumentsCopy(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val processed = mutableSetOf<Pair<KClass<*>, KClass<*>>>()
@@ -91,7 +94,6 @@ private fun generateRec(
             }
         }
 
-        println("@OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)")
         if (toClass.annotations.any { it.annotationClass == Deprecated::class }) {
             println("@Suppress(\"DEPRECATION\")")
         }
@@ -174,7 +176,7 @@ private fun generateConfigureLanguageFeaturesImpl(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ) {
     val targetPackage = compilerArgumentsClass.`package`
-    val destDir = PACKAGE_TO_DIR_MAPPING[targetPackage]!!.resolve(targetPackage.name.replace('.', '/'))
+    val destDir = CONFIGURE_LANGUAGE_FEATURES_DIR.resolve(targetPackage.name.replace('.', '/'))
 
     withPrinterToFile(destDir.resolve("Configure${qualifier}LanguageFeatures.kt")) {
         println(GENERATED_FILE_WARNING + "\n")

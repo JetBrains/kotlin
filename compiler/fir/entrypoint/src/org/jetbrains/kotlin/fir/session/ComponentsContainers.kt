@@ -26,9 +26,6 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformS
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
-import org.jetbrains.kotlin.fir.syntax.FirKmpSyntaxComponent
-import org.jetbrains.kotlin.fir.syntax.FirLightTreeSyntaxComponent
-import org.jetbrains.kotlin.fir.syntax.FirPsiSyntaxComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
@@ -66,7 +63,6 @@ import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope.FirMappedSymbolStorage
 import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
@@ -77,10 +73,6 @@ import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.syntax.KmpParseTreeKind
-import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
-import org.jetbrains.kotlin.syntax.ParseTreeKind
-import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 
 // -------------------------- Required components --------------------------
 
@@ -266,25 +258,4 @@ fun FirSession.registerCliCompilerOnlyResolveComponents(diagnosticFactoriesStora
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerModuleData(moduleData: FirModuleData) {
     register(FirModuleData::class, moduleData)
-}
-
-/**
- * Registers the [org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent] matching the raw FIR builder selected by [parseTreeKind].
- *
- * The Analysis API doesn't use this function; it always registers [FirPsiSyntaxComponent] in `registerIdeComponents`.
- *
- * The set of implementations is expected to shrink:
- * - The CLI doesn't use [PsiParseTreeKind] anymore (KT-86283), but PSI-based script compilation and some tests still do (KT-91411).
- *   Once they're migrated, [FirPsiSyntaxComponent] stays for the Analysis API only.
- * - [LightTreeParseTreeKind] and [FirLightTreeSyntaxComponent] will be dropped once [KmpParseTreeKind] becomes the default.
- */
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerSyntaxComponent(parseTreeKind: ParseTreeKind) {
-    val syntaxComponent = when (parseTreeKind) {
-        PsiParseTreeKind -> FirPsiSyntaxComponent
-        LightTreeParseTreeKind -> FirLightTreeSyntaxComponent
-        KmpParseTreeKind -> FirKmpSyntaxComponent
-        else -> error("Unsupported parse tree kind: ${parseTreeKind::class.simpleName}")
-    }
-    register(FirSyntaxComponent::class, syntaxComponent)
 }

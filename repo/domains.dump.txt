@@ -8,6 +8,7 @@ CompilerInfrastructure:
  - compiler/build.gradle.kts
  - compiler/cli/bin
  - compiler/cli/build.gradle.kts
+ - compiler/cli/cli-arguments
  - compiler/cli/cli-arguments-generator
  - compiler/cli/cli-base
  - compiler/cli/cli-js
@@ -47,9 +48,14 @@ CompilerInfrastructure:
  - core/error.handling
  - core/language.model
  - core/language.targets
+ - core/language.targets.common
+ - core/language.targets.js
  - core/language.targets.jvm
+ - core/language.targets.native
+ - core/language.targets.wasm
  - core/language.version-settings
  - core/names
+ - core/names.jvm
  - core/script.runtime
  - core/util.runtime
  - jps
@@ -139,6 +145,7 @@ Native:
  - native/native.config
  - native/native.tests
  - native/objcexport-header-generator
+ - native/targets
  - native/unsafe-mem
  - native/utils
 

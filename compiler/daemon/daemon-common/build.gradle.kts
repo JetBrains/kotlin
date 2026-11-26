@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+    api(project(":compiler:cli-arguments")) { isTransitive = false }
     api(project(":compiler:cli-base")) { isTransitive = false }
     api(project(":compiler:util")) { isTransitive = false }
     api(project(":core:compiler.common")) { isTransitive = false }

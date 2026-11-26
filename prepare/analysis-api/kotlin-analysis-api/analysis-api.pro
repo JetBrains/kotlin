@@ -39,12 +39,6 @@
 -dontwarn com.google.common.hash.Hashing$Crc32cMethodHandles
 -dontwarn com.google.common.hash.ChecksumHashFunction$ChecksumMethodHandles
 
-# From LLFirAbstractSessionFactory (KT-85503)
--dontwarn org.jetbrains.kotlin.assignment.plugin.**
-
-# From ScriptingIrExplainGenerationExtension backend extension (disabled by default)
--dontwarn org.jetbrains.kotlin.powerassert.diagram.**
-
 # From CliCompilerUtils.kt, Javac mode (disabled by default & obsolete)
 -dontwarn org.jetbrains.kotlin.javac.**
 
@@ -63,7 +57,16 @@
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt # Warning: ...: can't find referenced class kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt
 
-# Multiplatform parsing section
-# Is not supposed to be used in AA scenarios, so not important here
--dontwarn fleet.com.intellij.multiplatform.util.fastutil.ints.**
--dontwarn org.jetbrains.kotlin.kmp.parser.utils.**
+# ======================================================================================================================
+# Known problems
+#
+# Sic! Don't add more entries here. The entries below have to be fixed and removed.
+# ======================================================================================================================
+
+# Light tree and multiplatform parsing
+# Build a boundary between light tree and Java direct instead.
+-dontwarn org.jetbrains.kotlin.java.direct.JavaDirectJavaInteropKt
+-dontwarn org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
+-dontwarn org.jetbrains.kotlin.java.direct.modules.JavaModuleInfoSourceReaderKt
+-dontwarn org.jetbrains.kotlin.fir.pipeline.LightTreeFirUtils
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerImplKt

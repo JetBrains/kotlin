@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
 public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) : KotlinDeclarationProvider {
@@ -91,7 +89,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
                 }
 
                 if (chunks.size == 1) {
-                    yieldIfNotNull(element)
+                    yield(element)
                     continue
                 }
 
@@ -155,7 +153,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        if (kotlinFile.javaFileFacadeFqName != facadeFqName) return emptyList()
+        if (kotlinFile.jvmFacadeClassFqName != facadeFqName) return emptyList()
 
         for (declaration in topLevelDeclarations) {
             if (declaration !is KtClassLikeDeclaration) {

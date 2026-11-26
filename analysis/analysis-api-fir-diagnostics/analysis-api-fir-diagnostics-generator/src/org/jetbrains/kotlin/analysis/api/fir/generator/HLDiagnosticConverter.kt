@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractInvocationKind
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
@@ -154,11 +158,8 @@ internal object FirToKtConversionCreator {
     }
 
     private fun tryMapFirTypeToKtType(kClass: KClass<*>, nullable: Boolean): HLParameterConversion? {
-        return if (nullable) {
-            nullableTypeMapping[kClass] ?: typeMapping[kClass]
-        } else {
-            typeMapping[kClass]
-        }
+        val nullableConversion = if (nullable) nullableTypeMapping[kClass] else null
+        return nullableConversion ?: typeMapping[kClass] ?: typeArgumentDependentTypeMapping[kClass]
     }
 
     private fun tryMapAllowedType(kClass: KClass<*>): HLParameterConversion? {
@@ -395,7 +396,85 @@ internal object FirToKtConversionCreator {
         ConeReceiverInfo::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0}.type)",
             KaType::class.createType(),
-        )
+        ),
+        Visibility::class to HLFunctionCallConversion(
+            "{0}.asKaSymbolVisibility",
+            KaSymbolVisibility::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.symbols.asKaSymbolVisibility")
+        ),
+        EffectiveVisibility::class to HLFunctionCallConversion(
+            "{0}.toKaSymbolVisibility()",
+            KaSymbolVisibility::class.createType()
+        ),
+        RelationToType::class to HLFunctionCallConversion(
+            "{0}.toKaRelationToType()",
+            diagnosticApiType("KaRelationToType")
+        ),
+        ClassKind::class to HLFunctionCallConversion(
+            "{0}.toKaClassKind()",
+            KaClassKind::class.createType()
+        ),
+        KotlinTarget::class to HLFunctionCallConversion(
+            "{0}.toKaAnnotationTarget()",
+            KaAnnotationTarget::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.components.toKaAnnotationTarget"),
+            dropsUnsupportedValues = true,
+        ),
+        FunctionTypeKind::class to HLFunctionCallConversion(
+            "KaFirFunctionTypeFamily({0})",
+            KaFunctionTypeFamily::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.types.KaFirFunctionTypeFamily")
+        ),
+        EventOccurrencesRange::class to HLFunctionCallConversion(
+            "{0}.toKaContractInvocationKind()",
+            KaContractInvocationKind::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.contracts.description.toKaContractInvocationKind")
+        ),
+        FirDeprecationInfo::class to HLFunctionCallConversion(
+            "{0}.toKaDeprecation()",
+            KaDeprecation::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.components.toKaDeprecation")
+        ),
+        ReturnValueStatus::class to HLFunctionCallConversion(
+            "{0}.toKaReturnValueStatus()",
+            KaReturnValueStatus::class.createType(),
+            importsToAdd = listOf("org.jetbrains.kotlin.analysis.api.fir.components.toKaReturnValueStatus")
+        ),
+        ForbiddenNamedArgumentsTarget::class to HLFunctionCallConversion(
+            "{0}.toKaForbiddenNamedArgumentsTarget()",
+            diagnosticApiType("KaForbiddenNamedArgumentsTarget")
+        ),
+        ExpectActualMatchingCompatibility.Mismatch::class to HLFunctionCallConversion(
+            "{0}.toKaExpectActualMatchingCompatibility()",
+            diagnosticApiType("KaExpectActualMatchingCompatibility")
+        ),
+        ExpectActualMatchingCompatibility::class to HLFunctionCallConversion(
+            "{0}.toKaExpectActualMatchingCompatibility()",
+            diagnosticApiType("KaExpectActualMatchingCompatibility")
+        ),
+        IncompatibleVersionErrorData::class to HLFunctionCallConversion(
+            "{0}.toKaIncompatibleVersionErrorData()",
+            diagnosticApiType("KaIncompatibleVersionErrorData")
+        ),
+        VersionRequirement.Version::class to HLFunctionCallConversion(
+            "{0}.toMavenComparableVersion()",
+            MavenComparableVersion::class.createType()
+        ),
+        FirModuleData::class to HLFunctionCallConversion(
+            "{0}.toKaModule()",
+            KaModule::class.createType()
+        ),
+    )
+
+    /**
+     * The conversions which rely on the type arguments of the converted type. The arguments of compiler plugin diagnostics are untyped,
+     * so these conversions are not applicable to them.
+     */
+    private val typeArgumentDependentTypeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
+        ExpectActualAnnotationsIncompatibilityType::class to HLFunctionCallConversion(
+            "{0}.toKaExpectActualAnnotationsIncompatibilityType(firSymbolBuilder)",
+            diagnosticApiType("KaExpectActualAnnotationsIncompatibilityType")
+        ),
     )
 
     private val allowedTypesWithoutTypeParams = setOf(
@@ -403,31 +482,15 @@ internal object FirToKtConversionCreator {
         String::class,
         Int::class,
         Name::class,
-        EventOccurrencesRange::class,
         KtKeywordToken::class,
         KtModifierKeywordToken::class,
-        Visibility::class,
-        EffectiveVisibility::class,
-        ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,
         LanguageVersionSettings::class,
         Variance::class,
         FqName::class,
         ClassId::class,
-        FirModuleData::class,
-        ExpectActualMatchingCompatibility::class,
-        ExpectActualMatchingCompatibility.Mismatch::class,
-        ExpectActualAnnotationsIncompatibilityType::class,
-        FirDeprecationInfo::class,
         ApiVersion::class,
         CallableId::class,
-        ClassKind::class,
-        FunctionTypeKind::class,
-        VersionRequirement.Version::class,
-        IncompatibleVersionErrorData::class,
-        RelationToType::class,
-        KotlinTarget::class,
-        ReturnValueStatus::class,
         MavenComparableVersion::class,
     )
 

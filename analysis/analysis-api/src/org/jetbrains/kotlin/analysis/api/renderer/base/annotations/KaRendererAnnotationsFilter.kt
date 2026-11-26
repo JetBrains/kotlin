@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
+import com.intellij.openapi.components.service
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsObsoleteRendererImplementationProvider
+import org.jetbrains.kotlin.name.FqName
 
 @KaSpi
 @KaExperimentalApi
@@ -40,14 +42,18 @@ public interface KaRendererAnnotationsFilter {
     @KaExperimentalApi
     public object NO_NULLABILITY : KaRendererAnnotationsFilter {
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
-            return annotation.classId?.asSingleFqName() !in NULLABILITY_ANNOTATIONS
+            @OptIn(KaImplementationDetail::class)
+            val knownNullabilityAnnotations = service<KaInternalsObsoleteRendererImplementationProvider>().knownNullabilityAnnotations
+            return annotation.classId?.asSingleFqName() !in knownNullabilityAnnotations
         }
     }
 
     @KaExperimentalApi
     public object NO_PARAMETER_NAME : KaRendererAnnotationsFilter {
+        private val parameterNameFqName = FqName(ParameterName::class.java.name)
+
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
-            return annotation.classId?.asSingleFqName() != StandardNames.FqNames.parameterName
+            return annotation.classId?.asSingleFqName() != parameterNameFqName
         }
     }
 

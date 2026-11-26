@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
@@ -55,7 +56,7 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
 
     override fun createMetadataLibrarySymbolProvider(
         session: LLFirSession,
-        packagePartProvider: PackagePartProvider,
+        packagePartProvider: PackageAndMetadataPartProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> = listOf(
         LLKotlinStubBasedLibrarySymbolProvider(session, NullDeserializedContainerSourceProvider, scope),

@@ -33,6 +33,7 @@ ignored:
  - compiler/build-tools/kotlin-build-tools-compat/README.md
  - compiler/build-tools/kotlin-build-tools-impl/README.md
  - compiler/build-tools/kotlin-build-tools-jdk-utils/README.md
+ - compiler/cli/cli-arguments/README.md
  - compiler/cli/cli-jklib/README.md
  - compiler/cli/cli-native-klib/README.md
  - compiler/fir/ReadMe.md
@@ -70,9 +71,14 @@ ignored:
  - compiler/util-klib-abi/ReadMe.md
  - core/language.model/README.md
  - core/language.syntax/README.md
+ - core/language.targets.common/README.md
+ - core/language.targets.js/README.md
  - core/language.targets.jvm/README.md
+ - core/language.targets.native/README.md
+ - core/language.targets.wasm/README.md
  - core/language.targets/README.md
  - core/language.version-settings/README.md
+ - core/names.jvm/README.md
  - core/names/README.md
  - core/reflection.common.jvm/ReadMe.md
  - core/reflection.jvm/ReadMe.md
@@ -161,6 +167,7 @@ ignored:
  - native/swift/sir/README.md
  - native/swift/swift-export-standalone-integration-tests/README.md
  - native/swift/swift-export-standalone/README.md
+ - native/targets/README.md
  - plugins/compose/README.md
  - plugins/js-plain-objects/README.md
  - plugins/kotlin-dataframe/README.md

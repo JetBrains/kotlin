@@ -1,0 +1,7 @@
+public final class org/jetbrains/kotlin/platform/CommonPlatforms {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/platform/CommonPlatforms;
+	public final fun getAllDefaultTargetPlatforms ()Ljava/util/List;
+	public final fun getAllSimplePlatforms ()Ljava/util/List;
+	public final fun getDefaultCommonPlatform ()Lorg/jetbrains/kotlin/platform/TargetPlatform;
+}
+

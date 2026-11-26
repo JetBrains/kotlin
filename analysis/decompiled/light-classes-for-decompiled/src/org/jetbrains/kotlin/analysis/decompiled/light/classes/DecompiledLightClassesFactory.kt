@@ -18,11 +18,11 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.jvmFacadeClassFqName
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 object DecompiledLightClassesFactory {
@@ -113,7 +113,7 @@ object DecompiledLightClassesFactory {
         files: List<KtFile>,
     ): KtLightClassForFacade? {
         assert(files.all(KtFile::isCompiled))
-        val file = files.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
+        val file = files.firstOrNull { it.jvmFacadeClassFqName == facadeClassFqName } as? KtClsFile
             ?: error("Can't find the representative decompiled file for $facadeClassFqName in ${files.map { it.name }}")
 
         return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->

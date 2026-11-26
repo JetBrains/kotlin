@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER")
+@file:OptIn(KaUnstableDiagnosticApi::class)
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
@@ -11,12 +12,27 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaAnnotationTarget
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaDeprecation
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase
+import org.jetbrains.kotlin.analysis.api.fir.contracts.description.toKaContractInvocationKind
+import org.jetbrains.kotlin.analysis.api.fir.symbols.asKaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.RelationToType
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -40,8 +56,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 /*
  * This file was generated automatically
@@ -83,6 +105,21 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KaSymbolByFirBuild
         is KtSourceElement -> convertArgument(argument, firSymbolBuilder)
         is WhenMissingCase -> convertArgument(argument, firSymbolBuilder)
         is ConeReceiverInfo -> convertArgument(argument, firSymbolBuilder)
+        is Visibility -> convertArgument(argument, firSymbolBuilder)
+        is EffectiveVisibility -> convertArgument(argument, firSymbolBuilder)
+        is RelationToType -> convertArgument(argument, firSymbolBuilder)
+        is ClassKind -> convertArgument(argument, firSymbolBuilder)
+        is KotlinTarget -> convertArgument(argument, firSymbolBuilder)
+        is FunctionTypeKind -> convertArgument(argument, firSymbolBuilder)
+        is EventOccurrencesRange -> convertArgument(argument, firSymbolBuilder)
+        is FirDeprecationInfo -> convertArgument(argument, firSymbolBuilder)
+        is ReturnValueStatus -> convertArgument(argument, firSymbolBuilder)
+        is ForbiddenNamedArgumentsTarget -> convertArgument(argument, firSymbolBuilder)
+        is Mismatch -> convertArgument(argument, firSymbolBuilder)
+        is ExpectActualMatchingCompatibility -> convertArgument(argument, firSymbolBuilder)
+        is IncompatibleVersionErrorData<*> -> convertArgument(argument, firSymbolBuilder)
+        is Version -> convertArgument(argument, firSymbolBuilder)
+        is FirModuleData -> convertArgument(argument, firSymbolBuilder)
         is Map<*, *> -> convertArgument(argument, firSymbolBuilder)
         is Collection<*> -> convertArgument(argument, firSymbolBuilder)
         is Pair<*, *> -> convertArgument(argument, firSymbolBuilder)
@@ -200,6 +237,66 @@ private fun convertArgument(argument: WhenMissingCase, firSymbolBuilder: KaSymbo
 
 private fun convertArgument(argument: ConeReceiverInfo, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.typeBuilder.buildKtType(argument.type)
+}
+
+private fun convertArgument(argument: Visibility, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.asKaSymbolVisibility
+}
+
+private fun convertArgument(argument: EffectiveVisibility, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaSymbolVisibility()
+}
+
+private fun convertArgument(argument: RelationToType, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaRelationToType()
+}
+
+private fun convertArgument(argument: ClassKind, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaClassKind()
+}
+
+private fun convertArgument(argument: KotlinTarget, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaAnnotationTarget()
+}
+
+private fun convertArgument(argument: FunctionTypeKind, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return KaFirFunctionTypeFamily(argument)
+}
+
+private fun convertArgument(argument: EventOccurrencesRange, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaContractInvocationKind()
+}
+
+private fun convertArgument(argument: FirDeprecationInfo, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaDeprecation()
+}
+
+private fun convertArgument(argument: ReturnValueStatus, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaReturnValueStatus()
+}
+
+private fun convertArgument(argument: ForbiddenNamedArgumentsTarget, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaForbiddenNamedArgumentsTarget()
+}
+
+private fun convertArgument(argument: Mismatch, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaExpectActualMatchingCompatibility()
+}
+
+private fun convertArgument(argument: ExpectActualMatchingCompatibility, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaExpectActualMatchingCompatibility()
+}
+
+private fun convertArgument(argument: IncompatibleVersionErrorData<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaIncompatibleVersionErrorData()
+}
+
+private fun convertArgument(argument: Version, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toMavenComparableVersion()
+}
+
+private fun convertArgument(argument: FirModuleData, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return argument.toKaModule()
 }
 
 private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

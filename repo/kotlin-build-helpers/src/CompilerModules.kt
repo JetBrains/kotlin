@@ -49,10 +49,15 @@ object CompilerModules {
         ":core:util.runtime",
         ":core:error.handling",
         ":core:names",
+        ":core:names.jvm",
         ":core:language.model",
         ":core:language.syntax",
         ":core:language.targets",
         ":core:language.targets.jvm",
+        ":core:language.targets.js",
+        ":core:language.targets.wasm",
+        ":core:language.targets.native",
+        ":core:language.targets.common",
         ":core:language.version-settings",
         ":core:reflection.common.jvm",
         ":compiler:frontend.common.jvm",
@@ -66,6 +71,7 @@ object CompilerModules {
         ":wasm:wasm.config",
         ":native:base",
         ":native:native.config",
+        ":native:kotlin-native-targets",
         ":native:kotlin-native-utils",
     )
 
@@ -194,6 +200,7 @@ object CompilerModules {
     val analysisApiSyntaxSurfaceDependencies = listOf(
         ":core:error.handling",
         ":core:names",
+        ":core:names.jvm",
         ":core:language.model",
         ":core:language.syntax",
     )
@@ -201,11 +208,18 @@ object CompilerModules {
     val analysisApiSurfaceDependencies = analysisApiSyntaxSurfaceDependencies + listOf(
         ":core:language.targets",
         ":core:language.targets.jvm",
+        ":core:language.targets.js",
+        ":core:language.targets.wasm",
+        ":core:language.targets.native",
+        ":core:language.targets.common",
+        ":native:kotlin-native-targets",
         ":core:language.version-settings",
+        ":compiler:compiler.version",
     )
 
     val analysisApiSyntaxSurfaceModules = arrayOf(
         ":compiler:psi:psi-api",
+        ":compiler:psi:psi-utils",
     )
 
     val analysisApiSyntaxImplementationModules = arrayOf(
@@ -215,6 +229,7 @@ object CompilerModules {
 
     val cliCompilerModules = arrayOf(
         ":compiler:arguments.common",
+        ":compiler:cli-arguments",
         ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-jvm",
@@ -245,6 +260,28 @@ object CompilerModules {
     )
 
     /**
+     * The array of modules shipped in the 'kotlin-analysis-api-implementation-cli-options' artifact.
+     */
+    val analysisApiImplementationCliOptionsModules = arrayOf(
+        ":compiler:arguments.common",
+        ":compiler:cli-arguments",
+    )
+
+    /**
+     * The array of modules shipped in the 'kotlin-analysis-api-implementation-light-classes' artifact.
+     */
+    val analysisApiImplementationLightClassesModules = arrayOf(
+        ":analysis:light-classes-surface",
+    )
+
+    /**
+     * The array of modules shipped in the 'kotlin-analysis-api-scripting-support' artifact.
+     */
+    val analysisApiScriptingSupportModules = arrayOf(
+        ":analysis:low-level-api-fir-scripting",
+    )
+
+    /**
      * The array of Analysis API modules that aren't part of [commonCompilerModules] (e.g., `:compiler:psi:psi-api`).
      * It only covers production modules, so modules that hold nothing but tests have to be listed separately.
      */
@@ -252,6 +289,8 @@ object CompilerModules {
         *analysisApiSurfaceModules,
         *analysisApiPlatformInterfaceModules,
         *analysisApiStandaloneModules,
+        *analysisApiScriptingSupportModules,
+        *analysisApiImplementationLightClassesModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-internal-utils",
@@ -279,6 +318,9 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
+        ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options",
+        ":prepare:analysis-api:kotlin-analysis-api-implementation-light-classes",
         ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
@@ -392,9 +434,14 @@ object CompilerModules {
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
     ":core:names",
+    ":core:names.jvm",
     ":core:language.model",
     ":core:language.targets",
     ":core:language.targets.jvm",
+    ":core:language.targets.js",
+    ":core:language.targets.wasm",
+    ":core:language.targets.native",
+    ":core:language.targets.common",
     ":core:language.version-settings",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
@@ -424,6 +471,7 @@ object CompilerModules {
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-build-common",
     ":compiler:arguments.common",
+    ":compiler:cli-arguments",
     )
 
     val kotlinJpsPluginMavenDependencies = listOf(
@@ -431,12 +479,13 @@ object CompilerModules {
         ":kotlin-util-io",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
+        ":native:kotlin-native-targets",
         ":native:kotlin-native-utils",
         ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-jps",
     )
 
-    val compilerArtifactsForIde = listOfNotNull(
+    val compilerArtifactsForIde = analysisApiArtifacts + listOf(
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
@@ -444,6 +493,8 @@ object CompilerModules {
         ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
         ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-build-common-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-daemon-client-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-jps-common-for-ide",
@@ -478,6 +529,8 @@ object CompilerModules {
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-compiler-impl",
+        ":kotlin-power-assert-compiler-plugin",
+        ":kotlin-tooling-core",
         ":plugins:parcelize:parcelize-runtime",
         ":plugins:jvm-abi-gen",
         ":kotlin-stdlib-common",

@@ -26,6 +26,7 @@ dependencies {
     api(project(":analysis:light-classes-base"))
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:analysis-api-standalone"))
+    runtimeOnly(project(":analysis:low-level-api-fir-scripting"))
     implementation(libs.intellij.patched.kotlinx.coroutines.core.jvm)
 
     testImplementation(platform(libs.junit.bom))

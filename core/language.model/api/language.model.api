@@ -15,6 +15,14 @@ public final class org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSit
 	public static fun values ()[Lorg/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget;
 }
 
+public final class org/jetbrains/kotlin/load/java/structure/LightClassOriginKind : java/lang/Enum {
+	public static final field BINARY Lorg/jetbrains/kotlin/load/java/structure/LightClassOriginKind;
+	public static final field SOURCE Lorg/jetbrains/kotlin/load/java/structure/LightClassOriginKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/load/java/structure/LightClassOriginKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/load/java/structure/LightClassOriginKind;
+}
+
 public final class org/jetbrains/kotlin/types/Variance : java/lang/Enum {
 	public static final field INVARIANT Lorg/jetbrains/kotlin/types/Variance;
 	public static final field IN_VARIANCE Lorg/jetbrains/kotlin/types/Variance;

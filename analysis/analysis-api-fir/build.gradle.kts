@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:cli-base"))
     api(project(":compiler:fir:entrypoint"))
@@ -37,6 +38,7 @@ dependencies {
     implementation(libs.opentelemetry.api)
 
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))

@@ -12,19 +12,43 @@ val analysisApiSyntaxSurfaceModules: Array<String> = CompilerModules.analysisApi
 val analysisApiSyntaxImplementationModules: Array<String> = CompilerModules.analysisApiSyntaxImplementationModules
 val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
+val analysisApiScriptingSupportModules: Array<String> = CompilerModules.analysisApiScriptingSupportModules
+val analysisApiImplementationCliOptionsModules: Array<String> = CompilerModules.analysisApiImplementationCliOptionsModules
+val analysisApiImplementationLightClassesModules: Array<String> = CompilerModules.analysisApiImplementationLightClassesModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
     ":kotlin-annotations-jvm",
-    ":kotlin-script-runtime",
-    ":kotlin-scripting-common",
-    ":kotlin-scripting-dependencies",
-    ":kotlin-scripting-jvm",
-    ":kotlin-scripting-compiler",
-    ":kotlin-scripting-compiler-impl",
 )
 
 val excludedCompilerProjects = listOf(
+    // JS and Wasm backends
+    ":compiler:backend.js",
+    ":compiler:backend.wasm",
+    ":js:js.parser",
+    ":js:js.sourcemap",
+    ":js:js.translator",
+    ":js:typescript-export-model",
+    ":js:typescript-printer",
+    ":wasm:wasm.ir",
+    ":compiler:ir.serialization.js",
+
+    // K1
+    ":core:descriptors.runtime",
+    ":native:frontend.native",
+
+    // Light tree and multiplatform parsing
+    ":compiler:fir:raw-fir:light-tree2fir",
+    ":compiler:fir:raw-fir:mp-parsing2fir",
+    ":compiler:multiplatform-parsing",
+    ":compiler:java-direct",
+
+    // CLI
+    ":compiler:cli-js",
+    ":compiler:cli-jklib",
+    ":compiler:cli-metadata",
+
+    // Other
     ":compiler:incremental-compilation-impl",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-compiler-runner-unshaded",
@@ -36,6 +60,8 @@ val excludedCompilerProjects = listOf(
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-surface"))
     api(project(":prepare:analysis-api:kotlin-analysis-api-platform-interface"))
+    api(project(":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options"))
+    api(project(":prepare:analysis-api:kotlin-analysis-api-implementation-light-classes"))
 
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components"))
     implementation(project(":prepare:analysis-api:kotlin-analysis-api-syntax-implementation"))
@@ -45,6 +71,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.antlr.runtime)
+    implementation(project(":kotlin-tooling-core"))
 
     embedded(protobufFull())
 }
@@ -55,7 +82,6 @@ analysisApiArtifact {
             addAll(compilerModules)
             addAll(additionalCompilerProjects)
             addAll(analysisApiModules)
-            add(":kotlin-tooling-core")
 
             removeAll(excludedCompilerProjects)
 
@@ -75,10 +101,24 @@ analysisApiArtifact {
             // Standalone modules are shipped by the dedicated standalone artifacts
             removeAll(analysisApiStandaloneModules)
 
+            // Scripting support is shipped by the dedicated artifact
+            removeAll(analysisApiScriptingSupportModules)
+
+            // The compiler arguments are shipped by the dedicated artifact
+            removeAll(analysisApiImplementationCliOptionsModules)
+
+            // The legacy light class API is shipped by the dedicated artifact
+            removeAll(analysisApiImplementationLightClassesModules)
+
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")
         }
 
         projects(implementationProjects)
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-implementation.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-implementation.permitted-duplicates"),
+    )
 }

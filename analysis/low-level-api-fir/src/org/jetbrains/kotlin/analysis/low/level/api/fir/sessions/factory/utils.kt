@@ -108,7 +108,7 @@ internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Pr
 
     val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
     pluginsProvider
-        .getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
+        .getRegisteredExtensions(module, FirExtensionRegistrarAdapter::class.java)
         .forEach(::applyExtensionRegistrar)
 }
 

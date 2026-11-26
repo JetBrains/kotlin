@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -49,21 +48,6 @@ fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
 
 @Deprecated("Replace with a direct call to `KotlinAsJavaSupport`. See KT-85385")
 fun KtClassOrObject.toFakeLightClass(): KtFakeLightClass = KotlinAsJavaSupport.getInstance(project).getFakeLightClass(this)
-
-/**
- * The qualified name of the light class for this class or object, or `null` if it has no [fqName][KtClassOrObject.getFqName].
- *
- * Classes declared in a script are nested in the script class on the JVM, so the name includes the script name,
- * unlike [fqName][KtClassOrObject.getFqName].
- */
-@KtImplementationDetail
-@OptIn(KtExperimentalApi::class)
-fun KtClassOrObject.getLightClassQualifiedName(): String? {
-    val fqName = fqName ?: return null
-    val script = KtPsiUtil.getOutermostClassOrObject(this).containingScript ?: return fqName.asString()
-    val scriptFqName = script.fqName
-    return "${scriptFqName.asString()}.${fqName.tail(scriptFqName.parent()).asString()}"
-}
 
 @Deprecated("Use `asFacadePsiClass` from Analysis API or replace with a direct call to `JavaPsiFacade`. See KT-85385")
 fun KtFile.findFacadeClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightFacade(this)
@@ -111,6 +95,7 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? = when (this) {
 }
 
 @Deprecated("Use `asPsiParameters` from Analysis API or replace with a custom implementation. See KT-85385")
+@OptIn(KtImplementationDetail::class)
 fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 

@@ -209,6 +209,7 @@ include(
     ":compiler:plugin-api",
     ":compiler:java-direct",
     ":compiler:cli:cli-arguments-generator",
+    ":compiler:cli-arguments",
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-jvm",
@@ -232,6 +233,7 @@ include(
     ":js:js.tests:klib-compatibility",
     ":native:unsafe-mem",
     ":native:kotlin-native-utils",
+    ":native:kotlin-native-targets",
     ":native:frontend.native",
     ":native:kotlin-klib-commonizer",
     ":native:kotlin-klib-commonizer-api",
@@ -255,10 +257,15 @@ include(
     ":native:cinterop.deserialization",
     ":core:error.handling",
     ":core:names",
+    ":core:names.jvm",
     ":core:language.model",
     ":core:language.syntax",
     ":core:language.targets",
     ":core:language.targets.jvm",
+    ":core:language.targets.js",
+    ":core:language.targets.wasm",
+    ":core:language.targets.native",
+    ":core:language.targets.common",
     ":core:language.version-settings",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
@@ -601,6 +608,8 @@ include(
     ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
     ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-build-common-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-daemon-client-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
@@ -641,6 +650,9 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
     ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
     ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-scripting-support",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation-cli-options",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation-light-classes",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
@@ -714,6 +726,7 @@ include(
     ":analysis:low-level-api-fir",
     ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
     ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
+    ":analysis:low-level-api-fir-scripting",
     ":analysis:analysis-api-fir",
     ":analysis:analysis-api-fir-diagnostics",
     ":analysis:analysis-api-fir-diagnostics:analysis-api-fir-diagnostics-generator",
@@ -725,6 +738,7 @@ include(
     ":analysis:stubs",
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",
+    ":analysis:light-classes-surface",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-api-standalone:analysis-api-standalone-fir",
     ":analysis:decompiled:decompiler",
@@ -806,6 +820,7 @@ project(":kotlin-compiler-plugin-api").projectDir = File("$rootDir/prepare/compi
 project(":kotlin-klib-abi-reader").projectDir = File("$rootDir/libraries/tools/klib-abi-reader")
 project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")
+project(":compiler:cli-arguments").projectDir = File("$rootDir/compiler/cli/cli-arguments")
 project(":compiler:cli-base").projectDir = File("$rootDir/compiler/cli/cli-base")
 project(":compiler:cli-jvm").projectDir = File("$rootDir/compiler/cli/cli-jvm")
 project(":compiler:cli-js").projectDir = File("$rootDir/compiler/cli/cli-js")
@@ -842,6 +857,7 @@ project(":kotlin-util-klib").projectDir = File("$rootDir/compiler/util-klib")
 project(":kotlin-util-klib-metadata").projectDir = File("$rootDir/compiler/util-klib-metadata")
 project(":kotlin-util-klib-abi").projectDir = File("$rootDir/compiler/util-klib-abi")
 project(":native:kotlin-native-utils").projectDir = File("$rootDir/native/utils")
+project(":native:kotlin-native-targets").projectDir = File("$rootDir/native/targets")
 project(":native:frontend.native").projectDir = File("$rootDir/native/frontend")
 project(":native:kotlin-klib-commonizer").projectDir = File("$rootDir/native/commonizer")
 project(":native:kotlin-klib-commonizer-api").projectDir = File("$rootDir/native/commonizer-api")

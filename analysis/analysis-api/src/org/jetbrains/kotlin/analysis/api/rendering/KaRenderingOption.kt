@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.augmentedByWarningLevelAnnotations
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * A typed configuration flag that influences rendering. Its [defaultValue] is used unless overridden via [KaRendererBuilder.set].
@@ -158,10 +159,12 @@ public class KaRenderingOption<T> private constructor(public val defaultValue: T
          * how the name of a function type parameter is encoded, and the name is already rendered as part of the parameter itself (see
          * [KaPiece.FunctionTypeParameter]), so rendering the annotation as well would duplicate it.
          */
-        public val Annotations: KaRenderingOption<context(KaSession, KaRenderingContext) (KaAnnotated) -> List<KaAnnotation>> =
+        public val Annotations: KaRenderingOption<context(KaSession, KaRenderingContext) (KaAnnotated) -> List<KaAnnotation>> = run {
+            val parameterNameName = ClassId.topLevel(FqName(ParameterName::class.java.name))
             create { value ->
-                value.annotations.filter { it.classId != StandardNames.FqNames.parameterNameClassId }
+                value.annotations.filter { it.classId != parameterNameName }
             }
+        }
 
         /** Whether the annotations of the given element are placed on their own line rather than inline before it. */
         public val AnnotationsOnNewLine: KaRenderingOption<context(KaSession, KaRenderingContext) (KaAnnotated) -> Boolean> =

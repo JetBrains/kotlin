@@ -30,6 +30,7 @@ object ArgumentsConverterGenerator {
     private fun SmartPrinter.generate(packageName: String, convertersMap: Map<KClass<*>, HLParameterConversion>) {
         printCopyright()
         println("@file:Suppress(\"UNUSED_PARAMETER\")")
+        println("@file:OptIn(KaUnstableDiagnosticApi::class)")
         println()
         println("package $packageName")
         println()

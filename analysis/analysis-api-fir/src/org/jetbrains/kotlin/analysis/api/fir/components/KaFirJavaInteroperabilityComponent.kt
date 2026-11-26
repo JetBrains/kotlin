@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.valueClassRepresentation
@@ -64,6 +63,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.jvmFacadeClassFqName
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
@@ -399,7 +399,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return if (containingSymbolOrSelf.isTopLevel) {
                 (firSymbol.fir.getContainingFile()?.psi as? KtFile)
                     ?.takeUnless { it.isScript() }
-                    ?.javaFileFacadeFqName?.asString()
+                    ?.jvmFacadeClassFqName?.asString()
             } else {
                 val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
                     ?: containingSymbolOrSelf.callableId?.classId
