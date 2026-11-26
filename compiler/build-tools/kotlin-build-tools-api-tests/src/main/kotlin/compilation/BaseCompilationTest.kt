@@ -69,4 +69,13 @@ abstract class BaseCompilationTest {
             Thread.sleep(150)
         } while (tries-- > 0)
     }
+
+    /**
+     * Use together with the "Debug Kotlin daemon" run configuration in the IDE to debug the daemon's process.
+     */
+    fun ExecutionPolicy.WithDaemon.Builder.connectToDebugServer(): ExecutionPolicy.WithDaemon.Builder {
+        this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = (this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS]
+            ?: emptyList()) + "agentlib:jdwp=transport=dt_socket,server=n,address=5005,suspend=y"
+        return this
+    }
 }
