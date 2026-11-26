@@ -14,6 +14,7 @@ interface IncrementalDataProvider {
 
     val serializedIrFiles: Map<File, IrTranslationResultValue>
     val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
+    val serializedSignatureIndex: Map<File, FileSignatureIndex>
 }
 
 interface KmpIncrementalDataProvider : IncrementalDataProvider {

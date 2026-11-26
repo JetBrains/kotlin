@@ -47,6 +47,7 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
     val compiledIrFiles = serializedIrFiles
     val compiledIrInlineFiles = serializedIrInlineFiles
     val compiledMetaFiles = compiledPackageParts
+    val compilerSignatureIndices = serializedSignatureIndex
 
     assert(compiledIrFiles.size == compiledMetaFiles.size)
 
@@ -85,7 +86,7 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 fileEntries,
             )
         }
-        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile))
+        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile, compilerSignatureIndices[f]?.signatureIndex))
     }
     return storage
 }

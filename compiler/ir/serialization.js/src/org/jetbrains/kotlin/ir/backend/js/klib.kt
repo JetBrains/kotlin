@@ -289,6 +289,7 @@ fun serializeModuleIntoKlib(
                     compiledFile.irData!!.processIrFile(ioFile, icConsumer::processIrFile)
                     compiledFile.irInlineData?.processIrFile(ioFile, icConsumer::processIrInlineFile)
                     icConsumer.processIrInlineIds(ioFile, inlineIds)
+                    compiledFile.signatureIndex?.let { icConsumer.processSignatureIndex(ioFile, it) }
                 }
             },
         )

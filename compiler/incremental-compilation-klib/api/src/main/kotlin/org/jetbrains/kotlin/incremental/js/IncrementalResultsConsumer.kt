@@ -53,6 +53,11 @@ interface IncrementalResultsConsumer {
         sourceFile: File,
         ids: List<CallableId>,
     )
+
+    fun processSignatureIndex(
+        sourceFile: File,
+        signatureIndex: ByteArray,
+    )
 }
 
 interface IncrementalNextRoundChecker {
@@ -136,6 +141,13 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
             this.fileEntries?.contentHashCode()?.toLong(),
         )
         return hashCodes.reduce { acc, hashCode -> acc * 31 + hashCode }
+    }
+
+    val signatureIndexCache: Map<File, FileSignatureIndex>
+        field = hashMapOf<File, FileSignatureIndex>()
+
+    override fun processSignatureIndex(sourceFile: File, signatureIndex: ByteArray) {
+        signatureIndexCache[sourceFile] = FileSignatureIndex(signatureIndex)
     }
 }
 

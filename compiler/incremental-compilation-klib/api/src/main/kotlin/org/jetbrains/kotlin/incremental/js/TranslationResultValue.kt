@@ -34,3 +34,5 @@ data class IrTranslationResultValue(
 
 // We store List of hashes because one callableId can represent multiple overloads of an inline function
 data class IrInlineFunctionRepresentation(val callableId: CallableId, val hashes: List<Long>)
+
+data class FileSignatureIndex(val signatureIndex: ByteArray)
