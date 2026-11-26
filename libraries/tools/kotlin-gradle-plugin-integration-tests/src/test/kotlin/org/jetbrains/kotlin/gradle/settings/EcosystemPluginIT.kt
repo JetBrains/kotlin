@@ -83,7 +83,7 @@ class EcosystemPluginIT : KGPBaseTest() {
                         // this code can be unwrapped from afterEvaluate after upgrading minimal supported Gradle version to 8.2 or newer
                         project.afterEvaluate {
                             project.tasks.withType<KotlinJvmCompile>().configureEach {
-                                @Suppress("DEPRECATION_ERROR")
+                                @Suppress("DEPRECATION")
                                 it.compilerOptions {
                                     apiVersion.set(KotlinVersion.KOTLIN_1_8)
                                     languageVersion.set(KotlinVersion.KOTLIN_1_8)
