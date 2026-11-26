@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1413,7 +1415,10 @@ class FirCallCompletionResultsWriterTransformer(
         // If we have a conflict between the expected type and the inferred type, we would like to set the inferred type on the expression,
         // so that we report INITIALIZER_TYPE_MISMATCH/RETURN_TYPE_MISMATCH.
         // This is required so that the IDE provides the correct quick fixes.
-        if (syntheticCall.resultType !is ConeErrorType && resolvedCalleeReference is FirResolvedErrorReference) {
+        if (calleeReference.symbol?.let { it is FirCallableSymbol && (it.callableId == SyntheticCallableId.WHEN || it.callableId == SyntheticCallableId.TRY) } == true &&
+            syntheticCall.resultType !is ConeErrorType &&
+            resolvedCalleeReference is FirResolvedErrorReference
+        ) {
             val diagnostic = resolvedCalleeReference.diagnostic
             if (diagnostic is ConeConstraintSystemHasContradiction) {
                 val candidate = diagnostic.candidate as Candidate
