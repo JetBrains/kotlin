@@ -28,9 +28,9 @@
 //           with Expected <b>, actual <c>. The clean link (fresh cache dir) rebuilds
 //           lib2's w.kt against the new enum and passes, as does the non-IC link.
 //
-// A correct IC must re-walk a returning library's recorded per-file dependency edges
-// against the dependencies' current cache state: `modified cache: w.kt` at step 2 is the
-// fix. The sibling windows of the same root cause found by this campaign -- the itable
+// The fix: the cache of a library which is not in the link is removed, so it is built from
+// scratch when the library returns (`removed cache: w.kt` at step 1, `added cache: w.kt` at
+// step 2). The sibling windows of the same root cause found by this campaign -- the itable
 // (interface grows a default method) and the vtable (superclass grows a method) -- are
 // kept as reduced scenarios under
 // build/kn-ic-fuzz/c7-2026-11-08/r2t6-iface-growth-while-dependent-abs/reduce/manual and

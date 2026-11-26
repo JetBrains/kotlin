@@ -40,6 +40,7 @@ import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -169,6 +170,29 @@ class CacheBuilder(
         }
     }
 
+    /**
+     * The dirty-file analysis only sees the libraries being linked: the cache of a library which is not among them is not updated
+     * along with its dependencies, and nothing would notice that when the library comes back, since a recorded dependency
+     * keeps no version of the file it points to. So remove such caches: they are rebuilt from scratch if their libraries return.
+     *
+     * Note: this implies that the incremental cache directory is not shared between the links of different binaries.
+     */
+    @OptIn(ExperimentalPathApi::class)
+    private fun removeCachesOfNotLinkedLibraries() {
+        val cacheDirectory = config.incrementalCacheDirectory!!
+        // The directory is only created along with the first cache built in it.
+        if (!cacheDirectory.isDirectory()) return
+        val cacheNamesOfLinkedLibraries = config.klibDag.librariesReverseTopoSorted.flatMapTo(mutableSetOf()) {
+            listOf(CachedLibraries.getPerFileCachedLibraryName(it), CachedLibraries.getCachedLibraryName(it))
+        }
+        cacheDirectory.listDirectoryEntries()
+                .filter { it.isDirectory() && it.name !in cacheNamesOfLinkedLibraries }
+                .forEach {
+                    configuration.reportLog("Removing the incremental cache of a library which is not linked: $it")
+                    it.deleteRecursively()
+                }
+    }
+
     @OptIn(ExperimentalPathApi::class)
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
@@ -213,6 +237,8 @@ class CacheBuilder(
             dumpLastRebuiltArchivesToDisk(lastRebuiltArchives)
             return
         }
+
+        removeCachesOfNotLinkedLibraries()
 
         // The incremental dirty-file check later on only compares the IR content hash of each source file. So switching to
         // a different compiler without running `clean` would silently reuse the bitcode produced by the previous compiler,
