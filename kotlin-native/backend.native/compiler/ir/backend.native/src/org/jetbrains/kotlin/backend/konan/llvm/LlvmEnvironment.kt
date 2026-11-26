@@ -15,9 +15,6 @@ internal object LlvmEnvironment {
 
     /**
      * Loads the LLVM stubs and initializes the Kotlin/Native targets. Safe to call repeatedly and from several threads.
-     *
-     * Also disables LLVM's fast instruction selector for the whole process; this is never undone.
-     * Throws if that can't be done (e.g. the option was removed in a newer LLVM).
      */
     fun init(konanHome: String?) {
         loadLLVMStubs(konanHome)
