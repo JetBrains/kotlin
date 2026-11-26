@@ -1,0 +1,16 @@
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : main.kt -> main.kt
+
+// lib2 is out of the link; main no longer depends on it.
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : main.1.kt -> main.kt
+
+// lib2 returns to the link with its step-0 klib.
+STEP 2:
+    dependencies: lib1, lib2
+    modifications:
+        U : main.kt -> main.kt
