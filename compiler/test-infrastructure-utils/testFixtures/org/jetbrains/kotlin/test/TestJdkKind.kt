@@ -24,13 +24,13 @@ enum class TestJdkKind(val requiresSeparateProcess: Boolean = false, val release
     MODIFIED_MOCK_JDK(release = null),
 
     // JDK found at $JDK_1_8
-    FULL_JDK_8(release = "8"),
+    FULL_JDK_8(requiresSeparateProcess = true, release = "8"),
 
     // JDK found at $JDK_11_0
     FULL_JDK_11(requiresSeparateProcess = true, release = "11"),
 
     // JDK found at $JDK_17_0
-    FULL_JDK_17(requiresSeparateProcess = true, release = "17"),
+    FULL_JDK_17(release = "17"),
 
     // JDK found at $JDK_21_0
     FULL_JDK_21(requiresSeparateProcess = true, release = "21"),
