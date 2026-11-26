@@ -11,7 +11,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 abstract class KtInlineSourceCommonizerTestCase : InlineSourceBuilderDelegate {
-    private lateinit var testRootDisposable: Disposable
+    lateinit var testRootDisposable: Disposable
+        private set
 
     @BeforeEach
     fun setUp() {
