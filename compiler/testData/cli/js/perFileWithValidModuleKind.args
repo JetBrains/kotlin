@@ -5,6 +5,8 @@ $STDLIB_JS$
 $TEMP_DIR$
 -ir-output-name
 out
+-target
+es2015
 -module-kind
 es
 -Xir-per-file

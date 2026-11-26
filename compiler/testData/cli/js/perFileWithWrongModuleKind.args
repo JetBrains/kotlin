@@ -3,6 +3,8 @@ $TESTDATA_DIR$/simple2js.kt
 $TEMP_DIR$
 -ir-output-name
 out
+-target
+es2015
 -module-kind
 commonjs
 -Xir-per-file

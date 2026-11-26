@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
@@ -101,9 +102,19 @@ internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
 
 internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: CommonJsAndWasmCompilerArguments) {
+    val isPerFile = arguments is K2JSCompilerArguments && arguments.irPerFile
+
+    if (isPerFile && configuration.moduleKind != ModuleKind.ES) {
+        configuration.report(
+            WEB_ARGUMENT_ERROR,
+            "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+        )
+        return
+    }
+
     val artifactConfiguration = WebArtifactConfiguration.fromFlags(
         configuration,
-        isPerFile = arguments is K2JSCompilerArguments && arguments.irPerFile,
+        isPerFile = isPerFile,
         isPerModule = arguments is K2JSCompilerArguments && arguments.irPerModule,
         generateDts = arguments.generateDts,
     ) ?: return
