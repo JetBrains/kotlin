@@ -38,6 +38,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-browser-debug",
     ":kotlin-gradle-plugin-idea-proto",
+    ":kotlin-import-models",
     ":kotlin-gradle-plugin",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
