@@ -7,25 +7,35 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileBytesContain
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileBytesDoNotContain
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.readBytes
 
-private class RecordingIncrementalCache : EmptyIncrementalCache() {
+private class RecordingIncrementalCache(
+    private val moduleMappingData: ByteArray? = null,
+    private val obsoletePackageParts: Collection<String> = emptyList(),
+) : CompilerIncrementalCache {
     val calls: MutableList<String> = mutableListOf()
 
     override fun getModuleMappingData(): ByteArray? {
         calls += "getModuleMappingData"
-        return null
+        return moduleMappingData
     }
 
-    // No `getObsoletePackageParts` recorder: it is only reached from `addCompiledParts`, which runs only when
-    // `getModuleMappingData()` returns non-null - and this stub returns null.
+    override fun getObsoletePackageParts(): Collection<String> {
+        calls += "getObsoletePackageParts"
+        return obsoletePackageParts
+    }
 }
 
 @DisplayName("The JPS incremental compilation components")
@@ -45,6 +55,37 @@ class IncrementalCacheJpsTest : BaseJpsTest() {
                     components.requestedTargets.toSet(),
                 )
                 assertTrue("getModuleMappingData" in cache.calls) { "calls: ${cache.calls}" }
+            }
+        }
+    }
+
+    @DisplayName("The compiler merges the previous module mapping from the JPS cache and drops its obsolete parts")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun previousModuleMappingIsMerged(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            val mappingFile = "META-INF/${module.moduleName}.kotlin_module"
+
+            module.compile(compilationConfigAction = { it.withJpsIc() }) {
+                assertOutputFileBytesContain(mappingFile, "FooKt")
+                assertOutputFileBytesContain(mappingFile, "BazKt")
+            }
+            val previousMapping = module.outputDirectory.resolve(mappingFile).readBytes()
+
+            module.sourcesDirectory.resolve("foo.kt").deleteExisting()
+            module.sourcesDirectory.resolve("bar.kt").deleteExisting()
+            module.sourcesDirectory.resolve("baz.kt").deleteExisting()
+            module.outputDirectory.resolve("BazKt.class").deleteExisting()
+            module.createPredefinedFile("secret.kt", "new-file")
+
+            val cache = RecordingIncrementalCache(previousMapping, obsoletePackageParts = listOf("BazKt"))
+            module.compile(compilationConfigAction = { it.withJpsIc(SingleCacheComponents(cache)) }) {
+                // FooKt can come only from the previous mapping, SecretKt is the part of this compilation,
+                // and BazKt is dropped only by the obsolete parts
+                assertOutputFileBytesContain(mappingFile, "FooKt")
+                assertOutputFileBytesContain(mappingFile, "SecretKt")
+                assertOutputFileBytesDoNotContain(mappingFile, "BazKt")
             }
         }
     }

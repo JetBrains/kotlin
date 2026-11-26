@@ -370,6 +370,11 @@ testing {
             dependencies {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
+            targets.all {
+                testTask.configure {
+                    addClasspathProperty(pluginSandbox, "PLUGIN_SANDBOX")
+                }
+            }
         }
 
         named<JvmTestSuite>("testRestrictedArguments") {

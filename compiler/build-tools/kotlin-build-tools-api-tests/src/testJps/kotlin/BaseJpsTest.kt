@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfig
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import java.nio.file.Path
+import kotlin.io.path.copyTo
 
 abstract class BaseJpsTest : BaseCompilationTest() {
     protected companion object {
@@ -37,6 +39,10 @@ internal fun String.relativeToModule(fixtureName: String): String =
     replace('\\', '/').substringAfter(fixtureName.replace('\\', '/'))
 
 internal fun Path.relativeToModule(fixtureName: String): String = toString().relativeToModule(fixtureName)
+
+internal fun Module<*, *, *>.createPredefinedFile(fileName: String, version: String) {
+    sourcesDirectory.resolve("$fileName.$version").copyTo(sourcesDirectory.resolve(fileName))
+}
 
 /** A cache that records nothing and knows nothing; the default for tracker-only tests. */
 internal open class EmptyIncrementalCache : CompilerIncrementalCache {
