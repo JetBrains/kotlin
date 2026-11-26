@@ -21,8 +21,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.util.eraseIfTypeParameter
+import org.jetbrains.kotlin.ir.util.isEquals
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.reinterpretCastIfNeededTo
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -35,6 +41,34 @@ open class SharedVariablesPrimitiveBoxSpecializationLowering(
     private val context: CommonBackendContext,
     private val symbols: BackendKlibSymbols,
 ) : BodyLoweringPass {
+
+    internal fun IrType.getMostDeepValueClassUnderlyingType(
+        stopWhenEqualsIsOverridden: Boolean = false
+    ): IrType {
+        var currentType = this
+
+        while (true) {
+            currentType = currentType.eraseIfTypeParameter()
+
+            if (currentType.isPrimitiveType() || currentType.isNullable()) break
+
+            val currentClass = currentType.classOrNull?.owner ?: break
+
+            if (!context.inlineClassesUtils.isClassInlineLike(currentClass)) break
+
+            if (stopWhenEqualsIsOverridden) {
+                if (currentClass.declarations.any {
+                        it is IrSimpleFunction &&
+                                it.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER &&
+                                it.isEquals()
+                    }) break
+            }
+
+            currentType = context.inlineClassesUtils.getInlineClassUnderlyingType(currentClass)
+        }
+        return currentType
+    }
+
     private val genericSharedVariableBox = symbols.genericSharedVariableBox
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -49,7 +83,8 @@ open class SharedVariablesPrimitiveBoxSpecializationLowering(
         if (this !is IrSimpleType) return null
         if (classifier != genericSharedVariableBox.klass) return null
         val argument = arguments.getOrNull(0)?.typeOrNull ?: return null
-        return symbols.primitiveSharedVariableBoxes[argument]
+        val q = argument.getMostDeepValueClassUnderlyingType()
+        return symbols.primitiveSharedVariableBoxes[q]
     }
 
     private fun IrType.replaceIfNeeded(): IrType = getPrimitiveBoxClassIfPossible()?.klass?.defaultType ?: this
@@ -100,6 +135,7 @@ open class SharedVariablesPrimitiveBoxSpecializationLowering(
                 expression.origin,
             ).apply {
                 arguments[0] = expression.arguments[0]?.transform(this@Transformer, null)
+                    ?.reinterpretCastIfNeededTo(primitiveBoxClass.constructor.owner.parameters[0].type)
             }
         }
 
@@ -110,12 +146,12 @@ open class SharedVariablesPrimitiveBoxSpecializationLowering(
                 return IrCallImpl(
                     expression.startOffset,
                     expression.endOffset,
-                    expression.type,
+                    primitiveBoxClass.load.owner.returnType,
                     primitiveBoxClass.load,
                     origin = expression.origin,
                 ).apply {
                     arguments[0] = expression.arguments[0]?.transform(this@Transformer, null)
-                }
+                }.reinterpretCastIfNeededTo(expression.type)
             }
             if (expression.symbol == genericSharedVariableBox.store) {
                 return IrCallImpl(
@@ -126,7 +162,9 @@ open class SharedVariablesPrimitiveBoxSpecializationLowering(
                     origin = expression.origin,
                 ).apply {
                     arguments[0] = expression.arguments[0]?.transform(this@Transformer, null)
-                    arguments[1] = expression.arguments[1]?.transform(this@Transformer, null)
+                    arguments[1] = expression.arguments[1]
+                        ?.transform(this@Transformer, null)
+                        ?.reinterpretCastIfNeededTo(primitiveBoxClass.store.owner.parameters[1].type)
                 }
             }
             return super.visitCall(expression)
