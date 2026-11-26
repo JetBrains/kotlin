@@ -339,8 +339,10 @@ internal class ImplementationPrinter(
                     }
                 }
 
-                val additionalOverriddenTypes =
-                    field.overriddenFields.map { it.typeRef.copy(nullable = false) }.toSet() - field.typeRef.copy(nullable = false)
+                val additionalOverriddenTypes = field.overriddenFields
+                    .filter { it.withReplace }
+                    .map { it.typeRef.copy(nullable = false) }
+                    .toSet() - field.typeRef.copy(nullable = false)
                 for (overriddenType in additionalOverriddenTypes) {
                     generateReplace(field, overriddenType) {
                         println("require($newValue is ${field.typeRef.render()})")

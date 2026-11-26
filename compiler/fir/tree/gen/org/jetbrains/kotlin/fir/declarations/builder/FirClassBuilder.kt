@@ -30,8 +30,8 @@ sealed interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainer
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
     abstract val typeParameters: MutableList<FirTypeParameterRef>
-    abstract var status: FirDeclarationStatus
     abstract var isLocal: Boolean
+    abstract var status: FirClassLikeDeclarationStatus
     abstract var deprecationsProvider: DeprecationsProvider
     abstract var scopeProvider: FirScopeProvider
     abstract var classKind: ClassKind

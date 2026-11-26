@@ -34,8 +34,8 @@ open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerB
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var status: FirDeclarationStatus
     override var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    override lateinit var status: FirCallableDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     open var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -57,8 +57,8 @@ open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerB
             moduleData,
             origin,
             attributes,
-            status,
             isLocal,
+            status,
             returnTypeRef,
             receiverParameter,
             deprecationsProvider,
@@ -96,8 +96,8 @@ inline fun buildNamedFunctionCopy(original: FirNamedFunction, init: FirNamedFunc
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.status = original.status
     copyBuilder.isLocal = original.isLocal
+    copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverParameter = original.receiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider

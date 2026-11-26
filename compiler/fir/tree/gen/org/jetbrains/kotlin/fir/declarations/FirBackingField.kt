@@ -59,7 +59,7 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     abstract override val initializer: FirExpression?
     abstract override val annotations: List<FirAnnotation>
     abstract override val typeParameters: List<FirTypeParameter>
-    abstract override val status: FirDeclarationStatus
+    abstract override val status: FirCallableDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitBackingField(this, data)
@@ -86,7 +86,7 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract override fun replaceStatus(newStatus: FirCallableDeclarationStatus)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirBackingField
 

@@ -571,22 +571,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(declarationStatus)
     }
 
-    final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {
-        visitResolvedDeclarationStatus(resolvedDeclarationStatus)
-    }
-
-    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus) {
-        visitElement(resolvedDeclarationStatus)
-    }
-
-    final override fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: Nothing?) {
-        visitDeclarationStatusBase(declarationStatusBase)
-    }
-
-    open fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase) {
-        visitElement(declarationStatusBase)
-    }
-
     final override fun visitCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: Nothing?) {
         visitCallableDeclarationStatus(callableDeclarationStatus)
     }
@@ -603,12 +587,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(classLikeDeclarationStatus)
     }
 
-    final override fun visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase, data: Nothing?) {
-        visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase)
+    final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {
+        visitResolvedDeclarationStatus(resolvedDeclarationStatus)
     }
 
-    open fun visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase) {
-        visitElement(resolvedDeclarationStatusBase)
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus) {
+        visitElement(resolvedDeclarationStatus)
     }
 
     final override fun visitResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus: FirResolvedCallableDeclarationStatus, data: Nothing?) {

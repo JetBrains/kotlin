@@ -43,8 +43,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
+    abstract override val status: FirClassLikeDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val scopeProvider: FirScopeProvider
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
@@ -63,7 +63,7 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformClass(this, data) as E
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract override fun replaceStatus(newStatus: FirClassLikeDeclarationStatus)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 

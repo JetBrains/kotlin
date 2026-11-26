@@ -33,8 +33,8 @@ internal class FirEnumEntryImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var status: FirDeclarationStatus,
     override val isLocal: Boolean,
+    override var status: FirCallableDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
     override val name: Name,
@@ -143,7 +143,7 @@ internal class FirEnumEntryImpl(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

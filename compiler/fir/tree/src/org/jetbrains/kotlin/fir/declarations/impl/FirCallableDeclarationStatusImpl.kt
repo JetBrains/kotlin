@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.ReturnValueStatus
 open class FirCallableDeclarationStatusImpl(
     visibility: Visibility,
     modality: Modality?
-) : FirDeclarationStatusBaseImpl(visibility, modality), FirCallableDeclarationStatus {
+) : FirDeclarationStatusImpl(visibility, modality), FirCallableDeclarationStatus {
     override var isOverride: Boolean
         get() = this[OVERRIDE]
         set(value) {

@@ -35,7 +35,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override lateinit var status: FirDeclarationStatus
+    override lateinit var status: FirCallableDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null

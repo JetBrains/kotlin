@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.classLikeDeclarationStatus]
  */
-interface FirClassLikeDeclarationStatus : FirDeclarationStatusBase {
+interface FirClassLikeDeclarationStatus : FirDeclarationStatus {
     override val source: KtSourceElement?
     override val visibility: Visibility
     override val modality: Modality?

@@ -37,8 +37,8 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override var status: FirDeclarationStatus,
     override val isLocal: Boolean,
+    override var status: FirCallableDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
@@ -142,7 +142,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

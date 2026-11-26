@@ -38,8 +38,8 @@ class FirErrorPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnno
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val typeParameters: MutableList<FirTypeParameterRef> = []
-    override lateinit var status: FirDeclarationStatus
     override var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    override lateinit var status: FirCallableDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -63,8 +63,8 @@ class FirErrorPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnno
             origin,
             attributes,
             typeParameters,
-            status,
             isLocal,
+            status,
             returnTypeRef,
             receiverParameter,
             deprecationsProvider,

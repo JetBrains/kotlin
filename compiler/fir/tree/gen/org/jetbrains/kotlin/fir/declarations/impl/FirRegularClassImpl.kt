@@ -36,7 +36,7 @@ internal class FirRegularClassImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override var status: FirDeclarationStatus,
+    override var status: FirClassLikeDeclarationStatus,
     override var deprecationsProvider: DeprecationsProvider,
     override val scopeProvider: FirScopeProvider,
     override val classKind: ClassKind,
@@ -116,7 +116,7 @@ internal class FirRegularClassImpl(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirClassLikeDeclarationStatus) {
         status = newStatus
     }
 

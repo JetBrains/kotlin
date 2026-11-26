@@ -38,8 +38,8 @@ abstract class FirTypeAlias : FirClassLikeDeclaration() {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
+    abstract override val status: FirClassLikeDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val scopeProvider: FirScopeProvider
     abstract val name: Name
@@ -54,7 +54,7 @@ abstract class FirTypeAlias : FirClassLikeDeclaration() {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformTypeAlias(this, data) as E
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract override fun replaceStatus(newStatus: FirClassLikeDeclarationStatus)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 

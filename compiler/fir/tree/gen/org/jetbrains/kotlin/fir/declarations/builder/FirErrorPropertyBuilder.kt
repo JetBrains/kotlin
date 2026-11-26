@@ -71,15 +71,15 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
     }
 
 
-    @Deprecated("Modification of 'status' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
-    override var status: FirDeclarationStatus
+    @Deprecated("Modification of 'isLocal' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
+    override var isLocal: Boolean
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'isLocal' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
-    override var isLocal: Boolean
+    @Deprecated("Modification of 'status' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
+    override var status: FirCallableDeclarationStatus
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

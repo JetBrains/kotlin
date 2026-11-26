@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 
 val phaseAsResolveStateExtentionImport = ArbitraryImportable("org.jetbrains.kotlin.fir.declarations", "asResolveState")
 val resolvePhaseExtensionImport = ArbitraryImportable("org.jetbrains.kotlin.fir.declarations", "resolvePhase")
-val resolvedDeclarationStatusImport = ArbitraryImportable("org.jetbrains.kotlin.fir.declarations.impl", "FirResolvedDeclarationStatusImpl")
 
 val constructClassTypeImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "constructClassType")
 val toLookupTagImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "toLookupTag")

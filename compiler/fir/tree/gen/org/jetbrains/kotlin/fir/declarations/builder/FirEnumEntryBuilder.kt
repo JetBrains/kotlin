@@ -30,8 +30,8 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var status: FirDeclarationStatus
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    lateinit var status: FirCallableDeclarationStatus
     lateinit var returnTypeRef: FirTypeRef
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var name: Name
@@ -46,8 +46,8 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             moduleData,
             origin,
             attributes,
-            status,
             isLocal,
+            status,
             returnTypeRef,
             deprecationsProvider,
             name,
