@@ -29,7 +29,8 @@ kotlin.sourceSets {
     getByName("test") {
         dependencies {
             implementation(kotlin("test-js"))
-            implementation(npm("mocha", "*"))
+            // 11.7.6: its engines accept the Node 22.0.0 that KGP 2.2.20 pins by default; later majors require Node >=22.12.0
+            implementation(npm("mocha", "11.7.6"))
         }
     }
 }
