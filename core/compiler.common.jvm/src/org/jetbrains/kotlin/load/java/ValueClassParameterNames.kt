@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.load.java
 /**
  * Names of JVM parameters and local variables that hold the underlying value of an inline class (KT-73995):
  * `$v$c$<encoded fq name of the inline class>$$<source name>`. Such a slot never holds a boxed instance of the inline class.
+ * A captured `var` keeps its name when the compiler wraps it in a `kotlin.jvm.internal.Ref`.
+ * The slot or the captured field then holds the `Ref`, and its `element` holds the underlying value.
  * The encoded fq name has only Java identifier characters, because IntelliJ class file stubs drop other parameter names.
  *
  * The IntelliJ debugger reads these names in `decodeValueClassVariableName`, see intellij-community
