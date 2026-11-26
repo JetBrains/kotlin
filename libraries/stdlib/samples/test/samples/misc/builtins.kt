@@ -121,5 +121,100 @@ class Builtins {
         @Suppress("DIVISION_BY_ZERO")
         assertFailsWith<ArithmeticException> { 1u.mod(0u) }
     }
+
+    @Sample
+    fun shl() {
+        // 0001 -> 1000, which is 8 in binary
+        assertPrints(1 shl 3, "8")
+        // In most cases, shl 1 is equivalent to multiplying by two
+        assertPrints(13 shl 1, "26")
+
+        // This also works for negative numbers
+        assertPrints(-1 shl 1, "-2")
+        assertPrints(-256 shl 2, "-1024")
+
+        // However, if first bit of the number becomes 1, number overflows into negatives
+        assertPrints(1 shl 31, "-2147483648")
+
+        // only the five lowest-order bits of the bitCount are used, so `shl 32` won't work
+        assertPrints(1 shl 32, "1")
+
+        // This also means `shl -1` is equivalent to `shl 31`. not `shr 1`
+        assertPrints(2 shl -1, "0")
+        assertPrints(1 shl -31, "2")
+    }
+
+    @Sample
+    fun shr() {
+        // 1000 -> 0001
+        assertPrints(8 shr 3, "1")
+        // In most cases, shl 1 is equivalent to dividing by two (rounding down)
+        assertPrints(13 shr 1, "6")
+
+        // This also works for negative numbers.
+        assertPrints(-2 shr 1, "-1")
+        assertPrints(-256 shr 2, "-64")
+
+        // Note that regular division rounds negative numbers up
+        assertPrints(-13 shr 1, "-7")
+        assertPrints(-13 / 2, "-6")
+
+        // only the five lowest-order bits of the bitCount are used, so `shr 32` won't work
+        assertPrints(1 shr 32, "1")
+        // This also means `shr -1` is equivalent to `shr 31`. not `shl 1`
+        assertPrints(2 shr -31, "1")
+    }
+
+    @Sample
+    fun ushr() {
+        // 1000 -> 0001
+        assertPrints(8 ushr 3, "1")
+        // In most cases, shl 1 is equivalent to dividing by two (rounding down)
+        assertPrints(13 ushr 1, "6")
+
+        // ushr replaces leftmost bits with zeros, so negative numbers become positive.
+        assertPrints(-1 ushr 1, "2147483647")
+
+        // only the five lowest-order bits of the bitCount are used, so `shr 32` won't work
+        assertPrints(1 ushr 32, "1")
+        // This also means `shr -1` is equivalent to `shr 31`. not `shl 1`
+        assertPrints(2 ushr -31, "1")
+    }
+
+    @Sample
+    fun and() {
+        assertPrints(0 and 6, "0")
+        // 5 = 0101, 6 = 0110
+        assertPrints(5 and 6, "4")
+        // -1 = 11..1
+        assertPrints(1 and -1, "1")
+    }
+
+    @Sample
+    fun or() {
+        assertPrints(0 or 6, "6")
+        // 5 = 0101, 6 = 0110
+        assertPrints(5 or 6, "7")
+        // -1 = 11..1
+        assertPrints(1 or -1, "-1")
+    }
+
+    @Sample
+    fun xor() {
+        assertPrints(0 xor 6, "6")
+        // 5 = 0101, 6 = 0110
+        assertPrints(5 xor 6, "3")
+        // -1 = 11..1
+        assertPrints(1 xor -1, "-2")
+    }
+
+    @Sample
+    fun inv() {
+        // -1 = 11..1
+        assertPrints(0.inv(), "-1")
+        // x.inv() = -x - 1
+        assertPrints(100.inv(), "-101")
+        assertPrints((-100).inv(), "99")
+    }
 }
 
