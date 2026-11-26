@@ -1,0 +1,20 @@
+// Step 0: main uses lib1 directly and through lib2.
+
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : main.kt -> main.kt
+
+// Step 1: main depends on lib1 only, so lib2 is out of the link.
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : main.1.kt -> main.kt
+
+// Step 2: lib2 returns. The call of viaPub() pulls lib2's cached use.kt into the link, and the
+// call of pub() keeps lib1 a per-file (not whole-module) dependency of main, so the stale
+// use.kt -> lib1|pub.kt edge is actually resolved - and the IC link crashes on it.
+STEP 2:
+    dependencies: lib1, lib2
+    modifications:
+        U : main.kt -> main.kt
