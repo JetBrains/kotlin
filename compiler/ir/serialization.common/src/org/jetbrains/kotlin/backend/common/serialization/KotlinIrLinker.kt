@@ -71,6 +71,9 @@ abstract class KotlinIrLinker(
     @IrLinkerInternalApi
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
+    /** The current linker state. */
+    private val state = IrLinkerState(LINKING)
+
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
         override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
             referenceCallable(file, signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
@@ -129,10 +132,6 @@ abstract class KotlinIrLinker(
     abstract val partialLinkageSupport: PartialLinkageSupportForLinker
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
-
-    // Represents the fact that the linkage process was finished.
-    // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
-    private var finished = false
 
     @IrLinkerInternalApi
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
@@ -333,7 +332,7 @@ abstract class KotlinIrLinker(
         // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
         return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
-            if (finished) deserializeAllReachableTopLevels()
+            if (state.isFinalized) deserializeAllReachableTopLevels()
         }
     }
 
@@ -355,7 +354,7 @@ abstract class KotlinIrLinker(
      * Must be called after [drainDeserializationQueue]. Declarations requested later are linked right at deserialization.
      */
     fun finalizeIrLinkage(irBuiltIns: IrBuiltIns) {
-        finished = true
+        state.switchTo(FINALIZED)
 
         // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
         // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
@@ -590,3 +589,26 @@ private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
         return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
     }
 }
+
+/**
+ * Tracks which phase of IR linkage the [KotlinIrLinker] is in.
+ */
+private class IrLinkerState(private var currentState: State) {
+    enum class State {
+        /** Bulk linkage: requested declarations are queued and deserialized later in batches. */
+        LINKING,
+
+        /** [KotlinIrLinker.finalizeIrLinkage] has been called: Declarations requested from now on are deserialized immediately. */
+        FINALIZED;
+    }
+
+    val isFinalized: Boolean get() = currentState == State.FINALIZED
+
+    fun switchTo(newState: State) {
+        check(newState == currentState || newState.ordinal == currentState.ordinal + 1) {
+            "Unsupported transition between IR linker states: $currentState -> $newState"
+        }
+        currentState = newState
+    }
+}
+
