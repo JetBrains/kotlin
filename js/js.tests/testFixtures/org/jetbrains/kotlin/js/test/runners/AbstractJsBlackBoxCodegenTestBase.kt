@@ -111,14 +111,17 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
             testGroupOutputDirPrefix,
             backendFacades,
         )
+        defaultDiagnosticsDirectivesForJsCodegenTest()
+    }
+}
 
-        forTestsNotMatching(
-            "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
-                    "compiler/testData/diagnostics/*"
-        ) {
-            defaultDirectives {
-                DIAGNOSTICS with "-warnings"
-            }
+fun TestConfigurationBuilder.defaultDiagnosticsDirectivesForJsCodegenTest() {
+    forTestsNotMatching(
+        "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                "compiler/testData/diagnostics/*"
+    ) {
+        defaultDirectives {
+            DIAGNOSTICS with "-warnings"
         }
     }
 }
@@ -145,15 +148,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     testGroupOutputDirPrefix: String,
     backendFacades: JsBackendFacades,
 ) {
-    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
-    defaultDirectives {
-        JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-        JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-        JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-        +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-        if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
-        LANGUAGE with "+JsAllowValueClassesInExternals"
-    }
+    defaultDirectivesForJsBackendSecondStageTest(pathToTestDir, testGroupOutputDirPrefix)
 
     when (val backendFacades = backendFacades) {
         is JsBackendFacades.WithRecompilation -> {
@@ -176,6 +171,21 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 
     useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)
     useAfterAnalysisCheckers(JsArtifactsDumpHandler::Checker)
+}
+
+fun TestConfigurationBuilder.defaultDirectivesForJsBackendSecondStageTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) {
+    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    defaultDirectives {
+        JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
+        JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
+        JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+        +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
+        if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
+        LANGUAGE with "+JsAllowValueClassesInExternals"
+    }
 }
 
 /**
@@ -266,6 +276,16 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null
 ) {
+    setupCommonFirstStageHandlersForJsTest()
+
+    useFailureSuppressors(
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
+    )
+
+    enableMetaInfoHandler()
+}
+
+fun TestConfigurationBuilder.setupCommonFirstStageHandlersForJsTest() {
     configureFirHandlersStep {
         useHandlers(::FirDiagnosticsHandler)
     }
@@ -284,10 +304,4 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     configureKlibArtifactsHandlersStep {
         useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler, ::KlibAbiDumpHandler)
     }
-
-    useFailureSuppressors(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
-    )
-
-    enableMetaInfoHandler()
 }

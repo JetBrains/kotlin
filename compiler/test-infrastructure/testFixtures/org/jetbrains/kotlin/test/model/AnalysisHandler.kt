@@ -32,7 +32,7 @@ abstract class AnalysisHandlerBase<A : ResultingArtifact<A>>(
         private set
 
     @TestInfrastructureInternals
-    internal fun setCompilationStage(stage: CompilationStage) {
+    fun setCompilationStage(stage: CompilationStage) {
         if (this::compilationStage.isInitialized) {
             error("Compilation stage already initialized for $this")
         }

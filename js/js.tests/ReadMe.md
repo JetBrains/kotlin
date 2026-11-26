@@ -14,6 +14,16 @@ The JavaScript files generated from the test files are located in the following 
 - `js/js.tests/build/node/out-per-module` — JS files generated with the `PER_MODULE` translation mode (each module is compiled into a separate JS file)
 - `js/js.tests/build/node/out-per-module-min` — the same as previous, but with DCE and optional optimizations applied.
 
+The box tests of `compiler/testData/codegen/box` with ES5 as the target (`JsCodegenBoxTestGenerated` and
+`JsCodegenBoxWithInlineAnonymousFunctionsTestGenerated`) are run in batches: every test is compiled into a KLIB of its own,
+and the KLIBs of up to 50 tests are linked into one executable, which calls `box()` of each of them
+(see "Grouped tests" in [.ai/testing.md](../../.ai/testing.md)). So such a test has no JS file of its own:
+- The JS of a batch is located in the directory of the first test of the batch, as `<first test>-launcher_v5.js`.
+  A `<test>_v5.js` file next to it may be a leftover of an earlier run.
+- To get the JS of one test, run this test alone, e.g. with `--tests`: it makes a batch of its own then.
+- A test that checks more than the result of `box()` (dumps, JS AST checks, several modules, `IGNORE_BACKEND`, etc.,
+  see `JsGroupingTestIsolator`) is not batched, and its JS is in `<test>_v5.js`, as for the other test runners.
+
 There are multiple kinds of tests. Here are some of them:
 
 - Box tests. Those are the tests that we are often most interested in. 

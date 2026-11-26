@@ -148,29 +148,39 @@ fun Test.forwardProperties() {
     }
 }
 
+fun Test.setUpGroupedJsBoxTests() {
+    setUpJsBoxTests()
+    groupingEngineSettings(batchSize = 50, simultaneousBatches = 12)
+}
+
 projectTests {
     val swcTag = "swc"
     val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests")
 
-    jsTestTask {
+    jsTestTask(enableGroupingTestEngine = true) {
         if (swcEnabledLocally.get()) {
             with(swcKotlinBuild) { setupSwc() }
         } else {
             useJUnitPlatform { excludeTags(swcTag) }
         }
-        setUpJsBoxTests()
+        setUpGroupedJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
-        setUpJsBoxTests()
+    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true, enableGroupingTestEngine = true) {
+        setUpGroupedJsBoxTests()
     }
 
     jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES5InlineAnonymousFunctionsTest", tag = "!es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
-        setUpJsBoxTests()
+    jsTestTask(
+        taskName = "jsES5InlineAnonymousFunctionsTest",
+        tag = "!es6 & jsInlineAnonymousFunctions",
+        skipInLocalBuild = true,
+        enableGroupingTestEngine = true,
+    ) {
+        setUpGroupedJsBoxTests()
     }
 
     jsTestTask(taskName = "jsES6InlineAnonymousFunctionsTest", tag = "es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
@@ -212,6 +222,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/js-name-resolution")
     testData(project(":js:js.translator").isolated, "testData/multiModuleOrder")
     testData(project(":js:js.translator").isolated, "testData/sourcemap")
+    testData(project(":js:js.translator").isolated, "testData/twoStageCodegenBoxSanity")
     testData(project(":js:js.translator").isolated, "testData/typescript-export/js/")
     testData(project(":compiler").isolated, "testData/debug/stepping")
     testData(project(":compiler").isolated, "testData/debug/localVariables")

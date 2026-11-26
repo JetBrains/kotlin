@@ -347,6 +347,8 @@ class NonGroupingStageTestConfigurationBuilder :
             get() = builder.testInfo
         val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
             get() = builder.startingArtifactFactory
+        val groupingTestIsolators: List<Constructor<GroupingTestIsolator>>
+            get() = builder.groupingTestIsolators
     }
 }
 

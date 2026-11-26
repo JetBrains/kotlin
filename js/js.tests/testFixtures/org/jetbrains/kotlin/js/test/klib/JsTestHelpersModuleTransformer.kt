@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.klib.HelperModuleExtractingTransformer
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.DefaultsProvider
+import org.jetbrains.kotlin.test.services.ModuleStructureTransformer
+import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
 import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
 
@@ -32,4 +38,13 @@ object JsTestHelpersModuleTransformer : HelperModuleExtractingTransformer() {
 
     override fun isHelperFile(file: TestFile): Boolean =
         file.isAdditional && file.name.endsWith(".kt") && detectPackage(file, SourceContentView.ORIGINAL) in HELPER_PACKAGES
+}
+
+/** An isolated test keeps the module structure of the one-stage pipeline, which its checks expect. */
+@OptIn(TestInfrastructureInternals::class)
+class JsGroupedTestHelpersModuleTransformer(private val testServices: TestServices) : ModuleStructureTransformer() {
+    override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
+        if (testServices.shouldIsolateTestInGroupingConfiguration(moduleStructure, fileGenerationPhase = true)) return moduleStructure
+        return JsTestHelpersModuleTransformer.transformModuleStructure(moduleStructure, defaultsProvider)
+    }
 }
