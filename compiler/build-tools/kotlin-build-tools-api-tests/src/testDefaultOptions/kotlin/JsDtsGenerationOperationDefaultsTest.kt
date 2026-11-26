@@ -28,7 +28,7 @@ class JsDtsGenerationOperationDefaultsTest {
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
         assertEquals(JsModuleKind.UMD, operation[JsDtsGenerationOperation.MODULE_KIND])
         assertEquals(JsDtsGranularity.WHOLE_PROGRAM, operation[JsDtsGenerationOperation.GRANULARITY])
-        assertEquals(JsDtsCompilationStrategy.MERGED, operation[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
+        assertEquals(null, operation[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY])
         assertEquals(false, operation[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT])
         assertEquals(false, operation[JsDtsGenerationOperation.IMPLEMENT_INTERFACES])
         assertEquals(false, operation[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS])

@@ -118,7 +118,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
          * consistent with how the JS output is emitted. Defaults to [JsDtsCompilationStrategy.MERGED].
          */
         @JvmField
-        public val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", KotlinReleaseVersion(2, 5, 0))
+        public val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy?> = Option("TS_COMPILATION_STRATEGY", KotlinReleaseVersion(2, 5, 0))
 
         /**
          * Whether `Long` is compiled as ES2020 `bigint`. Must match the JS linking `-Xes-long-as-bigint`.

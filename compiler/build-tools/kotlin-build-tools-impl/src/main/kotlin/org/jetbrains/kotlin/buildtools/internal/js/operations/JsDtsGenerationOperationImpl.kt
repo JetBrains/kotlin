@@ -86,6 +86,9 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val outputName = this[OUTPUT_NAME] ?: mainModule.config.outputName ?: mainModule.name
         val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name
 
+        val tsCompilationStrategy = this[TS_COMPILATION_STRATEGY]?.name?.let(TsCompilationStrategy::valueOf)
+            ?: TsCompilationStrategy.MERGED
+
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
@@ -94,7 +97,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
                 outputDirectory = outputDirectory.toFile(),
                 outputName = outputName,
                 granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
-                tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
+                tsCompilationStrategy = tsCompilationStrategy,
                 production = false,
                 minimizedMemberNames = false,
             ),
@@ -154,9 +157,16 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
         this[GRANULARITY] = when {
             compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
-            // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
+            compilerArguments.irPerModule -> JsDtsGranularity.PER_MODULE
             else -> JsDtsGranularity.WHOLE_PROGRAM
+        }
+
+        if (this[TS_COMPILATION_STRATEGY] == null) {
+            this[TS_COMPILATION_STRATEGY] = when (this[GRANULARITY]) {
+                JsDtsGranularity.PER_FILE -> JsDtsCompilationStrategy.EACH_FILE
+                // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
+                JsDtsGranularity.PER_MODULE, JsDtsGranularity.WHOLE_PROGRAM -> JsDtsCompilationStrategy.MERGED
+            }
         }
     }
 
@@ -188,7 +198,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
     companion object {
         private val defaultArgsReference = K2JSCompilerArguments()
-        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
+        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy?> = Option("TS_COMPILATION_STRATEGY", null)
         val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
 
         @Suppress("EnumValuesSoftDeprecate")
