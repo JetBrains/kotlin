@@ -394,32 +394,36 @@ constructor(
     }
 
     private fun validateDisabledNativeCache() {
-        if (hasDisabledNativeCache) {
-            val diagnostics = disableCacheSettings.get().map { disableCache ->
-                if (konanPropertiesService.get().defaultCacheKindForTarget(konanTarget) == NativeCacheKind.NONE) {
+        val settings = disableCacheSettings.get()
+        if (settings.isEmpty()) return
+
+        if (konanPropertiesService.get().defaultCacheKindForTarget(konanTarget) == NativeCacheKind.NONE) {
+            // The target has no cache on this host, so the entry is redundant for any Kotlin/Native version.
+            settings.forEach { _ ->
+                reportDiagnostic(
                     KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic(
                         binaryBuildType.get(),
                         binaryName.get(),
                         konanTarget.visibleName,
                         HostManager.platformName()
                     )
-                } else {
-                    val version = simpleKotlinNativeVersion.map { version ->
-                        KotlinToolingVersion(version).toKotlinVersion()
-                    }
-
-                    KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
-                        version.get(),
-                        binaryBuildType.get(),
-                        binaryName.get(),
-                        konanTarget.visibleName,
-                        disableCache.reason,
-                        disableCache.issueUrl
-                    )
-                }
+                )
             }
+            return
+        }
 
-            diagnostics.forEach { reportDiagnostic(it) }
+        val nativeVersion = KotlinToolingVersion(simpleKotlinNativeVersion.get())
+        settings.filter { it.appliesTo(nativeVersion) }.forEach { disableCache ->
+            reportDiagnostic(
+                KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
+                    nativeVersion.toKotlinVersion(),
+                    binaryBuildType.get(),
+                    binaryName.get(),
+                    konanTarget.visibleName,
+                    disableCache.reason,
+                    disableCache.issueUrl
+                )
+            )
         }
     }
 
@@ -550,5 +554,4 @@ constructor(
 
 internal val String.asValidFrameworkName get() = replace('-', '_')
 
-private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)
