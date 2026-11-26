@@ -17,6 +17,9 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalKlibCache) 
 
     override val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
         get() = cache.nonDirtyIrInlineParts()
+
+    override val serializedSignatureIndex: Map<File, FileSignatureIndex>
+        get() = cache.nonDirtySignatures()
 }
 
 class KmpIncrementalDataProviderFromCache(
