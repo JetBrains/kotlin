@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : FileLoweringPass, IrBuildingTransformer(context) {
     private val irBuiltins = context.irBuiltIns
     private val symbols = context.symbols
+    private val canonicalizeNaNsInEquality = context.config.canonicalizeNaNsInEquality
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -144,10 +145,16 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
         val lhsBinaryType = lhs.type.computeBinaryType()
         return when (lhsBinaryType) {
             is BinaryType.Primitive -> {
-                val areEqualByValue = symbols.areEqualByValue[lhsBinaryType.type]!!.owner
-                irCall(areEqualByValue).apply {
-                    arguments[0] = reinterpret(lhs, areEqualByValue.parameters[0].type)
-                    arguments[1] = reinterpret(rhs, areEqualByValue.parameters[1].type)
+                val equals = if (canonicalizeNaNsInEquality &&
+                    (lhsBinaryType.type == PrimitiveBinaryType.FLOAT || lhsBinaryType.type == PrimitiveBinaryType.DOUBLE)
+                ) {
+                    symbols.areEqualByValueWithNaNs.getValue(lhsBinaryType.type)
+                } else {
+                    symbols.areEqualByValue.getValue(lhsBinaryType.type)
+                }.owner
+                irCall(equals).apply {
+                    arguments[0] = reinterpret(lhs, equals.parameters[0].type)
+                    arguments[1] = reinterpret(rhs, equals.parameters[1].type)
                 }
             }
 

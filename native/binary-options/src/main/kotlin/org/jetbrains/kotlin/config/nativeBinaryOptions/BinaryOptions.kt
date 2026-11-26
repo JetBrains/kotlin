@@ -107,6 +107,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val genericSafeCasts by booleanOption()
 
+    val canonicalizeNaNsInEquality by booleanOption()
+
     val smallBinary by booleanOption()
 
     val preCodegenInlineThreshold by uintOption()

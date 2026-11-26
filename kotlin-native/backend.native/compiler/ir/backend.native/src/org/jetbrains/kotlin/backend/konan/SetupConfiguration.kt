@@ -270,6 +270,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
     put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)
+    put(BinaryOptions.canonicalizeNaNsInEquality, config.canonicalizeNaNsInEquality)
     put(BinaryOptions.stripDebugInfoFromNativeLibs, !config.useDebugInfoInNativeLibs)
     put(ALLOCATION_MODE, config.allocationMode)
     put(BinaryOptions.gc, config.gc)

@@ -170,6 +170,7 @@ private object CallableIds {
     val restoreCoroutineState = "restoreCoroutineState".internalCallableId
     val getObjectTypeInfo = "getObjectTypeInfo".internalCallableId
     val areEqualByValue = "areEqualByValue".internalCallableId
+    val areEqualByValueWithNaNs = "areEqualByValueWithNaNs".internalCallableId
     val ieee754Equals = "ieee754Equals".internalCallableId
     fun inBoxCache(type: BoxCache) = "in${type.name.lowercase().replaceFirstChar(Char::uppercaseChar)}BoxCache".internalCallableId
     fun getCached(type: BoxCache) = "getCached${type.name.lowercase().replaceFirstChar(Char::uppercaseChar)}Box".internalCallableId
@@ -473,6 +474,12 @@ class BackendNativeSymbols(
             it.owner.parameters[0].type.computePrimitiveBinaryTypeOrNull()!!
         }.mapValues {
             it.value.singleOrNull() ?: error("Several ${CallableIds.areEqualByValue} functions found for type ${it.key}")
+        }
+    }
+
+    val areEqualByValueWithNaNs: Map<PrimitiveBinaryType, IrSimpleFunctionSymbol> by lazy {
+        CallableIds.areEqualByValueWithNaNs.functionSymbols().value.associateBy {
+            it.owner.parameters[0].type.computePrimitiveBinaryTypeOrNull()!!
         }
     }
 
