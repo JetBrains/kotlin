@@ -1,19 +1,10 @@
 # Compiler Architecture
 
-## Intro
+## Frontend
 
-Consider reading [fir-basics.md](../docs/fir/fir-basics.md).
+**K2/FIR (Current)**: Located in `compiler/fir/` - Frontend IR, the new compiler frontend
 
-## Two Frontends
-
-1. **K1/FE 1.0 (Legacy)**: Located in `compiler/frontend/` - uses PSI and BindingContext
-2. **K2/FIR (Current)**: Located in `compiler/fir/` - Frontend IR, the new compiler frontend
-
-## FIR Compilation Phases
-
-FIR processes code through sequential phases (see `FirResolvePhase.kt`).
-
-Key invariant: In phase B following phase A, all FIR elements visible in B are resolved to phase A.
+Read [AGENTS.md](fir/AGENTS.md).
 
 ## IR (Intermediate Representation)
 
@@ -28,19 +19,10 @@ Backend implementations:
 - `compiler/ir/backend.wasm/` - WebAssembly backend
 - `kotlin-native/backend.native/`, `native/` - Native backend
 
-## Inference
-
-For type inference implementation details, read [inference.md](../docs/fir/inference.md).
-
 ## Diagnostic Messages
 
 When adding or changing diagnostic messages, follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_guide.md).
 
 ## Commit Guidelines
 
-- **FIR prefix**: When changes are mostly related to FIR (`compiler/fir/`), use `FIR: ` prefix in the commit subject line.
-- **Test-before-fix**: When fixing an issue and adding a test, commit the test data as a separate commit **before** the fix. This helps reviewers see how the fix actually changes semantics (the test will show diagnostic differences in the fix commit).
-
-## Testing
-
-For FIR diagnostic test data format (directives, diagnostic markers, file structure), see [testData/diagnostics/AGENTS.md](testData/diagnostics/AGENTS.md).
+- **Test-before-fix**: When fixing an issue and adding a test, commit the test data as a separate commit **before** the fix. The test in this commit must pass on current HEAD, i.e. it documents the current (buggy) behavior; the fix commit then updates the test data expectations. This helps reviewers see how the fix actually changes semantics (the test will show diagnostic differences in the fix commit).
