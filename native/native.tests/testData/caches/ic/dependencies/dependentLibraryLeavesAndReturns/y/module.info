@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : y.kt -> y.kt
+    added cache: y.kt
+
+STEP 1:
+    modifications:
+        U : y.1.kt -> y.kt
+    modified cache: y.kt
+
+STEP 2:
+    unchanged cache: y.kt

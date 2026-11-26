@@ -1,0 +1,19 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// x inlines y.yv() into its per-file cache. Then x leaves the link for one step, and y.yv() changes in that step.
+// Nobody walks the dependency of x.kt on y.kt in that step, because x is not in the link.
+// When x comes back, its cache must be rebuilt: it still holds the old body of y.yv().
+
+MODULES: y, x, main
+
+STEP 0:
+    libs: y, x, main
+
+// main does not depend on x anymore, so x is not in the link. y changes the inline function that x uses.
+STEP 1:
+    libs: y, main
+
+// main depends on x again. The klib of x is the one from step 0.
+STEP 2:
+    libs: main

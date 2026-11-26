@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: y
+    modifications:
+        U : x.kt -> x.kt
+    added cache: x.kt
+
+// x is not in the link, so its cache stays as it is.
+STEP 1:
+    dependencies: y
+    unchanged cache: x.kt
+
+// x.kt inlined the old y.yv(), so its cache must be rebuilt.
+STEP 2:
+    dependencies: y
+    modified cache: x.kt
