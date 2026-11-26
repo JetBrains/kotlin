@@ -91,6 +91,11 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "Path to a file with a serialized ScriptCompilationConfiguration for the snippets compilation",
             required = false, allowMultipleOccurrences = false
         )
+        val REPL_SNIPPET_LOADED_PLUGIN_OPTION = CliOption(
+            "repl-snippet-loaded-plugin", "<encoded plugin request>",
+            "Compiler plugin request already loaded by the stateless REPL host; repeat for each plugin",
+            required = false, allowMultipleOccurrences = true
+        )
     }
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
@@ -110,6 +115,7 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             REPL_SNIPPET_PRIOR_CLASS_OPTION,
             REPL_SNIPPET_STATELESS_MODE_OPTION,
             REPL_SNIPPET_CONFIGURATION_OPTION,
+            REPL_SNIPPET_LOADED_PLUGIN_OPTION,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -194,6 +200,9 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
         }
         REPL_SNIPPET_CONFIGURATION_OPTION -> {
             configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_CONFIGURATION_FILE, File(value))
+        }
+        REPL_SNIPPET_LOADED_PLUGIN_OPTION -> {
+            configuration.add(ScriptingConfigurationKeys.REPL_SNIPPET_LOADED_PLUGINS, value)
         }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }

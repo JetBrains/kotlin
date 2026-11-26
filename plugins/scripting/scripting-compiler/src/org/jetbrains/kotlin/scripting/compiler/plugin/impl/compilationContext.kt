@@ -152,7 +152,8 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
-    isRefinement: Boolean
+    isRefinement: Boolean,
+    pluginArgumentsHandled: Boolean = false,
 ) {
     updateWithCompilerOptions(compilerOptions) {
         if (it.diagnostics.hasFatalError) {
@@ -162,7 +163,7 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
             val error = reportArgumentsNotAllowed(it, messageCollector, ignoredOptionsReportingState)
             reportArgumentsIgnoredGenerally(it, messageCollector, ignoredOptionsReportingState)
             if (isRefinement) {
-                reportArgumentsIgnoredFromRefinement(it, messageCollector, ignoredOptionsReportingState)
+                reportArgumentsIgnoredFromRefinement(it, messageCollector, ignoredOptionsReportingState, pluginArgumentsHandled)
             }
             !error
         }
@@ -334,9 +335,8 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
         context.ignoredOptionsReportingState,
         sourceFiles,
         messageCollector,
-    ) {
-        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration
-    }
+        getRefinedConfiguration = { getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration },
+    )
     return sourceFiles to sourceDependencies
 }
 
@@ -350,6 +350,7 @@ internal fun CompilerConfiguration.applyRefinedCompilerOptions(
     sources: List<SourceCode>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     getRefinedConfiguration: (SourceCode) -> ScriptCompilationConfiguration?,
+    pluginArgumentsHandled: Boolean = false,
 ) {
     val refinedCompilerOptions = sources.mapNotNull { source ->
         getRefinedConfiguration(source)?.get(ScriptCompilationConfiguration.compilerOptions)
@@ -358,7 +359,11 @@ internal fun CompilerConfiguration.applyRefinedCompilerOptions(
     }.distinct().flatten()
     if (refinedCompilerOptions.isNotEmpty()) {
         updateWithCompilerOptions(
-            baseCompilerOptions + refinedCompilerOptions, messageCollector, ignoredOptionsReportingState, isRefinement = true
+            baseCompilerOptions + refinedCompilerOptions,
+            messageCollector,
+            ignoredOptionsReportingState,
+            isRefinement = true,
+            pluginArgumentsHandled = pluginArgumentsHandled,
         )
     }
 }

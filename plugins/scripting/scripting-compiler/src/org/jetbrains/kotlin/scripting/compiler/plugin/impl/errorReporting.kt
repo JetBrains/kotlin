@@ -162,24 +162,35 @@ internal fun reportArgumentsIgnoredGenerally(
     )
 
 internal fun reportArgumentsIgnoredFromRefinement(
-    arguments: K2JVMCompilerArguments, messageCollector: MessageCollector, reportingState: IgnoredOptionsReportingState
-) =
-    reportInvalidArguments(
-        arguments,
-        "The following compiler arguments are ignored when configured from refinement callbacks: ",
-        CompilerMessageSeverity.STRONG_WARNING,
-        messageCollector,
-        reportingState,
+    arguments: K2JVMCompilerArguments,
+    messageCollector: MessageCollector,
+    reportingState: IgnoredOptionsReportingState,
+    pluginArgumentsHandled: Boolean = false,
+) {
+    val ignoredArguments = mutableListOf(
         K2JVMCompilerArguments::noJdk,
         K2JVMCompilerArguments::jdkHome,
         K2JVMCompilerArguments::javaModulePath,
         K2JVMCompilerArguments::classpath,
         K2JVMCompilerArguments::noStdlib,
         K2JVMCompilerArguments::noReflect,
-        K2JVMCompilerArguments::pluginClasspaths,
         K2JVMCompilerArguments::pluginOptions,
-        K2JVMCompilerArguments::pluginConfigurations,
     )
+    if (!pluginArgumentsHandled) {
+        ignoredArguments += listOf(
+            K2JVMCompilerArguments::pluginClasspaths,
+            K2JVMCompilerArguments::pluginConfigurations,
+        )
+    }
+    reportInvalidArguments(
+        arguments,
+        "The following compiler arguments are ignored when configured from refinement callbacks: ",
+        CompilerMessageSeverity.STRONG_WARNING,
+        messageCollector,
+        reportingState,
+        *ignoredArguments.toTypedArray(),
+    )
+}
 
 
 private fun reportInvalidArguments(

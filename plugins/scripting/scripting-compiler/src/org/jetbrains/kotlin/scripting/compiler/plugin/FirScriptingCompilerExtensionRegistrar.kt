@@ -12,20 +12,10 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.ClasspathBackedFirReplHistoryProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.Fir2IrReplSnippetConfiguratorExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.Fir2IrScriptConfiguratorExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetConfiguratorExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetResolveExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.StatelessReplPluginRequestReporter
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.*
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
@@ -46,6 +36,7 @@ class FirScriptingCompilerExtensionRegistrar(
         +Fir2IrScriptConfiguratorExtensionImpl.getFactory()
 
         if (compilerConfiguration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE)) {
+            val pluginRequestReporter = StatelessReplPluginRequestReporter(compilerConfiguration)
             val priorClassIds = compilerConfiguration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_CLASSES)
             var capturedSession: FirSession? = null
             val historyProvider = ClasspathBackedFirReplHistoryProvider(priorClassIds) { capturedSession }
@@ -64,7 +55,7 @@ class FirScriptingCompilerExtensionRegistrar(
             }
             +FirReplSnippetConfiguratorExtension.Factory { session ->
                 capturedSession = session
-                FirReplSnippetConfiguratorExtensionImpl(session, replHostConfiguration)
+                FirReplSnippetConfiguratorExtensionImpl(session, replHostConfiguration, pluginRequestReporter)
             }
             +FirExtensionSessionComponent.Factory { session ->
                 capturedSession = session
