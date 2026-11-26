@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-92047
+// LANGUAGE_FEATURE_TOGGLED: ReportUpperBoundViolatedWithSamTypealiasedConstructors
 
 sealed interface Key
 class AlphaKey : Key
@@ -15,8 +16,8 @@ fun interface SamContainer<T : Element<K>, K : Key> {
 typealias SamTA<A, B> = SamContainer<A, B>
 
 fun main() {
-    SamTA<Alpha, BetaKey> { } // no diagnostic
-    SamTA<Alpha, String> { } // no diagnostic
+    SamTA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, BetaKey> { } // no diagnostic
+    SamTA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>> { } // no diagnostic
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral,

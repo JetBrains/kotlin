@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.typeChangeRelatedTo
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceive
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -82,9 +84,10 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             mustRelaxDueToArgumentInteractionsBug: Boolean,
         ) {
             // TODO (KT-92047): missed typealias-to-SAM constructor
-            val typeAliasConstructorInfo = (calleeSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo
+            val typeAliasConstructorInfo = (calleeSymbol as? FirFunctionSymbol<*>)?.typeAliasConstructorInfo
+            val checkSamFunctions = LanguageFeature.ReportUpperBoundViolatedWithSamTypealiasedConstructors.isEnabled()
 
-            if (typeAliasConstructorInfo != null) {
+            if (typeAliasConstructorInfo != null && (calleeSymbol is FirConstructorSymbol || checkSamFunctions)) {
                 val typealiasType: ConeClassLikeType = typeAliasConstructorInfo.typeAliasSymbol.defaultType()
                 checkUpperBoundViolated(
                     typeRef = null,

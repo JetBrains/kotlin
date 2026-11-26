@@ -590,6 +590,7 @@ enum class LanguageFeature(
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
     ForbidUselessTypeArgumentsIn26(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-390"),
     EnforceMissingNamedArgumentsOnJavaAnnotation(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
+    ReportUpperBoundViolatedWithSamTypealiasedConstructors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-435"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
     ReportDeprecationsOnSamConstructorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-433"),
     ReportMissingErrorsOnForLoopOperatorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-432"),
