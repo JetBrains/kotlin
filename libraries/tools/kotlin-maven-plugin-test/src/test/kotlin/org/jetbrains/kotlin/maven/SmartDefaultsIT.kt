@@ -180,7 +180,41 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("Check order of auto-bound goals in Kotlin+Java project")
     fun testSmartDefaultsAutoBindOrder(mavenVersion: TestVersions.Maven) {
+        testAutoBindOrderWithPackaging(mavenVersion, packaging = "jar", artifactExtension = "jar")
+    }
+
+    @MavenTest
+    @DisplayName("Check order of auto-bound goals in Kotlin+Java project with war packaging")
+    fun testSmartDefaultsAutoBindOrderWarPackaging(mavenVersion: TestVersions.Maven) {
+        testAutoBindOrderWithPackaging(mavenVersion, packaging = "war", artifactExtension = "war") {
+            // The test project has no web.xml and no Servlet API dependency
+            setMavenProperty("failOnMissingWebXml", "false")
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Check order of auto-bound goals in Kotlin+Java project with ejb packaging")
+    fun testSmartDefaultsAutoBindOrderEjbPackaging(mavenVersion: TestVersions.Maven) {
+        testAutoBindOrderWithPackaging(mavenVersion, packaging = "ejb", artifactExtension = "jar")
+    }
+
+    @MavenTest
+    @DisplayName("Check order of auto-bound goals in Kotlin+Java project with rar packaging")
+    fun testSmartDefaultsAutoBindOrderRarPackaging(mavenVersion: TestVersions.Maven) {
+        testAutoBindOrderWithPackaging(mavenVersion, packaging = "rar", artifactExtension = "rar")
+    }
+
+    private fun testAutoBindOrderWithPackaging(
+        mavenVersion: TestVersions.Maven,
+        packaging: String,
+        artifactExtension: String,
+        configureProject: MavenTestProject.() -> Unit = {},
+    ) {
         testProject("test-smart-defaults-auto-bind-order", mavenVersion) {
+            modifyPomXml {
+                documentElement.getOrCreateChild("packaging").textContent = packaging
+            }
+            configureProject()
             build(
                 "package", "-X",
                 expectedToFail = false
@@ -195,6 +229,7 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
                     executedSecond = "org.apache.maven.plugins:maven-compiler-plugin", goalSecond = ":testCompile",
                 )
                 assertTestsPassed(3)
+                assertFileExists("target/test-smart-defaults-auto-bind-order-1.0-SNAPSHOT.$artifactExtension")
             }
         }
     }

@@ -166,7 +166,7 @@
               </process-resources>
               <compile>
                 ${project.groupId}:${project.artifactId}:${project.version}:compile,
-                org.apache.maven.plugins:maven-resources-plugin:3.16.0:compile
+                org.apache.maven.plugins:maven-compiler-plugin:3.16.0:compile
               </compile>
               <process-test-sources>
                 ${project.groupId}:${project.artifactId}:${project.version}:test-kapt
@@ -176,7 +176,7 @@
               </process-test-resources>
               <test-compile>
                 ${project.groupId}:${project.artifactId}:${project.version}:test-compile,
-                org.apache.maven.plugins:maven-resources-plugin:3.16.0:testCompile
+                org.apache.maven.plugins:maven-compiler-plugin:3.16.0:testCompile
               </test-compile>
               <test>
                 org.apache.maven.plugins:maven-surefire-plugin:3.6.0:test
