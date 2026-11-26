@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.library.impl.IrMultiArrayReader
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 
-fun serializeSignatures(
+fun serializeSignaturesIndex(
     exportedSignatures: Set<IdSignature>,
     importedSignatures: Set<IdSignature>,
 ): IrArrayWriter {
@@ -57,7 +57,7 @@ fun serializeSignatures(
     )
 }
 
-fun deserializeSignatures(bytes: ByteArray): Pair<Set<IdSignature>, Set<IdSignature>> {
+fun deserializeSignaturesIndex(bytes: ByteArray): Pair<Set<IdSignature>, Set<IdSignature>> {
     val multiReader = IrMultiArrayReader(bytes)
 
     when (val rowCount = multiReader.rowCount()) {

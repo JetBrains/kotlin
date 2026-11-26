@@ -64,7 +64,7 @@ class KlibSignatureIndexComponentWriterImpl(
         exportedTopLevelSignatures: Set<IdSignature>,
         importedTopLevelSignatures: Set<IdSignature>,
     ) : this(
-        serializeSignatures(
+        serializeSignaturesIndex(
             exportedSignatures = exportedTopLevelSignatures,
             importedSignatures = importedTopLevelSignatures,
         ).writeIntoMemory().let(::SerializedSignatureIndex)
@@ -118,7 +118,7 @@ private class KlibSignatureIndexComponentImpl(
 ) : KlibSignatureIndexComponent {
 
     private val signatures: Pair<Set<IdSignature>, Set<IdSignature>> by lazy {
-        layoutReader.readInPlace { deserializeSignatures(it.signatureIndexFile.readBytes()) }
+        layoutReader.readInPlace { deserializeSignaturesIndex(it.signatureIndexFile.readBytes()) }
     }
 
     override val exportedTopLevelSignatures: Set<IdSignature>

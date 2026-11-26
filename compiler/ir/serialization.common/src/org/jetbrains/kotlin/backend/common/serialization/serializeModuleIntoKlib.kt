@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.deserializeSignatures
+import org.jetbrains.kotlin.backend.common.deserializeSignaturesIndex
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
-import org.jetbrains.kotlin.backend.common.serializeSignatures
+import org.jetbrains.kotlin.backend.common.serializeSignaturesIndex
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -146,7 +146,7 @@ fun <SourceFile> serializeModuleIntoKlib(
                     """.trimMargin()
                 }
 
-                val serializedSignatureIndex = serializeSignatures(
+                val serializedSignatureIndex = serializeSignaturesIndex(
                     exportedSignatures = serializedIr.exportedSignatures,
                     importedSignatures = serializedIr.importedSignatures,
                 ).writeIntoMemory()
@@ -189,12 +189,12 @@ fun <SourceFile> serializeModuleIntoKlib(
 
     val signatureIndex: SerializedSignatureIndex? = runIf(serializedIrFromDirtySources != null) {
         for (file in cleanFiles) {
-            val [export, import] = deserializeSignatures(file.signatureIndex ?: continue)
+            val [export, import] = deserializeSignaturesIndex(file.signatureIndex ?: continue)
             globalExportedSignatures.addAll(export)
             globalImportedSignatures.addAll(import)
         }
 
-        serializeSignatures(
+        serializeSignaturesIndex(
             exportedSignatures = globalExportedSignatures,
             // Subtract to remove declarations referenced from other files in the same module
             importedSignatures = globalImportedSignatures - globalExportedSignatures,
