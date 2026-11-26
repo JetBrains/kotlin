@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
-import org.jetbrains.kotlin.test.utils.CONTEXT_SENSITIVE_VARIANT
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
@@ -81,7 +80,7 @@ open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosti
 
 open class AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override val variantChain: TestVariantChain
-        get() = listOf(CONTEXT_SENSITIVE_VARIANT)
+        get() = DiagnosticsVariantChains.CONTEXT_SENSITIVE
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)

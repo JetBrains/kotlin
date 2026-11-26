@@ -24,7 +24,8 @@ import java.nio.file.Path
  * test read the expected file of its [variantChain], and [assertEqualsToTestDataFile] compares the actual output with the same file
  * via [ManagedTestAssertions].
  *
- * The variants of the compiler test data are the constants next to [LL_FIR_VARIANT][org.jetbrains.kotlin.test.utils.LL_FIR_VARIANT].
+ * The variants of the compiler test data are the constants next to [LL_FIR_VARIANT][org.jetbrains.kotlin.test.utils.LL_FIR_VARIANT], and
+ * the variant chains of its tests are in `DiagnosticsVariantChains` and `LLDiagnosticsVariantChains`.
  */
 class ManagedTestData(private val testServices: TestServices, val variantChain: TestVariantChain) : TestService {
     /**

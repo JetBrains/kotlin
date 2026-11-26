@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
-import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -49,9 +48,6 @@ import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.service
-import org.jetbrains.kotlin.test.utils.LL_FIR_VARIANT
-import org.jetbrains.kotlin.test.utils.PARTIAL_BODY_VARIANT
-import org.jetbrains.kotlin.test.utils.REVERSED_VARIANT
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -191,13 +187,4 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         super.runTest(absoluteFilePath)
     }
-}
-
-/**
- * The variant chains of the LL tests over the compiler's diagnostic test data, see `compiler/testData/diagnostics/AGENTS.md`.
- */
-object LLDiagnosticsVariantChains {
-    val LL: TestVariantChain = listOf(LL_FIR_VARIANT)
-    val REVERSED: TestVariantChain = LL + REVERSED_VARIANT
-    val PARTIAL_BODY: TestVariantChain = LL + PARTIAL_BODY_VARIANT
 }
