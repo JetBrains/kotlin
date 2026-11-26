@@ -261,6 +261,8 @@ object FirOptInUsageBaseChecker {
         result: SmartSet<Experimentality>,
     ) {
         val parentClassSymbol = containingClassLookupTag()?.toRegularClassSymbol()
+
+        // TODO(KT-92034): sam constructor is treated differently than the regular one
         if (this is FirConstructorSymbol) {
             val ownerClassLikeSymbol = this.typeAliasConstructorInfo?.typeAliasSymbol ?: parentClassSymbol
             // For other callable we check dispatch receiver type instead
