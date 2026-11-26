@@ -19,3 +19,11 @@ object PathAsStringSerializer : KSerializer<Path> {
 
     override fun deserialize(decoder: Decoder): Path = Path(decoder.decodeString())
 }
+
+object AbsolutePathAsStringSerializer : KSerializer<Path> {
+    override val descriptor = PrimitiveSerialDescriptor("Path", STRING)
+
+    override fun serialize(encoder: Encoder, value: Path) = encoder.encodeString(value.toFile().absolutePath)
+
+    override fun deserialize(decoder: Decoder): Path = Path(decoder.decodeString())
+}

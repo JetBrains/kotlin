@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.internal.FileCompilationReasonBasic
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import java.io.File
 import java.nio.file.Path
@@ -190,37 +191,27 @@ internal object SourcesChangesSerializer : KSerializer<SourcesChanges> {
 
 @Serializable
 private class JvmSnapshotBasedIncrementalCompilationConfigurationImplSurrogate(
-    @Serializable(with = PathAsStringSerializer::class)
+    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val workingDirectory: Path,
     @Serializable(with = SourcesChangesSerializer::class)
     val sourcesChanges: SourcesChanges,
-    val dependenciesSnapshotFiles: List<Path>,
+    val dependenciesSnapshotFiles: List<@Serializable(with = AbsolutePathAsStringSerializer::class) Path>,
+    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val shrunkClasspathSnapshot: Path,
-    @SerialName("PRECISE_JAVA_TRACKING")
     val preciseJavaTracking: Boolean = false,
-    @SerialName("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
     val assuredNoClasspathSnapshotChanges: Boolean = false,
-    @SerialName("USE_FIR_RUNNER")
     val useFirRunner: Boolean = false,
-    @SerialName("ENABLE_ERROR_RECOVERY_ROUND")
     val enableErrorRecoveryRound: Boolean = true,
-    @SerialName("ROOT_PROJECT_DIR")
+    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val rootProjectDir: Path? = null,
-    @SerialName("MODULE_BUILD_DIR")
+    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val moduleBuildDir: Path? = null,
-    @SerialName("BACKUP_CLASSES")
     val backupClasses: Boolean = false,
-    @SerialName("KEEP_IC_CACHES_IN_MEMORY")
     val keepIcCachesInMemory: Boolean = false,
-    @SerialName("FORCE_RECOMPILATION")
     val forceRecompilation: Boolean = false,
-    @SerialName("OUTPUT_DIRS")
-    val outputDirs: Set<Path>? = null,
-    @SerialName("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
+    val outputDirs: Set<@Serializable(with = AbsolutePathAsStringSerializer::class) Path>? = null,
     val unsafeIncrementalCompilationForMultiplatform: Boolean = false,
-    @SerialName("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
     val monotonousIncrementalCompileSetExpansion: Boolean = true,
-    @SerialName("TRACK_CONFIGURATION_INPUTS")
     val trackConfigurationInputs: Boolean = false,
 )
 
