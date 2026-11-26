@@ -6,12 +6,12 @@
 package test.collections
 
 import test.TestPlatform
-import test.testExceptOn
+import test.testOn
 import kotlin.test.*
 
 class IterableSnapshotTest {
     @Test
-    fun listToListWhenChangedFromSingletonToEmpty() = testExceptOn(::notTestOnPlatform) {
+    fun listToListWhenChangedFromSingletonToEmpty() = testOn(::jvmOrNative) {
         val sut = ClearsAfterSizeRead()
 
         val snapshot = sut.toList()
@@ -20,7 +20,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun collectionToListWhenChangedFromSingletonToEmpty() = testExceptOn(::notTestOnPlatform) {
+    fun collectionToListWhenChangedFromSingletonToEmpty() = testOn(::jvmOrNative) {
         val sut = object : Collection<Int> by ClearsAfterSizeRead() {}
 
         val snapshot = sut.toList()
@@ -29,7 +29,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun randomAccessListToListWhenChangedFromSingletonToEmpty() = testExceptOn(::notTestOnPlatform) {
+    fun randomAccessListToListWhenChangedFromSingletonToEmpty() = testOn(::jvmOrNative) {
         val sut = object : List<Int> by ClearsAfterSizeRead(), RandomAccess {}
 
         val snapshot = sut.toList()
@@ -38,7 +38,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun setToListWhenChangedFromSingletonToEmpty() = testExceptOn(::notTestOnPlatform) {
+    fun setToListWhenChangedFromSingletonToEmpty() = testOn(::jvmOrNative) {
         val sut = object : AbstractSet<Int>() {
             private val delegate = ClearsAfterSizeRead()
 
@@ -54,7 +54,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun listToListWhenReplacedAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun listToListWhenReplacedAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = ChangesAfterSizeRead(initialElements = listOf(42), changedElements = listOf(7, 8))
 
         val snapshot = sut.toList()
@@ -63,7 +63,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun collectionToListWhenReplacedAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun collectionToListWhenReplacedAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = object : Collection<Int> by ChangesAfterSizeRead(
             initialElements = listOf(42),
             changedElements = listOf(7, 8)
@@ -75,7 +75,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun randomAccessListToListWhenReplacedAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun randomAccessListToListWhenReplacedAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = object : List<Int> by ChangesAfterSizeRead(
             initialElements = listOf(42),
             changedElements = listOf(7, 8)
@@ -87,7 +87,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun setToListWhenReplacedAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun setToListWhenReplacedAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = object : AbstractSet<Int>() {
             private val delegate = ChangesAfterSizeRead(
                 initialElements = listOf(42),
@@ -106,7 +106,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun listToListWhenSourceGrowsAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun listToListWhenSourceGrowsAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = ChangesAfterSizeRead(
             initialElements = listOf(1, 2, 3),
             changedElements = listOf(4, 5, 6, 7)
@@ -118,7 +118,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun listToListWhenSourceShrinksAfterSizeRead() = testExceptOn(::notTestOnPlatform) {
+    fun listToListWhenSourceShrinksAfterSizeRead() = testOn(::jvmOrNative) {
         val sut = ChangesAfterSizeRead(
             initialElements = listOf(1, 2, 3),
             changedElements = listOf(4)
@@ -130,7 +130,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun listToListWhenSourceChangesAfterIteratorCapture() = testExceptOn(::notTestOnPlatform) {
+    fun listToListWhenSourceChangesAfterIteratorCapture() = testOn(::jvmOrNative) {
         val sut = ChangesAfterIteratorCreation(
             initialElements = listOf(1, 2, 3),
             changedElements = listOf(4, 5)
@@ -140,7 +140,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun collectionToListWhenIteratorIsEmptyButSizeIsPositive() = testExceptOn(::notTestOnPlatform) {
+    fun collectionToListWhenIteratorIsEmptyButSizeIsPositive() = testOn(::jvmOrNative) {
         val sut = object : AbstractCollection<Int>() {
             override val size: Int get() = 3
 
@@ -151,7 +151,7 @@ class IterableSnapshotTest {
     }
 
     @Test
-    fun listToListIsIndependentWhenSourceChangesAfterReturn() = testExceptOn(::notTestOnPlatform) {
+    fun listToListIsIndependentWhenSourceChangesAfterReturn() = testOn(::jvmOrNative) {
         val sut = MutableListSource(listOf(1, 2, 3))
 
         val snapshot = sut.toList()
@@ -160,8 +160,8 @@ class IterableSnapshotTest {
         assertEquals(listOf(1, 2, 3), snapshot)
     }
 
-    private fun notTestOnPlatform(platform: TestPlatform) =
-        platform != TestPlatform.Jvm && platform != TestPlatform.Native
+    private fun jvmOrNative(platform: TestPlatform) =
+        platform == TestPlatform.Jvm || platform == TestPlatform.Native
 }
 
 private fun assertSnapshotIsOneOf(snapshot: List<Int>, vararg expectedSnapshots: List<Int>) {
