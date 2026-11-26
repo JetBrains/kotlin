@@ -149,7 +149,7 @@ fun <SourceFile> serializeModuleIntoKlib(
                 val serializedSignatureIndex = serializeSignaturesIndex(
                     exportedSignatures = serializedIr.exportedSignatures,
                     importedSignatures = serializedIr.importedSignatures,
-                ).writeIntoMemory()
+                )
 
                 KotlinFileSerializedData(metadata, serializedIr.irData, serializedIr.irInlineData, serializedSignatureIndex)
             }
@@ -198,7 +198,7 @@ fun <SourceFile> serializeModuleIntoKlib(
             exportedSignatures = globalExportedSignatures,
             // Subtract to remove declarations referenced from other files in the same module
             importedSignatures = globalImportedSignatures - globalExportedSignatures,
-        ).writeIntoMemory().let(::SerializedSignatureIndex)
+        ).let(::SerializedSignatureIndex)
     }
 
     return SerializerOutput(

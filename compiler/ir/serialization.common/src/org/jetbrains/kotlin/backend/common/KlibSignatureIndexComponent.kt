@@ -67,7 +67,7 @@ class KlibSignatureIndexComponentWriterImpl(
         serializeSignaturesIndex(
             exportedSignatures = exportedTopLevelSignatures,
             importedSignatures = importedTopLevelSignatures,
-        ).writeIntoMemory().let(::SerializedSignatureIndex)
+        ).let(::SerializedSignatureIndex)
     )
 
     override fun writeTo(root: Path) {
