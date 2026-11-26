@@ -12,7 +12,7 @@ fun foo(b: Boolean?): Int {
 fun bar(b: Boolean?): Int {
     if (b != null) return 1
     return when (b) {
-        <!SENSELESS_COMPARISON!>null<!> -> 2
+        null -> 2
     }
 }
 

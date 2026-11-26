@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -354,11 +354,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
                 else -> return
             }
         }
-        // We only report `SENSELESS_NULL_IN_WHEN` if `lType = type` because `lType` is the type of the `when` subject. This diagnostic is
-        // only intended for cases where the branch condition contains a null. Also, the error message for SENSELESS_NULL_IN_WHEN
-        // says the value is *never* equal to null, so we can't report it if the value is *always* equal to null.
-        if (expression.source?.syntaxId != KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION && type === lType && !compareResult) {
-            reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN)
+        // In when conditions, we only want to report if the subject is *never* null,
+        // if it's always null it's a valid exhaustive with a single branch
+        // or a negative smart cast (currently only available for union types `Nothing? | E -> Nothing?`).
+        if (expression.source?.kind == KtFakeSourceElementKind.WhenCondition) {
+            if (type === lType && !compareResult) {
+                reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN)
+            }
         } else {
             reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, compareResult)
         }
