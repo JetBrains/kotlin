@@ -261,6 +261,7 @@ Unknown:
  - .gitattributes
  - .github
  - .gitignore
+ - .idecli
  - ChangeLog.md
  - annotations
  - benchmarks
