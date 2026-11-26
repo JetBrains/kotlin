@@ -16,6 +16,17 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * [FirDeclarationStatus] represents a storage of various modifers which are applicable to declarations.
+ * It includes such information as visibility, modality, expect/actual flags and so on.
+ *
+ * This class has two inheritors, [FirCallableDeclarationStatus] and [FirClassLikeDeclarationStatus], which 
+ * contain modifiers which are specific to callable declarations (e.g. `operator`) and class-like
+ * declarations (e.g. `data`), respectively.
+ *
+ * [FirMemberDeclaration] has a property of type [FirDeclarationStatus], but its inheritors ([FirCallableDeclaration]
+ * and [FirClassLikeDeclaration]) override it with more specific status type, so none of actual FIR declarations
+ * exposes raw [FirDeclarationStatus].
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.declarationStatus]
  */
 interface FirDeclarationStatus : FirElement {

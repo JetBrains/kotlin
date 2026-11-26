@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * [FirResolvedDeclarationStatus] is a [FirDeclarationStatus] which was resolved during
+ * status resolution phase. If unresolved status have flags set based on what was written
+ * in the source code, in the resolved status some of them are reified (e.g. override function
+ * could be an `operator`, if the overridden function is an `operator`).
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedDeclarationStatus]
  */
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {

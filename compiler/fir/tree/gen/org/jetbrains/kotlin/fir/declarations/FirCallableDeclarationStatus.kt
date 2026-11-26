@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
 /**
+ * @see [FirDeclarationStatus]
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.callableDeclarationStatus]
  */
 interface FirCallableDeclarationStatus : FirDeclarationStatus {

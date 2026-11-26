@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
+ * @see [FirResolvedDeclarationStatus]
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedClassLikeDeclarationStatus]
  */
 interface FirResolvedClassLikeDeclarationStatus : FirClassLikeDeclarationStatus, FirResolvedDeclarationStatus {
