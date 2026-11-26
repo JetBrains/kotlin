@@ -1,2 +1,2 @@
-error: per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)
+error: per-file compilation can only be used with `-module-kind es` (ECMAScript Modules).
 COMPILATION_ERROR
