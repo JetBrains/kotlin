@@ -56,14 +56,14 @@ public enum class KotlinVersion(
   @RemovedCompilerArgument
   V1_5("1.5"),
   /**
-   * Deprecated in Kotlin version 1.3.0.
+   * Deprecated in Kotlin version 2.0.0.
    *
-   * Removed in Kotlin version 2.1.0.
+   * Removed in Kotlin version 2.2.0.
    */
   @RemovedCompilerArgument
   V1_6("1.6"),
   /**
-   * Deprecated in Kotlin version 1.3.0.
+   * Deprecated in Kotlin version 2.1.0.
    *
    * Removed in Kotlin version 2.2.0.
    */
