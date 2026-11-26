@@ -56,7 +56,6 @@ private val RELEVANT_JAVA_FILE_EXTENSIONS = JavaFileExtensions(JavaFileExtension
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
 // which is indirectly invoked from PsiPackage.getSubPackages
-@OptIn(VirtualFileBasedApi::class)
 class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
     private var perfManager: PerformanceManager? = null
     private lateinit var index: JvmDependenciesIndex
@@ -99,7 +98,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
         return perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
-            findFileForTopLevelClass(classId, searchScope)?.virtualFile?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+            val classFile = findFileForTopLevelClass(classId, searchScope)
+            (@OptIn(VirtualFileBasedApi::class) classFile?.virtualFile)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
         }
     }
 
@@ -124,7 +124,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 ?: SmartList(
                     index.findClassFiles(outerMostClassId, RELEVANT_JAVA_FILE_EXTENSIONS)
                 ).takeIf { it.isNotEmpty() }
-        }?.firstOrNull { it.virtualFile in searchScope }
+        }?.firstOrNull { (@OptIn(VirtualFileBasedApi::class) it.virtualFile) in searchScope }
     }
 
     private val binaryCache = BinaryJavaClasses()
@@ -138,7 +138,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         (val classId, val classFileContentFromRequest = previouslyFoundClassFileContent, val outerClassFromRequest = outerClass) = request
         val classFile = findFileForTopLevelClass(classId, searchScope) ?: return null
-        val virtualFile = classFile.virtualFile
+        val virtualFile = @OptIn(VirtualFileBasedApi::class) classFile.virtualFile
 
         if (!usePsiClassFilesReading && (virtualFile.extension == "class" || virtualFile.extension == "sig")) {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
@@ -215,7 +215,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 // Search java sources first. For build tools, it makes sense to build new files passing all the
                 // class files for the previous build on the class path.
                 result.addIfNotNull(
-                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                    (@OptIn(VirtualFileBasedApi::class) singleJavaFileRootsIndex.findJavaSourceClass(classId))
                         ?.takeIf { it in scope }
                         ?.findPsiClassInVirtualFile(relativeClassName)
                 )
@@ -223,7 +223,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 val topLevelClassId = if (classId.isNestedClass) classId.outermostClassId else classId
                 index.findClassFiles(topLevelClassId, RELEVANT_JAVA_FILE_EXTENSIONS).forEach { classFile ->
                     result.addIfNotNull(
-                        classFile.virtualFile
+                        (@OptIn(VirtualFileBasedApi::class) classFile.virtualFile)
                             .takeIf { it in scope }
                             ?.findPsiClassInVirtualFile(relativeClassName)
                     )
@@ -245,7 +245,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
         if (!found && singleJavaFileRootsIndex.hasPackage(packageFqName)) {
             val packageInfoClassId = ClassId(packageFqName, SingleJavaFileRootsIndex.PACKAGE_INFO_CLASS_NAME)
-            val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
+            val packageInfoVirtualFile =
+                @OptIn(VirtualFileBasedApi::class) singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
             val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
             val annotationsList = packageInfoPsiFile?.packageStatement?.annotationList
             return SingleFileRootPsiPackage(myPsiManager, packageName, annotationsList)

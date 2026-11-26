@@ -45,7 +45,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     private val classesByPackage: MutableMap<FqName, MutableList<ClassId>> = Object2ObjectOpenHashMap()
     private val allPackages: MutableSet<FqName> = ObjectOpenHashSet()
 
-    @OptIn(VirtualFileBasedApi::class)
+    @VirtualFileBasedApi
     fun findJavaSourceClass(classId: ClassId): VirtualFile? = findJavaSourceClassFile(classId)?.virtualFile
 
     fun findJavaSourceClassFile(classId: ClassId): BinaryClassFileHandle? {
