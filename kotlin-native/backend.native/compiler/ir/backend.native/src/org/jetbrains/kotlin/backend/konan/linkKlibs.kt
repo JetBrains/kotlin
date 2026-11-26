@@ -209,12 +209,14 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         linker.createAndRegisterModuleDeserializer(dependencyModuleDescriptor, library, deserializationStrategy)
     }
 
+    // Finally, add the forward declarations module. It does not have any associated KLIB.
+    linker.createAndRegisterModuleDeserializer(forwardDeclarationsModule, kotlinLibrary = null, DeserializationStrategy.ALL)
+
+    linker.finalizeInitialization()
+
     // Make sure the library-to-be-cached is also scheduled for deserialization.
     // Note: a batched build never contains C-interop libraries, so it has nothing to load here.
     ensureCStructsAndEnumsAreLoadedForCaching(linker, config.librariesToCache.keys.singleOrNull())
-
-    // Finally, add the forward declarations module. It does not have any associated KLIB.
-    linker.createAndRegisterModuleDeserializer(forwardDeclarationsModule, kotlinLibrary = null, DeserializationStrategy.ALL)
 }
 
 private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, libraryToCache: KotlinLibrary?) {

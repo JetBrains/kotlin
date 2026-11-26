@@ -72,7 +72,17 @@ abstract class KotlinIrLinker(
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     /** The current linker state. */
-    private val state = IrLinkerState(LINKING)
+    private val state = IrLinkerState(INITIALIZING)
+
+    /**
+     * Completes the initialization of the linker: no more module deserializers can be registered,
+     * and symbols can be requested from now on.
+     *
+     * Must be called after the last [createAndRegisterModuleDeserializer] call.
+     */
+    fun finalizeInitialization() {
+        state.switchTo(LINKING)
+    }
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
         override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
@@ -139,6 +149,8 @@ abstract class KotlinIrLinker(
         symbolKind: BinarySymbolData.SymbolKind,
         moduleDeserializer: IrModuleDeserializer,
     ): IrSymbol {
+        state.checkInitializationCompleted()
+
         check(idSignature.canBeReferencedFromOtherFiles) {
             "An attempt to run a lookup in IR linker for a signature that is supposed to be limited to the single file: ${idSignature::class.java.simpleName}, ${idSignature.render()}"
         }
@@ -264,6 +276,8 @@ abstract class KotlinIrLinker(
      * Must be called before [finalizeIrLinkage], which handles the symbols that remain unbound.
      */
     fun drainDeserializationQueue() {
+        state.checkInitializationCompleted()
+
         // Deserializing a reference may lead to new unbound references, so we loop until none are left.
         var unbound: Set<IrSymbol> = emptySet()
         do {
@@ -296,8 +310,10 @@ abstract class KotlinIrLinker(
 
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
-        deserializeOrResolveDeclaration(symbol)
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        state.checkInitializationCompleted()
+        return deserializeOrResolveDeclaration(symbol)
+    }
 
     private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
         if (!symbol.isBound) {
@@ -329,6 +345,8 @@ abstract class KotlinIrLinker(
      * @return The symbol for the given signature and kind if successfully found; otherwise, null.
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        state.checkInitializationCompleted()
+
         // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
         return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
@@ -377,6 +395,8 @@ abstract class KotlinIrLinker(
         kotlinLibrary: KotlinLibrary?,
         strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
+        state.checkInitializationInProgress()
+
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
         moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
@@ -595,7 +615,10 @@ private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
  */
 private class IrLinkerState(private var currentState: State) {
     enum class State {
-        /** Bulk linkage: requested declarations are queued and deserialized later in batches. */
+        /** Module deserializers are being registered; symbols can't be requested yet. */
+        INITIALIZING,
+
+        /** [KotlinIrLinker.finalizeInitialization] has been called: Requested declarations are queued and deserialized in batches. */
         LINKING,
 
         /** [KotlinIrLinker.finalizeIrLinkage] has been called: Declarations requested from now on are deserialized immediately. */
@@ -603,6 +626,18 @@ private class IrLinkerState(private var currentState: State) {
     }
 
     val isFinalized: Boolean get() = currentState == State.FINALIZED
+
+    fun checkInitializationInProgress() {
+        check(currentState == State.INITIALIZING) {
+            "Expected IR linker state ${State.INITIALIZING}, but was $currentState"
+        }
+    }
+
+    fun checkInitializationCompleted() {
+        check(currentState > State.INITIALIZING) {
+            "IR linker is not initialized yet"
+        }
+    }
 
     fun switchTo(newState: State) {
         check(newState == currentState || newState.ordinal == currentState.ordinal + 1) {

@@ -153,6 +153,8 @@ class NativeDeserializerFacade(
 
         val moduleDependencies: IrModuleDependencies = deserializeIrModuleFragments(loadedKlibs.all, irLinker, mainLibrary, libraryToModuleDescriptor::getValue)
 
+        irLinker.finalizeInitialization()
+
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 

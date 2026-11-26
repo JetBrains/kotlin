@@ -200,6 +200,8 @@ internal class JsIrLinkerLoader(
             }.moduleFragment
         }
 
+        linker.finalizeInitialization()
+
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings)
 
