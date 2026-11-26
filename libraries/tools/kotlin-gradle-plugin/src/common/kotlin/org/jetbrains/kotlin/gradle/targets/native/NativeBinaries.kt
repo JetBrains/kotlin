@@ -83,6 +83,7 @@ sealed class NativeBinary(
      *
      * @param version The Kotlin version for which the compiler caches should be disabled.
      *                Only predefined versions available in `DisableCacheInKotlinVersion` are supported.
+     *                A version also covers its bug-fix releases: `2_4_0` covers 2.4.10 and 2.4.11, and `2_4_20` covers 2.4.21.
      * @param reason A descriptive explanation clarifying why the compiler caches are being disabled.
      * @param issueUrl An optional issue tracker URL that provides additional context or links to a documented issue.
      */
