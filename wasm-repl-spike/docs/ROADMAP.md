@@ -302,6 +302,34 @@ cast; or accepting the cost as the price of swap-anything — SBCL
 pays the same). The fused-codegen files are parked uncommitted in
 /tmp/fusion-save (BodyGenerator.kt + WasmFunctionCodegenContext.kt).
 
+**WHERE THE 7× ACTUALLY LIVES (profiled, 2026-11-26; the harness now
+has in-wasm loop exports — `bumpLoop`/`invLoop`, one JS crossing
+per 100k recompositions — to remove the driver from the
+measurement; the ratio is unchanged, ~6.6×).** (1) Every VTABLE and
+ITABLE SLOT holds an `__hot_entry$` TRAMPOLINE, not the body —
+virtual/interface dispatch is a chained double-indirect through a
+stub V8 cannot statically see. The mechanism is load-bearing: it
+is the ONLY way a method-BODY redefinition flips EXISTING instances
+(the vtable-swap path cannot — old code's vtable type-test
+SUCCEEDS on old instances, so no stepper ever runs). But its
+measured cost is modest in the monomorphic case: hand-patching the
+bench wasm's two vtable slots to hold the bodies directly moves
+virtRun only 2.0 → 1.6 ns (~20%) — V8's speculative call_ref
+inlining already absorbs most of the stub. (2) The per-function
+profile split shows the cost DISTRIBUTED, not localized: the
+snapshot machinery that dominates recomposition is each
+individually 6–8× slower (readable 6.6×, SnapshotMutableStateImpl
+set-value 5.9×, snapshots.current 8.3×, SnapshotIdSet.get 2.2× —
+no single outlier). (3) The module split of the hot arm: compose
+runtime 38%, stdlib base 26%, collection 2%, atomicfu 1.8%,
+coroutines 0.4%, APP MODULE 2.3% — ~97% of hot recomposition time
+is LIBRARY code. That quantifies the scoped-hot-set lever: with
+libraries compiled plain and only delta/app modules hot, nearly
+all of this runs at monolith speed and the app's hot share is
+single-digit percent — the honest fix is architectural, and the
+boundary problem (cell-built types don't unify with plain-built
+ones) is the work it would take.
+
 ## Operational notes
 
 - After `./gradlew dist`: delete the IC caches AND the cached stdlib
