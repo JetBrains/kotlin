@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.LLRealPsiSymbolId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
@@ -27,9 +28,12 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+import org.jetbrains.kotlin.fir.symbols.symbolId
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -52,11 +56,20 @@ abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() 
     }
 
     protected fun doTest(ktFile: KtFile, selectedElement: PsiElement, testServices: TestServices) {
+        val directives = testServices.moduleStructure.allDirectives
+        val localProperty = if (Directives.CHECK_LOCAL_SYMBOL_ID_RESTORATION in directives) {
+            selectedElement.parentsWithSelf.filterIsInstance<KtProperty>().first().also {
+                require(it.isLocal) { "Select an element in a local property" }
+            }
+        } else {
+            null
+        }
         val actual = testInBlockModification(
             file = ktFile,
             elementToModify = selectedElement,
             testServices = testServices,
-            dumpFirFile = Directives.DUMP_FILE in testServices.moduleStructure.allDirectives,
+            dumpFirFile = Directives.DUMP_FILE in directives,
+            localPropertyToRestore = localProperty,
         )
 
         testServices.assertions.assertEqualsToTestOutputFile(actual)
@@ -64,6 +77,7 @@ abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() 
 
     private object Directives : SimpleDirectivesContainer() {
         val DUMP_FILE by directive("Dump the entire FirFile to the output")
+        val CHECK_LOCAL_SYMBOL_ID_RESTORATION by directive("Check symbol ID restoration for the modified local property")
     }
 }
 
@@ -72,10 +86,11 @@ internal fun testInBlockModification(
     elementToModify: PsiElement,
     testServices: TestServices,
     dumpFirFile: Boolean,
+    localPropertyToRestore: KtProperty? = null,
 ): String = withResolutionFacade(file) { resolutionFacade ->
     // We are trying to invoke a test case twice inside one session to be sure that sequent modifications are work
-    val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade)
-    val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade)
+    val firstAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade, localPropertyToRestore)
+    val secondAttempt = doTestInBlockModification(file, elementToModify, testServices, dumpFirFile, resolutionFacade, localPropertyToRestore)
     testServices.assertions.assertEquals(firstAttempt, secondAttempt) { "Invocations must be the same" }
 
     firstAttempt
@@ -87,6 +102,7 @@ private fun doTestInBlockModification(
     testServices: TestServices,
     dumpFirFile: Boolean,
     resolutionFacade: LLResolutionFacade,
+    localPropertyToRestore: KtProperty?,
 ): String {
     val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(resolutionFacade)
@@ -97,6 +113,7 @@ private fun doTestInBlockModification(
     }
 
     val textBefore = declarationToRender.render()
+    val localSymbolBefore = localPropertyToRestore?.let { resolutionFacade.resolveToFirSymbol(it, FirResolvePhase.BODY_RESOLVE) }
 
     val modificationService = LLFirDeclarationModificationService.getInstance(elementToModify.project)
 
@@ -124,6 +141,22 @@ private fun doTestInBlockModification(
     val textAfterModification = declarationToRender.render()
     testServices.assertions.assertNotEquals(textBefore, textAfterModification) {
         "The declaration before and after modification must be in different state"
+    }
+
+    if (localPropertyToRestore != null && localSymbolBefore != null) {
+        val id = localSymbolBefore.symbolId as LLRealPsiSymbolId<*>
+        check(localPropertyToRestore.isValid) { "The local property's PSI anchor should survive the in-block modification" }
+
+        // Force restoration before another lookup rebuilds the body. Keep the old symbol alive to compare identities.
+        id.clearSymbolReferenceForTest()
+        val restored = id.symbol
+        val current = resolutionFacade.resolveToFirSymbol(localPropertyToRestore, FirResolvePhase.BODY_RESOLVE)
+
+        check(restored !== localSymbolBefore) { "Restoration should rebuild the local symbol after invalidation" }
+        check(restored === current) { "Restoration should return the same symbol as a fresh lookup" }
+        check(restored.moduleData.session === localSymbolBefore.moduleData.session) { "The FIR session should survive an in-block modification" }
+        check(restored.fir.psi === localPropertyToRestore) { "Restoration should preserve the PSI anchor" }
+        check(restored.symbolId == id) { "The rebuilt symbol should have an equal symbol ID" }
     }
 
     val textAfter = if (dumpFirFile) {

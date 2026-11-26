@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.isSymbolRestorationSupported
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.restoreSymbol
@@ -71,6 +72,11 @@ internal class LLRealPsiSymbolId<S : FirBasedSymbol<*>>(
     @FirImplementationDetail
     override fun bind(symbol: S) {
         symbolReference = WeakReference(symbol)
+    }
+
+    @TestOnly
+    internal fun clearSymbolReferenceForTest() {
+        checkNotNull(symbolReference).clear()
     }
 
     @OptIn(FirImplementationDetail::class)
