@@ -5,7 +5,9 @@
 #include "KotlinPlugin.h"
 
 #include "Passes/CallsChecker.h"
+#include "Passes/EraseDialect.h"
 #include "Passes/HideSymbols.h"
+#include "Passes/KotlinVerify.h"
 #include "Passes/PrepareStackProtector.h"
 #include "Passes/PrepareThreadSanitizer.h"
 #include "Passes/RemoveRedundantSafepoints.h"
@@ -77,6 +79,14 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   }
                   if (parsePass(Name, "kotlin-calls-checker-module")) {
                     PM.addPass(ModuleCallsCheckerPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-verify")) {
+                    PM.addPass(KotlinVerifyPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-erase-dialect")) {
+                    PM.addPass(EraseDialectPass());
                     return true;
                   }
                   return false;

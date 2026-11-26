@@ -15,7 +15,7 @@
 #define touchType(type) type touch##type;
 #define touchFunction(function) void* touch##function() { return reinterpret_cast<void*>(&::function); }
 
-// Types and functions used by the compiler (at Runtime.kt and ContextUtils.kt)
+// Types and functions used by the compiler (at Runtime.kt, ContextUtils.kt and KotlinLLVMDialect.cpp)
 extern "C" {
 
 touchType(WritableTypeInfo)

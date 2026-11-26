@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
+import org.jetbrains.kotlin.config.nativeBinaryOptions.EraseKotlinLLVMDialect
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -145,6 +146,16 @@ internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
+internal val KotlinLlvmDialectLoweringsPhase = optimizationPipelinePass(
+        name = "KotlinLlvmDialectLowerings",
+        pipeline = ::KotlinLlvmDialectLoweringsPipeline,
+)
+
+internal val LateEraseKotlinLlvmDialectPhase = optimizationPipelinePass(
+        name = "LateEraseKotlinLlvmDialect",
+        pipeline = ::LateEraseKotlinLlvmDialectPipeline,
+)
+
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         postactions = getDefaultLlvmModuleActions(),
@@ -200,8 +211,28 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             // The list of known functions has to be created after all optimizations (notably, DCE).
             it.runAndMeasurePhase(ModuleCallsChecker, module)
         }
+        if (context.config.eraseKotlinLLVMDialect == EraseKotlinLLVMDialect.LATE) {
+            it.runAndMeasurePhase(LateEraseKotlinLlvmDialectPhase, module)
+        }
     }
     if (context.config.runLLVMPassesInCompiler) {
         runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+    }
+}
+
+internal fun PhaseEngine<NativeGenerationState>.runKotlinLlvmLowerings() {
+    if (!context.config.useKotlinLLVMDialect) {
+        return
+    }
+    // Reusing the existing "optimization pipeline" to avoid a refactoring. Should be reworked in the future.
+    val optimizationConfig = createLTOFinalPipelineConfig(
+            context,
+            context.llvm.targetTriple,
+            closedWorld = context.config.isFinalBinary,
+            timePasses = context.config.phaseConfig.needProfiling,
+    )
+    useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
+        val module = this@runKotlinLlvmLowerings.context.llvmModule
+        it.runAndMeasurePhase(KotlinLlvmDialectLoweringsPhase, module)
     }
 }

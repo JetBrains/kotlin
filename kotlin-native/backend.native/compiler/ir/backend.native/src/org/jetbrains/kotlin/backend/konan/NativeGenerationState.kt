@@ -89,8 +89,19 @@ internal class NativeGenerationState(
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 
     private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
-    private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
+    private val llvmDelegate = lazy { CodegenLlvmHelpers(this, createKotlinLLVMModule()) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
+
+    private fun createKotlinLLVMModule(): LLVMModuleRef {
+        return if (context.config.useKotlinLLVMDialect) {
+            LLVMKotlinModuleCreate(llvmModuleName, runtime.llvmModule)!!
+        } else {
+            val module = LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!
+            LLVMSetDataLayout(module, runtime.dataLayout)
+            LLVMSetTarget(module, runtime.target)
+            module
+        }
+    }
 
     override val llvmContext = run {
         loadLLVMStubs(config.configuration.konanHome)

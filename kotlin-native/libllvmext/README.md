@@ -2,6 +2,8 @@
 
 Extensions on top of LLVM for Kotlin/Native.
 
+Also contains support code for Kotlin LLVM dialect, see [docs](KotlinLLVMDialect.md) for details.
+
 `src/main/include` contains C headers extending LLVM C API. From these headers Kotlin/JVM bindings
 are generated in [llvmInterop](../llvmInterop). Kotlin additions should be prefixed with `LLVMKotlin`.
 
@@ -17,7 +19,7 @@ The tests are declared in [testData/fileCheck](testData/fileCheck) as `.ll` file
 - `OPT:` and `FILECHECK:` directives to set additional arguments for `opt` and `FileCheck` tools
 - LLVM code on which `opt` will be run
 - `CHECK:` directives for `FileCheck`, which are run on the `opt` output;
-  see also [`FileCheck` docs](https://llvm.org/docs/CommandGuide/FileCheck.html)) for additional `CHECK-*` directives
+  see also [`FileCheck` docs](https://llvm.org/docs/CommandGuide/FileCheck.html) for additional `CHECK-*` directives
 - output of `opt` can be found in `build/fileCheck/` with the same name as the test file.
 
 To help with code formatting, [.clang-format](.clang-format) file is placed in this folder.
@@ -46,3 +48,4 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - External calls checker instrumentation ([docs](../runtime/src/externalCallsChecker))
   - `ModuleCallsCheckerPass` (`kotlin-calls-checker-module`): module pass; creates module contructor; should be run after DCE
   - `CallsCheckerPass` (`kotlin-calls-checker`): function pass; performs the instrumentation
+- Kotlin LLVM dialect support ([docs](KotlinLLVMDialect.md#passes))
