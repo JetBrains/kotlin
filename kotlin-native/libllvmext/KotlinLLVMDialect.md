@@ -23,6 +23,12 @@ generator produces low-level LLVM directly) and the dialect approach.
 
 See [README](README.md) for general technical details on writing code in `libllvmext`.
 
+### Compiler API
+
+C API for the compiler can be found in [KotlinLLVMDialect.h](src/main/include/KotlinLLVMDialect.h):
+- `LLVMKotlinModuleCreate`: create a new LLVM module that will contain code in the Kotlin dialect; it's essentially an empty module with
+  a number of pre-defined intrinsics.
+
 ### Intrinsics
 
 TBD
