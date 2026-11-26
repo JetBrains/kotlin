@@ -193,6 +193,7 @@ object NativeTestSupport {
         // Stop tracking memory when all tests are finished:
         root.getStore(NAMESPACE).put(
             testClassKeyFor<MemoryTracker>(),
+            @Suppress("DEPRECATION")
             ExtensionContext.Store.CloseableResource { MemoryTracker.stopTracking() }
         )
     }
