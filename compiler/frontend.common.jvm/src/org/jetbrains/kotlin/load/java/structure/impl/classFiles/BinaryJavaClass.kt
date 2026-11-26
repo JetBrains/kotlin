@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnota
 import org.jetbrains.kotlin.load.kotlin.JvmClassFileVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNames
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNameUtils
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -262,8 +262,8 @@ class BinaryJavaClass(
     fun findInnerClass(name: Name, classFileContent: ByteArray?): JavaClass? {
         val access = ownInnerClassNameToAccess[name] ?: return null
 
-        val nestedClassFileName = JvmClassFileNames.fileName(
-            JvmClassFileNames.nestedClassFileNameWithoutExtension(classFile.nameWithoutExtension, name), classFile.extension
+        val nestedClassFileName = JvmClassFileNameUtils.fileName(
+            JvmClassFileNameUtils.nestedClassFileNameWithoutExtension(classFile.nameWithoutExtension, name), classFile.extension
         )
         return classFile.sibling(nestedClassFileName)?.let {
             BinaryJavaClass(

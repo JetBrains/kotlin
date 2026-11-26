@@ -34,7 +34,7 @@ public class JvmClassName {
     @NotNull
     public static String internalNameByClassId(@NotNull ClassId classId) {
         FqName packageFqName = classId.getPackageFqName();
-        String relativeClassName = JvmClassFileNames.fileNameWithoutExtension(classId.getRelativeClassName());
+        String relativeClassName = JvmClassFileNameUtils.fileNameWithoutExtension(classId.getRelativeClassName());
         return packageFqName.isRoot()
                ? relativeClassName
                : packageFqName.asString().replace('.', '/') + "/" + relativeClassName;

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object JvmClassFileNames {
+object JvmClassFileNameUtils {
     const val CLASS_FILE_EXTENSION: String = "class"
 
     /** The name of the file of the class [relativeClassName] in its package directory, without extension, e.g. `A$B` for `A.B`. */

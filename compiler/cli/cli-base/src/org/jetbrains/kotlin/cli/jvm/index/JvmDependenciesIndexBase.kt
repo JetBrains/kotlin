@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNames
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNameUtils
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
@@ -141,7 +141,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
         handleEntry: (VirtualFile, JavaRoot) -> Boolean,
     ) {
         // a list of package sub names, ["org", "jb", "kotlin"]
-        val packagesPath = packageFqName.pathSegments().map { JvmClassFileNames.packageDirectoryName(it) ?: return }
+        val packagesPath = packageFqName.pathSegments().map { JvmClassFileNameUtils.packageDirectoryName(it) ?: return }
         // a list of caches corresponding to packages, [default, "org", "org.jb", "org.jb.kotlin"]
         val caches = cachesPath(packagesPath)
 
@@ -227,7 +227,7 @@ abstract class JvmDependenciesIndexBase(protected val roots: List<JavaRoot>) : J
 
         // If in addition to a directory "foo" there's a class file "foo.class" AND there are no classes anywhere in the directory "foo",
         // then we ignore the directory and let the resolution choose the class "foo" instead.
-        if (findChild(JvmClassFileNames.fileName(subPackageName, fileExtension))?.isDirectory == false) {
+        if (findChild(JvmClassFileNameUtils.fileName(subPackageName, fileExtension))?.isDirectory == false) {
             if (VfsUtilCore.processFilesRecursively(childDirectory) { file -> file.extension != fileExtension }) {
                 return null
             }

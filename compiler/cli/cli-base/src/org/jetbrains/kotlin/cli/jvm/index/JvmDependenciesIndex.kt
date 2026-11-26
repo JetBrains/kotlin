@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
-import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassFileNameUtils
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -164,8 +163,8 @@ data class JavaRoot(
 }
 
 enum class JavaFileExtension(val extension: String, val rootType: JavaRoot.RootType) {
-    JAVA(JavaFileType.DEFAULT_EXTENSION, JavaRoot.RootType.SOURCE),
-    CLASS(JavaClassFileType.DEFAULT_EXTENSION, JavaRoot.RootType.BINARY),
+    JAVA("java", JavaRoot.RootType.SOURCE),
+    CLASS(JvmClassFileNameUtils.CLASS_FILE_EXTENSION, JavaRoot.RootType.BINARY),
     SIG("sig", JavaRoot.RootType.BINARY_SIG),
     KOTLIN_METADATA(METADATA_FILE_EXTENSION, JavaRoot.RootType.BINARY),
 }
