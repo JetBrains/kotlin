@@ -276,6 +276,13 @@ testing {
                 sources.configureCompatibilitySourceDirectories("testCompatibility")
                 if (implVersion.isCurrent) {
                     addSpecificBuildToolsImpl()
+                    if (isKotlinNativeEnabled) {
+                        targets.all {
+                            testTask.configure {
+                                addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
+                            }
+                        }
+                    }
                 } else {
                     addSpecificBuildToolsImpl(implVersion.toString())
                 }

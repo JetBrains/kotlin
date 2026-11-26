@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.description.*
 import org.jetbrains.kotlin.arguments.description.removed.*
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -18,6 +19,11 @@ import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 internal abstract class ArgumentConfiguration<T>(
     val kotlinToolchain: KotlinToolchains,
     private val argumentTestDescriptor: ArgumentTestDescriptor<T>,
+    /**
+     * The levels to look the argument up in, in the order of precedence.
+     * A platform whose argument names clash with the ones of the other platforms should pass its own levels.
+     */
+    private val argumentLevels: List<KotlinCompilerArgumentsLevel> = defaultArgumentLevels,
 ) {
     private val argumentName: String = argumentTestDescriptor.argumentName
     private val kotlinCompilerArgument: KotlinCompilerArgument = getKotlinCompilerArgument()
@@ -41,20 +47,7 @@ internal abstract class ArgumentConfiguration<T>(
     }
 
     private fun getKotlinCompilerArgument() =
-        listOf(
-            actualJvmCompilerArguments,
-            actualCommonCompilerArguments,
-            actualJsArguments,
-            actualWasmArguments,
-            actualCommonJsAndWasmArguments,
-            actualCommonKlibBasedArguments,
-            actualMetadataArguments,
-            removedJvmCompilerArguments,
-            removedCommonCompilerArguments,
-            removedJsArguments,
-            removedWasmArguments,
-            removedMetadataArguments,
-        ).firstNotNullOfOrNull { argumentLevel ->
+        argumentLevels.firstNotNullOfOrNull { argumentLevel ->
             argumentLevel.arguments.firstOrNull { it.name == argumentName }
         } ?: error("Argument '$argumentName' not found.")
 
@@ -98,3 +91,18 @@ internal abstract class ArgumentConfiguration<T>(
         return argumentType.stringRepresentation(defaultValue)?.removeSurrounding("\"")
     }
 }
+
+private val defaultArgumentLevels: List<KotlinCompilerArgumentsLevel> = listOf(
+    actualJvmCompilerArguments,
+    actualCommonCompilerArguments,
+    actualJsArguments,
+    actualWasmArguments,
+    actualCommonJsAndWasmArguments,
+    actualCommonKlibBasedArguments,
+    actualMetadataArguments,
+    removedJvmCompilerArguments,
+    removedCommonCompilerArguments,
+    removedJsArguments,
+    removedWasmArguments,
+    removedMetadataArguments,
+)

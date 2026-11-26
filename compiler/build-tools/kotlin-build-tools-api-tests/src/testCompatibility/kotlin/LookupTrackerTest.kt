@@ -28,6 +28,7 @@ class LookupTrackerTest : BaseCompilationTest() {
         incremental: Boolean,
     ) {
         assumeFalse(this is MetadataProject) // doesn't record lookups
+        assumeFalse(this is NativeProject) // doesn't record lookups and has no incremental compilation yet
         val currentKotlinVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
         if (this !is JvmProject && incremental) {
             // other types of projects (Js/Wasm) had no lookups recorded in incremental mode until 2.5.0
