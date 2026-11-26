@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
@@ -18,40 +16,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
 /**
- * Checker that heavily relies on source tree. So it may have different implementation for each tree variant. Subclass should either
- *
- * - implement `checkPsiOrLightTree` in an AST-agnostic manner, or
- * - implement both `checkPsi` and `checkLightTree` if it's difficult to handle PSI and LT tree in a unified way.
+ * Checker that heavily relies on the source tree.
+ * Subclasses must stay independent of a concrete tree: anything tree-specific belongs to [org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent].
  */
 interface FirSyntaxChecker<D : FirElement> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkSyntax(element: D) {
-        val source = element.source ?: return
-        if (!isApplicable(element, source)) return
-        when (source) {
-            is KtPsiSourceElement -> checkPsi(element, source)
-            is KtLightSourceElement -> checkLightTree(element, source)
-        }
-    }
-
-    fun isApplicable(element: D, source: KtSourceElement): Boolean = true
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkPsi(element: D, source: KtPsiSourceElement) {
-        checkPsiOrLightTree(element, source)
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkLightTree(element: D, source: KtLightSourceElement) {
-        checkPsiOrLightTree(element, source)
-    }
-
-    /**
-     *  By default psi tree should be equivalent to light tree and can be processed the same way.
-     */
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkPsiOrLightTree(element: D, source: KtSourceElement) {
-    }
+    fun check(element: D, source: KtSourceElement)
 }
 
 abstract class FirDeclarationSyntaxChecker<D : FirDeclaration> :
@@ -60,7 +30,8 @@ abstract class FirDeclarationSyntaxChecker<D : FirDeclaration> :
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     final override fun check(declaration: D) {
-        checkSyntax(declaration)
+        val source = declaration.source ?: return
+        check(declaration, source)
     }
 }
 
@@ -69,6 +40,7 @@ abstract class FirExpressionSyntaxChecker<E : FirStatement> :
     FirSyntaxChecker<E> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     final override fun check(expression: E) {
-        checkSyntax(expression)
+        val source = expression.source ?: return
+        check(expression, source)
     }
 }

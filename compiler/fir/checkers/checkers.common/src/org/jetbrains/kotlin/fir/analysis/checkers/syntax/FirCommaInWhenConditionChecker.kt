@@ -19,15 +19,13 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 
 object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpression>() {
-    override fun isApplicable(element: FirWhenExpression, source: KtSourceElement): Boolean {
-        return element.subjectVariable == null
-    }
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirWhenExpression,
         source: KtSourceElement,
     ) {
+        if (element.subjectVariable != null) return
+
         for (branch in element.branches) {
             if (branch.condition is FirElseIfTrueCondition) continue
             checkCommaInBranchCondition(branch)

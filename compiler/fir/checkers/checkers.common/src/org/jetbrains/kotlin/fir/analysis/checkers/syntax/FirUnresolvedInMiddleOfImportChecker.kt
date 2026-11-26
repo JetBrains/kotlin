@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFile>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirFile,
         source: KtSourceElement,
     ) {

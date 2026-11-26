@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.syntax.withSyntax
 
 object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirFunctionTypeParameter,
         source: KtSourceElement,
     ) {

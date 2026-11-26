@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -77,3 +78,68 @@ fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStruc
     }.takeIf {
         it?.tokenType in @OptIn(KtImplementationDetail::class) UNWRAPPABLE_TOKEN_TYPES
     }
+
+/**
+ * Returns the direct children of [node], or an empty array if it has none.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.getChildrenArray(node: LighterASTNode): Array<LighterASTNode?> {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get() ?: emptyArray()
+}
+
+/**
+ * Returns the modifier list among the direct children of [node], or `null` if there is none.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.modifierList(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtNodeTypes.MODIFIER_LIST)
+
+/**
+ * Returns the annotation entries in the modifier list of the type reference of [node],
+ * or `null` if [node] has no type reference or the type reference has no modifier list.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.annotations(node: LighterASTNode): List<LighterASTNode>? {
+    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
+    val modifiers = modifierList(typeReference) ?: return null
+    return collectDescendantsOfType(modifiers, KtNodeTypes.ANNOTATION_ENTRY)
+}
+
+/**
+ * Returns the user type of the type reference of [node], or `null` if there is none.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.userType(node: LighterASTNode): LighterASTNode? {
+    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
+    return findChildByType(typeReference, KtNodeTypes.USER_TYPE)
+}
+
+/**
+ * Returns all descendants of [node] with the given [type] that satisfy [predicate], in pre-order.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(
+    node: LighterASTNode, type: IElementType,
+    predicate: (LighterASTNode) -> Boolean = { true }
+): List<LighterASTNode> {
+    val result = mutableListOf<LighterASTNode>()
+
+    fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantByType(node: LighterASTNode) {
+        val childrenRef = Ref<Array<LighterASTNode?>>()
+        getChildren(node, childrenRef)
+
+        val childrenRefGet = childrenRef.get()
+        if (childrenRefGet != null) {
+            for (child in childrenRefGet) {
+                if (child?.tokenType == type && predicate(child)) {
+                    result.add(child)
+                }
+
+                if (child != null) {
+                    collectDescendantByType(child)
+                }
+            }
+        }
+    }
+
+    collectDescendantByType(node)
+
+    return result
+}

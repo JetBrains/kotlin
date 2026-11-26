@@ -35,7 +35,12 @@ These contracts imply the following:
 4. If a checker is supposed to check anonymous initializers, it's better to create a `FirAnonymousInitializerChecker` that is separately run for each `init` block in the class, rather than creating a `FirClassChecker` that manually iterates over each `init` block in the class. There are several reasons for this:
     - The diagnostic suppression mechanism is implemented in the checkers dispatcher, so reporting something on a sub-element can cause false-positive diagnostics if there is a `@Suppress` annotation between the root element (passed to the checker) and the sub-element. While there is a mechanism to fix this, it is not recommended to use it.
     - Checkers with a smaller scope improve IDE performance because they require fewer elements to be resolved in order to perform checks.
-5. The FIR compiler is designed to be syntax-agnostic and can work with different parsers and syntax trees (at present, it already supports PSI and LightTree syntax trees). Therefore, checkers should not rely on any syntax implementation details. Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt) for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class). The only exception to this rule is inheritors of [FirSyntaxChecker](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/syntax/FirSyntaxChecker.kt), which work directly with a syntax tree and must support several implementations for different ASTs.
+5. The FIR compiler is designed to be syntax-agnostic and can work with different parsers and syntax trees (at present, it already supports PSI and LightTree syntax trees).
+   Therefore, checkers should not rely on any syntax implementation details. 
+   Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt)
+   for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class).
+   Inheritors of [FirSyntaxChecker](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/syntax/FirSyntaxChecker.kt) 
+   implement traversals for each parse tree.
 
 ## Checkers pipeline
 

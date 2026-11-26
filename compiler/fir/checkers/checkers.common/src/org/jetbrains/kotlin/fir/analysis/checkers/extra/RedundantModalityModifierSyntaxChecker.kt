@@ -30,17 +30,17 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
-    override fun isApplicable(element: FirDeclaration, source: KtSourceElement): Boolean =
-        element.isMemberWithRealSource && element !is FirValueParameter
-                || element.source?.kind == KtFakeSourceElementKind.PropertyFromParameter
-
     private val FirDeclaration.isMemberWithRealSource get() = this is FirMemberDeclaration && source?.kind is KtRealSourceElementKind
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirDeclaration,
         source: KtSourceElement,
     ) {
+        val isApplicable = element.isMemberWithRealSource && element !is FirValueParameter
+                || source.kind == KtFakeSourceElementKind.PropertyFromParameter
+        if (!isApplicable) return
+
         require(element is FirMemberDeclaration)
         val modality = element.modality ?: return
         val resolvedStatus = element.symbol.resolvedStatus!!
