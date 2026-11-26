@@ -1,0 +1,25 @@
+STEP 0:
+    dependencies: y
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : x.kt -> x.kt
+    added cache: x.kt
+
+// x is not in the link, so its cache keeps its step-0 state, with the adapter that imports
+// _kclass:y.Bound baked into x.kt's cached bitcode. (The cache dir staying on disk is the
+// info-level STALE_LIBRARY_CACHE the harness reports, which is by design.)
+STEP 1:
+    dependencies: y
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : x.kt -> x.kt
+    unchanged cache: x.kt
+
+// Bound changed files (it moved to y2.kt) while x was absent, so a correct IC must rebuild
+// x.kt's cache when x returns to the link.
+STEP 2:
+    dependencies: y
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : x.kt -> x.kt
+    modified cache: x.kt

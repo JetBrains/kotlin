@@ -1,0 +1,13 @@
+STEP 0:
+    dependencies: y, x
+    modifications:
+        U : main.kt -> main.kt
+
+// x is out of the link at this step; the program reads y only.
+STEP 1:
+    dependencies: y
+
+// x returns to the link. main's own sources are unchanged, so a correct IC keeps main's
+// cache and rebuilds only x's (see x/module.info).
+STEP 2:
+    dependencies: y, x
