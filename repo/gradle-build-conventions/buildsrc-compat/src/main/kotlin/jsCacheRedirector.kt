@@ -7,11 +7,11 @@ import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 
-const val DEFAULT_YARN_REGISTRY = "https://registry.yarnpkg.com"
 const val NPM_REGISTRY_CACHE = "https://cache-redirector.jetbrains.com/registry.npmjs.org"
 
 fun Project.configureJsCacheRedirector() {
@@ -43,16 +43,22 @@ fun Project.configureJsCacheRedirector() {
     }
 
     if (project.parent == null) {
-        plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-            the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().restoreYarnLockTaskProvider.configure {
-                doLast {
-                    // yarn 1.x doesn't and won't support overriding registry used in yarn.lock, so we need to replace it manually
-                    // https://github.com/yarnpkg/yarn/issues/6436#issuecomment-426728911
-                    val lockFile = outputFile.get()
-                    lockFile.writeText(lockFile.readText().replace(DEFAULT_YARN_REGISTRY, NPM_REGISTRY_CACHE))
-                }
-            }
-            the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().yarnLockMismatchReport.set(YarnLockMismatchReport.WARNING)
+        plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
+            val nodeJsRoot = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+            nodeJsRoot.npmInstallTaskProvider.configureNpmRegistry()
+        }
+
+        plugins.withType(org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin::class.java) {
+            val wasmNodeJsRoot = the<org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension>()
+            wasmNodeJsRoot.npmInstallTaskProvider.configureNpmRegistry()
+        }
+    }
+}
+
+private fun TaskProvider<out KotlinNpmInstallTask>.configureNpmRegistry() {
+    configure {
+        if ("--registry" !in args) {
+            args += listOf("--registry", NPM_REGISTRY_CACHE)
         }
     }
 }

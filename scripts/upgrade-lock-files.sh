@@ -7,10 +7,10 @@ root_dir=$(pwd)
 echo "Deleting .npmrc files..."
 find . -name ".npmrc" -type f -delete
 
-# Upgrade kotlin-js-store/yarn.lock
-echo "Start upgrade 'kotlin-js-store/yarn.lock'"
-rm -rf kotlin-js-store build/js && ./gradlew :kotlinUpgradeYarnLock -PcacheRedirectorEnabled=false
-echo "End upgrade 'kotlin-js-store/yarn.lock'"
+# Upgrade kotlin-js-store/package-lock.json and kotlin-js-store/wasm/package-lock.json
+echo "Start upgrade 'kotlin-js-store/package-lock.json' and 'kotlin-js-store/wasm/package-lock.json'"
+rm -rf kotlin-js-store build/js build/wasm && ./gradlew :kotlinUpgradePackageLock :kotlinWasmUpgradePackageLock
+echo "End upgrade 'kotlin-js-store/package-lock.json' and 'kotlin-js-store/wasm/package-lock.json'"
 
 # Upgrade js/js.translator/testData/package-lock.json
 

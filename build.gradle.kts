@@ -1,10 +1,9 @@
 import TestLifecycleTask.QualityGate
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
-import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.testFederation.PlanTestFederationTask
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
@@ -902,14 +901,6 @@ configure<IdeaModel> {
     }
 }
 
-plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
-    extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        npmInstallTaskProvider.configure {
-            args += listOf("--network-concurrency", "1", "--mutex", "network")
-        }
-    }
-}
-
 if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
     configureJsCacheRedirector()
 }
@@ -918,18 +909,12 @@ afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
 
-plugins.withType<YarnPlugin> {
-    extensions.configure<YarnRootEnvSpec> {
-        version = libs.versions.yarn
-        downloadBaseUrl.set(null as String?)
-    }
+plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
+    the<NpmExtension>().packageLockMismatchReport.set(LockFileMismatchReport.WARNING)
 }
 
-plugins.withType<WasmYarnPlugin> {
-    extensions.configure<WasmYarnRootEnvSpec> {
-        version = libs.versions.yarn
-        downloadBaseUrl.set(null as String?)
-    }
+plugins.withType(org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin::class.java) {
+    the<WasmNpmExtension>().packageLockMismatchReport.set(LockFileMismatchReport.WARNING)
 }
 
 tasks.register<TestFederationInferAffectedDomainsTask>("inferAffectedDomains")
