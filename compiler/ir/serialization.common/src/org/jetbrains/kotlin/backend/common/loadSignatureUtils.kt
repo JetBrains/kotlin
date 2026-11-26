@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature
 fun serializeSignaturesIndex(
     exportedSignatures: Set<IdSignature>,
     importedSignatures: Set<IdSignature>,
-): IrArrayWriter {
+): ByteArray {
     val stringSerializer = IrStringSerializer()
     val signatureSerializer = CommonSignatureSerializer(stringSerializer, debugInfoSerializer = null)
 
@@ -54,7 +54,7 @@ fun serializeSignaturesIndex(
             IrArrayWriter(serializedImportedSignatures, useVarInt = true).writeIntoMemory(),
         ),
         useVarInt = true,
-    )
+    ).writeIntoMemory()
 }
 
 fun deserializeSignaturesIndex(bytes: ByteArray): Pair<Set<IdSignature>, Set<IdSignature>> {
