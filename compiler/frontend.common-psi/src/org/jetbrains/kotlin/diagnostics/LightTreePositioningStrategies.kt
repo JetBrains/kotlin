@@ -22,17 +22,7 @@ import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 @Suppress("UNUSED") // Most strategies are only accessed via `kindToStrategy`, where they are registered by `registerAs`
-object LightTreePositioningStrategies {
-    val kindToStrategy: Map<PositioningStrategyKind, LightTreePositioningStrategy>
-        field: MutableMap<PositioningStrategyKind, LightTreePositioningStrategy> = mutableMapOf()
-
-    // Plugins can extend strategies in the future.
-    private fun <T : LightTreePositioningStrategy> T.registerAs(kind: PositioningStrategyKind): T {
-        require(kind !in kindToStrategy) { "${kind::class.simpleName} is already registered" }
-        kindToStrategy[kind] = this
-        return this
-    }
-
+object LightTreePositioningStrategies : PositioningStrategyRegistry<LightTreePositioningStrategy>() {
     val DEFAULT = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

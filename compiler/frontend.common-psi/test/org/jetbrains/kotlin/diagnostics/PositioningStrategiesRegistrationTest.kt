@@ -28,16 +28,16 @@ class PositioningStrategiesRegistrationTest {
 
     @Test
     fun allStandardStrategiesAreRegisteredForLightTree() {
-        checkRegistered(LightTreePositioningStrategies.kindToStrategy)
+        checkRegistered(LightTreePositioningStrategies)
     }
 
     @Test
     fun allStandardStrategiesAreRegisteredForPsi() {
-        checkRegistered(PsiPositioningStrategies.kindToStrategy)
+        checkRegistered(PsiPositioningStrategies)
     }
 
-    private fun checkRegistered(kindToStrategy: Map<PositioningStrategyKind, PositioningStrategy>) {
-        val notRegistered = standardStrategies.filter { it !in kindToStrategy }.map { it::class.simpleName }
+    private fun checkRegistered(registry: PositioningStrategyRegistry<*>) {
+        val notRegistered = standardStrategies.filter { it !in registry.kindToStrategy }.map { it::class.simpleName }
         assertEquals(emptyList<String>(), notRegistered, "Strategies without a registered implementation")
     }
 }

@@ -28,17 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 @Suppress("UNUSED") // Most strategies are only accessed via `kindToStrategy`, where they are registered by `registerAs`
-object PsiPositioningStrategies {
-    val kindToStrategy: Map<PositioningStrategyKind, PsiPositioningStrategy<*>>
-        field: MutableMap<PositioningStrategyKind, PsiPositioningStrategy<*>> = mutableMapOf()
-
-    // Plugins can extend strategies in the future.
-    private fun <T : PsiPositioningStrategy<*>> T.registerAs(kind: PositioningStrategyKind): T {
-        require(kind !in kindToStrategy) { "${kind::class.simpleName} is already registered" }
-        kindToStrategy[kind] = this
-        return this
-    }
-
+object PsiPositioningStrategies : PositioningStrategyRegistry<PsiPositioningStrategy<*>>() {
     open class DeclarationHeader<T : PsiElement>(private val checkValidity: Boolean) : PsiPositioningStrategy<T>() {
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: KtSourceElement): Boolean {
