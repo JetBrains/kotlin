@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.defaultValueForType
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -92,6 +93,9 @@ class JvmSharedVariablesManager(
                 this.typeArguments[index] = type
             }
         }
+        // The slot holds the `Ref`, not the underlying value of an inline class, so it keeps the source name, see [ValueClassParameterNames]
+        val decoded = ValueClassParameterNames.decodeValueClassParameterNameOrNull(originalDeclaration.name.asString())
+        val name = if (decoded != null) Name.identifier(decoded.parameterName) else originalDeclaration.name
         return with(originalDeclaration) {
             IrVariableImpl(
                 startOffset, endOffset, origin, IrVariableSymbolImpl(), name, refType,
