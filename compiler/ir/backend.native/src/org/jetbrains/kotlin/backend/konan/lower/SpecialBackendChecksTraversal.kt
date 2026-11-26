@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
+import org.jetbrains.kotlin.backend.common.ir.isArrayOfOrArrayDotOf
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
@@ -708,12 +709,14 @@ private fun BackendChecker.checkCanUnwrapVariadicArguments(elements: List<IrVara
             checkCanMapCalleeFunctionParameter(element.type, isObjCMethod, variadic = true, parameter = null, argument = element)
         is IrSpreadElement -> {
             val expression = element.expression
-            if (expression is IrCall && expression.symbol == irBuiltIns.arrayOf)
+            // The isArrayOfOrArrayDotOf() predicate also accepts primitive array factories.
+            // But FIR rejects primitive arrays as spreads for interop varargs, so we are good to use this predicate.
+            if (expression is IrCall && expression.symbol.owner.isArrayOfOrArrayDotOf())
                 checkCanHandleArgumentForVarargParameter(expression.arguments[0], isObjCMethod)
             else
                 reportError(element, "When calling variadic " +
-                        (if (isObjCMethod) "Objective-C methods " else "C functions ") +
-                        "spread operator is supported only for *arrayOf(...)")
+                        (if (isObjCMethod) "Objective-C methods, " else "C functions, ") +
+                        "the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.")
         }
     }
 }

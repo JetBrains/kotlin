@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.fir.backend.native.interop.isObjCMethod
-import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
+import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
@@ -46,7 +46,7 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
             for (element in argument.arguments) {
                 if (element is FirSpreadArgumentExpression) {
                     val spreadExpression = element.expression
-                    if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfCall()) {
+                    if (spreadExpression is FirFunctionCall && spreadExpression.isArrayOfOrArrayDotOfCall()) {
                         checkVarargArguments(spreadExpression, reportStringAsError = false)
                     }
                     continue

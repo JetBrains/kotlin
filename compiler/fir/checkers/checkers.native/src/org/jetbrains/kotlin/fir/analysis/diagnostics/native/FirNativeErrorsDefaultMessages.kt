@@ -215,11 +215,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
-            "When calling variadic Objective-C methods, the spread operator is supported only for *arrayOf(...).",
+            "When calling variadic Objective-C methods, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.",
         )
         map.put(
             VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
-            "When calling variadic C functions, the spread operator is supported only for *arrayOf(...).",
+            "When calling variadic C functions, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.",
         )
     }
 }

@@ -4,7 +4,9 @@ This testsuit can be run:
 - automatically: `LightTreeNativeKlibDiagnosticsTestGenerated`, e.g.
   `./gradlew :native:native.tests:klib-ir-inliner:withPlatformLibs:test --tests "org.jetbrains.kotlin.konan.test.diagnostics.LightTreeNativeKlibDiagnosticsTestGenerated"`.
   Platform libs for the host are built as a dependency of this task.
-- manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh`.
+- manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh -Xcompanion-blocks`.
+  The flag enables calls to `Array.of` in `objCInterop/t5.kt`, `objCInterop/t6.kt`, and `objCInterop/t7.kt`.
+  Remove it once companion blocks are enabled by default.
   Make sure platform libs for both targets are installed first:
   - `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and
   - `./gradlew :kotlin-native:platformLibs:linux_x64Install`
@@ -235,27 +237,42 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t4.kt
 fun foo() = println(NSAssertionHandler()::handleFailureInFunction)
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
-/tmp/t5.kt:7:81: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string.
-fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, "qzz")
-                                                                                ^^^^^
+/tmp/t5.kt:33:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, "literal")
+                                                           ^^^^^^^^^
+/tmp/t5.kt:34:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, detail)
+                                                           ^^^^^^
+/tmp/t5.kt:55:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, detail)
+                                                           ^^^^^^
+/tmp/t5.kt:61:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, myString)
+                                                           ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
-/tmp/t6.kt:7:95: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...).
+/tmp/t6.kt:13:95: error: when calling variadic Objective-C methods, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun foo(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *s)
                                                                                               ^^
-/tmp/t6.kt:8:113: error: when calling variadic Objective-C methods spread operator is supported only for *arrayOf(...).
+/tmp/t6.kt:14:113: error: when calling variadic Objective-C methods, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun bar(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(*arrayOf(*s)))
                                                                                                                 ^^
+/tmp/t6.kt:15:112: error: when calling variadic Objective-C methods, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
+fun arrayDotOf(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *Array.of(*s))
+                                                                                                               ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t61.kt
 /tmp/t61.kt:5:5: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t62.kt
 /tmp/t62.kt:4:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t7.kt
-/tmp/t7.kt:7:40: error: when calling variadic C functions spread operator is supported only for *arrayOf(...).
+/tmp/t7.kt:13:40: error: when calling variadic C functions, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun foo(s: Array<Any?>) = NSLog("zzz", *s)
                                        ^^
-/tmp/t7.kt:8:58: error: when calling variadic C functions spread operator is supported only for *arrayOf(...).
+/tmp/t7.kt:14:58: error: when calling variadic C functions, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun bar(s: Array<Any?>) = NSLog("zzz", *arrayOf(*arrayOf(*s)))
                                                          ^^
+/tmp/t7.kt:15:57: error: when calling variadic C functions, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
+fun arrayDotOf(s: Array<Any?>) = NSLog("zzz", *Array.of(*s))
+                                                        ^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/posix/t3.kt
 /tmp/t3.kt:7:13: error: callable references to variadic C functions are not supported: fun printf(arg0: String?, vararg variadicArguments: Any?): Int
     println(::printf)

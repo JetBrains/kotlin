@@ -1,0 +1,4 @@
+language = Objective-C
+headers = Foundation/NSString.h
+headerFilter = **/varargs.h Foundation/NSString.h
+linkerOpts = -lcollectionLiteralVarargs

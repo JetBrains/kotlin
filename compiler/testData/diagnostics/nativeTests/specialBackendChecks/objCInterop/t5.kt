@@ -1,8 +1,14 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_PLATFORM_LIBS
 // KT-86474
+// Remove this flag once companion blocks are enabled by default.
+// LANGUAGE: +CompanionBlocks
 
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(
+    kotlinx.cinterop.ExperimentalForeignApi::class,
+    // Remove this opt-in once Array.of is stable.
+    kotlin.ExperimentalCollectionLiteralsApi::class,
+)
 
 import kotlinx.cinterop.*
 import platform.Foundation.NSAssertionHandler
@@ -15,6 +21,7 @@ fun cArguments(detail: String, nullableDetail: String?) {
     NSLog("%@", <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)
     NSLog("%@", <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>nullableDetail<!>)
     NSLog("%@", *arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
+    NSLog("%@", *Array.of(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
     NSLog("%@", *arrayOf(*arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)))
 
     printf("%s", <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)
@@ -26,6 +33,7 @@ fun objCArguments(handler: NSAssertionHandler, detail: String) {
     handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS!>"literal"<!>)
     handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS!>detail<!>)
     handler.handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, *Array.of(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
     handler.handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(*arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)))
 }
 
