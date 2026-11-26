@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments.enums
 
 import kotlin.String
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 
 /**
  * @since 2.3.0
@@ -11,6 +12,12 @@ import kotlin.String
 public enum class JvmTarget(
   public val stringValue: String,
 ) {
+  /**
+   * Deprecated in Kotlin version 1.5.0.
+   *
+   * Removed in Kotlin version 1.7.0.
+   */
+  @RemovedCompilerArgument
   JVM1_6("1.6"),
   JVM1_8("1.8"),
   JVM_9("9"),

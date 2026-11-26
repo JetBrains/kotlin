@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments.enums
 
 import kotlin.String
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 
 /**
  * @since 2.5.20
@@ -20,17 +21,33 @@ public enum class KonanTarget(
   IOS_SIMULATOR_ARM64("ios_simulator_arm64"),
   WATCHOS_ARM32("watchos_arm32"),
   WATCHOS_ARM64("watchos_arm64"),
+  /**
+   * Deprecated in Kotlin version 2.3.20.
+   */
+  @DeprecatedCompilerArgument
   WATCHOS_X64("watchos_x64"),
   WATCHOS_SIMULATOR_ARM64("watchos_simulator_arm64"),
   WATCHOS_DEVICE_ARM64("watchos_device_arm64"),
   TVOS_ARM64("tvos_arm64"),
+  /**
+   * Deprecated in Kotlin version 2.3.20.
+   */
+  @DeprecatedCompilerArgument
   TVOS_X64("tvos_x64"),
   TVOS_SIMULATOR_ARM64("tvos_simulator_arm64"),
   LINUX_X64("linux_x64"),
   MINGW_X64("mingw_x64"),
+  /**
+   * Deprecated in Kotlin version 2.3.20.
+   */
+  @DeprecatedCompilerArgument
   MACOS_X64("macos_x64"),
   MACOS_ARM64("macos_arm64"),
   LINUX_ARM64("linux_arm64"),
+  /**
+   * Deprecated in Kotlin version 1.8.20.
+   */
+  @DeprecatedCompilerArgument
   LINUX_ARM32_HFP("linux_arm32_hfp"),
   ;
 }

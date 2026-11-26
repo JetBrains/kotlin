@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
@@ -42,6 +43,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Test builders produce independent operations")
     @DefaultStrategyAgnosticCompilationTest
+    @OptIn(RemovedCompilerArgument::class)
     fun buildersProduceIndependentInstances(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val toolchain = strategyConfig.first
         val sources = listOf("a.kt", "b.kt", "c.kt").map { Paths.get(it) }
