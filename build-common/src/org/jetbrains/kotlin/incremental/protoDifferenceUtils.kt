@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.expandedType
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -70,17 +71,94 @@ private fun MessageLite.name(nameResolver: NameResolver): String {
 internal fun List<MessageLite>.names(nameResolver: NameResolver): List<String> = map { it.name(nameResolver) }
 
 abstract class DifferenceCalculator {
+    protected abstract val compareObject: ProtoCompareGenerated
 
     abstract fun difference(): Difference
 
+    protected fun calcDifferenceForMembers(oldList: List<MessageLite>, newList: List<MessageLite>): Collection<String> {
+        val result = hashSetOf<String>()
+
+        val oldMap =
+            oldList.groupBy {
+                it.getHashCode(
+                    compareObject::oldGetIndexOfString,
+                    compareObject::oldGetIndexOfClassId,
+                    compareObject::oldGetTypeById
+                )
+            }
+        val newMap =
+            newList.groupBy {
+                it.getHashCode(
+                    compareObject::newGetIndexOfString,
+                    compareObject::newGetIndexOfClassId,
+                    compareObject::newGetTypeById
+                )
+            }
+
+        val hashes = oldMap.keys + newMap.keys
+        for (hash in hashes) {
+            val oldMembers = oldMap[hash]
+            val newMembers = newMap[hash]
+
+            val differentMembers = when {
+                newMembers == null -> oldMembers!!.names(compareObject.oldNameResolver)
+                oldMembers == null -> newMembers.names(compareObject.newNameResolver)
+                else -> calcDifferenceForEqualHashes(oldMembers, newMembers)
+            }
+            result.addAll(differentMembers)
+        }
+
+        return result
+    }
+
+    private fun calcDifferenceForEqualHashes(
+        oldList: List<MessageLite>,
+        newList: List<MessageLite>,
+    ): Collection<String> {
+        val result = hashSetOf<String>()
+        val newSet = HashSet(newList)
+
+        oldList.forEach { oldMember ->
+            val newMember = newSet.firstOrNull { compareObject.checkEquals(oldMember, it) }
+            if (newMember != null) {
+                newSet.remove(newMember)
+            } else {
+                result.add(oldMember.name(compareObject.oldNameResolver))
+            }
+        }
+
+        newSet.forEach { newMember ->
+            result.add(newMember.name(compareObject.newNameResolver))
+        }
+
+        return result
+    }
+
+    protected fun calcDifferenceForNames(
+        oldList: List<Int>,
+        newList: List<Int>,
+    ): Collection<String> {
+        val oldNames = oldList.map { compareObject.oldNameResolver.getString(it) }.toSet()
+        val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
+        return oldNames.union(newNames) - oldNames.intersect(newNames)
+    }
+
+    private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeTable: (Int) -> ProtoBuf.Type): Int {
+        return when (this) {
+            is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            else -> error("Unknown message: $this")
+        }
+    }
 }
 
 class DifferenceCalculatorForClass(
     private val oldData: ClassProtoData,
     private val newData: ClassProtoData,
 ) : DifferenceCalculator() {
-
-    private val compareObject = ProtoCompareGenerated(
+    override val compareObject = ProtoCompareGenerated(
         oldNameResolver = oldData.nameResolver,
         newNameResolver = newData.nameResolver,
         oldTypeTable = oldData.proto.typeTableOrNull,
@@ -105,7 +183,7 @@ class DifferenceCalculatorForClass(
         fun calcDifferenceForNonPrivateMembers(members: (ProtoBuf.Class) -> List<MessageLite>): Collection<String> {
             val oldMembers = members(oldProto).filterNot { it.isPrivate }
             val newMembers = members(newProto).filterNot { it.isPrivate }
-            return compareObject.calcDifferenceForMembers(oldMembers, newMembers)
+            return calcDifferenceForMembers(oldMembers, newMembers)
         }
 
         for (kind in diff) {
@@ -249,16 +327,6 @@ class DifferenceCalculatorForClass(
         return Difference(isClassAffected, areSubclassesAffected, names, changedSupertypes)
     }
 
-    private fun calcDifferenceForNames(
-        oldList: List<Int>,
-        newList: List<Int>,
-    ): Collection<String> {
-        val oldNames = oldList.map { compareObject.oldNameResolver.getString(it) }.toSet()
-        val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
-
-        return oldNames.union(newNames) - oldNames.intersect(newNames)
-    }
-
     companion object {
         private val membersResolvers: List<(ProtoBuf.Class) -> List<MessageLite>> = listOf(
             // This list must match the logic in `DifferenceCalculatorForClass.difference`
@@ -283,8 +351,7 @@ class DifferenceCalculatorForPackageFacade(
     private val oldData: PackagePartProtoData,
     private val newData: PackagePartProtoData,
 ) : DifferenceCalculator() {
-
-    private val compareObject = ProtoCompareGenerated(
+    override val compareObject = ProtoCompareGenerated(
         oldNameResolver = oldData.nameResolver,
         newNameResolver = newData.nameResolver,
         oldTypeTable = oldData.proto.typeTableOrNull,
@@ -302,7 +369,7 @@ class DifferenceCalculatorForPackageFacade(
         fun calcDifferenceForNonPrivateMembers(members: (ProtoBuf.Package) -> List<MessageLite>): Collection<String> {
             val oldMembers = members(oldProto).filterNot { it.isPrivate }
             val newMembers = members(newProto).filterNot { it.isPrivate }
-            return compareObject.calcDifferenceForMembers(oldMembers, newMembers)
+            return calcDifferenceForMembers(oldMembers, newMembers)
         }
 
         for (kind in diff) {
@@ -368,135 +435,149 @@ class DifferenceCalculatorForPackageFacade(
     }
 }
 
-private fun ProtoCompareGenerated.calcDifferenceForMembers(
-    oldList: List<MessageLite>,
-    newList: List<MessageLite>,
-): Set<String> {
-    val oldProtoContext = ProtoContext(oldNameResolver, oldTypeTable)
-    val newProtoContext = ProtoContext(newNameResolver, newTypeTable)
-
-    return DifferenceCalculatorForMembers { old, new -> checkEquals(old.proto, new.proto) }.difference(
-        oldList.map { ProtoMember(it, oldProtoContext) },
-        newList.map { ProtoMember(it, newProtoContext) },
-    )
-}
-
+/**
+ * Compares the non-private members of several package parts, each with its own name resolver and type table.
+ *
+ * Members of one kind are matched by name, and a name is reported unless its old and new declarations can be paired one to one
+ * with `checkEquals`. So a member that moves to another part is not reported, and a name declared in several parts is reported
+ * if any of its declarations changed.
+ */
 class DifferenceCalculatorForPackageFacades(
     private val oldData: List<PackagePartProtoData>,
     private val newData: List<PackagePartProtoData>,
-) : DifferenceCalculator() {
-
-    private val compareObjects = HashMap<Pair<ProtoContext, ProtoContext>, ProtoCompareGenerated>()
-
-    private val differenceCalculatorForMembers = DifferenceCalculatorForMembers { old, new -> areEqual(old, new) }
-
-    override fun difference(): Difference {
-        val oldMembers = oldData.getNonPrivateMembers()
-        val newMembers = newData.getNonPrivateMembers()
-
-        return Difference(changedMembersNames = differenceCalculatorForMembers.difference(oldMembers, newMembers))
-    }
-
-    private fun areEqual(old: ProtoMember, new: ProtoMember): Boolean =
-        compareObject(old.context, new.context).checkEquals(old.proto, new.proto)
-
-    private fun compareObject(first: ProtoContext, second: ProtoContext): ProtoCompareGenerated =
-        compareObjects.getOrPut(first to second) {
-            ProtoCompareGenerated(first.nameResolver, second.nameResolver, first.typeTable, second.typeTable)
-        }
-
-    private fun List<PackagePartProtoData>.getNonPrivateMembers() =
-        buildList {
-            this@getNonPrivateMembers.forEach { (val proto, val nameResolver) ->
-                val context = ProtoContext(nameResolver, proto.typeTableOrNull)
-                proto.functionList.filterNot { it.isPrivate }.forEach { function ->
-                    add(ProtoMember(function, context))
-                }
-                proto.propertyList.filterNot { it.isPrivate }.forEach { property ->
-                    add(ProtoMember(property, context))
-                }
-                proto.typeAliasList.filterNot { it.isPrivate }.forEach { typeAlias ->
-                    add(ProtoMember(typeAlias, context))
-                }
-            }
-        }
-}
-
-private class ProtoContext(val nameResolver: NameResolver, typeTable: ProtoBuf.TypeTable?) {
-    val typeTable: ProtoBuf.TypeTable = typeTable ?: ProtoBuf.TypeTable.getDefaultInstance()
-
-    private val stringHashCodes = HashMap<Int, Int>()
-    private val classIdHashCodes = HashMap<Int, Int>()
-
-    fun stringHashCode(index: Int): Int = stringHashCodes.getOrPut(index) { nameResolver.getString(index).hashCode() }
-    fun classIdHashCode(index: Int): Int = classIdHashCodes.getOrPut(index) { nameResolver.getClassId(index).hashCode() }
-    fun typeById(id: Int): ProtoBuf.Type = typeTable.getType(id)
-}
-
-private class ProtoMember(val proto: MessageLite, val context: ProtoContext) {
-
-    val name: String get() = proto.name(context.nameResolver)
-
-    val contentHashCode: Int = proto.getHashCode(context::stringHashCode, context::classIdHashCode, context::typeById)
-
-    private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeTable: (Int) -> ProtoBuf.Type): Int {
-        return when (this) {
-            is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes, typeTable)
-            is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes, typeTable)
-            is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes, typeTable)
-            is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes, typeTable)
-            else -> error("Unknown message: $this")
-        }
-    }
-}
-
-private class DifferenceCalculatorForMembers(
-    private val areEqual: (ProtoMember, ProtoMember) -> Boolean,
 ) {
+    private class Member(
+        val proto: MessageLite,
+        val parent: PackagePartProtoData,
+    ) {
+        val nameResolver: NameResolver = parent.nameResolver
+        val typeTable: ProtoBuf.TypeTable = parent.proto.typeTableOrNull ?: ProtoBuf.TypeTable.getDefaultInstance()
+    }
 
-    fun difference(oldMembers: List<ProtoMember>, newMembers: List<ProtoMember>): Set<String> {
-        val result = hashSetOf<String>()
+    private val strings = Interner<String>()
+    private val classIds = Interner<ClassId>()
 
-        val oldMap = oldMembers.groupBy { it.contentHashCode }
-        val newMap = newMembers.groupBy { it.contentHashCode }
+    private val compareObjects = HashMap<Pair<PackagePartProtoData, PackagePartProtoData>, ProtoCompareGenerated>()
 
-        val hashes = oldMap.keys + newMap.keys
-        for (hash in hashes) {
-            val oldBucket = oldMap[hash]
-            val newBucket = newMap[hash]
+    fun difference(): Difference {
+        val oldMembersByType = oldData.getNonPrivateMembers().groupBy { it.proto::class.java }
+        val newMembersByType = newData.getNonPrivateMembers().groupBy { it.proto::class.java }
+
+        val changeMemberNames = mutableSetOf<String>()
+
+        for (type in oldMembersByType.keys + newMembersByType.keys) {
+            val oldMembers = oldMembersByType[type]
+            val newMembers = newMembersByType[type]
+
+            if (oldMembers == null) {
+                newMembers!!.mapTo(changeMemberNames) { it.proto.name(it.nameResolver) }
+                continue
+            }
+
+            if (newMembers == null) {
+                oldMembers.mapTo(changeMemberNames) { it.proto.name(it.nameResolver) }
+                continue
+            }
+
+            changeMemberNames.addAll(calcDifferenceForMembers(oldMembers, newMembers))
+        }
+
+        return Difference(changedMembersNames = changeMemberNames)
+    }
+
+    private fun calcDifferenceForMembers(oldMembers: List<Member>, newMembers: List<Member>): Set<String> {
+        val oldMembersByHash = oldMembers.groupBy {
+            it.proto.getHashCode(
+                { index -> strings.intern(it.nameResolver.getString(index)) },
+                { index -> classIds.intern(it.nameResolver.getClassId(index)) },
+                { index -> it.typeTable.getType(index) },
+            )
+        }
+        val newMembersByHash = newMembers.groupBy {
+            it.proto.getHashCode(
+                { index -> strings.intern(it.nameResolver.getString(index)) },
+                { index -> classIds.intern(it.nameResolver.getClassId(index)) },
+                { index -> it.typeTable.getType(index) },
+            )
+        }
+
+        val changeMemberNames = hashSetOf<String>()
+
+        for (hash in oldMembersByHash.keys + newMembersByHash.keys) {
+            val oldMembers = oldMembersByHash[hash]
+            val newMembers = newMembersByHash[hash]
 
             val differentMembers = when {
-                newBucket == null -> oldBucket!!.map { it.name }
-                oldBucket == null -> newBucket.map { it.name }
-                else -> calcDifferenceForEqualHashes(oldBucket, newBucket)
+                newMembers == null -> oldMembers!!.map { it.proto.name(it.nameResolver) }
+                oldMembers == null -> newMembers.map { it.proto.name(it.nameResolver) }
+                else -> calcDifferenceForEqualHashes(oldMembers, newMembers)
             }
-            result.addAll(differentMembers)
+            changeMemberNames.addAll(differentMembers)
         }
 
-        return result
+        return changeMemberNames
     }
 
     private fun calcDifferenceForEqualHashes(
-        oldList: List<ProtoMember>,
-        newList: List<ProtoMember>,
-    ): Collection<String> {
-        val result = hashSetOf<String>()
-        val newSet = HashSet(newList)
+        oldMembers: List<Member>,
+        newMembers: List<Member>,
+    ): Set<String> {
+        val changeMemberNames = hashSetOf<String>()
 
-        oldList.forEach { oldMember ->
-            val newMember = newSet.firstOrNull { areEqual(oldMember, it) }
-            if (newMember != null) {
-                newSet.remove(newMember)
+        val unmatchedMemberNames = newMembers.toMutableSet()
+        for (oldMember in oldMembers) {
+            val equalNewMember =
+                unmatchedMemberNames.firstOrNull { compareObject(oldMember.parent, it.parent).checkEquals(oldMember.proto, it.proto) }
+            if (equalNewMember != null) {
+                unmatchedMemberNames.remove(equalNewMember)
             } else {
-                result.add(oldMember.name)
+                changeMemberNames.add(oldMember.proto.name(oldMember.nameResolver))
             }
         }
 
-        newSet.forEach { newMember ->
-            result.add(newMember.name)
+        unmatchedMemberNames.forEach { newMember ->
+            changeMemberNames.add(newMember.proto.name(newMember.nameResolver))
         }
 
-        return result
+        return changeMemberNames
+    }
+
+    private fun compareObject(old: PackagePartProtoData, new: PackagePartProtoData): ProtoCompareGenerated =
+        compareObjects.getOrPut(old to new) {
+            ProtoCompareGenerated(
+                oldNameResolver = old.nameResolver,
+                newNameResolver = new.nameResolver,
+                oldTypeTable = old.proto.typeTableOrNull,
+                newTypeTable = new.proto.typeTableOrNull,
+                strings = strings,
+                classIds = classIds,
+            )
+        }
+
+    companion object {
+
+        private fun List<PackagePartProtoData>.getNonPrivateMembers(): List<Member> =
+            buildList {
+                for (packagePart in this@getNonPrivateMembers) {
+                    packagePart.proto.functionList.filterNot { it.isPrivate }.mapTo(this) { Member(it, packagePart) }
+                    packagePart.proto.propertyList.filterNot { it.isPrivate }.mapTo(this) { Member(it, packagePart) }
+                    packagePart.proto.typeAliasList.filterNot { it.isPrivate }.mapTo(this) { Member(it, packagePart) }
+                }
+            }
+
+        private fun MessageLite.getHashCode(
+            stringIndexes: (Int) -> Int,
+            fqNameIndexes: (Int) -> Int,
+            typeTable: (Int) -> ProtoBuf.Type,
+        ): Int {
+            return when (this) {
+                is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+                is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+                is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+                is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+                else -> error("Unknown message: $this")
+            }
+        }
     }
 }
 
@@ -506,7 +587,7 @@ private fun ProtoCompareGenerated.checkEquals(old: MessageLite, new: MessageLite
         old is ProtoBuf.Function && new is ProtoBuf.Function -> checkEquals(old, new)
         old is ProtoBuf.Property && new is ProtoBuf.Property -> checkEquals(old, new)
         old is ProtoBuf.TypeAlias && new is ProtoBuf.TypeAlias -> checkEquals(old, new)
-        else -> false
+        else -> error("Unknown message: $this")
     }
 }
 

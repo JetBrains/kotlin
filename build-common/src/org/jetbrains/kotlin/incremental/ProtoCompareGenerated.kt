@@ -24,17 +24,16 @@ open class ProtoCompareGenerated(
     val oldNameResolver: NameResolver,
     val newNameResolver: NameResolver,
     oldTypeTable: ProtoBuf.TypeTable?,
-    newTypeTable: ProtoBuf.TypeTable?
+    newTypeTable: ProtoBuf.TypeTable?,
+    private val strings: Interner<String> = Interner(),
+    private val classIds: Interner<ClassId> = Interner(),
 ) {
-    private val strings = Interner<String>()
     val oldStringIndexesMap: MutableMap<Int, Int> = hashMapOf()
     val newStringIndexesMap: MutableMap<Int, Int> = hashMapOf()
     val oldClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
     val newClassIdIndexesMap: MutableMap<Int, Int> = hashMapOf()
     val oldTypeTable: ProtoBuf.TypeTable = oldTypeTable ?: ProtoBuf.TypeTable.getDefaultInstance()
     val newTypeTable: ProtoBuf.TypeTable = newTypeTable ?: ProtoBuf.TypeTable.getDefaultInstance()
-
-    private val classIds = Interner<ClassId>()
 
     open fun checkEquals(old: ProtoBuf.Package, new: ProtoBuf.Package): Boolean {
         if (!checkEqualsPackageFunction(old, new)) return false

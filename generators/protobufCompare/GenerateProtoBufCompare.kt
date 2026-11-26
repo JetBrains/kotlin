@@ -115,21 +115,19 @@ class GenerateProtoBufCompare {
         p.println("val oldNameResolver: NameResolver,")
         p.println("val newNameResolver: NameResolver,")
         p.println("oldTypeTable: ProtoBuf.TypeTable?,")
-        p.println("newTypeTable: ProtoBuf.TypeTable?")
+        p.println("newTypeTable: ProtoBuf.TypeTable?,")
+        p.println("private val strings: Interner<String> = Interner(),")
+        p.println("private val classIds: Interner<ClassId> = Interner(),")
         p.popIndent()
         p.println(") {")
         p.pushIndent()
 
-        p.println("private val strings = Interner<String>()")
         p.println("val $OLD_PREFIX${STRING_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
         p.println("val $NEW_PREFIX${STRING_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
         p.println("val $OLD_PREFIX${CLASS_ID_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
         p.println("val $NEW_PREFIX${CLASS_ID_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
         p.println("val oldTypeTable: ProtoBuf.TypeTable = oldTypeTable ?: ProtoBuf.TypeTable.getDefaultInstance()")
         p.println("val newTypeTable: ProtoBuf.TypeTable = newTypeTable ?: ProtoBuf.TypeTable.getDefaultInstance()")
-
-        p.println()
-        p.println("private val classIds = Interner<ClassId>()")
 
         val fileDescriptor = DebugProtoBuf.getDescriptor()
 
