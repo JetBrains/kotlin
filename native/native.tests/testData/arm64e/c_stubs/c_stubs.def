@@ -1,0 +1,5 @@
+package = stubs
+---
+static inline int answer(void) {
+    return 42;
+}

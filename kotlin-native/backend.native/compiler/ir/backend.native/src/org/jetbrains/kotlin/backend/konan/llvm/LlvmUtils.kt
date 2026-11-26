@@ -29,6 +29,12 @@ internal interface ConstPointer : ConstValue {
             ConstGetElementPtr(llvm, pointeeType, this, index)
 }
 
+/**
+ * A function pointer that C code can call. On arm64e, it is signed with the IA key and no discriminator, and on other
+ * targets it is not signed. Make one with [ContextUtils.toCFunctionPointer], and don't sign it again.
+ */
+internal interface ConstCFunctionPointer : ConstPointer
+
 internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
     init {
         assert(LLVMIsConstant(value) == 1)

@@ -92,7 +92,7 @@ bitcode {
     )
     googleTestHeadersDependency.set(unpackGoogletest.name)
 
-    allTargets {
+    fun CompileToBitcodeExtension.Target.defineRuntimeModules() {
         val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
                 "TARGET_OS_OSX" to "1",
@@ -584,6 +584,12 @@ bitcode {
             onlyIf { it.family.isAppleFamily }
         }
     }
+
+    allTargets { defineRuntimeModules() }
+    // The runtime for -Xbinary=arm64e=true.
+    targetList.filter { platformManager.hasArm64eVariant(it) }.forEach {
+        target(it.arm64eVariant()) { defineRuntimeModules() }
+    }
 }
 
 val objcExportApi = configurations.create("objcExportApi") {
@@ -621,7 +627,7 @@ targetList.forEach { target ->
         group = CompileToBitcodeExtension.BUILD_TASK_GROUP
         val dependencies = runtimeBitcode.incoming.artifactView {
             attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
+                attribute(TargetVariant.TARGET_ATTRIBUTE, target.withSanitizer())
             }
         }.files
         dependsOn(dependencies)

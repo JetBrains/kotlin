@@ -18,7 +18,7 @@ import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cpp.CppUsage
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.TargetVariant
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
@@ -77,7 +77,7 @@ val cppLinkElements = configurations.create("cppLinkElements") {
     attributes {
         attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LIBRARY_LINK))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
-        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+        attribute(TargetVariant.TARGET_ATTRIBUTE, TargetVariant.host)
     }
 }
 

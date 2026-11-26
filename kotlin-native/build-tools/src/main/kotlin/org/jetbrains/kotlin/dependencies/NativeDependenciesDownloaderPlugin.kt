@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.TargetVariant
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.utils.capitalized
 import java.io.File
@@ -116,7 +116,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
 
     abstract class Target @Inject constructor(
             private val owner: NativeDependenciesDownloaderExtension,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -158,7 +158,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
                 variants {
                     create("$_target") {
                         attributes {
-                            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                            attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                         }
                         dependencies.forEach { dependency ->
                             artifact(dependencyProcessor.resolve(dependency)) {

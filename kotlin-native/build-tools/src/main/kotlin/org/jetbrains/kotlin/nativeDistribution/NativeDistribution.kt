@@ -139,6 +139,11 @@ class NativeDistribution(val root: Directory) {
     fun runtime(target: String): Directory = root.dir("konan/targets/$target/native")
 
     /**
+     * Runtime files for a specific [target] built for the arm64e ABI, used with `-Xbinary=arm64e=true`.
+     */
+    fun arm64eRuntime(target: String): Directory = root.dir("konan/targets/$target/arm64e/native")
+
+    /**
      * Platform library [name] klib for a specific [target].
      */
     fun platformLib(name: String, target: String): Directory = platformLibs(target).dir(name)

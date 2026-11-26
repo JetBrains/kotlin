@@ -207,6 +207,28 @@ internal interface ContextUtils : RuntimeAware {
     val IrSimpleFunction.entryPointAddress: ConstPointer
         get() = llvmFunction.toConstPointer()
 
+    /**
+     * [this] function as a pointer that C code can call. On arm64e, it is signed with the IA key and no discriminator,
+     * as C code expects.
+     */
+    fun ConstPointer.toCFunctionPointer(): ConstCFunctionPointer = constCFunctionPointer(this.llvm)
+
+    /**
+     * [this] function as an entry of a vtable or an itable. The runtime's C++ code also calls, copies and stores these
+     * entries, so they are signed as C function pointers, see [CodegenLlvmHelpers.kotlinVtableFunctionPointerAuth].
+     */
+    fun ConstPointer.toKotlinVtableFunctionPointer(): ConstPointer = toCFunctionPointer()
+
+    /**
+     * [function] as a pointer that C code calls, see [toCFunctionPointer].
+     */
+    fun constCFunctionPointer(function: LLVMValueRef): ConstCFunctionPointer {
+        val pointer = llvm.signedPointer(constPointer(function), PtrAuthKey.IA)
+        return object : ConstCFunctionPointer {
+            override val llvm = pointer.llvm
+        }
+    }
+
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
@@ -587,6 +609,42 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         override val llvm = kNull
     }
 
+    /**
+     * Marks the module with pointer authentication ABI version 0 for user space, as Clang does. Without the mark, the
+     * module's object file has no ABI version, and libtool leaves it out of static libraries, including caches.
+     */
+    fun addPtrAuthAbiVersion() {
+        val versions = node(llvmContext, node(llvmContext, int32(0), int1(false))!!)!!
+        val key = "ptrauth.abi-version"
+        // Use AppendUnique, as Clang does. The runtime bitcode comes from Clang, and the IR linker rejects a flag whose
+        // behavior differs between modules. Modules with the same version end up with a single entry.
+        LLVMAddModuleFlag(
+                module, LLVMModuleFlagBehavior.LLVMModuleFlagBehaviorAppendUnique, key, key.length.toLong(), LLVMValueAsMetadata(versions)
+        )
+    }
+
+    /**
+     * Returns [pointer] signed as Clang signs it, with [key], [integerDiscriminator] and, if given, [addressDiscriminator].
+     * Returns [pointer] unchanged when not compiling for arm64e, and for a null pointer, which Clang does not sign either.
+     */
+    fun signedPointer(
+            pointer: ConstPointer, key: PtrAuthKey, integerDiscriminator: Int = 0, addressDiscriminator: ConstPointer? = null,
+    ): ConstPointer =
+            if (context.config.arm64e && LLVMIsNull(pointer.llvm) == 0) {
+                val discriminator = int64(integerDiscriminator.toLong())
+                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), discriminator, addressDiscriminator?.llvm ?: kNull)!!)
+            } else {
+                pointer
+            }
+
+    /**
+     * How virtual calls authenticate the entries of vtables and itables, if they are signed, see
+     * [ContextUtils.toKotlinVtableFunctionPointer].
+     */
+    val kotlinVtableFunctionPointerAuth: PtrAuthBundle? by lazy {
+        if (context.config.arm64e) PtrAuthBundle(int32(PtrAuthKey.IA.value), int64(0)) else null
+    }
+
     val memsetFunction = importMemset()
 
     val llvmTrap = llvmIntrinsic(
@@ -602,6 +660,14 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                     "nounwind",
             ).toTypedArray()
     )
+
+    val llvmPtrAuthBlend by lazy {
+        llvmIntrinsic("llvm.ptrauth.blend", functionType(int64Type, false, int64Type, int64Type), "nounwind")
+    }
+
+    val llvmPtrAuthSign by lazy {
+        llvmIntrinsic("llvm.ptrauth.sign", functionType(int64Type, false, int64Type, int32Type, int64Type), "nounwind")
+    }
 
     var tlsCount = 0
 
@@ -660,6 +726,14 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val longTypeWidth: Long by lazy {
         getSizeOfTypeInBits(Kotlin_longTypeProvider.returnType)
     }
+}
+
+/**
+ * Keys of arm64e pointer authentication, numbered as in LLVM.
+ */
+internal enum class PtrAuthKey(val value: Int) {
+    IA(0),
+    DA(2),
 }
 
 class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)

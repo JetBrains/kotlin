@@ -165,11 +165,20 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     // So, no exception handler in "outlined" => no redundant jump => the optimized return works properly.
 
     val functionIsPassedAsLastParameter = !function.isConstant
+    // The outlined function can't compute the discriminator of a signed function pointer, so it also takes the
+    // discriminator as an argument.
+    val ptrAuth = function.ptrAuth?.takeIf { functionIsPassedAsLastParameter }
 
-    val valuesToPass = args + if (functionIsPassedAsLastParameter) listOf(function.asCallback()) else emptyList()
+    val valuesToPass = args + listOfNotNull(
+            function.asCallback().takeIf { functionIsPassedAsLastParameter },
+            ptrAuth?.discriminator,
+    )
     val outlinedType = LlvmFunctionSignature(
             signature.returnType,
-            signature.parameterTypes + if (functionIsPassedAsLastParameter) listOf(LlvmParamType(llvm.pointerType)) else emptyList(),
+            signature.parameterTypes + listOfNotNull(
+                    LlvmParamType(llvm.pointerType).takeIf { functionIsPassedAsLastParameter },
+                    LlvmParamType(llvm.int64Type).takeIf { ptrAuth != null },
+            ),
             functionAttributes = listOf(LlvmFunctionAttribute.NoInline)
     )
 
@@ -182,7 +191,10 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
 
         val actualArgs = signature.parameterTypes.indices.map { param(it) }
         val actualCallable = if (functionIsPassedAsLastParameter)
-            LlvmFunctionPointer(param(signature.parameterTypes.size), signature)
+            LlvmFunctionPointer(
+                    param(signature.parameterTypes.size), signature,
+                    ptrAuth?.let { PtrAuthBundle(it.key, param(signature.parameterTypes.size + 1)) },
+            )
         else
             function
 
@@ -708,7 +720,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
     val converters = (0 until arityLimit).map { arity ->
         functionClassesByArity[arity]?.let {
             val bridge = BlockPointerBridge(numberOfParameters = arity, returnsVoid = false)
-            blockToKotlinFunctionConverter(bridge).toConstPointer()
+            with(codegen) { blockToKotlinFunctionConverter(bridge).toConstPointer().toCFunctionPointer() }
         } ?: llvm.nullPointer
     }
 
@@ -1955,7 +1967,7 @@ private fun ObjCExportCodeGeneratorBase.bindObjCExportConvertToRetained(
         convertToRetained: ConstPointer,
 ) {
     try {
-        codegen.bindObjCExportConvertToRetained(irClass, convertToRetained)
+        codegen.bindObjCExportConvertToRetained(irClass, with(codegen) { convertToRetained.toCFunctionPointer() })
     } catch (_: WritableTypeInfoOverrideError) {
         // ObjCExport never tried to catch this error, so ignore.
     }

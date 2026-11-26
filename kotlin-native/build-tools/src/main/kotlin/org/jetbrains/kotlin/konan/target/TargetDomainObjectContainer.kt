@@ -54,9 +54,9 @@ open class TargetDomainObjectContainer<T : Any> constructor(
     /**
      * How to create [T]. Must be set before using the rest of API.
      */
-    lateinit var factory: (TargetWithSanitizer) -> T
+    lateinit var factory: (TargetVariant) -> T
 
-    private val targets: MutableMap<TargetWithSanitizer, T> = mutableMapOf()
+    private val targets: MutableMap<TargetVariant, T> = mutableMapOf()
 
     /**
      * Create or update configuration [T] for [target] and apply [action] to it.
@@ -65,7 +65,7 @@ open class TargetDomainObjectContainer<T : Any> constructor(
      * @param action action to apply to the configuration
      * @return resulting configuration
      */
-    fun target(target: TargetWithSanitizer, action: Action<in T>): T {
+    fun target(target: TargetVariant, action: Action<in T>): T {
         val element = targets.getOrPut(target) { factory(target) }
         action.execute(element)
         return element
@@ -78,7 +78,7 @@ open class TargetDomainObjectContainer<T : Any> constructor(
      * @return resulting configuration
      * @throws UnknownDomainObjectException if configuration for [target] does not exist
      */
-    fun target(target: TargetWithSanitizer): T {
+    fun target(target: TargetVariant): T {
         return targets[target] ?: throw UnknownDomainObjectException("Configuration for $target does not exists")
     }
 

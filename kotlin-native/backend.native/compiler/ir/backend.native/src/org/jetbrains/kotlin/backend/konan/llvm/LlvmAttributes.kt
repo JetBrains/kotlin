@@ -20,6 +20,14 @@ internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendContext, llv
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction, context)
     }
+    if (context.config.arm64e) {
+        // Clang sets these attributes for arm64e. They make functions authenticate indirect calls and gotos, trap when
+        // an authentication fails, and sign the return addresses they save on the stack, which the unwinder authenticates.
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-auth-traps", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-calls", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-indirect-gotos", "")
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-returns", "")
+    }
 }
 
 /**

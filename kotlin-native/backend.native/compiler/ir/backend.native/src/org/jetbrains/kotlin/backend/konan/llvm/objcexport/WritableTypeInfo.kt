@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMLinkage
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.ConstCFunctionPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
@@ -80,7 +81,7 @@ internal class WritableTypeInfoOverrideError(val irClass: IrClass, val reason: R
  */
 internal fun CodeGenerator.bindObjCExportConvertToRetained(
         irClass: IrClass,
-        convertToRetained: ConstPointer,
+        convertToRetained: ConstCFunctionPointer,
 ) = setWritableTypeInfo(
         irClass,
         buildWritableTypeInfoValue(

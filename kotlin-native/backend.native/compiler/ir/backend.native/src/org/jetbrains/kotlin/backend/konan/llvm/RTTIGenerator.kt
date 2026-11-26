@@ -61,7 +61,7 @@ internal class RTTIGenerator(
             classId: Int,
             writableTypeInfo: WritableTypeInfoPointer?,
             associatedObjects: ConstPointer?,
-            processObjectInMark: ConstPointer?,
+            processObjectInMark: ConstCFunctionPointer?,
             requiredAlignment: Int,
     ) : Struct(
                     runtime.typeInfoType,
@@ -221,7 +221,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer().toCFunctionPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.bodyType.alignment
@@ -252,7 +252,7 @@ internal class RTTIGenerator(
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 llvm.nullPointer
             } else {
-                implementation.entryPointAddress
+                implementation.entryPointAddress.toKotlinVtableFunctionPointer()
             }
         }
         return ConstArray(llvm.pointerType, vtableEntries)
@@ -332,7 +332,7 @@ internal class RTTIGenerator(
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
                                 llvm.nullPointer
-                            else impl.entryPointAddress
+                            else impl.entryPointAddress.toKotlinVtableFunctionPointer()
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
@@ -435,7 +435,7 @@ internal class RTTIGenerator(
         val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer().toCFunctionPointer())
         }
 
         return staticData.placeGlobalConstArray(
@@ -445,16 +445,16 @@ internal class RTTIGenerator(
         )
     }
 
-    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstPointer {
+    private fun genProcessObjectInMark(classType: ObjectBodyType): ConstCFunctionPointer {
         val indicesOfObjectFields = classType.sortedIndicesOfObjectFields
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
-                llvm.Kotlin_processEmptyObjectInMark.toConstPointer()
+                llvm.Kotlin_processEmptyObjectInMark.toConstPointer().toCFunctionPointer()
             }
             else -> {
                 // TODO: specialize for "small" objects
-                llvm.Kotlin_processObjectInMark.toConstPointer()
+                llvm.Kotlin_processObjectInMark.toConstPointer().toCFunctionPointer()
             }
         }
     }
@@ -499,7 +499,7 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!! }
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.toKotlinVtableFunctionPointer() }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.pointerType, vtableEntries)
                 val interfaceVTableType = LLVMArrayType(llvm.pointerType, vtableEntries.size)!!
                 InterfaceTableRecord(

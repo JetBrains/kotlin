@@ -87,6 +87,8 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
+    fun arm64eNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/arm64e/native"
+
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "${defaultNatives(target)}/runtime.bc"
 
     fun compilerInterface(target: KonanTarget) =
@@ -132,6 +134,18 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         private fun readResolve(): Any = Distribution(this)
     }
 }
+
+/**
+ * Whether [target] has an arm64e variant, the ABI with pointer authentication that `-Xbinary=arm64e=true` selects.
+ * konan.properties describes the variant with `<property>.arm64e.<target>` entries.
+ */
+fun Distribution.hasArm64eVariant(target: String): Boolean = properties.getProperty("targetTriple.arm64e.$target") != null
+
+/**
+ * Property overrides that replace the triple, CPU and CPU features of [target] with those of its arm64e variant.
+ */
+fun arm64ePropertyOverrides(target: String): Map<String, String> =
+        listOf("targetTriple", "targetCpu", "targetCpuFeatures").associate { "$it.$target" to "\$$it.arm64e.$target" }
 
 // TODO: Move into K/N?
 fun buildDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,true, null, konanDataDir = konanDataDir)

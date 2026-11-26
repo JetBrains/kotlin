@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.library.components
 
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.impl.KlibBitcodeComponentImpl
@@ -20,26 +21,54 @@ import kotlin.io.path.exists
 interface KlibBitcodeComponent : KlibComponent {
     val bitcodeFilePaths: List<Path>
 
-    data class Kind(val target: KonanTarget) : KlibComponent.Kind<KlibBitcodeComponent, KlibBitcodeComponentLayout> {
-        override fun createLayout(root: Path) = KlibBitcodeComponentLayout(target, root)
+    /**
+     * The bitcode of [variant] for [target].
+     */
+    data class Kind(
+        val target: KonanTarget,
+        val variant: BitcodeVariant = BitcodeVariant.DEFAULT,
+    ) : KlibComponent.Kind<KlibBitcodeComponent, KlibBitcodeComponentLayout> {
+        override fun createLayout(root: Path) = KlibBitcodeComponentLayout(target, root, variant)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibBitcodeComponentLayout>): KlibBitcodeComponent? =
             if (layoutReader.readInPlaceOrFallback(false) { it.bitcodeDir.exists() }) KlibBitcodeComponentImpl(layoutReader) else null
     }
 }
 
-fun Klib.bitcode(target: KonanTarget): KlibBitcodeComponent? =
-    getComponent(KlibBitcodeComponent.Kind(target))
+/**
+ * A variant of the bitcode for a target.
+ */
+enum class BitcodeVariant(internal val folderName: String?) {
+    /** The bitcode that binaries of the target link. */
+    DEFAULT(null),
 
-class KlibBitcodeComponentLayout(val target: KonanTarget, root: Path) : KlibComponentLayout(root) {
+    /** The bitcode compiled for arm64e, which binaries compiled with `-Xbinary=arm64e=true` link instead. */
+    ARM64E(KLIB_ARM64E_FOLDER_NAME),
+}
+
+fun Klib.bitcode(target: KonanTarget, variant: BitcodeVariant = BitcodeVariant.DEFAULT): KlibBitcodeComponent? =
+    getComponent(KlibBitcodeComponent.Kind(target, variant))
+
+class KlibBitcodeComponentLayout(
+    val target: KonanTarget,
+    root: Path,
+    val variant: BitcodeVariant = BitcodeVariant.DEFAULT,
+) : KlibComponentLayout(root) {
     val bitcodeDir: Path
         get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME)
             .resolve(KLIB_TARGETS_FOLDER_NAME)
             .resolve(target.visibleName)
+            .let { targetDir -> variant.folderName?.let(targetDir::resolve) ?: targetDir }
             .resolve(KLIB_BITCODE_FOLDER_NAME)
 }
 
 /** Constants for bitcode files stored in Native Klibs. */
 object KlibBitcodeConstants {
     const val KLIB_BITCODE_FOLDER_NAME = "native"
+    const val KLIB_ARM64E_FOLDER_NAME = "arm64e"
+
+    /**
+     * Lists the bitcode variants that the library has besides the default one. The only such variant so far is `arm64e`.
+     */
+    const val KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS = "native_bitcode_variants"
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.arm64ePropertyOverrides
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
@@ -446,6 +447,16 @@ private fun processCLib(
     }
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
+
+    fun compileStubsToBitcode(compilerArgs: Array<String>, outLib: File): String {
+        // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+        // The source file is passed in via stdin to ensure the output library is deterministic.
+        val compilerCmd = arrayOf(compiler, *compilerArgs,
+                "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
+        runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
+        return outLib.absolutePath
+    }
+
     val nativeOutputPath: String? = if (cinteropArguments.headerMode) null else {
         when (flavor) {
             KotlinPlatform.JVM -> {
@@ -470,21 +481,22 @@ private fun processCLib(
                 // We could introduce another flag to control that, but let's keep things simple for now.
                 null
             }
-            KotlinPlatform.NATIVE -> {
-                val outLib = File(nativeLibsDir, "$libName.bc")
-                // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
-                // The source file is passed in via stdin to ensure the output library is deterministic.
-                val compilerCmd = arrayOf(compiler, *compilerArgs,
-                        "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-                runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
-                outLib.absolutePath
-            }
+            KotlinPlatform.NATIVE -> compileStubsToBitcode(compilerArgs, File(nativeLibsDir, "$libName.bc"))
         }
     }
 
     val compiledFiles = if (cinteropArguments.headerMode) emptyList() else {
         compileSources(nativeLibsDir, tool, cinteropArguments)
     }
+
+    val arm64eBitcodeFiles = compileArm64eBitcode(
+            cinteropArguments, tool, flavor, def, library, File(nativeLibsDir, "arm64e"),
+            // Without stubs, the library has no bitcode at all, because header mode compiles nothing and
+            // -Xccall-mode direct doesn't allow -Xcompile-source.
+            compileStubs = if (nativeOutputPath == null) null else { compilerArgs, outputDir ->
+                compileStubsToBitcode(compilerArgs, File(outputDir, "$libName.bc"))
+            },
+    )
 
     return when (stubIrOutput) {
         is StubIrDriver.Result.SourceCode -> {
@@ -524,6 +536,7 @@ private fun processCLib(
             createInteropLibrary(
                     serializedMetadata = serializedMetadata,
                     nativeBitcodeFiles = (compiledFiles + listOfNotNull(nativeOutputPath)).map(::Path),
+                    arm64eBitcodeFiles = arm64eBitcodeFiles.map(::Path),
                     target = tool.target,
                     moduleName = moduleName,
                     outputPath = Path(outputPath),
@@ -587,6 +600,65 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
                 // No specific restrictions for now.
             }
         }
+
+/**
+ * Compiles the library's -Xcompile-source files and C stubs for the arm64e variant of its target into [outputDir], and
+ * returns the bitcode files. Returns an empty list if [CInteropArguments.arm64eBitcode] is [Arm64eBitcodeMode.DISABLED],
+ * if the target has no arm64e variant, or if the library has no bitcode (the JVM flavor, or no stubs). If the
+ * compilation fails, throws an exception that suggests '-Xarm64e-bitcode disabled'.
+ */
+private fun compileArm64eBitcode(
+        cinteropArguments: CInteropArguments,
+        tool: ToolConfig,
+        flavor: KotlinPlatform,
+        def: DefFile,
+        library: NativeLibrary,
+        outputDir: File,
+        compileStubs: ((compilerArgs: Array<String>, outputDir: File) -> String)?,
+): List<String> {
+    val mode = cinteropArguments.arm64eBitcode
+    when {
+        mode == Arm64eBitcodeMode.DISABLED -> return emptyList()
+        !tool.hasArm64eVariant -> {
+            if (mode == Arm64eBitcodeMode.ENABLED) {
+                warn("'-Xarm64e-bitcode' is supported only for the iosArm64 and macosArm64 targets and is ignored.")
+            }
+            return emptyList()
+        }
+        // Only libraries of the native flavor store bitcode.
+        flavor != KotlinPlatform.NATIVE -> return emptyList()
+        compileStubs == null -> return emptyList()
+    }
+    return try {
+        // The same sources and stubs, compiled with the arm64e variant of the target.
+        val arm64eTool = ToolConfig(
+                tool.target.name,
+                flavor,
+                // As in the compiler, overrides from the command line take precedence.
+                arm64ePropertyOverrides(tool.target.name) + parseKeyValuePairs(cinteropArguments.overrideKonanProperties),
+                cinteropArguments.konanDataDir,
+                cinteropArguments.konanHome,
+        )
+        outputDir.mkdirs()
+        // The stubs get their declarations from precompiled headers, so those have to be compiled for arm64e too. As for
+        // the ordinary stubs, precompile the library's headers first, then the ones the stubs add.
+        val stubsCompilation = CompilationImpl(
+                includes = library.includes,
+                additionalPreambleLines = library.additionalPreambleLines,
+                compilerArgs = nativeLibraryCompilerArgs(arm64eTool, def, cinteropArguments, library.language),
+                language = library.language,
+        ).precompileHeaders().forCStubs(flavor).precompileHeaders()
+        compileSources(outputDir.absolutePath, arm64eTool, cinteropArguments) +
+                compileStubs(stubsCompilation.compilerArgs.toTypedArray(), outputDir)
+    } catch (e: Throwable) {
+        if (e is VirtualMachineError) throw e
+        throw IllegalStateException(
+                "Failed to compile the library's arm64e bitcode, which binaries built with '-Xbinary=arm64e=true' need. " +
+                        "To create the library without it, use '-Xarm64e-bitcode disabled'.\n${e.message}",
+                e,
+        )
+    }
+}
 
 private fun compileSources(
         nativeLibsDir: String,
@@ -655,6 +727,23 @@ internal fun prepareTool(
 
 internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
 
+/**
+ * The arguments that [tool] uses to compile the [language] headers of the library that [def] describes.
+ */
+private fun nativeLibraryCompilerArgs(tool: ToolConfig, def: DefFile, arguments: CInteropArguments, language: Language): List<String> {
+    val additionalCompilerOpts = (arguments.compilerOpts +
+            arguments.compilerOptions + arguments.compilerOption).toTypedArray()
+
+    val compilerOpts: List<String> = mutableListOf<String>().apply {
+        addAll(def.config.compilerOpts)
+        addAll(tool.getDefaultCompilerOptsForLanguage(language))
+        addAll(additionalCompilerOpts)
+        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
+        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see buildNativeLibrary)
+    }
+    return defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts
+}
+
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
@@ -662,18 +751,9 @@ internal fun buildNativeLibrary(
         imports: Imports
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
-    val additionalCompilerOpts = (arguments.compilerOpts +
-            arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
-    val compilerOpts: List<String> = mutableListOf<String>().apply {
-        addAll(def.config.compilerOpts)
-        addAll(tool.getDefaultCompilerOptsForLanguage(language))
-        addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
-        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
-    }
 
     // Expanding macros such as __FILE__ or __TIME__ exposes arbitrary generated filenames and timestamps from the compiler pipeline
     // which are not useful for interop though makes the klib generation non-deterministic. See KT-54284
@@ -685,7 +765,7 @@ internal fun buildNativeLibrary(
     val compilation = CompilationImpl(
             includes = headerFiles.map { IncludeInfo(it, null) },
             additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
-            compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
+            compilerArgs = nativeLibraryCompilerArgs(tool, def, arguments, language),
             language = language
     )
 

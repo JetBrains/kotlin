@@ -132,6 +132,11 @@ object BinaryOptions : BinaryOptionRegistry() {
      */
     val macabi by booleanOption()
 
+    /**
+     * Generate an arm64e (pointer authentication) binary for iosArm64 or macosArm64
+     */
+    val arm64e by booleanOption()
+
     val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
 
     val perFileCacheForStdlib by booleanOption()

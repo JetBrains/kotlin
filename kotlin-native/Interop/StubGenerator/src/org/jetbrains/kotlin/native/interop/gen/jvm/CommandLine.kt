@@ -179,6 +179,27 @@ open class CInteropArguments(argParser: ArgParser =
 
     val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
             description = "Generate only metadata, skip bridge validation and bitcode compilation. Declarations with non-compilable C bridges will not be deprecated or excluded in this mode, deferring errors to link-time.").default(false)
+
+    val arm64eBitcode by argParser.option(
+            ArgType.Choice<Arm64eBitcodeMode>(),
+            "Xarm64e-bitcode",
+            description = "For iosArm64 and macosArm64, also store bitcode compiled for arm64e, " +
+                    "which is linked into binaries built with '-Xbinary=arm64e=true'. " +
+                    "Enabled by default. To skip it, use 'disabled'. If the arm64e compilation fails, cinterop fails too."
+    )
+}
+
+/**
+ * Whether cinterop also compiles the bitcode of a library for the arm64e variant of its target, see
+ * [CInteropArguments.arm64eBitcode]. Without the option, cinterop compiles the arm64e bitcode for every target that has
+ * an arm64e variant.
+ */
+enum class Arm64eBitcodeMode {
+    /** Compile the arm64e bitcode, and warn if the target has no arm64e variant. */
+    ENABLED,
+
+    /** Don't compile the arm64e bitcode. */
+    DISABLED,
 }
 
 internal fun warn(msg: String) {

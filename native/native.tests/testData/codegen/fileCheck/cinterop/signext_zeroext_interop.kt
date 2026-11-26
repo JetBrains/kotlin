@@ -76,7 +76,7 @@ fun checkDirectInterop() {
     // CHECK-AAPCS: invoke i16 [[UNSIGNED_SHORT_ID_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](i16 {{.*}})
     // CHECK-WINDOWSX64: invoke i16 [[UNSIGNED_SHORT_ID_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](i16 {{.*}})
     unsigned_short_id(0.toUShort())
-    // CHECK-DEFAULTABI: invoke i32 [[CALLBACK_USER_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](ptr [[STATIC_C_FUNCTION_BRIDGE:@_.*_[0-9]+_kncfun[0-9]+]])
+    // CHECK-DEFAULTABI: invoke i32 [[CALLBACK_USER_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](ptr {{(ptrauth \(ptr )?}}[[STATIC_C_FUNCTION_BRIDGE:@_.*_[0-9]+_kncfun[0-9]+]]{{(, i32 0\))?}})
     // CHECK-AAPCS: invoke i32 [[CALLBACK_USER_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](ptr [[STATIC_C_FUNCTION_BRIDGE:@_.*_[0-9]+_kncfun[0-9]+]])
     // CHECK-WINDOWSX64: invoke i32 [[CALLBACK_USER_BRIDGE:@_.*_[0-9]+_knbridge[0-9]+]](ptr [[STATIC_C_FUNCTION_BRIDGE:@_.*_[0-9]+_kncfun[0-9]+]])
     callbackUser(staticCFunction { int: Int, short: Short -> int + short })
