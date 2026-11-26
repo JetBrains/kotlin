@@ -15,6 +15,5 @@ object LightTreeParseTreeKind : ParseTreeKind() {
     override val isKmp: Boolean = false
 
     override val PositioningStrategyKind.positioningStrategy: LightTreePositioningStrategy
-        get() = LightTreePositioningStrategies.kindToStrategy[this]
-            ?: error("No light tree positioning strategy is registered for ${this::class.simpleName}")
+        get() = LightTreePositioningStrategies[this]
 }

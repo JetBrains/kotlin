@@ -15,6 +15,5 @@ object PsiParseTreeKind : ParseTreeKind() {
     override val isKmp: Boolean = false
 
     override val PositioningStrategyKind.positioningStrategy: PsiPositioningStrategy<*>
-        get() = PsiPositioningStrategies.kindToStrategy[this]
-            ?: error("No PSI positioning strategy is registered for ${this::class.simpleName}")
+        get() = PsiPositioningStrategies[this]
 }

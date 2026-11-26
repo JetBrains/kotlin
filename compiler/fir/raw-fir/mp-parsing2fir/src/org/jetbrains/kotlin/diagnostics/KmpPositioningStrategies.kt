@@ -11,15 +11,7 @@ package org.jetbrains.kotlin.diagnostics
  *
  * TODO: implement the strategies based on LightTreePositioningStrategies, KT-91322
  */
-object KmpPositioningStrategies {
-    val kindToStrategy: Map<PositioningStrategyKind, KmpPositioningStrategy>
-        field: MutableMap<PositioningStrategyKind, KmpPositioningStrategy> = mutableMapOf()
-
-    private fun KmpPositioningStrategy.registerAs(kind: PositioningStrategyKind) {
-        require(kind !in kindToStrategy) { "${kind::class.simpleName} is already registered" }
-        kindToStrategy[kind] = this
-    }
-
+object KmpPositioningStrategies : PositioningStrategyRegistry<KmpPositioningStrategy>() {
     init {
         KmpPositioningStrategy().registerAs(PositioningStrategyKinds.DEFAULT)
 

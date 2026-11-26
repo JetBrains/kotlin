@@ -15,6 +15,5 @@ object KmpParseTreeKind : ParseTreeKind() {
     override val isKmp: Boolean = true
 
     override val PositioningStrategyKind.positioningStrategy: KmpPositioningStrategy
-        get() = KmpPositioningStrategies.kindToStrategy[this]
-            ?: error("No KMP positioning strategy is registered for ${this::class.simpleName}")
+        get() = KmpPositioningStrategies[this]
 }
