@@ -27,7 +27,7 @@ fun AbstractTwoStageKotlinCompilerTest.runSanityTest(@TestDataFile filePath: Str
  * stage, even if all of them were suppressed without muting the test.
  */
 private fun AbstractTwoStageKotlinCompilerTest.runSanityTestStages(filePath: String): Boolean {
-    initTestRunnerAndCreateModuleStructure(filePath)
+    initSanityTestRunnerAndCreateModuleStructure(filePath)
     try {
         nonGroupingRunner.runTestPreprocessing()
         nonGroupingRunner.runSteps()

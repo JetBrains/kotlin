@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerJsTest
 import org.jetbrains.kotlin.test.klib.KlibOnlyFirstStageStateReleaser
+import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheCloser
+import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheConfigurator
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -88,7 +90,8 @@ abstract class AbstractJsTwoStageCodegenBoxTestBase(
             }
 
             useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)
-            useAfterAnalysisCheckers(::NonIncrementalFirstStageStateReleaser)
+            useConfigurators(::KlibZipFileSystemCacheConfigurator)
+            useAfterAnalysisCheckers(::KlibZipFileSystemCacheCloser, ::NonIncrementalFirstStageStateReleaser)
         }
 
         groupingStage {

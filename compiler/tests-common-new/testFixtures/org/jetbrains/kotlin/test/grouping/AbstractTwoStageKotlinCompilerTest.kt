@@ -40,6 +40,7 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
             startingArtifactFactory = { ResultingArtifact.Source() }
             testInfo = this@AbstractTwoStageKotlinCompilerTest.testInfo
             useGroupingTestIsolators(::MutedTestsIsolator, { RetriedTestIsolator(it) { isRetriedInIsolation } })
+            if (!isSanityTest) useGroupingTestIsolators(::AllTestsIsolator)
         }
 
         groupingStage {
@@ -51,6 +52,10 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
 
 
     private lateinit var testInfo: KotlinTestInfo
+
+    /** A sanity test checks the grouping itself, so [AllTestsIsolator] must not isolate it. */
+    private var isSanityTest: Boolean = false
+
     final override lateinit var nonGroupingRunner: NonGroupingTestRunner
         private set
 
@@ -95,6 +100,11 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
     fun initTestRunnerAndCreateModuleStructure(@TestDataFile filePath: String) {
         initTestRunners(filePath)
         nonGroupingRunner.prepareModuleStructure(filePath)
+    }
+
+    internal fun initSanityTestRunnerAndCreateModuleStructure(@TestDataFile filePath: String) {
+        isSanityTest = true
+        initTestRunnerAndCreateModuleStructure(filePath)
     }
 }
 

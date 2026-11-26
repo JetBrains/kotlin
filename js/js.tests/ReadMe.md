@@ -58,6 +58,9 @@ There is a helpful tool for running and debugging JS code generated from test fi
 Note that this will only work for files generated in the `FULL` translation mode,
 because these files are self-sufficient and don't require any dependencies.
 
+The run configuration calls `box()` of the test, which the JS of a batch of tests (see above) does not export.
+For a test that is run in batches, generate the JS with `-Pkotlin.test.grouping.engine.all.tests.isolated=true` first.
+
 Open a generated JS file located in `js/js.tests/build/node/out`, select
 the "run IR test in node.js" run configuration in IDEA, and click on the "Run" or "Debug" icon.
 The test output will be printed in the console.
