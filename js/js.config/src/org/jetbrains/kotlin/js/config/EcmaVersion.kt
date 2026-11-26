@@ -26,6 +26,3 @@ enum class EcmaVersion {
 
 val EcmaVersion?.supportsEsModules: Boolean
     get() = this != null && this >= EcmaVersion.es2015
-
-val EcmaVersion?.supportsPerFileGranularity: Boolean
-    get() = this != null && this >= EcmaVersion.es2015
