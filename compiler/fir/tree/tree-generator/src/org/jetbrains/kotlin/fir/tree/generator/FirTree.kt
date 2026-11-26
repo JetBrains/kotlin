@@ -808,6 +808,18 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val declarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = """
+            [FirDeclarationStatus] represents a storage of various modifers which are applicable to declarations.
+            It includes such information as visibility, modality, expect/actual flags and so on.
+            
+            This class has two inheritors, [FirCallableDeclarationStatus] and [FirClassLikeDeclarationStatus], which 
+            contain modifiers which are specific to callable declarations (e.g. `operator`) and class-like
+            declarations (e.g. `data`), respectively.
+            
+            [FirMemberDeclaration] has a property of type [FirDeclarationStatus], but its inheritors ([FirCallableDeclaration]
+            and [FirClassLikeDeclaration]) override it with more specific status type, so none of actual FIR declarations
+            exposes raw [FirDeclarationStatus].
+        """.trimIndent()
 
         +field(visibilityType)
         +field(modalityType, nullable = true)
@@ -820,6 +832,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val callableDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = "@see [FirDeclarationStatus]"
 
         parent(declarationStatus)
 
@@ -832,6 +845,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val classLikeDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = "@see [FirDeclarationStatus]"
 
         parent(declarationStatus)
 
@@ -844,6 +858,12 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val resolvedDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = """
+            [FirResolvedDeclarationStatus] is a [FirDeclarationStatus] which was resolved during
+            status resolution phase. If unresolved status have flags set based on what was written
+            in the source code, in the resolved status some of them are reified (e.g. override function
+            could be an `operator`, if the overridden function is an `operator`).
+        """.trimIndent()
 
         parent(declarationStatus)
 
@@ -853,6 +873,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val resolvedCallableDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = "@see [FirResolvedDeclarationStatus]"
 
         parent(callableDeclarationStatus)
         parent(resolvedDeclarationStatus)
@@ -863,6 +884,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val resolvedClassLikeDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
+        kDoc = "@see [FirResolvedDeclarationStatus]"
 
         parent(classLikeDeclarationStatus)
         parent(resolvedDeclarationStatus)
