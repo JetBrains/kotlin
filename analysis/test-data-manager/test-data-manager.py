@@ -75,6 +75,8 @@ BUILD_GENERATED_TESTS = re.compile(r"generateTestsInBuildDirectory\s*=\s*true")
 CUSTOM_PROJECT_DIRECTORY = re.compile(
     r'project\(\s*"(?P<project>:[^"]+)"\s*\)\.projectDir\s*=\s*(?:File|file)\(\s*"\$rootDir/(?P<directory>[^"]+)"\s*\)'
 )
+# Any assignment of a project directory: each one must be a [CUSTOM_PROJECT_DIRECTORY]
+PROJECT_DIRECTORY_ASSIGNMENT = re.compile(r"\bprojectDir\s*=(?!=)")
 
 EXIT_PASSED, EXIT_FAILED, EXIT_ERROR, EXIT_INTERRUPTED = 0, 1, 2, 130
 
@@ -149,14 +151,23 @@ def custom_project_directories(root: Path) -> Dict[str, str]:
     """
     The projects `settings.gradle.kts` gives another directory than the default one, e.g., `:kotlin-allopen-compiler-plugin` in
     `plugins/allopen`: {project path: repository-relative directory}.
+
+    Fails on an assignment of a project directory in another form, which would leave the module its default project path.
     """
     settings = root / "settings.gradle.kts"
     if not settings.is_file():
         return {}
-    return {
-        match.group("project"): match.group("directory").rstrip("/")
-        for match in CUSTOM_PROJECT_DIRECTORY.finditer(settings.read_text(encoding="utf-8"))
-    }
+    text = settings.read_text(encoding="utf-8")
+    matches = list(CUSTOM_PROJECT_DIRECTORY.finditer(text))
+    unread_lines = [
+        str(text.count("\n", 0, assignment.start()) + 1)
+        for assignment in PROJECT_DIRECTORY_ASSIGNMENT.finditer(text)
+        if not any(match.start() <= assignment.start() < match.end() for match in matches)
+    ]
+    if unread_lines:
+        raise ValueError(f"CUSTOM_PROJECT_DIRECTORY in {Path(__file__).name} doesn't read the project directory on line "
+                         f"{', '.join(unread_lines)} of {settings}; update the pattern")
+    return {match.group("project"): match.group("directory").rstrip("/") for match in matches}
 
 
 def directory_project(root: Path, directory: str) -> str:
