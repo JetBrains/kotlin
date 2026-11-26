@@ -152,6 +152,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     if (project.providers.systemProperty("idea.active").isPresent) {
         extra["idea.internal.test"] = true
         systemProperty("idea.active", "true")
+        ideIntegration.set(true)
     }
 
     // Pass project name for unique test IDs when running multiple modules in parallel
