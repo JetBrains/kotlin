@@ -60,12 +60,7 @@ class LLFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtF
             return
         }
 
-        if (managedTestData?.updatesTestData == true) {
-            if (managedTestData.isWriteTarget(llFile)) {
-                managedTestData.deleteWriteTargetFile()
-            }
-            return
-        }
+        if (managedTestData?.deleteRedundantWriteTargetFile() == true) return
 
         testServices.assertions.fail { redundancyMessage }
     }

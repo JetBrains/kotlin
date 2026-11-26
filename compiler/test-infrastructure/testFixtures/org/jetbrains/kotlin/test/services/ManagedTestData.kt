@@ -37,7 +37,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      * Whether the test data is updated rather than checked. A muted test is checked even by `updateTestData`, as its output is expected
      * to be wrong, and so is a test whose inline diagnostics were incomplete or failed to be written (see [assertEqualsToTestDataFile]).
      */
-    val updatesTestData: Boolean
+    internal val updatesTestData: Boolean
         get() = mode == TestDataManagerMode.UPDATE && isInlineComparisonSuccessful != false
 
     /**
@@ -78,12 +78,13 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      * Whether [file] is created, updated, deleted or checked by a managed assertion of the test, so no other code may write it, e.g., the
      * legacy update of a failed check of the file under `kotlin.test.update.test.data`.
      */
-    fun isWriteTarget(file: File): Boolean = file.toPath().normalizedAbsolute() in writeTargetFiles
+    internal fun isWriteTarget(file: File): Boolean = file.toPath().normalizedAbsolute() in writeTargetFiles
 
     /**
-     * Marks [file] as checked by a managed assertion of the test, see [isWriteTarget].
+     * Marks [file] as created, updated, deleted or checked by a managed assertion of the test, see [isWriteTarget].
      */
-    internal fun addCheckedFile(file: File) {
+    internal fun addWriteTarget(file: File) {
+        // `add`, not `+=`: a `Path` is an `Iterable<Path>` of its name elements
         writeTargetFiles.add(file.toPath().normalizedAbsolute())
     }
 
@@ -92,7 +93,10 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      * exists or not.
      */
     val writeTargetFile: File
-        get() = inlineWriteTargetFile.toFile()
+        get() = ManagedTestAssertions
+            .getWriteTargetFile(baseTestDataFile.toPath(), variantChain, extension)
+            .normalizedAbsolute()
+            .toFile()
 
     /**
      * The test data the test would read if [writeTargetFile] didn't exist, e.g., `foo.ll.kt` or `foo.kt` for the `[ll, reversed]` variant
@@ -100,11 +104,6 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      */
     val fallbackFile: File?
         get() = ManagedTestAssertions.findFallbackFile(baseTestDataFile.toPath(), variantChain, extension)?.toFile()
-
-    private val inlineWriteTargetFile: Path
-        get() = ManagedTestAssertions
-            .getWriteTargetFile(baseTestDataFile.toPath(), variantChain, extension)
-            .normalizedAbsolute()
 
     /**
      * Whether [assertEqualsToTestDataFile] compared complete inline diagnostics and passed: `false` if they were incomplete or if the
@@ -114,7 +113,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
 
     /**
      * The edits of the test data made before the comparison of the inline diagnostics. They wait for it, as it would overwrite the edits
-     * of [inlineWriteTargetFile], and as they come from the same analysis: they are dropped if its diagnostics are incomplete or if it
+     * of [writeTargetFile], and as they come from the same analysis: they are dropped if its diagnostics are incomplete or if it
      * fails.
      */
     private val pendingEdits: MutableList<Pair<File, (String) -> String>> = mutableListOf()
@@ -125,8 +124,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      */
     fun assertEqualsToTestDataFile(actual: String, isActualComplete: Boolean) {
         val testDataPath = baseTestDataFile.toPath()
-        // `add`, not `+=`: a `Path` is an `Iterable<Path>` of its name elements
-        writeTargetFiles.add(inlineWriteTargetFile)
+        addWriteTarget(writeTargetFile)
         // `false` until the comparison passes, so that no edit is applied after a failed one
         isInlineComparisonSuccessful = false
         val edits = pendingEdits.toList()
@@ -150,10 +148,13 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
     /**
      * Deletes [writeTargetFile] in `updateTestData` as redundant, e.g., an `.ll.kt` which differs from the test data it falls back to only
      * in the `LL_FIR_DIVERGENCE` directive: the test data manager can't detect such redundancy itself. The deletion goes through
-     * [ManagedTestAssertions], so the run reports it.
+     * [ManagedTestAssertions], so the run reports it. A variant the test didn't compare is left alone, see [isWriteTarget].
+     *
+     * Returns `false` if the test data isn't updated, so the caller reports the redundancy instead.
      */
-    fun deleteWriteTargetFile() {
-        check(updatesTestData) { "`$writeTargetFile` may be deleted only by `updateTestData`" }
+    fun deleteRedundantWriteTargetFile(): Boolean {
+        if (!updatesTestData) return false
+        if (!isWriteTarget(writeTargetFile)) return true
         ManagedTestAssertions.assertEqualsToTestDataFile(
             testDataPath = baseTestDataFile.toPath(),
             actual = null,
@@ -161,6 +162,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
             extension = extension,
             mode = TestDataManagerMode.UPDATE,
         )
+        return true
     }
 
     /**
@@ -192,7 +194,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
     }
 
     private fun applyEdit(file: File, edit: (String) -> String) {
-        writeTargetFiles.add(file.toPath().normalizedAbsolute())
+        addWriteTarget(file)
         ManagedTestAssertions.updateTestDataFile(
             testDataPath = baseTestDataFile.toPath(),
             file = file.toPath(),
@@ -225,7 +227,7 @@ fun TestServices.assertFileUnchangedBy(
         managedTestData.updateFile(file, edit)
     } else {
         // Only `updateTestData` applies the edit to the test data of a managed test
-        managedTestData?.addCheckedFile(file)
+        managedTestData?.addWriteTarget(file)
         assertions.assertEqualsToFile(file, edit(file.readText()), message = message)
     }
 }
