@@ -109,7 +109,7 @@ internal fun dumpDeclarationIds(
     fun add(symbol: KaSymbol) {
         try {
             val id = generateDeclarationId(symbol, hashSignature = hashSignature)
-            ids.getOrPut(id) { mutableListOf() }.add(symbol.realPsi)
+            ids.getOrPut(id.value) { mutableListOf() }.add(symbol.realPsi)
         } catch (e: IllegalArgumentException) {
             error("Failed to generate a declaration ID for $symbol: ${e.message}")
         }
