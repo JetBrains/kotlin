@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
-// ^^^ AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest does not invoke Fir2IR and IR Lowerings
-//     so cannot emit IR diagnostics
+// AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest (`.latestLV.kt`) does not invoke Fir2IR and IR Lowerings,
+// so cannot emit IR diagnostics
 val t2 = context(a: String) <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun() {}
 
 /* GENERATED_FIR_TAGS: anonymousFunction, propertyDeclaration */
