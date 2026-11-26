@@ -89,3 +89,20 @@ fun hotInvalidate(): Int {
     Harness.frame()
     return Harness.revision.value
 }
+
+@WasmExport("bumpLoop")
+fun bumpLoop(n: Int): Int {
+    var r = 0
+    var i = 0
+    while (i < n) { r = bumpRemembered(); i++ }
+    return r
+}
+
+@WasmExport("invLoop")
+fun invLoop(n: Int): Int {
+    val inv = ::hotInvalidate
+    var r = 0
+    var i = 0
+    while (i < n) { r = inv(); i++ }
+    return r
+}
