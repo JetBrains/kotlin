@@ -95,7 +95,7 @@ public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
  * Returns the first non-null value produced by [transform] function being applied to characters of this char sequence in iteration order,
  * or throws [NoSuchElementException] if no non-null value was produced.
  * 
- * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ * @sample samples.text.Strings.firstNotNullOf
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -107,7 +107,7 @@ public inline fun <R : Any> CharSequence.firstNotNullOf(transform: (Char) -> R?)
  * Returns the first non-null value produced by [transform] function being applied to characters of this char sequence in iteration order,
  * or `null` if no non-null value was produced.
  * 
- * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ * @sample samples.text.Strings.firstNotNullOf
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -139,7 +139,7 @@ public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Elements.getOrElse
+ * @sample samples.text.Strings.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
@@ -152,7 +152,7 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Elements.getOrNull
+ * @sample samples.text.Strings.getOrNull
  */
 public fun CharSequence.getOrNull(index: Int): Char? {
     return if (index in indices) get(index) else null
