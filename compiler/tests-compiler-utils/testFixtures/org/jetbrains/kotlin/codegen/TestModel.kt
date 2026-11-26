@@ -29,6 +29,7 @@ class ProjectInfo(
         val order: List<String>,
         val dirtyJsFiles: List<String>,
         val dirtyJsModules: List<String>,
+        val dirtyJsPerClassFiles: List<String>? = null,
         val language: List<String>,
     )
 }
@@ -89,9 +90,11 @@ private const val MODULES_KIND = "MODULE_KIND"
 private const val LIBS_LIST = "libs"
 private const val DIRTY_JS_FILES_LIST = "dirty js files"
 private const val DIRTY_JS_MODULES_LIST = "dirty js modules"
+private const val DIRTY_JS_PER_CLASS_FILES_LIST = "dirty js per-class files"
 private const val LANGUAGE = "language"
 private const val IGNORE_PER_FILE = "IGNORE_PER_FILE"
 private const val IGNORE_PER_MODULE = "IGNORE_PER_MODULE"
+private const val IGNORE_PER_CLASS = "IGNORE_PER_CLASS"
 private const val TYPESCRIPT_DEFINITIONS = "TYPESCRIPT_DEFINITIONS"
 private const val IGNORE_BACKEND = "IGNORE_BACKEND"
 private const val TARGET_BACKEND = "TARGET_BACKEND"
@@ -162,6 +165,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
         val order = mutableListOf<String>()
         val dirtyJsFiles = mutableListOf<String>()
         val dirtyJsModules = mutableListOf<String>()
+        var dirtyJsPerClassFiles: MutableList<String>? = null
         val language = mutableListOf<String>()
 
         loop { line ->
@@ -187,6 +191,8 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 LIBS_LIST -> order += split[1].splitAndTrim()
                 DIRTY_JS_FILES_LIST -> dirtyJsFiles += split[1].splitAndTrim()
                 DIRTY_JS_MODULES_LIST -> dirtyJsModules += split[1].splitAndTrim()
+                DIRTY_JS_PER_CLASS_FILES_LIST -> dirtyJsPerClassFiles =
+                    (dirtyJsPerClassFiles ?: mutableListOf()).apply { this += split[1].splitAndTrim() }
                 LANGUAGE -> language += split[1].splitAndTrim()
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
@@ -194,7 +200,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
             false
         }
 
-        return (firstId..lastId).map { ProjectInfo.ProjectBuildStep(it, order, dirtyJsFiles, dirtyJsModules, language) }
+        return (firstId..lastId).map { ProjectInfo.ProjectBuildStep(it, order, dirtyJsFiles, dirtyJsModules, dirtyJsPerClassFiles, language) }
     }
 
     override fun parse(entryName: String): ProjectInfo {
@@ -229,6 +235,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 op == CALL_MAIN && split[1].trim() == "true" -> callMain = true
                 op == IGNORE_PER_FILE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_FILE
                 op == IGNORE_PER_MODULE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_MODULE
+                op == IGNORE_PER_CLASS && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_CLASS
                 op == TYPESCRIPT_DEFINITIONS && split[1].trim() == "true" -> checkTypeScriptDefinitions = true
                 op == MODULES_KIND -> moduleKind = split[1].trim()
                     .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
