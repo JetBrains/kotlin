@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
-import org.jetbrains.kotlin.test.utils.NO_ALIAS_EXPANSION_VARIANT
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -71,7 +70,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest :
  */
 open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest {
     override val variantChain: TestVariantChain
-        get() = listOf(NO_ALIAS_EXPANSION_VARIANT)
+        get() = DiagnosticsVariantChains.NO_ALIAS_EXPANSION
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
