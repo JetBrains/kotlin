@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SymbolFinder
+import org.jetbrains.kotlin.ir.backend.js.JsPrimitiveArrayType
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -77,7 +78,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             is BackendWasmSymbols.CoroutinesStackSwitchingIntrinsics -> validateContainer(result)
             is BackendWasmSymbols.CoroutinesStateMachineIntrinsics -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
-            null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType,
+            null, is FqName, is Name, is String, is PrimitiveBinaryType, is BoxCache, is PrimitiveType, is UnsignedType, is JsPrimitiveArrayType,
             is IrFactory, is LanguageVersionSettings, is IrExternalPackageFragment, is IrModuleFragment, is SymbolFinder -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }

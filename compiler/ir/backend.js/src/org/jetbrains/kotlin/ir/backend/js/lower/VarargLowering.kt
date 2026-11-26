@@ -183,8 +183,7 @@ private fun List<IrExpression>.toArrayLiteral(
     startOffset: Int,
     endOffset: Int,
 ): IrExpression {
-
-    val primitiveType = context.irBuiltIns.primitiveArraysToPrimitiveTypes.mapKeys { it.key }[type.classifierOrNull]
+    val primitiveType = context.symbols.primitiveArraysToPrimitiveTypes[type.classifierOrNull]
 
     val intrinsic =
         if (primitiveType != null)

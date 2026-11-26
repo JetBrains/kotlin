@@ -444,7 +444,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 JsIrBuilder.buildCall(context.symbols.isCharSequenceSymbol).apply { arguments[0] = argument }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
-                val f = context.symbols.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
+                val primitiveType = context.symbols.primitiveArraysToPrimitiveTypes[toType.classifierOrNull]!!
+                val f = context.symbols.isPrimitiveArray[primitiveType]!!
                 return JsIrBuilder.buildCall(f).apply { arguments[0] = argument }
             }
 

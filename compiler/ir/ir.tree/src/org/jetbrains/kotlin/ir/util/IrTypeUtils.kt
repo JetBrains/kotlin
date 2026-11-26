@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,10 +107,6 @@ private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boole
 }
 
 fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FqNames.primitiveArrayTypeShortNames }
-
-fun IrType.getPrimitiveArrayElementType() = (this as? IrSimpleType)?.let {
-    (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FqNames.arrayClassFqNameToPrimitiveType[fqn] }
-}
 
 fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): IrType =
     substitute(params.map { it.symbol }.zip(arguments).toMap())

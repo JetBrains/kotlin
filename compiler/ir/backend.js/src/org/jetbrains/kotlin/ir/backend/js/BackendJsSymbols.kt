@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 abstract class BackendWebSymbols(
     irBuiltIns: IrBuiltIns,
@@ -266,26 +265,12 @@ class BackendJsSymbols(
 
     val longCopyOfRangeForBoxedLong by CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbolOrNull()
 
-    val isPrimitiveArray by run {
-        val isBooleanArray by CallableIds.isBooleanArray.functionSymbol()
-        val isByteArray by CallableIds.isByteArray.functionSymbol()
-        val isShortArray by CallableIds.isShortArray.functionSymbol()
-        val isCharArray by CallableIds.isCharArray.functionSymbol()
-        val isIntArray by CallableIds.isIntArray.functionSymbol()
-        val isFloatArray by CallableIds.isFloatArray.functionSymbol()
-        val isLongArray by CallableIds.isLongArray(compileLongAsBigint).functionSymbolOrNull()
-        val isDoubleArray by CallableIds.isDoubleArray.functionSymbol()
-        lazy {
-            mapOf(
-                PrimitiveType.BOOLEAN to isBooleanArray,
-                PrimitiveType.BYTE to isByteArray,
-                PrimitiveType.SHORT to isShortArray,
-                PrimitiveType.CHAR to isCharArray,
-                PrimitiveType.INT to isIntArray,
-                PrimitiveType.FLOAT to isFloatArray,
-                PrimitiveType.LONG to isLongArray,
-                PrimitiveType.DOUBLE to isDoubleArray,
-            )
+    val isPrimitiveArray: Map<JsPrimitiveArrayType, IrSimpleFunctionSymbol> by primitiveArrayFunctions {
+        val name = "is${it.kotlinName}"
+        if (it.requiresBigInt) {
+            name.jsLongId(compileLongAsBigint)
+        } else {
+            name.jsCallableId
         }
     }
 
@@ -410,9 +395,8 @@ class BackendJsSymbols(
 
     val jsArrayIteratorFunction by CallableIds.arrayIterator.functionSymbol()
 
-    val jsPrimitiveArrayIteratorFunctions: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
-        val lazyValues = PrimitiveType.entries.map { "${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator".jsCallableId.functionSymbol() }
-        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
+    val jsPrimitiveArrayIteratorFunctions: Map<JsPrimitiveArrayType, IrSimpleFunctionSymbol> by primitiveArrayFunctions {
+        "${it.kotlinName.decapitalizeAsciiOnly()}Iterator".jsCallableId
     }
 
     val jsClass by CallableIds.jsClassIntrinsic.functionSymbol()
@@ -444,33 +428,43 @@ class BackendJsSymbols(
 
     internal val reflectionSymbols: JsReflectionSymbols = JsReflectionSymbols()
 
-    val primitiveToTypedArrayMap = EnumMap(
-        buildMap<PrimitiveType, String> {
-            set(PrimitiveType.BYTE, "Int8")
-            set(PrimitiveType.SHORT, "Int16")
-            set(PrimitiveType.INT, "Int32")
-            set(PrimitiveType.FLOAT, "Float32")
-            set(PrimitiveType.DOUBLE, "Float64")
-            if (compileLongAsBigint) {
-                set(PrimitiveType.LONG, "BigInt64")
+    val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, JsPrimitiveArrayType> = buildMap {
+        for ([klass, primitive] in irBuiltIns.primitiveArraysToPrimitiveTypes) {
+            this[klass] = primitive.toJsPrimitiveArrayType()
+        }
+        if (false /* TODO(KT-58867): transparentUnsignedTypes */) {
+            for ([unsigned, klass] in irBuiltIns.unsignedTypesToUnsignedArrays) {
+                this[klass] = unsigned.toJsPrimitiveArrayType()
             }
         }
-    )
-
-    val primitiveToSizeConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
-        val lazyValues = PrimitiveType.entries.map { type ->
-            (primitiveToTypedArrayMap[type]?.let { "${it.toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol() }
-                ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol())
-        }
-        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
     }
 
-    val primitiveToLiteralConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
-        val lazyValues = PrimitiveType.entries.map { type ->
-            (primitiveToTypedArrayMap[type]?.let { "${it.toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol() }
-                ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol())
+    internal fun nativeJsNameIfSupported(type: JsPrimitiveArrayType): String? = when {
+        type.requiresBigInt && !compileLongAsBigint -> null
+        type.isUnsigned /* TODO(KT-58867): && !transparentUnsignedTypes */ -> null
+        else -> type.jsName
+    }
+
+    /**
+     * The functions in stdlib have inconsistent capitalization for BigInt.
+     */
+    private fun String.decapitalizeWithBigIntHack() =
+        replace("BigInt", "bigint").decapitalizeAsciiOnly()
+
+    private inline fun primitiveArrayFunctions(name: (JsPrimitiveArrayType) -> CallableId): Lazy<Map<JsPrimitiveArrayType, IrSimpleFunctionSymbol>> {
+        val lazyValues = JsPrimitiveArrayType.entries.mapNotNull {
+            if (it.isUnsigned /* TODO(KT-58867): && !transparentUnsignedTypes */) return@mapNotNull null
+            it to name(it).functionSymbol()
         }
-        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
+        return lazy { lazyValues.associate { [type, lazy] -> type to lazy.value } }
+    }
+
+    val primitiveToSizeConstructor: Map<JsPrimitiveArrayType, IrSimpleFunctionSymbol> by primitiveArrayFunctions {
+        (nativeJsNameIfSupported(it) ?: it.kotlinName).decapitalizeWithBigIntHack().jsCallableId
+    }
+
+    val primitiveToLiteralConstructor: Map<JsPrimitiveArrayType, IrSimpleFunctionSymbol> by primitiveArrayFunctions {
+        "${(nativeJsNameIfSupported(it) ?: it.kotlinName).decapitalizeWithBigIntHack()}Of".jsCallableId
     }
 
     val arrayConcat: IrSimpleFunctionSymbol by CallableIds.arrayConcat.functionSymbol()
@@ -565,6 +559,9 @@ private object ClassIds {
 }
 
 private val String.jsCallableId get() = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))
+private val String.jsLongAsBigIntId get() = CallableId(JsStandardClassIds.LONG_AS_BIGINT_PACKAGE, Name.identifier(this))
+private fun String.jsLongId(compileLongAsBigint: Boolean) = if (compileLongAsBigint) this.jsLongAsBigIntId else this.jsBoxedLongId
 
 private object CallableIds {
     // Kotlin functions
@@ -648,13 +645,6 @@ private object CallableIds {
     val isCharSequence = "isCharSequence".jsCallableId
     val longCopyOfRange = "longCopyOfRange".jsCallableId
     val isLongCompiledToBigInt = "isLongCompiledToBigInt".jsCallableId
-    val isBooleanArray = "isBooleanArray".jsCallableId
-    val isByteArray = "isByteArray".jsCallableId
-    val isShortArray = "isShortArray".jsCallableId
-    val isCharArray = "isCharArray".jsCallableId
-    val isIntArray = "isIntArray".jsCallableId
-    val isFloatArray = "isFloatArray".jsCallableId
-    val isDoubleArray = "isDoubleArray".jsCallableId
     val enumValueOfIntrinsic = "enumValueOfIntrinsic".jsCallableId
     val enumValuesIntrinsic = "enumValuesIntrinsic".jsCallableId
     val js = "js".jsCallableId
@@ -725,9 +715,6 @@ private object CallableIds {
     val constructCallableReference = "constructCallableReference".jsCallableId
 
     // JS Long functions
-    private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))
-    private val String.jsLongAsBigIntId get() = CallableId(JsStandardClassIds.LONG_AS_BIGINT_PACKAGE, Name.identifier(this))
-    private fun String.jsLongId(compileLongAsBigint: Boolean) = if (compileLongAsBigint) this.jsLongAsBigIntId else this.jsBoxedLongId
 
     val longBoxedOne = "ONE".jsBoxedLongId
 
@@ -761,7 +748,6 @@ private object CallableIds {
     fun lowBits(compileLongAsBigint: Boolean) = "lowBits".jsLongId(compileLongAsBigint)
     fun highBits(compileLongAsBigint: Boolean) = "highBits".jsLongId(compileLongAsBigint)
     fun longCopyOfRange(compileLongAsBigint: Boolean) = "longCopyOfRange".jsLongId(compileLongAsBigint)
-    fun isLongArray(compileLongAsBigint: Boolean) = "isLongArray".jsLongId(compileLongAsBigint)
     fun equalsLong(compileLongAsBigint: Boolean) = "equalsLong".jsLongId(compileLongAsBigint)
     fun compare(compileLongAsBigint: Boolean) = "compare".jsLongId(compileLongAsBigint)
     fun toStringImpl(compileLongAsBigint: Boolean) = "toStringImpl".jsLongId(compileLongAsBigint)
