@@ -41,6 +41,12 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         noImpl(declarationStatus)
         noImpl(resolvedDeclarationStatus)
+        noImpl(declarationStatusBase)
+        noImpl(callableDeclarationStatus)
+        noImpl(classLikeDeclarationStatus)
+        noImpl(resolvedDeclarationStatusBase)
+        noImpl(resolvedCallableDeclarationStatus)
+        noImpl(resolvedClassLikeDeclarationStatus)
 
         impl(regularClass) {
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)

@@ -579,6 +579,54 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedDeclarationStatus(resolvedDeclarationStatus, data)
     }
 
+    open fun transformDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: D): FirDeclarationStatusBase {
+        return transformElement(declarationStatusBase, data)
+    }
+
+    final override fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: D): FirDeclarationStatusBase {
+        return transformDeclarationStatusBase(declarationStatusBase, data)
+    }
+
+    open fun transformCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: D): FirCallableDeclarationStatus {
+        return transformElement(callableDeclarationStatus, data)
+    }
+
+    final override fun visitCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: D): FirCallableDeclarationStatus {
+        return transformCallableDeclarationStatus(callableDeclarationStatus, data)
+    }
+
+    open fun transformClassLikeDeclarationStatus(classLikeDeclarationStatus: FirClassLikeDeclarationStatus, data: D): FirClassLikeDeclarationStatus {
+        return transformElement(classLikeDeclarationStatus, data)
+    }
+
+    final override fun visitClassLikeDeclarationStatus(classLikeDeclarationStatus: FirClassLikeDeclarationStatus, data: D): FirClassLikeDeclarationStatus {
+        return transformClassLikeDeclarationStatus(classLikeDeclarationStatus, data)
+    }
+
+    open fun transformResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase, data: D): FirResolvedDeclarationStatusBase {
+        return transformElement(resolvedDeclarationStatusBase, data)
+    }
+
+    final override fun visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase, data: D): FirResolvedDeclarationStatusBase {
+        return transformResolvedDeclarationStatusBase(resolvedDeclarationStatusBase, data)
+    }
+
+    open fun transformResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus: FirResolvedCallableDeclarationStatus, data: D): FirResolvedCallableDeclarationStatus {
+        return transformElement(resolvedCallableDeclarationStatus, data)
+    }
+
+    final override fun visitResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus: FirResolvedCallableDeclarationStatus, data: D): FirResolvedCallableDeclarationStatus {
+        return transformResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus, data)
+    }
+
+    open fun transformResolvedClassLikeDeclarationStatus(resolvedClassLikeDeclarationStatus: FirResolvedClassLikeDeclarationStatus, data: D): FirResolvedClassLikeDeclarationStatus {
+        return transformElement(resolvedClassLikeDeclarationStatus, data)
+    }
+
+    final override fun visitResolvedClassLikeDeclarationStatus(resolvedClassLikeDeclarationStatus: FirResolvedClassLikeDeclarationStatus, data: D): FirResolvedClassLikeDeclarationStatus {
+        return transformResolvedClassLikeDeclarationStatus(resolvedClassLikeDeclarationStatus, data)
+    }
+
     open fun transformImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): FirStatement {
         return transformElement(implicitInvokeCall, data)
     }
