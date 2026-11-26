@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -67,7 +68,10 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 constructorOnlyDeprecation
             )
         } else {
-            reportApiStatusIfNeeded(source, referencedSymbol, callSite = expression)
+            reportApiStatusIfNeeded(
+                source, referencedSymbol, callSite = expression,
+                migrationLF = runIf(referencedSymbol.origin == SamConstructor) { ReportDeprecationsOnSamConstructorCalls },
+            )
         }
 
         reportCallToDeprecatedOverrideOfHidden(expression, source, referencedSymbol)
@@ -167,11 +171,10 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         referencedSymbol: FirBasedSymbol<*>,
         callSite: FirElement?,
     ): Boolean = when (referencedSymbol) {
-        is FirConstructorSymbol -> referencedSymbol.typeAliasConstructorInfo?.typeAliasSymbol
+        is FirFunctionSymbol<*> -> referencedSymbol.typeAliasConstructorInfo?.typeAliasSymbol
             ?.let { isTypealiasExpansionOf(it, callSite) }
             ?: false
-        !is FirTypeAliasSymbol -> false
-        else -> referencedSymbol.getOwnDeprecation(context.session, callSite).let {
+        is FirTypeAliasSymbol -> referencedSymbol.getOwnDeprecation(context.session, callSite).let {
             // If 2 deprecations along a typealias "expansion chain"
             // are equivalent (a <= b && a >= b), then getDeprecation()
             // has returned the first of them.
@@ -179,6 +182,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             // from typealiases should come first.
             it == null || it < this
         }
+        else -> false
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -297,7 +301,11 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
     ): FirDeprecationInfo? {
         val deprecationInfos = listOfNotNull(
             (symbol as? FirConstructorSymbol)
-                ?.classSymbolItIsCalledThrough()
+                ?.classSymbolConstructorIsCalledThrough()
+                ?.getDeprecation(context.session, callSite),
+            (symbol as? FirFunctionSymbol<*>)
+                ?.takeIf { it.origin == SamConstructor }
+                ?.classSymbolConstructorIsCalledThrough()
                 ?.getDeprecation(context.session, callSite),
             symbol.getDeprecation(context.session, callSite),
         )
@@ -305,7 +313,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
     }
 
     context(context: CheckerContext)
-    private fun FirConstructorSymbol.classSymbolItIsCalledThrough(): FirClassLikeSymbol<*>? {
+    private fun FirFunctionSymbol<*>.classSymbolConstructorIsCalledThrough(): FirClassLikeSymbol<*>? {
         return typeAliasConstructorInfo?.typeAliasSymbol ?: (resolvedReturnTypeRef.toRegularClassSymbol(context.session))
     }
 }

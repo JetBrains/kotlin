@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86428
+// LANGUAGE_FEATURE_TOGGLED: ReportDeprecationsOnSamConstructorCalls
 
 // FILE: JJava.java
 @Deprecated
@@ -57,26 +58,26 @@ fun interface KNo {
 typealias TError = KNo
 
 fun kTest() {
-    KError { 42 }.foo()
-    ::KError
-    KWarning { }.bar("!")
-    ::KWarning
-    KHidden { }.baz()
-    ::KHidden
+    <!DEPRECATION_ERROR!>KError<!> { 42 }.foo()
+    ::<!DEPRECATION_ERROR!>KError<!>
+    <!DEPRECATION!>KWarning<!> { }.bar("!")
+    ::<!DEPRECATION!>KWarning<!>
+    <!DEPRECATION_ERROR!>KHidden<!> { }.baz()
+    ::<!DEPRECATION_ERROR!>KHidden<!>
 }
 
 fun jTest() {
-    JJava { }.bar("!")
-    JError { 42 }.foo()
-    JWarning { }.bar("!")
-    JHidden { }.baz()
+    <!DEPRECATION!>JJava<!> { }.bar("!")
+    <!DEPRECATION_ERROR!>JError<!> { 42 }.foo()
+    <!DEPRECATION!>JWarning<!> { }.bar("!")
+    <!DEPRECATION_ERROR!>JHidden<!> { }.baz()
 }
 
 fun tTest() {
-    TWarning { }.bar("!")
-    ::TWarning
-    TError { 42 }.foo()
-    ::TError
+    <!TYPEALIAS_EXPANSION_DEPRECATION!>TWarning<!> { }.bar("!")
+    ::<!TYPEALIAS_EXPANSION_DEPRECATION!>TWarning<!>
+    <!DEPRECATION_ERROR!>TError<!> { 42 }.foo()
+    ::<!DEPRECATION_ERROR!>TError<!>
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, integerLiteral, interfaceDeclaration, lambdaLiteral,
