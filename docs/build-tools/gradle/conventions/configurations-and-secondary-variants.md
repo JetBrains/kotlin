@@ -82,3 +82,38 @@ state. The service is intended for project-to-project sharing, not for consuming
 
 * You need to expose information unrelated to a specific target.
 * You need to publish an artifact separately, even if it is related to a specific target.
+
+## Consume Secondary Variants via Artifact Views
+
+Use the `artifactView` API to consume secondary variants:
+
+```kotlin
+fun artifactViewOf(resolvable: Configuration): FileCollection {
+    return resolvable.incoming.artifactView {
+        it.attributes {
+            it.attribute(yourDiscriminatingAttribute, yourValue)
+        }
+    }.files
+}
+```
+
+### Avoid Variant Reselection
+
+When using `artifactView` to consume secondary variants, avoid enabling variant reselection with
+`artifactView { it.withVariantReselection() }`. Variant reselection ignores the attributes configured on the parent
+resolvable configuration, which can lead to unexpected resolution errors. For example, attributes added to the
+resolvable configuration will not be considered unless they are also requested in the artifact view.
+
+### Use a Component Filter
+
+When only project components provide the information you need, filter out other components:
+
+```kotlin
+artifactView {
+    it.componentFilter { componentId ->
+        componentId is ProjectComponentIdentifier
+    }
+}
+```
+
+This helps avoid triggering artifact transformations for external components.
