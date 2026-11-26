@@ -216,6 +216,7 @@ class FirScriptConfiguratorExtensionImpl(
                         visibility = Visibilities.Public,
                         propertySymbol = this.symbol,
                         modality = Modality.FINAL,
+                        symbol = FirPropertyAccessorSymbol(),
                     )
 
                     status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)

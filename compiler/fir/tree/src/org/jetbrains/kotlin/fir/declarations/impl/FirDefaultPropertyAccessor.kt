@@ -80,6 +80,7 @@ abstract class FirDefaultPropertyAccessor(
                 origin = origin,
                 propertyTypeRef = propertyTypeRef,
                 visibility = visibility,
+                symbol = FirPropertyAccessorSymbol(),
                 propertySymbol = propertySymbol,
                 modality = null,
             )
@@ -90,6 +91,7 @@ abstract class FirDefaultPropertyAccessor(
                 origin = origin,
                 propertyTypeRef = propertyTypeRef,
                 visibility = visibility,
+                propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                 propertySymbol = propertySymbol,
                 modality = null,
                 parameterAnnotations = parameterAnnotations,
@@ -106,7 +108,7 @@ class FirDefaultPropertyGetter(
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
     status: FirCallableDeclarationStatus,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 ) : FirDefaultPropertyAccessor(
@@ -134,7 +136,7 @@ class FirDefaultPropertyGetter(
         isInline: Boolean = false,
         isOverride: Boolean = false,
         isStatic: Boolean = false,
-        symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        symbol: FirPropertyAccessorSymbol,
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
         attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     ) : this(
@@ -161,7 +163,7 @@ class FirDefaultPropertySetter(
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
     status: FirCallableDeclarationStatus,
-    propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    propertyAccessorSymbol: FirPropertyAccessorSymbol,
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
@@ -203,7 +205,7 @@ class FirDefaultPropertySetter(
         isInline: Boolean = false,
         isOverride: Boolean = false,
         isStatic: Boolean = false,
-        propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        propertyAccessorSymbol: FirPropertyAccessorSymbol,
         parameterSource: KtSourceElement? = null,
         parameterAnnotations: List<FirAnnotation> = emptyList(),
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,

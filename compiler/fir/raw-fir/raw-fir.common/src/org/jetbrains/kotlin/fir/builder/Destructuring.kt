@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -159,6 +160,7 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
                 }
 
                 getter = FirDefaultPropertyGetter(
+                    symbol = FirPropertyAccessorSymbol(),
                     source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                     moduleData = moduleData,
                     origin = FirDeclarationOrigin.Source,
@@ -168,6 +170,7 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
                 )
                 if (entry.isVar) {
                     setter = FirDefaultPropertySetter(
+                        propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                         source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter),
                         moduleData = moduleData,
                         origin = FirDeclarationOrigin.Source,

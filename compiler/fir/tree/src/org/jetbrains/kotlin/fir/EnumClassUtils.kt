@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclaratio
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -248,6 +249,7 @@ fun generateEntriesGetter(
             origin = origin,
             propertyTypeRef = getterTypeRefSource,
             visibility = Visibilities.Public,
+            symbol = FirPropertyAccessorSymbol(),
             propertySymbol = symbol,
             modality = Modality.FINAL,
             resolvePhase = classResolvePhase,

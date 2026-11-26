@@ -260,6 +260,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             }
 
             getter = FirDefaultPropertyGetter(
+                symbol = FirPropertyAccessorSymbol(),
                 source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                 moduleData = baseModuleData,
                 origin = origin,

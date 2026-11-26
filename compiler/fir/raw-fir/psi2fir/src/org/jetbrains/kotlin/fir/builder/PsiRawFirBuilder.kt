@@ -779,6 +779,7 @@ open class PsiRawFirBuilder(
                     annotations = annotationsFromProperty.toMutableList(),
                     returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                     isVar = property.isVar,
+                    symbol = FirBackingFieldSymbol(),
                     propertySymbol = propertySymbol,
                     status = status,
                 )
@@ -909,6 +910,7 @@ open class PsiRawFirBuilder(
                         }.toMutableList(),
                         returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                         isVar = isVar,
+                        symbol = FirBackingFieldSymbol(),
                         propertySymbol = symbol,
                         status = status.copy(isLateInit = false),
                     ).also {
@@ -925,6 +927,7 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                         visibility = status.visibility,
+                        symbol = FirPropertyAccessorSymbol(),
                         propertySymbol = symbol,
                         modality = status.modality,
                         isInline = hasModifier(INLINE_KEYWORD),
@@ -940,6 +943,7 @@ open class PsiRawFirBuilder(
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                         visibility = status.visibility,
+                        propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                         propertySymbol = symbol,
                         modality = status.modality,
                         parameterAnnotations = parameterAnnotations.filterUseSiteTarget(SETTER_PARAMETER),

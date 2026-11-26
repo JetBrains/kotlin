@@ -1625,6 +1625,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 origin = FirDeclarationOrigin.Source,
                                 propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                                 visibility = propertyVisibility,
+                                symbol = FirPropertyAccessorSymbol(),
                                 propertySymbol = symbol,
                                 modality = calculatedModifiers.getModality(isClassOrObject = false),
                             ).also {
@@ -1642,6 +1643,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                     propertyTypeRef = returnType
                                         .copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Setter),
                                     visibility = propertyVisibility,
+                                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                                     propertySymbol = symbol,
                                     modality = calculatedModifiers.getModality(isClassOrObject = false),
                                     parameterAnnotations = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
@@ -1949,6 +1951,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 annotations = annotationsFromProperty.toMutableList(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
+                symbol = FirBackingFieldSymbol(),
                 propertySymbol = propertySymbol,
                 status = status,
             )
