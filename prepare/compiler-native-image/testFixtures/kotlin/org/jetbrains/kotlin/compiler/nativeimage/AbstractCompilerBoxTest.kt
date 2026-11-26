@@ -95,7 +95,7 @@ abstract class AbstractCompilerBoxTest(
 
         private fun prepareSource(source: String): String {
             val transformers = listOf(
-                JvmInlineSourceTransformer.computeModifier(BACKEND),
+                JvmInlineSourceTransformer.computeModifier(BACKEND, fullValueClassesEnabled = false),
                 ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"$BACKEND\""),
             )
             return clearTextFromDiagnosticMarkup(transformers.fold(source) { acc, transformer -> transformer.invokeForTestFile(acc) })

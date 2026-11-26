@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseGroup
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseGroupId
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
@@ -12,8 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
-import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
-import org.jetbrains.kotlin.test.utils.TransformersFunctions.removeOptionalJvmInlineAnnotation
 import java.io.File
 
 /**
@@ -66,15 +65,9 @@ internal class EagerExtTestCaseGroupProvider : ExtTestCaseGroupProvider() {
      * It is necessary to use these source processors as soon as they are being used in codegen tests.
      * They are registered in the test class constructor, but during the test grouping they are not accessible.
      * This happens because we eagerly iterate through the test data, while JUnit does not create actual test instances.
-     *
-     * Keep this list in sync with `AbstractNativeCodegenBoxTest.getSourceTransformers()`: a transformer that is
-     * missing here is silently not applied, which makes the affected test data fail to compile only in the eager mode.
      */
     private object NativeCodegenSourceTransformers : ExternalSourceTransformersProvider {
-        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers = listOf(
-            // `JvmInlineSourceTransformer.computeModifier(TargetBackend.NATIVE)` resolves to exactly this transformer.
-            removeOptionalJvmInlineAnnotation,
-            ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"NATIVE\""),
-        )
+        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers =
+            AbstractNativeCodegenBoxTest.nativeCodegenSourceTransformers(testDataFile)
     }
 }
