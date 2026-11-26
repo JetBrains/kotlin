@@ -1,0 +1,9 @@
+model {
+  [type.googleapis.com/org.jetbrains.kotlin.importmodels.proto.BaseModel] {
+    id: "base"
+    plugin_version {
+      classifier: "KGP_VERSION"
+    }
+    capabilities: CAPABILITY_KOTLIN_JVM
+  }
+}
