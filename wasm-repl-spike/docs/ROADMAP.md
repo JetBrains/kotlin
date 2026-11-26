@@ -258,18 +258,49 @@ the same klibs fine.)
 
 **The Compose macrobenchmark, milestone-1 harness (runtime +
 coroutines, headless composition driven from JS; wasm-js, node
-25, 3-run medians).** Plain monolith: 4,824,239 B raw / 1,059,704 B
-gz; recomposition (`bumpRemembered`) 189 ns, invalidation
-(`__hot_invalidate`) 127 ns. Hot image (10 module instances, base =
-hot stdlib): 13,229,688 B raw / 2,968,707 B gz = 2.7×/2.8×;
-recomposition 965 ns = **5.1×**, invalidation 811 ns = **6.4×**.
-The gap dwarfs the fib bench's 1.5–1.6× because this workload is
-cross-module state traffic: every `mutableStateOf` read/write and
-every runtime call is a fdefn-cell hop across module instances, and
-state fields run the layout-checked slot-value path — the encoding
-overhead compounds per access, not per call site. The raw-size gap
+25).** Plain monolith: 4,824,239 B raw / 1,059,704 B gz. Hot image
+(10 module instances, base = hot stdlib): 13,229,688 B raw /
+2,968,707 B gz = 2.7×/2.8×. The first measurement session (3
+sequential runs per arm) reported 189→965 ns = 5.1×; the careful
+INTERLEAVED protocol (alternating plain/hot runs on the same
+machine state, repeated until each arm's medians stabilize) gives
+**plain ~161 ns vs hot ~1127 ns = 7.0×** — sequential-runs-after-
+builds overstates plain by warm-up noise; the interleaved number is
+the one to trust. The gap dwarfs the fib bench's 1.5–1.6× because
+this workload is cross-module state traffic: every
+`mutableStateOf` read/write and every runtime call is a fdefn-cell
+hop across module instances, and state fields run the
+layout-checked slot-value path — the encoding overhead compounds
+per access, not per call site. The raw-size gap
 is partly "no DCE in the hot image" (each library module ships its
 whole library), not encoding overhead alone.
+
+**NO EASY CODEGEN FIX (measured, 2026-11-26).** The obvious one was
+implemented and measured to ZERO effect: fuse every hot fast
+path's ref.test+re-load+ref.cast into a single br_on_cast_fail
+(all four arms — field read, field write, class dispatch, itable
+dispatch; one payload load, two fewer synthetic locals). Built,
+debugged through three validation lessons (br_on_cast_fail hands
+the UNCONVERTED value to its target — the miss block's result type
+is the from-type, so it cannot be void; wasm blocks start with an
+EMPTY stack, so stashed receivers must be re-read from locals
+INSIDE the blocks; special/functional itable branches consume a
+SHARED trailing cast that the generic-arm restructure removed —
+they broke PLAIN, the non-hot leak rule caught it) — and the
+interleaved measurement is IDENTICAL before and after: 7.0×. The
+cause, visible in the attribution microbench (per-op medians:
+named calls 1.5×, field RMW 2.8×, box/unbox 3.9×, virtual dispatch
+4–5×): plain's field/dispatch loops measure 0.5 ns/iter — LOOP
+OVERHEAD ALONE — TurboFan ELIMINATES the plain access in a hot
+loop (pure SSA load, folded to a register), while the hot path
+must re-read a MUTABLE payload pointer and re-test its type every
+access. The tax is OPTIMIZER FREEDOM, not instruction count, so
+no instruction-level trick closes it; the levers that remain all
+change semantics or architecture (scoping the hot set to delta
+modules; typed per-signature fdefn cells to drop the trampoline
+cast; or accepting the cost as the price of swap-anything — SBCL
+pays the same). The fused-codegen files are parked uncommitted in
+/tmp/fusion-save (BodyGenerator.kt + WasmFunctionCodegenContext.kt).
 
 ## Operational notes
 
