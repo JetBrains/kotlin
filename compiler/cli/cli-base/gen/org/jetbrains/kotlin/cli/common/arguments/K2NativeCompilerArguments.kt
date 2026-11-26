@@ -342,16 +342,6 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
-        value = "-Xllvm-lto-passes",
-        description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.",
-    )
-    var llvmLTOPasses: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xllvm-module-passes",
         description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.",
     )

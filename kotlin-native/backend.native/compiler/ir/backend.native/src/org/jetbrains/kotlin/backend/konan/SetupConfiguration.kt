@@ -246,7 +246,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
-    putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
 
     get(BinaryOptions.globalDataLazyInit)?.let {
         if (!it) {
