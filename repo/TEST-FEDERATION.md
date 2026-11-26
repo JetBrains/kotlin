@@ -30,7 +30,7 @@ A domain is **changed** when at least one file belonging to it is changed or it 
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
 
 A test task belongs to the domains of its project directory. When a domain is changed, all its tests must run and pass
-before the commit can be merged to master.
+before the commit can be merged to master. Other test filters still apply.
 
 ## Which tests are required for merging to master?
 
@@ -42,6 +42,8 @@ The following tests must run and pass before a commit can be merged to master:
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
 - Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
+
+Other test filters still apply.
 
 Running all tests in a domain does **not** make that domain changed. Changed files and the `^test:` commit command mark domains as changed.
 `mustRunAllTestsOnChangesIn` does **not** make a domain changed, so it does not trigger `@MustRunOnChangesInXYZ` tests in other domains.
@@ -144,6 +146,7 @@ class MyImportantJsTests {
 ```
 
 The annotation can be placed on a test method, a test class, an abstract test class, or another annotation.
+Other test filters still apply.
 
 This annotation adds a reason to run a test. The test still runs whenever all tests in its own domain must run.
 
@@ -153,7 +156,7 @@ See [Extra: Contract tests](#extra-contract-tests) for why these tests are usefu
 ## Always running tests
 
 Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
-These tests are required for merging to master unless all changed files are ignored.
+These tests are required for merging to master unless all changed files are ignored. Other test filters still apply.
 
 With JUnit 5 (or higher), the annotation can be placed:
 
@@ -244,6 +247,8 @@ relevant `ContractTestsFor<Domain>` subsets otherwise.
 
 Test subsets may overlap. For example, the same test may declare both `@MustRunOnChangesInJs` and `@MustRunOnChagesInWasm`, so it would be
 selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
+
+Other test filters still apply regardless of the requested subsets.
 
 ### Customizing test subsets
 
