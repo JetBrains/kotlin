@@ -73,6 +73,7 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation based on K1 compiler code")
+    val USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS by directive("Use K1 reflection implementation for mapped builtin subclasses")
 
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by stringDirective("Ignored annotations for bridges")
 

@@ -175,6 +175,11 @@ fun main(args: Array<String>) {
                 model("box/reflection")
                 model("boxJvm/reflection")
             }
+
+            testClass<AbstractReflectionK1CollectionsImplementationTest> {
+                model("box/reflection")
+                model("boxJvm/reflection")
+            }
         }
 
         testGroup(testRoot, testDataRoot = "compiler/testData") {
