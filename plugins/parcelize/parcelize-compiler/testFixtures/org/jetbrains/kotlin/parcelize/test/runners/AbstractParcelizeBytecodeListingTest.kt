@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -25,5 +26,6 @@ private fun TestConfigurationBuilder.configureParcelizeSpecific() {
         // Robolectric 4.16 (onward) with Android SDK 36 requires JDK 21
         JDK_KIND with TestJdkKind.FULL_JDK_21
     }
+    useDirectives(ParcelizeDirectives)
     useConfigurators(::ParcelizeEnvironmentConfigurator)
 }

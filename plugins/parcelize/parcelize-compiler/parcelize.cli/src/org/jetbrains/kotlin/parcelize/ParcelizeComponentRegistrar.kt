@@ -20,11 +20,14 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
             extensionStorage: ExtensionStorage,
             additionalAnnotation: List<String>,
             experimentalCodeGeneration: Boolean,
+            implicitlyAddParcelableSupertype: Boolean,
         ) = with(extensionStorage) {
             val parcelizeAnnotations = ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES.toMutableList()
             additionalAnnotation.mapTo(parcelizeAnnotations) { FqName(it) }
             IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension(parcelizeAnnotations, experimentalCodeGeneration))
-            FirExtensionRegistrar.registerExtension(FirParcelizeExtensionRegistrar(parcelizeAnnotations, experimentalCodeGeneration))
+            FirExtensionRegistrar.registerExtension(
+                FirParcelizeExtensionRegistrar(parcelizeAnnotations, experimentalCodeGeneration, implicitlyAddParcelableSupertype)
+            )
         }
     }
 
@@ -34,6 +37,7 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
             this,
             additionalAnnotation,
             configuration.getBoolean(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION),
+            configuration.getBoolean(ParcelizeConfigurationKeys.IMPLICITLY_ADD_PARCELABLE_SUPERTYPE),
         )
     }
 

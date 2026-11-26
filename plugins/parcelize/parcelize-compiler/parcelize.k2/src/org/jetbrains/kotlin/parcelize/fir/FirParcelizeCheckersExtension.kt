@@ -9,12 +9,20 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirResolvedQualifierChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.*
 
 class FirParcelizeCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val annotationCallCheckers: Set<FirAnnotationCallChecker> = setOf(FirParcelizeAnnotationChecker)
+        override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = setOf(FirParcelizeInternalParcelableQualifierChecker)
+    }
+
+    override val typeCheckers: TypeCheckers = object : TypeCheckers() {
+        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(FirParcelizeInternalParcelableTypeChecker)
     }
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
