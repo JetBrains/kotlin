@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -48,7 +48,7 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (!isDesugaredComponentCall && declaration.isCatchParameter != true) {
             declaration.requireFeatureSupport(
                 LanguageFeature.UnnamedLocalVariables,
-                positioningStrategy = SourceElementPositioningStrategies.NAME_IDENTIFIER,
+                positioningStrategyKind = PositioningStrategyKinds.NAME_IDENTIFIER,
             )
         }
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 /**
- * A parse-tree agnostic positioning strategy of a diagnostic.
+ * Identifies a parse-tree agnostic positioning strategy of a diagnostic.
  * Its implementation for the concrete parse tree is provided by [org.jetbrains.kotlin.syntax.ParseTreeKind.positioningStrategy].
  */
-abstract class SourceElementPositioningStrategy
+abstract class PositioningStrategyKind

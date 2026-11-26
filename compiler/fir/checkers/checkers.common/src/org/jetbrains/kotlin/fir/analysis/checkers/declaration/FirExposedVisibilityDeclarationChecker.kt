@@ -351,7 +351,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
                 symbol,
                 relation,
                 symbolVisibility,
-                factory.defaultPositioningStrategy,
+                factory.defaultPositioningStrategyKind,
             )
         }
     }

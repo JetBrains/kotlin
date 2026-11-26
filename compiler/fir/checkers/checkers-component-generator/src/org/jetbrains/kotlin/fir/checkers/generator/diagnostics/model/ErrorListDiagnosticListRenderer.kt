@@ -74,7 +74,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             is RegularDiagnosticData -> diagnostic.severity.name
             is DeprecationDiagnosticData -> diagnostic.featureForError.name
         }
-        val positioningStrategy = diagnostic.positioningStrategy.expressionToCreate
+        val positioningStrategyKind = diagnostic.positioningStrategyKind.expressionToCreate
 
         print("val ${diagnostic.name}: $type")
         diagnostic.parameters.map { it.type }.ifNotEmpty { printTypeArguments(this) }
@@ -82,7 +82,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         val arguments = listOf(
             escapedName,
             severityOrFeatureForError,
-            positioningStrategy,
+            positioningStrategyKind,
             "getRendererFactory()"
         )
         printSeparatedWithComma(arguments) { print(it) }
@@ -141,7 +141,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
                         add("org.jetbrains.kotlin.config.LanguageFeature.${diagnostic.featureForError.name}")
                 }
             }
-            add(PositioningStrategy.importToAdd)
+            add(PositioningStrategyKind.importToAdd)
             add("org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory")
             add("org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer")
         }

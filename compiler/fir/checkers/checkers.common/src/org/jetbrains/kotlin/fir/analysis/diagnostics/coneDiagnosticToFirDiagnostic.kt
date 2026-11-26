@@ -377,7 +377,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 qualifiedAccessSource ?: source,
                 LanguageFeature.CompanionBlocks to session.languageVersionSettings,
                 session,
-                positioningStrategy = SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED,
+                positioningStrategyKind = PositioningStrategyKinds.REFERENCE_BY_QUALIFIED,
             )
 
             else -> genericDiagnostic.takeIf { candidate.symbol !is FirSyntheticFunctionSymbol }
@@ -1226,9 +1226,9 @@ private fun FirSession.toDiagnosticContext(): DiagnosticContext {
 internal fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, positioningStrategyKind, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1236,9 +1236,9 @@ internal fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, a, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, a, positioningStrategyKind, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1247,9 +1247,9 @@ internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     a: A,
     b: B,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, a, b, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, a, b, positioningStrategyKind, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1259,9 +1259,9 @@ internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     b: B,
     c: C,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, a, b, c, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, a, b, c, positioningStrategyKind, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1272,9 +1272,9 @@ internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     c: C,
     d: D,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, a, b, c, d, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, a, b, c, d, positioningStrategyKind, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1286,7 +1286,7 @@ internal fun <A, B, C, D, E> KtDiagnosticFactory5<A, B, C, D, E>.createOn(
     d: D,
     e: E,
     session: FirSession,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
 ): KtDiagnostic? {
-    return onOrFallback(element, a, b, c, d, e, positioningStrategy, session.toDiagnosticContext())
+    return onOrFallback(element, a, b, c, d, e, positioningStrategyKind, session.toDiagnosticContext())
 }

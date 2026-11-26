@@ -7,7 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -63,7 +63,7 @@ internal fun CheckerContext.checkPrivateCompanion(
         FirSerializationErrors.PRIVATE_COMPANION_OF_SERIALIZABLE,
         classSymbol,
         companionObjectSymbol,
-        positioningStrategy = SourceElementPositioningStrategies.VISIBILITY_MODIFIER
+        positioningStrategyKind = PositioningStrategyKinds.VISIBILITY_MODIFIER
     )
 }
 

@@ -80,11 +80,11 @@ class DataSchemaInfoCheckers(
 }
 
 object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
-    val PROPERTY_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val FUNCTION_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val FUNCTION_CALL_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val PROPERTY_ACCESS_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val GENERATED_FROM_SOURCE_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val PROPERTY_SCHEMA by info1<String>(PositioningStrategyKinds.DECLARATION_NAME)
+    val FUNCTION_SCHEMA by info1<String>(PositioningStrategyKinds.DECLARATION_SIGNATURE)
+    val FUNCTION_CALL_SCHEMA by info1<String>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val PROPERTY_ACCESS_SCHEMA by info1<String>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val GENERATED_FROM_SOURCE_SCHEMA by info1<String>(PositioningStrategyKinds.DECLARATION_NAME)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
 
@@ -249,10 +249,10 @@ fun StringBuilder.appendComponentSchemaIfApplicable(componentName: String, type:
 }
 
 context(container: KtDiagnosticsContainer)
-internal fun <A> info1(positioningStrategy: SourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<A> {
+internal fun <A> info1(positioningStrategyKind: PositioningStrategyKind): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(
         Severity.INFO,
-        positioningStrategy,
+        positioningStrategyKind,
         container = container,
     )
 }

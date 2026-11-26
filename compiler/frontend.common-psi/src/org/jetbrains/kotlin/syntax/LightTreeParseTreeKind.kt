@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.syntax
 
+import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategies
 import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategy
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKind
 
 object LightTreeParseTreeKind : ParseTreeKind() {
     override val isPsi: Boolean = false
 
     override val isKmp: Boolean = false
 
-    override val SourceElementPositioningStrategy.positioningStrategy: LightTreePositioningStrategy
-        get() = LightTreePositioningStrategies.keyToStrategy[this]
+    override val PositioningStrategyKind.positioningStrategy: LightTreePositioningStrategy
+        get() = LightTreePositioningStrategies.kindToStrategy[this]
             ?: error("No light tree positioning strategy is registered for ${this::class.simpleName}")
 }

@@ -24,28 +24,28 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
 
     @OptIn(PrivateForInline::class)
     internal inline fun <reified P : PsiElement> error(
-        positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
+        positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKind.DEFAULT,
         crossinline init: DiagnosticBuilder.Regular.() -> Unit = {}
-    ) = diagnosticDelegateProvider<P>(Severity.ERROR, positioningStrategy, init)
+    ) = diagnosticDelegateProvider<P>(Severity.ERROR, positioningStrategyKind, init)
 
 
     @OptIn(PrivateForInline::class)
     internal inline fun <reified P : PsiElement> warning(
-        positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
+        positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKind.DEFAULT,
         crossinline init: DiagnosticBuilder.Regular.() -> Unit = {}
-    ) = diagnosticDelegateProvider<P>(Severity.WARNING, positioningStrategy, init)
+    ) = diagnosticDelegateProvider<P>(Severity.WARNING, positioningStrategyKind, init)
 
     @OptIn(PrivateForInline::class)
     internal inline fun <reified P : PsiElement> deprecationError(
         featureForError: LanguageFeature,
-        positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
+        positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKind.DEFAULT,
         crossinline init: DiagnosticBuilder.Deprecation.() -> Unit = {}
-    ) = deprecationDiagnosticDelegateProvider<P>(featureForError, positioningStrategy, init)
+    ) = deprecationDiagnosticDelegateProvider<P>(featureForError, positioningStrategyKind, init)
 
     @PrivateForInline
     internal inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
-        positioningStrategy: PositioningStrategy,
+        positioningStrategyKind: PositioningStrategyKind,
         crossinline init: DiagnosticBuilder.Regular.() -> Unit = {}
     ) = PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> { _, property ->
         val diagnostic = DiagnosticBuilder.Regular(
@@ -53,7 +53,7 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
             severity,
             name = property.name,
             psiType = typeOf<P>(),
-            positioningStrategy,
+            positioningStrategyKind,
         ).apply(init).build()
         _diagnostics += diagnostic
         ReadOnlyProperty { _, _ -> diagnostic }
@@ -62,7 +62,7 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     @PrivateForInline
     internal inline fun <reified P : PsiElement> deprecationDiagnosticDelegateProvider(
         featureForError: LanguageFeature,
-        positioningStrategy: PositioningStrategy,
+        positioningStrategyKind: PositioningStrategyKind,
         crossinline init: DiagnosticBuilder.Deprecation.() -> Unit = {}
     ) = PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DeprecationDiagnosticData>> { _, property ->
         val diagnostic = DiagnosticBuilder.Deprecation(
@@ -70,7 +70,7 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
             featureForError,
             name = property.name,
             psiType = typeOf<P>(),
-            positioningStrategy,
+            positioningStrategyKind,
         ).apply(init).build()
         _diagnostics += diagnostic
         ReadOnlyProperty { _, _ -> diagnostic }

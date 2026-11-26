@@ -27,18 +27,18 @@ fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory0,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
 fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory0,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactory1 ####
@@ -48,9 +48,9 @@ fun <A> DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactory1<A>,
     a: A,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -58,9 +58,9 @@ fun <A> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactory1<A>,
     a: A,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactory2 ####
@@ -71,9 +71,9 @@ fun <A, B> DiagnosticReporter.reportOn(
     a: A,
     b: B,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -82,9 +82,9 @@ fun <A, B> DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactory2<A, B>,
     a: A,
     b: B,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactory3 ####
@@ -96,9 +96,9 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     b: B,
     c: C,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -108,9 +108,9 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     a: A,
     b: B,
     c: C,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactory4 ####
@@ -123,9 +123,9 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, d, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, d, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -136,9 +136,9 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     b: B,
     c: C,
     d: D,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, d, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, d, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactory5 ####
@@ -152,9 +152,9 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     d: D,
     e: E,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategyKind, context), context)
 }
 
 context(context: DiagnosticContext)
@@ -166,9 +166,9 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     e: E,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
+    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategyKind, context), context)
 }
 
 // #### KtDiagnosticFactoryForDeprecation0 ####
@@ -177,18 +177,18 @@ fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation0,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
 fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation0,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), positioningStrategy)
+    reportOn(source, factory.chooseFactory(), positioningStrategyKind)
 }
 
 // #### KtDiagnosticFactoryForDeprecation1 ####
@@ -198,9 +198,9 @@ fun <A> DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactoryForDeprecation1<A>,
     a: A,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), a, positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), a, positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
@@ -208,9 +208,9 @@ fun <A> DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,
     factory: KtDiagnosticFactoryForDeprecation1<A>,
     a: A,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), a, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, positioningStrategyKind)
 }
 
 // #### KtDiagnosticFactoryForDeprecation2 ####
@@ -221,9 +221,9 @@ fun <A, B> DiagnosticReporter.reportOn(
     a: A,
     b: B,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), a, b, positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
@@ -232,9 +232,9 @@ fun <A, B> DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactoryForDeprecation2<A, B>,
     a: A,
     b: B,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), a, b, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, positioningStrategyKind)
 }
 
 // #### KtDiagnosticFactoryForDeprecation3 ####
@@ -246,9 +246,9 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     b: B,
     c: C,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
@@ -258,9 +258,9 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     a: A,
     b: B,
     c: C,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategyKind)
 }
 
 // #### KtDiagnosticFactoryForDeprecation4 ####
@@ -273,9 +273,9 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
@@ -286,9 +286,9 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     b: B,
     c: C,
     d: D,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategyKind)
 }
 
 // #### KtDiagnosticFactoryForDeprecation5 ####
@@ -302,9 +302,9 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     d: D,
     e: E,
     context: DiagnosticContext,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy) }
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategyKind) }
 }
 
 context(context: DiagnosticContext)
@@ -316,9 +316,9 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     e: E,
-    positioningStrategy: SourceElementPositioningStrategy? = null
+    positioningStrategyKind: PositioningStrategyKind? = null
 ) {
-    reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategyKind)
 }
 
 context(context: DiagnosticContext)

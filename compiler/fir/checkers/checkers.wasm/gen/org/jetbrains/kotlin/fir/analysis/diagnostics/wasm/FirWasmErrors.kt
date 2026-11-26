@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -22,39 +22,39 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 @Suppress("IncorrectFormatting")
 object FirWasmErrors : KtDiagnosticsContainer() {
     // Externals
-    val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
-    val WRONG_JS_INTEROP_TYPE: KtDiagnosticFactory2<ConeKotlinType, String> = KtDiagnosticFactory2("WRONG_JS_INTEROP_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val WRONG_JS_INTEROP_TYPE: KtDiagnosticFactory2<ConeKotlinType, String> = KtDiagnosticFactory2("WRONG_JS_INTEROP_TYPE", ERROR, PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
 
     // JsFun
-    val WRONG_JS_FUN_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_FUN_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_JS_FUN_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_FUN_TARGET", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     // JsCode
-    val JSCODE_WRONG_CONTEXT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_WRONG_CONTEXT", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, getRendererFactory())
-    val JSCODE_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("JSCODE_UNSUPPORTED_FUNCTION_KIND", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, getRendererFactory())
-    val JSCODE_INVALID_PARAMETER_NAME: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_INVALID_PARAMETER_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val JSCODE_WRONG_CONTEXT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_WRONG_CONTEXT", ERROR, PositioningStrategyKinds.NAME_IDENTIFIER, getRendererFactory())
+    val JSCODE_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("JSCODE_UNSUPPORTED_FUNCTION_KIND", ERROR, PositioningStrategyKinds.NAME_IDENTIFIER, getRendererFactory())
+    val JSCODE_INVALID_PARAMETER_NAME: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_INVALID_PARAMETER_NAME", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     // Wasm interop
-    val NESTED_WASM_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_EXPORT_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_EXPORT_ON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
-    val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val NESTED_WASM_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_IMPORT_EXPORT_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_VARARG_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
-    val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
-    val EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val RESERVED_WORD_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("RESERVED_WORD_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val NESTED_WASM_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_EXPORT", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_EXPORT_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_EXPORT_ON_EXTERNAL_DECLARATION", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND", ERROR, PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val NESTED_WASM_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_IMPORT", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_IMPORT_EXPORT_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_VARARG_PARAMETER", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE", ERROR, PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE", ERROR, PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT, getRendererFactory())
+    val EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val RESERVED_WORD_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("RESERVED_WORD_AS_JS_EXPORT_NAME", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     // WASI
-    val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     // Associated object
-    val ASSOCIATED_OBJECT_INVALID_BINDING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ASSOCIATED_OBJECT_INVALID_BINDING", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val ASSOCIATED_OBJECT_INVALID_BINDING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ASSOCIATED_OBJECT_INVALID_BINDING", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirWasmErrorsDefaultMessages
 }

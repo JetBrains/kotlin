@@ -16,117 +16,117 @@ private const val message = "PSI element is no longer required for defining diag
 @JvmName("deprecatedWarning0")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> warning0(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
-    return DiagnosticFactory0DelegateProvider(WARNING, positioningStrategy, container)
+    return DiagnosticFactory0DelegateProvider(WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedStrongWarning0")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> strongWarning0(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
-    return DiagnosticFactory0DelegateProvider(STRONG_WARNING, positioningStrategy, container)
+    return DiagnosticFactory0DelegateProvider(STRONG_WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedStrongWarning1")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> strongWarning1(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(STRONG_WARNING, positioningStrategy, container)
+    return DiagnosticFactory1DelegateProvider(STRONG_WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedWarning1")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> warning1(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(WARNING, positioningStrategy, container)
+    return DiagnosticFactory1DelegateProvider(WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedStrongWarning2")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> strongWarning2(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
-    return DiagnosticFactory2DelegateProvider(STRONG_WARNING, positioningStrategy, container)
+    return DiagnosticFactory2DelegateProvider(STRONG_WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedWarning2")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> warning2(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
-    return DiagnosticFactory2DelegateProvider(WARNING, positioningStrategy, container)
+    return DiagnosticFactory2DelegateProvider(WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedWarning3")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> warning3(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
-    return DiagnosticFactory3DelegateProvider(WARNING, positioningStrategy, container)
+    return DiagnosticFactory3DelegateProvider(WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedWarning4")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> warning4(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DiagnosticFactory4DelegateProvider(WARNING, positioningStrategy, container)
+    return DiagnosticFactory4DelegateProvider(WARNING, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedError0")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> error0(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
-    return DiagnosticFactory0DelegateProvider(ERROR, positioningStrategy, container)
+    return DiagnosticFactory0DelegateProvider(ERROR, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedError1")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> error1(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
-    return DiagnosticFactory1DelegateProvider(ERROR, positioningStrategy, container)
+    return DiagnosticFactory1DelegateProvider(ERROR, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedError2")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> error2(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
-    return DiagnosticFactory2DelegateProvider(ERROR, positioningStrategy, container)
+    return DiagnosticFactory2DelegateProvider(ERROR, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedError3")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> error3(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
-    return DiagnosticFactory3DelegateProvider(ERROR, positioningStrategy, container)
+    return DiagnosticFactory3DelegateProvider(ERROR, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
 @JvmName("deprecatedError4")
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> error4(
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DiagnosticFactory4DelegateProvider(ERROR, positioningStrategy, container)
+    return DiagnosticFactory4DelegateProvider(ERROR, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
@@ -134,9 +134,9 @@ inline fun <reified P : PsiElement, A, B, C, D> error4(
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> deprecationError0(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DeprecationDiagnosticFactory0DelegateProvider {
-    return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategy, container)
+    return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
@@ -144,9 +144,9 @@ inline fun <reified P : PsiElement> deprecationError0(
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> deprecationError1(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DeprecationDiagnosticFactory1DelegateProvider<A> {
-    return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategy, container)
+    return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
@@ -154,9 +154,9 @@ inline fun <reified P : PsiElement, A> deprecationError1(
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B> deprecationError2(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DeprecationDiagnosticFactory2DelegateProvider<A, B> {
-    return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategy, container)
+    return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
@@ -164,9 +164,9 @@ inline fun <reified P : PsiElement, A, B> deprecationError2(
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C> deprecationError3(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DeprecationDiagnosticFactory3DelegateProvider<A, B, C> {
-    return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategy, container)
+    return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategyKind, container)
 }
 
 @Deprecated(message, level = DeprecationLevel.WARNING)
@@ -174,7 +174,7 @@ inline fun <reified P : PsiElement, A, B, C> deprecationError3(
 context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
     featureForError: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategyKind: PositioningStrategyKind = PositioningStrategyKinds.DEFAULT
 ): DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D> {
-    return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, container)
+    return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategyKind, container)
 }

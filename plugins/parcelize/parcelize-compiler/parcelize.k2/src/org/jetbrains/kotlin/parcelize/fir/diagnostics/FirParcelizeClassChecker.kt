@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -103,11 +103,11 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
         if (klass !is FirRegularClass || !klass.isCompanion) return
         if (klass.isSubclassOf(OLD_PARCELER_ID.toLookupTag(), context.session, isStrict = true)) {
             val strategy = if (klass.name == SpecialNames.NO_NAME_PROVIDED) {
-                SourceElementPositioningStrategies.OBJECT_KEYWORD
+                PositioningStrategyKinds.OBJECT_KEYWORD
             } else {
-                SourceElementPositioningStrategies.NAME_IDENTIFIER
+                PositioningStrategyKinds.NAME_IDENTIFIER
             }
-            reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, context, positioningStrategy = strategy)
+            reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, context, positioningStrategyKind = strategy)
         }
     }
 }

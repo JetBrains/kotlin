@@ -30,7 +30,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
 
     // error goes on the non-composable function with composable calls
     val COMPOSABLE_EXPECTED by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val NONREADONLY_CALL_IN_READONLY_COMPOSABLE by error0()
@@ -40,11 +40,11 @@ object ComposeErrors : KtDiagnosticsContainer() {
     // composable calls are not allowed in try expressions
     // error goes on the `try` keyword
     val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE by error0(
-        SourceElementPositioningStrategies.TRY_KEYWORD
+        PositioningStrategyKinds.TRY_KEYWORD
     )
 
     // error goes on the `runCatching` call
-    val ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE by error0(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE by error0(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
 
     val MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION by error3<
             FirValueParameterSymbol, // unmarked
@@ -54,39 +54,39 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by warning0()
 
     val COMPOSABLE_SUSPEND_FUN by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val COMPOSABLE_FUN_MAIN by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val COMPOSABLE_PROPERTY_REFERENCE by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val COMPOSABLE_PROPERTY_BACKING_FIELD by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
-    val COMPOSABLE_VAR by error0(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val COMPOSABLE_VAR by error0(PositioningStrategyKinds.DECLARATION_NAME)
 
     val COMPOSE_INVALID_DELEGATE by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val COMPOSE_APPLIER_CALL_MISMATCH by warning2<String, String>(
-        SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+        PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED
     )
 
     val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<String, String>()
 
     val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
 
     val COMPOSABLE_INAPPLICABLE_TYPE by error1<ConeKotlinType>()
@@ -96,7 +96,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<LanguageVersion>()
 
     val KEY_CALL_WITH_NO_ARGUMENTS by error0(
-        SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+        PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED
     )
 
     val COMPOSE_CONFIGURATION_ERROR by errorWithoutSource()

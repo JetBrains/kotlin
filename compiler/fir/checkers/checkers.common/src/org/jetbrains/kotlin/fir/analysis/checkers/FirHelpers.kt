@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKind
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
@@ -1085,11 +1085,11 @@ private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boole
 context(context: CheckerContext, reporter: DiagnosticReporter)
 inline fun KtSourceElement?.requireFeatureSupport(
     feature: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
     ifSupported: () -> Unit = {},
 ) {
     if (feature.isDisabled()) {
-        reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategy)
+        reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategyKind)
     } else {
         ifSupported()
     }
@@ -1098,10 +1098,10 @@ inline fun KtSourceElement?.requireFeatureSupport(
 context(context: CheckerContext, reporter: DiagnosticReporter)
 inline fun FirElement.requireFeatureSupport(
     feature: LanguageFeature,
-    positioningStrategy: SourceElementPositioningStrategy? = null,
+    positioningStrategyKind: PositioningStrategyKind? = null,
     ifSupported: () -> Unit = {},
 ) {
-    source.requireFeatureSupport(feature, positioningStrategy, ifSupported)
+    source.requireFeatureSupport(feature, positioningStrategyKind, ifSupported)
 }
 
 context(context: CheckerContext)
