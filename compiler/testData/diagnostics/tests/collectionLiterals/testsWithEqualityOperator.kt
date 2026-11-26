@@ -47,7 +47,7 @@ fun testInWhenBranches() {
 
 fun testsWithId() {
     when ([1, 2, 3]) {
-        <!CONDITION_TYPE_MISMATCH!>id(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)<!> -> { }
+        id(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>) -> { }
         id([1, 2, 3]) -> { }
         id(["!"]) -> { }
     }
