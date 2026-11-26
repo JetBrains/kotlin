@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
-import org.jetbrains.kotlin.backend.konan.sourcesModules
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -28,17 +26,10 @@ internal class TestsDumper(private val context: NativeLoweringContext) : FileLow
     private val baseClassSuite = symbols.baseClassSuite
     private val topLevelSuite = symbols.topLevelSuite
 
-    private val sourcesModules = context.configuration.sourcesModules
-            ?: error("sourcesModules must have been set in the configuration by the frontend phase")
-
-    private fun shouldProcessFile(irFile: IrFile): Boolean =
-            irFile.moduleDescriptor in sourcesModules // Process test annotations in source libraries too.
-
     override fun lower(irFile: IrFile) {
         val testDumpFile = context.config.testDumpFile ?: return
 
-        // TODO: uses descriptors.
-        if (!shouldProcessFile(irFile)) return
+        if (!context.shouldProcessFileWithTests(irFile)) return
 
         /* test suite class -> test function names */
         val testCasesToDump = mutableMapOf<String, MutableList<String>>()
