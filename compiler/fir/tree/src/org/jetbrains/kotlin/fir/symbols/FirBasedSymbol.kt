@@ -54,6 +54,10 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * the session. In particular, symbols built from PSI should not use the default constructor, but rather get their symbol ID from the
  * [FirSymbolIdFactory]. See [FirSymbolId] for more information.
  *
+ * Some symbols with unique symbol IDs are currently *transient*: they are created during resolution without being stored for the session
+ * lifetime, for example synthetic properties and declarations imported from objects. Their lifetime and symbol ID semantics are still
+ * open (KT-92103).
+ *
  * Default constructors keep existing symbol creation source-compatible, which especially eases the migration of compiler plugins.
  */
 abstract class FirBasedSymbol<out E : FirDeclaration>(symbolId: FirSymbolId<FirBasedSymbol<E>>) : DeclarationSymbolMarker {
