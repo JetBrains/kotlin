@@ -330,6 +330,29 @@ single-digit percent — the honest fix is architectural, and the
 boundary problem (cell-built types don't unify with plain-built
 ones) is the work it would take.
 
+**THE RATIO IS THE DENOMINATOR (2026-11-26; JS baseline added).**
+"Indirect linkage doesn't normally cost 7×" — it costs exactly
+THIS, per operation; the shock is the baseline. Measured on the
+same machine, JavaScript itself (the most optimized IC-bearing
+indirect system) does the three microbench ops at: field RMW
+1.05 ns (plain wasm 0.5, hot 1.4), Any-box traffic 1.05 (plain
+1.8, hot 7.1), virtual dispatch 0.43 (plain 0.3, hot 1.5).
+Hot-mode field access is within 35% of a JS property access —
+the same cost class as an inline cache (map check + indirect
+load; our payload ref.test IS the map check). JS is 2.1× plain
+wasm for the same op; we are 2.8×; IC systems look cheap because
+they are quoted against baselines that already pay 1–3 ns/op — we
+are quoted against a baseline where TurboFan ELIMINATES the op
+(plain's 0.5 ns/iter field loop is loop overhead alone). The one
+genuinely above-family component: the Any-channel BOX path
+(7.1 ns vs JS 1.05 — JS never allocates, SMI tagging; we allocate
++ payload-check + cross-instance getOrBox), and compose state
+traffic is box-dense. Normal systems also seal hot paths (JVM
+devirtualizes, SBCL users declare/local-call); swap-anything
+deliberately seals nothing — the honest precedent is SBCL's
+full-call world, where 5–10× over specialized code was always
+the norm.
+
 ## Operational notes
 
 - After `./gradlew dist`: delete the IC caches AND the cached stdlib
