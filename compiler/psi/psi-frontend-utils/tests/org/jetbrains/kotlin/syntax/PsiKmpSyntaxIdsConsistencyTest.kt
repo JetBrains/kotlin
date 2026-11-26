@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.junit.jupiter.api.Test
 import java.lang.Deprecated
 import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -86,6 +88,23 @@ class PsiKmpSyntaxIdsConsistencyTest {
                 psiId, kmpId,
                 "KMP_ID = $kmpId KMP_ELEMENT_TYPE = $kmpElementType PSI_ID = $psiId PSI_ELEMENT_TYPE = $psiElementType"
             )
+        }
+    }
+
+    @Test
+    fun syntaxIdSets() {
+        val psiSets = mapOf(
+            KotlinSyntaxIdSets::UNWRAPPABLE_TOKEN_TYPES.name to UNWRAPPABLE_TOKEN_TYPES,
+            KotlinSyntaxIdSets::VISIBILITY_MODIFIERS.name to KtTokens.VISIBILITY_MODIFIERS,
+            KotlinSyntaxIdSets::MODALITY_MODIFIERS.name to KtTokens.MODALITY_MODIFIERS,
+        )
+
+        for (idSetProperty in KotlinSyntaxIdSets::class.declaredMemberProperties) {
+            val name = idSetProperty.name
+            val psiSet = assertNotNull(psiSets[name], "$name: no PSI counterpart is specified")
+            val idSet = idSetProperty.get(KotlinSyntaxIdSets) as SyntaxIdSet
+            val psiIds = psiSet.types.map { it.syntaxId() }
+            assertEquals(psiIds.toSortedSet(), idSet.toSortedSet(), "$name: KotlinSyntaxIdSets and PSI sets differ")
         }
     }
 
