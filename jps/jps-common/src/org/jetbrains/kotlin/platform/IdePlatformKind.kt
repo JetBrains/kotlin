@@ -42,7 +42,7 @@ abstract class IdePlatformKind {
         // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
         private val extension = run {
             if (isJps) return@run null
-            ApplicationExtensionDescriptor("org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java)
+            ApplicationExtensionDescriptor<IdePlatformKind>("org.jetbrains.kotlin.idePlatformKind")
         }
 
         // For using only in JPS

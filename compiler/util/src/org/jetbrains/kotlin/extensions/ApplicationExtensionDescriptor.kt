@@ -5,25 +5,15 @@
 
 package org.jetbrains.kotlin.extensions
 
-import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 
-open class ApplicationExtensionDescriptor<T : Any>(name: String, private val extensionClass: Class<T>) {
+/**
+ * This class is used only in `:jps:jps-common` (jps/jps-common/src/org/jetbrains/kotlin/platform/IdePlatformKind.kt).
+ * It cannot be declared there, as that module doesn't directly depend on the intellij-platform.
+ */
+open class ApplicationExtensionDescriptor<T : Any>(name: String) {
     private val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
-
-    fun registerExtensionPoint() {
-        CoreApplicationEnvironment.registerExtensionPoint(
-            ApplicationManager.getApplication().extensionArea,
-            extensionPointName.name,
-            extensionClass
-        )
-    }
-
-    fun registerExtension(extension: T, disposable: Disposable) {
-        ApplicationManager.getApplication().extensionArea.getExtensionPoint(extensionPointName).registerExtension(extension, disposable)
-    }
 
     fun getInstances(): List<T> {
         val projectArea = ApplicationManager.getApplication().extensionArea

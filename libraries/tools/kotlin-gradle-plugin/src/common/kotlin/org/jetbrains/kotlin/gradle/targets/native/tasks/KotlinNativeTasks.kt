@@ -69,12 +69,12 @@ import java.io.File
 import java.nio.file.Files
 import java.security.MessageDigest
 import javax.inject.Inject
-import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
-import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
-import org.jetbrains.kotlin.utils.ResolvedDependency as KResolvedDependency
-import org.jetbrains.kotlin.utils.ResolvedDependencyArtifactPath as KResolvedDependencyArtifactPath
-import org.jetbrains.kotlin.utils.ResolvedDependencyId as KResolvedDependencyId
-import org.jetbrains.kotlin.utils.ResolvedDependencyVersion as KResolvedDependencyVersion
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependencies as KResolvedDependencies
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependenciesSupport as KResolvedDependenciesSupport
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependency as KResolvedDependency
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependencyArtifactPath as KResolvedDependencyArtifactPath
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependencyId as KResolvedDependencyId
+import org.jetbrains.kotlin.gradle.tasks.ResolvedDependencyVersion as KResolvedDependencyVersion
 
 // region Useful extensions
 internal fun MutableList<String>.addArg(parameter: String, value: String) {
