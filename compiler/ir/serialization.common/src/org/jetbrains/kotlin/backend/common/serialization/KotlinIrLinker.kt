@@ -448,17 +448,6 @@ abstract class KotlinIrLinker(
 }
 
 /**
- * A key for looking up a declaration (or its symbol) in the linker: the [signature] tells which declaration
- * it is, and the [kind] tells what kind of declaration (and so what kind of [IrSymbol]) is expected.
- *
- * Unlike [TopLevelCallableIdAndKind], which may correspond to several overloaded callables,
- * a [SignatureAndKind] denotes exactly one declaration.
- */
-data class SignatureAndKind(val signature: IdSignature, val kind: BinarySymbolData.SymbolKind) {
-    override fun toString() = "${signature.render()}, kind=$kind"
-}
-
-/**
  * Defines which declarations of a deserialized IR file are loaded, and how much of each declaration.
  *
  * A strategy is resolved per file by [DeserializationStrategyResolver]. Every strategy is also a resolver
