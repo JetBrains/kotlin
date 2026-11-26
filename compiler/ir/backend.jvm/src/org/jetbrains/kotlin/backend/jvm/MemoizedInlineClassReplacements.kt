@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -42,10 +41,11 @@ var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by ir
  * `true` if the name of the parameter must be used as is, without any further adjustments in the codegen
  * (in particular, without replacing it with the `$this$callableName` extension receiver name).
  *
- * It is set for parameters that have the encoded name of their inline class, see [withValueClassParameterName].
+ * It holds for a parameter that has the encoded name of its inline class, see [withValueClassParameterName].
+ * The property reads the name, so a copy of the parameter keeps it, for example in a suspend function view.
  */
-var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
-    internal set
+val IrValueParameter.hasFixedName: Boolean
+    get() = ValueClassParameterNames.decodeValueClassParameterNameOrNull(name.asString()) != null
 
 private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
@@ -336,7 +336,6 @@ class MemoizedInlineClassReplacements(
     private fun encodeInlineClassIntoName(parameter: IrValueParameter) {
         if (!parameter.type.holdsUnderlyingInlineClassValue(context)) return
         parameter.name = parameter.name.withValueClassParameterName(parameter.type.erasedUpperBound)
-        parameter.hasFixedName = true
     }
 
     /**
