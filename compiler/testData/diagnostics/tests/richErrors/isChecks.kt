@@ -4,7 +4,7 @@ error class Foo
 fun test(x: String | Foo, y: String | RichError) {
     if (x is String) return
     if (x is Foo) return
-    if (x|.length !is Foo) return
+    if (x<!UNNECESSARY_SAFE_CALL!>|.<!>length !is Foo) return
     if (y !is Foo) return
 }
 

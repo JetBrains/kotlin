@@ -46,7 +46,7 @@ object ConeTypeUnifier {
         attributes: ConeAttributes,
         typeContext: ConeTypeContext,
     ): ConeKotlinType {
-        require(richErrorTypes.isNotEmpty()) { "Empty list of rich error types" }
+        if (richErrorTypes.isEmpty()) return primaryType.withAttributes(attributes)
 
         if (primaryType is ConeUnionType) {
             return unify(primaryType.primaryType, primaryType.richErrorTypes + richErrorTypes, attributes, typeContext)
