@@ -148,7 +148,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
         sanitizer: (String) -> String = { it },
         dependsOnAnalysis: Boolean = true,
     ) {
-        writeTargetFiles.add(dumpWriteTargetFile(dumpExtension).toPath().normalizedAbsolute())
+        addWriteTarget(dumpWriteTargetFile(dumpExtension))
         val mayBeIncomplete = testCrashed || dependsOnAnalysis && someModulesWereNotAnalyzed
         ManagedTestAssertions.assertEqualsToTestDataFile(
             testDataPath = baseTestDataFile.toPath(),
