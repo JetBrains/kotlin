@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMCodeGenOptLevel
 import llvm.LLVMCodeModel
-import llvm.LLVMKotlinInstructionSelector
 import llvm.LLVMRelocMode
+import org.jetbrains.kotlin.backend.konan.LlvmInstructionSelector
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.konan.target.Architecture.ARM64
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 enum class LlvmOptimizationLevel(val value: Int) {
     NONE(0),
@@ -23,17 +21,6 @@ enum class LlvmSizeLevel(val value: Int) {
     NONE(0),
     DEFAULT(1),
     AGGRESSIVE(2)
-}
-
-/**
- * Instruction selector used by the target machine for machine code generation.
- *
- * Only matters for target machines that emit object code. Note that if [GLOBAL_ISEL] is not available,
- * then [SELECTION_DAG] will be the fallback option.
- */
-enum class LlvmInstructionSelector(val llvmValue: LLVMKotlinInstructionSelector) {
-    SELECTION_DAG(LLVMKotlinInstructionSelector.LLVMKotlinInstructionSelectorSelectionDAG),
-    GLOBAL_ISEL(LLVMKotlinInstructionSelector.LLVMKotlinInstructionSelectorGlobalISel),
 }
 
 /**
@@ -80,17 +67,6 @@ private val NativeBackendPhaseContext.llvmOptimizationLevel: LlvmOptimizationLev
 private val NativeBackendPhaseContext.llvmSizeLevel: LlvmSizeLevel
     get() = if (config.smallBinary) LlvmSizeLevel.AGGRESSIVE else LlvmSizeLevel.NONE
 
-private val KonanTarget.supportsGlobalISel: Boolean
-    get() = architecture == ARM64
-
-/**
- * We select the `GlobalISel` only for targets on ARM64.
- */
-private val NativeBackendPhaseContext.llvmInstructionSelector: LlvmInstructionSelector
-    get() = when {
-        !shouldOptimize() && config.target.supportsGlobalISel -> LlvmInstructionSelector.GLOBAL_ISEL
-        else -> LlvmInstructionSelector.SELECTION_DAG
-    }
 
 /**
  * Creates [LLvmBackendConfig] for the LLVM module that is compiled to the output artifact (e.g., program, framework, ...).
@@ -101,7 +77,7 @@ internal fun createLlvmBackendConfigForOutputModuleFrom(context: NativeBackendPh
                 optimizationLevel = context.llvmOptimizationLevel,
                 sizeLevel = context.llvmSizeLevel,
                 codegenOptimizationLevel = context.llvmCodeGenOptLevel,
-                instructionSelector = context.llvmInstructionSelector,
+                instructionSelector = context.config.instructionSelector,
         )
 
 /**

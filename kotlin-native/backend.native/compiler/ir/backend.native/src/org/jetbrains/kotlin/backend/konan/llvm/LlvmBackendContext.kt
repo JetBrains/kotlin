@@ -16,9 +16,11 @@ import llvm.LLVMDisposeMessage
 import llvm.LLVMDisposeTargetMachine
 import llvm.LLVMGetTarget
 import llvm.LLVMKotlinCreateTargetMachine
+import llvm.LLVMKotlinInstructionSelector
 import llvm.LLVMKotlinIsTargetTripleCompatible
 import llvm.LLVMModuleRef
 import llvm.LLVMTargetMachineRef
+import org.jetbrains.kotlin.backend.konan.LlvmInstructionSelector
 import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.cli.report
@@ -70,6 +72,13 @@ private class LLvmBackendContextImpl(
             LLVMDisposeTargetMachine(targetMachine)
         }
     }
+
+    private val LlvmInstructionSelector.llvmValue: LLVMKotlinInstructionSelector
+        get() = when (this) {
+            DEFAULT -> LLVMKotlinInstructionSelectorDefault
+            SELECTION_DAG -> LLVMKotlinInstructionSelectorSelectionDAG
+            GLOBAL_ISEL -> LLVMKotlinInstructionSelectorGlobalISel
+        }
 }
 
 fun <T> withLlvmBackendContext(llvmBackendConfig: LLvmBackendConfig, block: LlvmBackendContext.() -> T): T {

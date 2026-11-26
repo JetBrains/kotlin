@@ -160,12 +160,12 @@ class NativeSecondStageCompilationConfig(override val configuration: CompilerCon
     /**
      * The instruction selector used when generating machine code from LLVM bitcode.
      */
-    val instructionSelector: LlvmInstructionSelector? by lazy {
+    val instructionSelector: LlvmInstructionSelector by lazy {
         configuration.instructionSelector
                 ?: platform.configurables.llvmInstructionSelector?.let { selectorName ->
                     LlvmInstructionSelector.fromStringOrNull(selectorName)
                             ?: error("Unknown 'llvmInstructionSelector' value in konan.properties for target $target: $selectorName")
-                }
+                } ?: error("Instruction selector cannot be null")
     }
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
