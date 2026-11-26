@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
-import org.jetbrains.kotlin.test.utils.LF_DISABLED_VARIANT
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -57,7 +56,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest :
 abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest :
     AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest {
     override val variantChain: TestVariantChain
-        get() = listOf(LF_DISABLED_VARIANT)
+        get() = DiagnosticsVariantChains.LF_DISABLED
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
