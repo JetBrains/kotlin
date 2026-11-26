@@ -32,8 +32,8 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract override var moduleData: FirModuleData
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
-    abstract override var status: FirDeclarationStatus
     abstract override var isLocal: Boolean
+    abstract override var status: FirCallableDeclarationStatus
     abstract override var returnTypeRef: FirTypeRef
     abstract override var deprecationsProvider: DeprecationsProvider
     abstract override var containerSource: DeserializedContainerSource?

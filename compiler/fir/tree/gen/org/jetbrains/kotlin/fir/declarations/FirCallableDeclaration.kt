@@ -47,8 +47,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
+    abstract override val status: FirCallableDeclarationStatus
     abstract val returnTypeRef: FirTypeRef
     abstract val receiverParameter: FirReceiverParameter?
     abstract val deprecationsProvider: DeprecationsProvider
@@ -66,7 +66,7 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract fun replaceStatus(newStatus: FirCallableDeclarationStatus)
 
     abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 

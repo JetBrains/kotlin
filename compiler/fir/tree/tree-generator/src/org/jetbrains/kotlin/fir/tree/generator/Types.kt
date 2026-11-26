@@ -133,7 +133,7 @@ val callableReferenceMappedArgumentsType = type("fir.resolve.calls", "CallableRe
 val functionCallOrigin = type("fir.expressions", "FirFunctionCallOrigin")
 val resolvedSymbolOrigin = type("fir.resolve", "FirResolvedSymbolOrigin")
 
-val resolvedDeclarationStatusImplType = type("fir.declarations.impl", "FirResolvedDeclarationStatusImpl")
+val resolvedCallableDeclarationStatusImplType = type("fir.declarations.impl", "FirResolvedCallableDeclarationStatusImpl")
 
 val deprecationsProviderType = type("fir.declarations", "DeprecationsProvider")
 val unresolvedDeprecationsProviderType = type("fir.declarations", "UnresolvedDeprecationProvider")

@@ -31,8 +31,8 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
+    abstract override val status: FirCallableDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider
@@ -61,7 +61,7 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformProperty(this, data) as E
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract override fun replaceStatus(newStatus: FirCallableDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 

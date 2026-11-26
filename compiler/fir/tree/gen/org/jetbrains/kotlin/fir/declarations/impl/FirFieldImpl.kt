@@ -35,8 +35,8 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var status: FirDeclarationStatus,
     override val isLocal: Boolean,
+    override var status: FirCallableDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
@@ -145,7 +145,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

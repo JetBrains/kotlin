@@ -31,8 +31,8 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
+    abstract override val status: FirCallableDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
     abstract override val deprecationsProvider: DeprecationsProvider
@@ -59,7 +59,7 @@ abstract class FirField : FirVariable(), FirControlFlowGraphOwner {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformField(this, data) as E
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract override fun replaceStatus(newStatus: FirCallableDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 

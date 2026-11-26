@@ -38,7 +38,7 @@ internal class FirAnonymousFunctionImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var status: FirDeclarationStatus,
+    override var status: FirCallableDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
@@ -149,7 +149,7 @@ internal class FirAnonymousFunctionImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

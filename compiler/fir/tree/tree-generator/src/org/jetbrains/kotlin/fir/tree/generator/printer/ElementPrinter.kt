@@ -50,7 +50,10 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
             allFields.filter { it.withReplace }.forEach { field ->
                 val clazz = field.typeRef.copy(nullable = false)
-                val overriddenClasses = field.overriddenFields.map { it -> it.typeRef.copy(nullable = false) }.toSet()
+                val overriddenClasses = field.overriddenFields
+                    .filter { it.withReplace }
+                    .map { it -> it.typeRef.copy(nullable = false) }
+                    .toSet()
 
                 val override = clazz in overriddenClasses && !(field.name == "source" && element in elementsWithReplaceSource)
                 field.replaceDeclaration(override, forceNullable = field.receiveNullableTypeInReplace)

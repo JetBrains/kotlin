@@ -107,17 +107,14 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): R =
         visitTypeParameterRef(outerClassTypeParameterRef, data)
 
-    override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R =
-        visitDeclarationStatus(resolvedDeclarationStatus, data)
-
     override fun visitCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: D): R =
-        visitDeclarationStatusBase(callableDeclarationStatus, data)
+        visitDeclarationStatus(callableDeclarationStatus, data)
 
     override fun visitClassLikeDeclarationStatus(classLikeDeclarationStatus: FirClassLikeDeclarationStatus, data: D): R =
-        visitDeclarationStatusBase(classLikeDeclarationStatus, data)
+        visitDeclarationStatus(classLikeDeclarationStatus, data)
 
-    override fun visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase, data: D): R =
-        visitDeclarationStatusBase(resolvedDeclarationStatusBase, data)
+    override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R =
+        visitDeclarationStatus(resolvedDeclarationStatus, data)
 
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): R =
         visitFunctionCall(implicitInvokeCall, data)

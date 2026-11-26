@@ -227,20 +227,14 @@ abstract class FirVisitor<out R, in D> {
     open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R =
         visitElement(declarationStatus, data)
 
-    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R =
-        visitElement(resolvedDeclarationStatus, data)
-
-    open fun visitDeclarationStatusBase(declarationStatusBase: FirDeclarationStatusBase, data: D): R =
-        visitElement(declarationStatusBase, data)
-
     open fun visitCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: D): R =
         visitElement(callableDeclarationStatus, data)
 
     open fun visitClassLikeDeclarationStatus(classLikeDeclarationStatus: FirClassLikeDeclarationStatus, data: D): R =
         visitElement(classLikeDeclarationStatus, data)
 
-    open fun visitResolvedDeclarationStatusBase(resolvedDeclarationStatusBase: FirResolvedDeclarationStatusBase, data: D): R =
-        visitElement(resolvedDeclarationStatusBase, data)
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R =
+        visitElement(resolvedDeclarationStatus, data)
 
     open fun visitResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus: FirResolvedCallableDeclarationStatus, data: D): R =
         visitElement(resolvedCallableDeclarationStatus, data)

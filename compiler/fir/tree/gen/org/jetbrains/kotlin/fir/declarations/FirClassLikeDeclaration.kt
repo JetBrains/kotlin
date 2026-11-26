@@ -41,9 +41,9 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement, Fir
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
-    abstract override val status: FirDeclarationStatus
     abstract override val isLocal: Boolean
     abstract override val symbol: FirClassLikeSymbol<FirClassLikeDeclaration>
+    abstract override val status: FirClassLikeDeclarationStatus
     abstract val deprecationsProvider: DeprecationsProvider
     abstract val scopeProvider: FirScopeProvider
 
@@ -56,7 +56,7 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement, Fir
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+    abstract fun replaceStatus(newStatus: FirClassLikeDeclarationStatus)
 
     abstract fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 

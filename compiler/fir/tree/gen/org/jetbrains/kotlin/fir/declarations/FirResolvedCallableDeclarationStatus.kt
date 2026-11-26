@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.ReturnValueStatus
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedCallableDeclarationStatus]
  */
-interface FirResolvedCallableDeclarationStatus : FirCallableDeclarationStatus, FirResolvedDeclarationStatusBase {
+interface FirResolvedCallableDeclarationStatus : FirCallableDeclarationStatus, FirResolvedDeclarationStatus {
     override val source: KtSourceElement?
     override val visibility: Visibility
     override val isExpect: Boolean

@@ -110,6 +110,7 @@ object FirTree : AbstractFirTreeBuilder() {
                 """.trimIndent()
         parent(memberDeclaration)
 
+        +field("status", callableDeclarationStatus, withReplace = true, withTransform = true)
         +field("returnTypeRef", typeRef, withReplace = true, withTransform = true)
         +field("receiverParameter", receiverParameter, nullable = true, withReplace = true, withTransform = true)
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
@@ -185,7 +186,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(declaration)
         parent(typeParameterRefsOwner)
 
-        +field("status", declarationStatus, withReplace = true, withTransform = true)
+        +field("status", declarationStatus, withTransform = true)
         +field("isLocal", boolean)
     }
 
@@ -503,6 +504,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeParameterRefsOwner)
 
         +declaredSymbol(classLikeSymbolType.withArgs(classLikeDeclaration))
+        +field("status", classLikeDeclarationStatus, withReplace = true, withTransform = true)
         +field("deprecationsProvider", deprecationsProviderType, withReplace = true) {
             isMutable = true
         }
@@ -801,34 +803,10 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("initializer", expression, nullable = true, withReplace = true, withTransform = true)
         +annotations
         +typeParameters
-        +field("status", declarationStatus, withReplace = true, withTransform = true)
+        +field("status", callableDeclarationStatus, withReplace = true, withTransform = true)
     }
 
     val declarationStatus: Element by element(Declaration) {
-        +field(visibilityType)
-        +field(modalityType, nullable = true)
-        generateBooleanFields(
-            "expect", "actual", "override", "operator", "infix", "inline", "value", "tailRec",
-            "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-            "fromSealedClass", "fromEnumClass", "fun", "richError", "hasStableParameterNames"
-        )
-        +field("returnValueStatus", returnValueStatusType, nullable = false)
-        +field("defaultVisibility", visibilityType, nullable = false)
-        +field("defaultModality", modalityType, nullable = false)
-
-        fields.find { it.name == "isRichError" }!!.kDoc = "A class or object with the `error` modifier."
-    }
-
-    val resolvedDeclarationStatus: Element by element(Declaration) {
-        kind = ImplementationKind.Interface
-
-        parent(declarationStatus)
-
-        +field(modalityType, nullable = false)
-        +field("effectiveVisibility", effectiveVisibilityType)
-    }
-
-    val declarationStatusBase: Element by element(Declaration) {
         kind = ImplementationKind.Interface
 
         +field(visibilityType)
@@ -843,7 +821,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val callableDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
 
-        parent(declarationStatusBase)
+        parent(declarationStatus)
 
         generateBooleanFields(
             "override", "operator", "infix", "inline", "tailRec",
@@ -855,7 +833,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val classLikeDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
 
-        parent(declarationStatusBase)
+        parent(declarationStatus)
 
         generateBooleanFields(
             "inline", "value", "inner", "companion", "data", "fun", "richError"
@@ -864,10 +842,10 @@ object FirTree : AbstractFirTreeBuilder() {
         fields.find { it.name == "isRichError" }!!.kDoc = "A class or object with the `error` modifier."
     }
 
-    val resolvedDeclarationStatusBase: Element by element(Declaration) {
+    val resolvedDeclarationStatus: Element by element(Declaration) {
         kind = ImplementationKind.Interface
 
-        parent(declarationStatusBase)
+        parent(declarationStatus)
 
         +field(modalityType, nullable = false)
         +field("effectiveVisibility", effectiveVisibilityType)
@@ -877,7 +855,7 @@ object FirTree : AbstractFirTreeBuilder() {
         kind = ImplementationKind.Interface
 
         parent(callableDeclarationStatus)
-        parent(resolvedDeclarationStatusBase)
+        parent(resolvedDeclarationStatus)
 
         +field(modalityType, nullable = false)
         +field("effectiveVisibility", effectiveVisibilityType)
@@ -887,7 +865,7 @@ object FirTree : AbstractFirTreeBuilder() {
         kind = ImplementationKind.Interface
 
         parent(classLikeDeclarationStatus)
-        parent(resolvedDeclarationStatusBase)
+        parent(resolvedDeclarationStatus)
 
         +field(modalityType, nullable = false)
         +field("effectiveVisibility", effectiveVisibilityType)

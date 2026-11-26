@@ -32,7 +32,7 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParameterRefsOwnerBuil
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val typeParameters: MutableList<FirTypeParameterRef> = []
-    lateinit var status: FirDeclarationStatus
+    lateinit var status: FirClassLikeDeclarationStatus
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var scopeProvider: FirScopeProvider
     lateinit var name: Name

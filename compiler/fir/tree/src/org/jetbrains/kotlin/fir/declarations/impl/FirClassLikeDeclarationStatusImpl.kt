@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclarationStatus
 open class FirClassLikeDeclarationStatusImpl(
     visibility: Visibility,
     modality: Modality?
-) : FirDeclarationStatusBaseImpl(visibility, modality), FirClassLikeDeclarationStatus {
+) : FirDeclarationStatusImpl(visibility, modality), FirClassLikeDeclarationStatus {
     override var isInline: Boolean
         get() = this[INLINE]
         set(value) {

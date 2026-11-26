@@ -43,7 +43,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     lateinit var propertySymbol: FirPropertySymbol
     override var initializer: FirExpression? = null
     override val annotations: MutableList<FirAnnotation> = []
-    override lateinit var status: FirDeclarationStatus
+    override lateinit var status: FirCallableDeclarationStatus
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirBackingField {

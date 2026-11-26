@@ -36,8 +36,8 @@ internal class FirNamedFunctionImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override var status: FirDeclarationStatus,
     override val isLocal: Boolean,
+    override var status: FirCallableDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
@@ -133,7 +133,7 @@ internal class FirNamedFunctionImpl(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

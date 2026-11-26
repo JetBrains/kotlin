@@ -44,9 +44,9 @@ internal class FirDefaultSetterValueParameter(
 ) : FirValueParameter() {
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()
-    override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val isLocal: Boolean
         get() = true
+    override var status: FirCallableDeclarationStatus = FirResolvedCallableDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val receiverParameter: FirReceiverParameter?
         get() = null
     override val containerSource: DeserializedContainerSource?
@@ -156,7 +156,7 @@ internal class FirDefaultSetterValueParameter(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 

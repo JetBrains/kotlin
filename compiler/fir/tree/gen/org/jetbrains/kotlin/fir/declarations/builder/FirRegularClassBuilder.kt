@@ -34,7 +34,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val typeParameters: MutableList<FirTypeParameterRef> = []
-    override lateinit var status: FirDeclarationStatus
+    override lateinit var status: FirClassLikeDeclarationStatus
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override lateinit var scopeProvider: FirScopeProvider
     override lateinit var classKind: ClassKind

@@ -43,7 +43,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override val propertySymbol: FirPropertySymbol,
     override var initializer: FirExpression?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var status: FirDeclarationStatus,
+    override var status: FirCallableDeclarationStatus,
 ) : FirBackingField() {
     override val isLocal: Boolean
         get() = propertySymbol.fir.isLocal
@@ -167,7 +167,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         status = newStatus
     }
 }

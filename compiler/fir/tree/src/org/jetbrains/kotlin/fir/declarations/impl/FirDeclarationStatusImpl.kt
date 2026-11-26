@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.DeclarationStatusModifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
-open class FirDeclarationStatusImpl(
+abstract class FirDeclarationStatusImpl(
     override val visibility: Visibility,
     override val modality: Modality?
 ) : FirPureAbstractElement(), FirDeclarationStatus {
@@ -50,88 +50,10 @@ open class FirDeclarationStatusImpl(
             this[ACTUAL] = value
         }
 
-    override var isOverride: Boolean
-        get() = this[OVERRIDE]
-        set(value) {
-            this[OVERRIDE] = value
-        }
-
-    override var isOperator: Boolean
-        get() = this[OPERATOR]
-        set(value) {
-            this[OPERATOR] = value
-        }
-
-    override var isInfix: Boolean
-        get() = this[INFIX]
-        set(value) {
-            this[INFIX] = value
-        }
-
-    override var isInline: Boolean
-        get() = this[INLINE]
-        set(value) {
-            this[INLINE] = value
-        }
-
-    override var isValue: Boolean
-        get() = this[VALUE]
-        set(value) {
-            this[VALUE] = value
-        }
-
-    override var isTailRec: Boolean
-        get() = this[TAILREC]
-        set(value) {
-            this[TAILREC] = value
-        }
-
     override var isExternal: Boolean
         get() = this[EXTERNAL]
         set(value) {
             this[EXTERNAL] = value
-        }
-
-    override var isConst: Boolean
-        get() = this[CONST]
-        set(value) {
-            this[CONST] = value
-        }
-
-    override var isLateInit: Boolean
-        get() = this[LATEINIT]
-        set(value) {
-            this[LATEINIT] = value
-        }
-
-    override var isInner: Boolean
-        get() = this[INNER]
-        set(value) {
-            this[INNER] = value
-        }
-
-    override var isCompanion: Boolean
-        get() = this[COMPANION]
-        set(value) {
-            this[COMPANION] = value
-        }
-
-    override var isData: Boolean
-        get() = this[DATA]
-        set(value) {
-            this[DATA] = value
-        }
-
-    override var isSuspend: Boolean
-        get() = this[SUSPEND]
-        set(value) {
-            this[SUSPEND] = value
-        }
-
-    override var isStatic: Boolean
-        get() = this[STATIC]
-        set(value) {
-            this[STATIC] = value
         }
 
     override var isFromSealedClass: Boolean
@@ -146,49 +68,10 @@ open class FirDeclarationStatusImpl(
             this[FROM_ENUM] = value
         }
 
-    override var isFun: Boolean
-        get() = this[FUN]
-        set(value) {
-            this[FUN] = value
-        }
-
-    override var isRichError: Boolean
-        get() = this[RICH_ERROR]
-        set(value) {
-            this[RICH_ERROR] = value
-        }
-
-    override var hasStableParameterNames: Boolean
-        get() = this[HAS_STABLE_PARAMETER_NAMES]
-        set(value) {
-            this[HAS_STABLE_PARAMETER_NAMES] = value
-        }
-
-    override var returnValueStatus: ReturnValueStatus
-        get() = ReturnValueStatus.fromBitFlags(this[HAS_MUST_USE_RETURN_VALUE], this[HAS_IGNORABLE_RETURN_VALUE])
-        set(value) {
-            flags = flags and (HAS_MUST_USE_RETURN_VALUE.mask or HAS_IGNORABLE_RETURN_VALUE.mask).inv()
-            when (value) {
-                ReturnValueStatus.MustUse ->
-                    this[HAS_MUST_USE_RETURN_VALUE] = true
-                ReturnValueStatus.ExplicitlyIgnorable ->
-                    this[HAS_IGNORABLE_RETURN_VALUE] = true
-                else -> Unit // flags are already cleared
-            }
-        }
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDeclarationStatusImpl {
         return this
-    }
-
-    open fun resolved(
-        visibility: Visibility,
-        modality: Modality,
-        effectiveVisibility: EffectiveVisibility
-    ): FirResolvedDeclarationStatusImpl {
-        return FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility, flags)
     }
 
     override val defaultModality: Modality
@@ -196,38 +79,12 @@ open class FirDeclarationStatusImpl(
 
     override val defaultVisibility: Visibility
         get() = Visibilities.DEFAULT_VISIBILITY
-}
 
-class FirDeclarationStatusWithAlteredDefaults(
-    visibility: Visibility,
-    modality: Modality?,
-    override val defaultVisibility: Visibility,
-    override val defaultModality: Modality,
-) : FirDeclarationStatusImpl(visibility, modality) {
-    internal constructor(
-        visibility: Visibility,
-        modality: Modality?,
-        defaultVisibility: Visibility,
-        defaultModality: Modality,
-        flags: Int
-    ) : this(visibility, modality, defaultVisibility, defaultModality) {
-        this.flags = flags
-    }
-
-    override fun resolved(
+    abstract fun resolved(
         visibility: Visibility,
         modality: Modality,
         effectiveVisibility: EffectiveVisibility
-    ): FirResolvedDeclarationStatusImpl {
-        return FirResolvedDeclarationStatusWithAlteredDefaults(
-            visibility,
-            modality,
-            defaultVisibility,
-            defaultModality,
-            effectiveVisibility,
-            flags
-        )
-    }
+    ): FirResolvedDeclarationStatus
 }
 
 @OptIn(FirImplementationDetail::class)

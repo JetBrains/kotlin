@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.declarationStatus]
@@ -25,29 +24,9 @@ interface FirDeclarationStatus : FirElement {
     val modality: Modality?
     val isExpect: Boolean
     val isActual: Boolean
-    val isOverride: Boolean
-    val isOperator: Boolean
-    val isInfix: Boolean
-    val isInline: Boolean
-    val isValue: Boolean
-    val isTailRec: Boolean
     val isExternal: Boolean
-    val isConst: Boolean
-    val isLateInit: Boolean
-    val isInner: Boolean
-    val isCompanion: Boolean
-    val isData: Boolean
-    val isSuspend: Boolean
-    val isStatic: Boolean
     val isFromSealedClass: Boolean
     val isFromEnumClass: Boolean
-    val isFun: Boolean
-    /**
-     * A class or object with the `error` modifier.
-     */
-    val isRichError: Boolean
-    val hasStableParameterNames: Boolean
-    val returnValueStatus: ReturnValueStatus
     val defaultVisibility: Visibility
     val defaultModality: Modality
 

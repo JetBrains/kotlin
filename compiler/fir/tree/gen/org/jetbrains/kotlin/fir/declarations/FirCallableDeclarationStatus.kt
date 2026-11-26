@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.ReturnValueStatus
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.callableDeclarationStatus]
  */
-interface FirCallableDeclarationStatus : FirDeclarationStatusBase {
+interface FirCallableDeclarationStatus : FirDeclarationStatus {
     override val source: KtSourceElement?
     override val visibility: Visibility
     override val modality: Modality?
