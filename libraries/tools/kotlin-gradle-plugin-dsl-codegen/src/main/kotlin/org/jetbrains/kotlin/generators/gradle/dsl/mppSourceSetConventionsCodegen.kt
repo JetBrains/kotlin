@@ -82,17 +82,17 @@ internal data class CommonSourceSetConvention(
     val baseName: String,
     val allTargetsDescription: String,
     val sampleTarget1: String,
-    val sampleTarget2: String,
+    val sampleTarget2: String? = null,
 )
 
 private val commonSourceSetConventions = listOf(
     CommonSourceSetConvention("common", "all declared targets", "jvm", "iosX64"),
     CommonSourceSetConvention("native", "all declared native targets", "linuxX64", "iosX64"),
-    CommonSourceSetConvention("apple", "all declared Apple targets (ios, macos, watchos, tvos)", "iosX64", "macosX64"),
+    CommonSourceSetConvention("apple", "all declared Apple targets (ios, macos, watchos, tvos)", "iosX64", "macosArm64"),
     CommonSourceSetConvention("ios", "all declared iOS targets", "iosX64", "iosArm64"),
-    CommonSourceSetConvention("tvos", "all declared tvOS targets", "tvosX64", "tvosArm64"),
-    CommonSourceSetConvention("watchos", "all declared watchOS targets", "watchosX64", "watchosArm64"),
-    CommonSourceSetConvention("macos", "all declared macOS targets", "macosX64", "macosArm64"),
+    CommonSourceSetConvention("tvos", "all declared tvOS targets", "tvosArm64", "tvosSimulatorArm64"),
+    CommonSourceSetConvention("watchos", "all declared watchOS targets", "watchosArm64", "watchosSimulatorArm64"),
+    CommonSourceSetConvention("macos", "all declared macOS targets", "macosArm64"),
     CommonSourceSetConvention("linux", "all declared Linux targets", "linuxX64", "linuxArm64"),
     CommonSourceSetConvention("mingw", "all declared Mingw targets", "mingwX64", "mingwX86"),
     CommonSourceSetConvention("androidNative", "all declared Android Native targets", "androidNativeX64", "androidNativeArm64"),
@@ -176,30 +176,35 @@ private fun leafSourceSetAccessorKdoc(sourceSetName: String, targetName: String,
      */
 """.trimIndent()
 
-private fun commonSourceSetAccessorKdoc(sourceSetName: String, description: String, sampleTarget1: String, sampleTarget2: String) = """
-    /**
-     * Static accessor for shared kotlin Source Set between $description.
-     * Declare at least one of the targets mentioned above to access this source set.
-     * If no targets were declared, accessing this source set will cause a runtime error during configuration time.
-     *
-     * Sample:
-     *
-     * ```kotlin
-     * kotlin {
-     *    $sampleTarget1()
-     *    $sampleTarget2()
-     *
-     *    sourceSets {
-     *      $sourceSetName.dependencies {
-     *          // Add $sourceSetName dependencies here
-     *      }
-     *    }
-     * }
-     * ```
-     *
-     * @since 1.9.20
-     */
-""".trimIndent()
+private fun commonSourceSetAccessorKdoc(
+    sourceSetName: String,
+    description: String,
+    sampleTarget1: String,
+    sampleTarget2: String?,
+) = buildString {
+    appendLine("/**")
+    appendLine(" * Static accessor for shared kotlin Source Set between $description.")
+    appendLine(" * Declare at least one of the targets mentioned above to access this source set.")
+    appendLine(" * If no targets were declared, accessing this source set will cause a runtime error during configuration time.")
+    appendLine(" *")
+    appendLine(" * Sample:")
+    appendLine(" *")
+    appendLine(" * ```kotlin")
+    appendLine(" * kotlin {")
+    appendLine(" *    $sampleTarget1()")
+    sampleTarget2?.let { appendLine(" *    $it()") }
+    appendLine(" *")
+    appendLine(" *    sourceSets {")
+    appendLine(" *      $sourceSetName.dependencies {")
+    appendLine(" *          // Add $sourceSetName dependencies here")
+    appendLine(" *      }")
+    appendLine(" *    }")
+    appendLine(" * }")
+    appendLine(" * ```")
+    appendLine(" *")
+    appendLine(" * @since 1.9.20")
+    append(" */")
+}
 
 private fun List<PlatformSourceSetConvention>.generatePlatformImplDeclarations(): String = buildString {
     appendLine()

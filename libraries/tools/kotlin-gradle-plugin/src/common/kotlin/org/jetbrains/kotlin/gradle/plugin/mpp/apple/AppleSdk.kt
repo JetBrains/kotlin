@@ -48,7 +48,6 @@ internal object AppleSdk {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.WATCHOS_SIMULATOR_ARM64
-                        "x86_64" -> KonanTarget.WATCHOS_X64
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
@@ -65,7 +64,6 @@ internal object AppleSdk {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
                         "arm64", "arm64e" -> KonanTarget.TVOS_SIMULATOR_ARM64
-                        "x86_64" -> KonanTarget.TVOS_X64
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
@@ -75,7 +73,7 @@ internal object AppleSdk {
                     when (arch) {
                         // Experimental support for Mac Catalyst in Native backend is implemented via simulator targets.
                         "arm64" -> if (isCatalyst) KonanTarget.IOS_SIMULATOR_ARM64 else KonanTarget.MACOS_ARM64
-                        "x86_64" -> if (isCatalyst) KonanTarget.IOS_X64 else KonanTarget.MACOS_X64
+                        "x86_64" -> if (isCatalyst) KonanTarget.IOS_X64 else throw UnknownArchitectureException(platform, arch)
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
@@ -119,11 +117,7 @@ internal val KonanTarget.appleArchitecture: AppleArchitecture
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
             -> AppleArchitecture.ARM64
 
-        KonanTarget.IOS_X64,
-        KonanTarget.MACOS_X64,
-        KonanTarget.TVOS_X64,
-        KonanTarget.WATCHOS_X64,
-            -> AppleArchitecture.X86_64
+        KonanTarget.IOS_X64 -> AppleArchitecture.X86_64
 
         KonanTarget.WATCHOS_ARM64 -> AppleArchitecture.ARM64_32
 

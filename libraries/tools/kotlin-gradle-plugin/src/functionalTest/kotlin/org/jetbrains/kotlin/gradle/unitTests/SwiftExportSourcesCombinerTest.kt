@@ -30,14 +30,11 @@ class SwiftExportSourcesCombinerTest {
                 "ios_simulator_arm64" to "os(iOS) && targetEnvironment(simulator) && arch(arm64)",
                 "ios_x64" to "os(iOS) && targetEnvironment(simulator) && arch(x86_64)",
                 "macos_arm64" to "os(macOS) && arch(arm64)",
-                "macos_x64" to "os(macOS) && arch(x86_64)",
                 "tvos_arm64" to "os(tvOS) && !targetEnvironment(simulator) && arch(arm64)",
                 "tvos_simulator_arm64" to "os(tvOS) && targetEnvironment(simulator) && arch(arm64)",
-                "tvos_x64" to "os(tvOS) && targetEnvironment(simulator) && arch(x86_64)",
                 "watchos_arm64" to "os(watchOS) && !targetEnvironment(simulator) && arch(arm64_32)",
                 "watchos_device_arm64" to "os(watchOS) && !targetEnvironment(simulator) && arch(arm64)",
                 "watchos_simulator_arm64" to "os(watchOS) && targetEnvironment(simulator) && arch(arm64)",
-                "watchos_x64" to "os(watchOS) && targetEnvironment(simulator) && arch(x86_64)",
             ),
             appleTargets.associate { it.name to it.swiftPackageDestinationCondition(SwiftPackageSourceLanguage.SWIFT) },
         )
@@ -51,14 +48,11 @@ class SwiftExportSourcesCombinerTest {
                 "ios_simulator_arm64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(arm64)",
                 "ios_x64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
                 "macos_arm64" to "__is_target_os(macos) && __is_target_arch(arm64)",
-                "macos_x64" to "__is_target_os(macos) && __is_target_arch(x86_64)",
                 "tvos_arm64" to "__is_target_os(tvos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
                 "tvos_simulator_arm64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
-                "tvos_x64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
                 "watchos_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)",
                 "watchos_device_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
                 "watchos_simulator_arm64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
-                "watchos_x64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
             ),
             appleTargets.associate { it.name to it.swiftPackageDestinationCondition(SwiftPackageSourceLanguage.C_HEADER) },
         )
@@ -343,9 +337,8 @@ class SwiftExportSourcesCombinerTest {
         ),
     )
 
-    // Every Apple target, the deprecated ones included. watchosArm32 is the one Swift Export doesn't support:
-    // it has no AppleArchitecture.
-    private val appleTargets = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily } - KonanTarget.WATCHOS_ARM32
+    // Every Apple target, the deprecated ones included.
+    private val appleTargets = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily }
 
     private fun bridged(name: String, location: String, dependencies: List<String> = emptyList()) =
         GradleSwiftExportModule.BridgesToKotlin(

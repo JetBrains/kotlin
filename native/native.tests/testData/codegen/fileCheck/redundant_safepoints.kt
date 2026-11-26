@@ -5,7 +5,7 @@
 
 // This test checks:
 // - there is only one safepoint per function
-// - safepoint function is inlined in OPT mode, unless SMALLBINARY is needed (for ex, watchos_arm32)
+// - safepoint function is inlined in OPT mode, unless SMALLBINARY is needed (for ex, watchos_arm64)
 // Might fail under -Xbinary=gc=stwms and -Xbinary=gc=noop. In this case, just add ignore clause.
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")

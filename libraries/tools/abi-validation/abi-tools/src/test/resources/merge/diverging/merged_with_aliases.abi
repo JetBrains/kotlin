@@ -1,5 +1,5 @@
 // Klib ABI Dump
-// Targets: [androidNativeArm64, linuxArm64, linuxX64, tvosX64]
+// Targets: [androidNativeArm64, linuxArm64, linuxX64, tvosArm64]
 // Alias: linux => [linuxArm64, linuxX64]
 // Rendering settings:
 // - Signature version: 2
@@ -35,8 +35,8 @@ final fun (org.example/X).org.example/add(org.example/X): org.example/X // org.e
 // Targets: [androidNativeArm64]
 final fun org.example/add(org.example/X, org.example/X): org.example/X // org.example/add|add(org.example.X;org.example.X){}[0]
 
-// Targets: [tvosX64]
+// Targets: [tvosArm64]
 final fun (kotlin/Int).org.example/add(kotlin/Int): kotlin/Int // org.example/add|add@kotlin.Int(kotlin.Int){}[0]
 
-// Targets: [tvosX64]
+// Targets: [tvosArm64]
 final fun org.example/add(kotlin/Int, kotlin/Int): kotlin/Int // org.example/add|add(kotlin.Int;kotlin.Int){}[0]

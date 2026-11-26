@@ -74,7 +74,6 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
                 build("check") {
                     when (HostManager.host) {
                         KonanTarget.MACOS_ARM64 -> assertTasksExecuted(":iosSimulatorArm64Test")
-                        KonanTarget.MACOS_X64 -> assertTasksExecuted(":iosX64Test")
                         else -> error("Unexpected host")
                     }
                 }

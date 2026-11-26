@@ -170,7 +170,7 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 
 /**
  * The set of konanTargets is considered 'host specific' if the shared compilation of said set can *not* be built
- * on *all* potential hosts. e.g. a set like (iosX64, macosX64) can only be built on macos hosts, and is therefore considered
+ * on *all* potential hosts. e.g. a set like (iosX64, macosArm64) can only be built on macos hosts, and is therefore considered
  * 'host specific'.
  */
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =

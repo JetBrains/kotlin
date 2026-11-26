@@ -47,7 +47,7 @@ internal suspend fun Project.setupDefaultKotlinHierarchy() = requiredStage(Final
 
     /*
     Using a group of the 'defaultTargetHierarchy' as 'target name' will potentially lead to conflicts e.g.:
-    linuxX64("linux") or macosX64("native") can lead to confusion of for 'linuxMain' and 'nativeMain' SourceSets
+    linuxX64("linux") or macosArm64("native") can lead to confusion of for 'linuxMain' and 'nativeMain' SourceSets
      */
     run check@{
         val illegalTargetNamesUsed = illegalTargetNamesUsed()

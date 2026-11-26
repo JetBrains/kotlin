@@ -58,7 +58,6 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         NativeCacheDeprecatedProperty(KonanTarget.IOS_SIMULATOR_ARM64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.IOS_X64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.MACOS_ARM64.presetName), // Since 2.3.20
-        NativeCacheDeprecatedProperty(KonanTarget.MACOS_X64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.LINUX_X64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.LINUX_ARM64.presetName), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.MINGW_X64.presetName), // Since 2.3.20

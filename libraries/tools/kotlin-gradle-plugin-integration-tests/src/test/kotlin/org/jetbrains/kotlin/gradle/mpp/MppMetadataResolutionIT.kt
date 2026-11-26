@@ -355,7 +355,6 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                         KonanTarget.IOS_X64,
                         KonanTarget.IOS_ARM64,
                         KonanTarget.IOS_SIMULATOR_ARM64,
-                        KonanTarget.MACOS_X64,
                         KonanTarget.MACOS_ARM64,
                     )
                     targets.all {

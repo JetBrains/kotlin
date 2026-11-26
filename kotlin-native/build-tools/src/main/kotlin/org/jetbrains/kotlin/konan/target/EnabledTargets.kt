@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.konan.target
 
-// Targets that are kept in KonanTarget only to report a deprecation error: not even klibs can be compiled for them,
-// so they are excluded from the stdlib's native targets manifest.
+// Targets removed from the in-tree compiler that the bootstrap still knows. Not even klibs can be compiled for them,
+// so they are excluded from the stdlib's native targets manifest, from platform libraries and from the def files
+// dependency update.
 // Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
-// todo: KT-78078
-val removedTargetNames = setOf("watchos_arm32")
-
-// Targets no longer supported by the in-tree compiler but still present in the bootstrap.
-// Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
-// todo: KT-78078
-internal val unsupportedTargetNames = removedTargetNames + "macos_x64"
+// todo: KT-78078, KT-91457
+val removedTargetNames = setOf("watchos_arm32", "macos_x64", "tvos_x64", "watchos_x64")
 
 fun enabledTargets(platformManager: PlatformManager) = platformManager.enabled.filterNot {
-    it.name in unsupportedTargetNames
+    it.name in removedTargetNames
             || (it in KonanTarget.deprecatedTargets && it !in KonanTarget.toleratedDeprecatedTargets)
 }

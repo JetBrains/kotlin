@@ -124,7 +124,7 @@ interface KotlinHierarchyDsl {
      * Apply the descriptor from the example to the following targets:
      * - iosX64()
      * - iosArm64()
-     * - macosX64()
+     * - macosArm64()
      * - jvm()
      *
      * To create the following 'main' KotlinSourceSetTree:
@@ -138,7 +138,7 @@ interface KotlinHierarchyDsl {
      *              |                        |
      *    +---------+------------+-----------+----------+
      *    |                      |                      |
-     * jvmMain                iosMain               macosX64Main
+     * jvmMain                iosMain               macosArm64Main
      *                           |
      *                           |
      *                      +----+----+

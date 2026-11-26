@@ -45,7 +45,7 @@ import java.util.*
  *
  * Example of output:
 
-ID|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|macos_x64|ios_x64
+ID|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|macos_arm64|ios_x64
 SystemConfiguration||||MODULE|E|A|A
 platform/SystemConfiguration/SCPreferencesContext||||CLASS|E|A|A
 platform/SystemConfiguration/SCPreferencesContext.Companion||||COMPANION_OBJECT|E|A|A

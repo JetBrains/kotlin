@@ -76,17 +76,17 @@ class CommonizeLibcurlTest {
                     KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
-            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)),
+            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_ARM64)),
             outputDirectory = temporaryOutputDirectory
         )
 
         val commonOutputDirectory = temporaryOutputDirectory
-            .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString)
+            .resolve(CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_ARM64).identityString)
 
         assertContainsManifestWithContent(commonOutputDirectory, "native_targets=linux_arm64 linux_x64")
-        assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64 macos_x64")
+        assertContainsManifestWithContent(commonOutputDirectory, "commonizer_native_targets=linux_arm64 linux_x64 macos_arm64")
         assertContainsManifestWithContent(
-            commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_X64).identityString}"
+            commonOutputDirectory, "commonizer_target=${CommonizerTarget(LINUX_X64, LINUX_ARM64, MACOS_ARM64).identityString}"
         )
     }
 }

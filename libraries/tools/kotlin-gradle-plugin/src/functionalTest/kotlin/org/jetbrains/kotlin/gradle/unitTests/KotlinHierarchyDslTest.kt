@@ -482,7 +482,7 @@ class KotlinHierarchyDslTest {
      *              |                        |
      *    +---------+------------+-----------+----------+
      *    |                      |                      |
-     * jvmMain                iosMain               macosX64Main
+     * jvmMain                iosMain               macosArm64Main
      *                           |
      *                           |
      *                      +----+----+

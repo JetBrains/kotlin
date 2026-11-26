@@ -41,6 +41,5 @@ excludedFunctions = aio_readv aio_writev unw_strerror __tg_promote KERNEL_AUDIT_
                     vm_stats \
                     mach_vm_reclaim_update_kernel_accounting_trap
 
-compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm -lresolv

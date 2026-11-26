@@ -100,7 +100,6 @@ dependencies {
     listOf(
         "linuxx64",
         "macosarm64",
-        "macosx64",
         "iossimulatorarm64",
         "mingwx64"
     ).forEach {

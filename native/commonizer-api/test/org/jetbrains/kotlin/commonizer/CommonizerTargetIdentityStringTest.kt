@@ -22,8 +22,8 @@ class CommonizerTargetIdentityStringTest {
 
     @Test
     fun `simple shared targets are invariant under konanTarget order`() {
-        val macosFirst = CommonizerTarget(MACOS_X64, LINUX_X64)
-        val linuxFirst = CommonizerTarget(LINUX_X64, MACOS_X64)
+        val macosFirst = CommonizerTarget(MACOS_ARM64, LINUX_X64)
+        val linuxFirst = CommonizerTarget(LINUX_X64, MACOS_ARM64)
 
         assertEquals(macosFirst, linuxFirst)
         assertEquals(macosFirst.identityString, linuxFirst.identityString)

@@ -35,7 +35,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
         val manifestOfNativeKlib = loadManifestOfNativeKlib(klibPath, target = null)
         manifestOfNativeKlib.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
 
-        val manifestOfNativeKlib2 = loadManifestOfNativeKlib(klibPath, target = KonanTarget.MACOS_X64) // irrelevant target
+        val manifestOfNativeKlib2 = loadManifestOfNativeKlib(klibPath, target = KonanTarget.IOS_X64) // irrelevant target
         manifestOfNativeKlib2.assertContainsAllProperties(CUSTOM_MANIFEST_PROPERTIES)
         assertEquals(manifestOfNativeKlib, manifestOfNativeKlib2)
     }
