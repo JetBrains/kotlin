@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
 import java.net.URLClassLoader
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 internal interface UsesClassLoadersCachingBuildService : Task {
     @get:Internal
@@ -94,7 +94,7 @@ private object ClassLoadersCacheHolder {
             synchronized(this) {
                 if (!::classLoaders.isInitialized) {
                     classLoaders = CacheBuilder.newBuilder()
-                        .expireAfterAccess(classLoaderCacheTimeoutInSeconds, TimeUnit.SECONDS)
+                        .expireAfterAccess(Duration.ofSeconds(classLoaderCacheTimeoutInSeconds))
                         .softValues()
                         .build<ClassLoaderCacheKey, ClassLoader>()
                 }
