@@ -207,7 +207,7 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      */
     fun assertWriteTargetFileUnchangedBy(edit: (String) -> String) {
         val readFile = writeTargetFile.takeIf(File::exists) ?: fallbackFile ?: baseTestDataFile
-        writeTargetFiles.add(inlineWriteTargetFile)
+        addWriteTarget(writeTargetFile)
         ManagedTestAssertions.assertEqualsToTestDataFile(
             testDataPath = baseTestDataFile.toPath(),
             actual = edit(readFile.readText()),
