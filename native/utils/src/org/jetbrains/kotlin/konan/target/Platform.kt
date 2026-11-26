@@ -26,6 +26,10 @@ class Platform(val configurables: Configurables) : Configurables by configurable
         ClangArgs.Jni(configurables)
     }
 
+    val clangForCStubs: ClangArgs.CStubs by lazy {
+        ClangArgs.CStubs(configurables)
+    }
+
     val linker: LinkerFlags by lazy {
         linker(configurables)
     }

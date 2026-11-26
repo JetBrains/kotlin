@@ -290,6 +290,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.pagedAllocator, config.pagedAllocator)
     put(BinaryOptions.concurrentWeakSweep, config.concurrentWeakSweep)
     put(BinaryOptions.checkStateAtExternalCalls, config.checkStateAtExternalCalls)
+    put(BinaryOptions.compileCStubsWithTargetSysRoot, config.compileCStubsWithTargetSysRoot)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
 }
 

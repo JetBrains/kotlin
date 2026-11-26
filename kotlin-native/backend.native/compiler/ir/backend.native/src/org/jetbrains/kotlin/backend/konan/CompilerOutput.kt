@@ -70,7 +70,7 @@ internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(
-            generationState.config.clang,
+            generationState.config.clangForCStubs,
             generationState.diagnosticReporter,
             generationState.inVerbosePhase
     ).forEach {

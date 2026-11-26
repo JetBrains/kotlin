@@ -152,6 +152,13 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     // a replacement for Apple's libtool to workaround KT-89897
     val useLlvmLibtoolDarwin by booleanOption()
+
+    /**
+     * When `true`, the C stubs that the compiler generates for interop are compiled with the target toolchain and sysroot,
+     * like other C code, instead of without them.
+     * This option exists as a workaround, in case compiling the stubs without them introduces regressions.
+     */
+    val compileCStubsWithTargetSysRoot by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

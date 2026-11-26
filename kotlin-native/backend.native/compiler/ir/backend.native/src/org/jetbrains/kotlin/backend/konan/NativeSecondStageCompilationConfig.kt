@@ -391,6 +391,12 @@ class NativeSecondStageCompilationConfig(
 
     internal val clang by lazy { platform.clang }
 
+    val compileCStubsWithTargetSysRoot: Boolean
+        get() = configuration.get(BinaryOptions.compileCStubsWithTargetSysRoot) ?: false
+
+    internal val clangForCStubs: ClangArgs
+        get() = if (compileCStubsWithTargetSysRoot) clang else platform.clangForCStubs
+
     internal val produceStaticFramework get() = configuration.staticFramework
 
     override val loadedKlibs = loadNativeKlibs(configuration, target)
