@@ -1,0 +1,17 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : w.kt -> w.kt
+    added cache: w.kt
+
+// lib2 is not in the link, so its cache keeps the step-0 state: w.kt's cached bitcode holds
+// the when dispatch over E's step-0 ordinals.
+STEP 1:
+    dependencies: lib1
+    unchanged cache: w.kt
+
+// E changed while lib2 was absent, so a correct IC must rebuild w.kt's cache (the baked
+// ordinal dispatch) when lib2 returns to the link. The bug: it does not.
+STEP 2:
+    dependencies: lib1
+    modified cache: w.kt

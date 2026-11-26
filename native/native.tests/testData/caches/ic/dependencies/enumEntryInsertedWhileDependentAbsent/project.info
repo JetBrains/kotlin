@@ -1,0 +1,50 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+
+// Leave-and-return staleness on the enum-ordinal axis (the open family pinned by the
+// committed, still-failing corpus cases dependencies/dependentLibraryLeavesAndReturns,
+// dependencies/propertyTypeChangedWhileDependentAbsent,
+// dependencies/objcBoundClassMovedWhileDependentAbsent and
+// dependencies/renamedFileWhileDependentOutOfLink):
+//   step 0: lib1 declares enum class E { B, C }; lib2 lowers `when (e)` over it, baking
+//           E's ordinals into its per-file cache (NativeEnumWhenLowering.mapConstEnumEntry
+//           records a strong per-file dependency on the enum's file for exactly that reason
+//           -- the KT-86110 fix, EnumClassLowering.kt:76). Everything is cached.
+//   step 1: lib2 is OUT OF THE LINK while lib1 inserts NEW before B, shifting the ordinals
+//           (B: 0 -> 1). lib1 is recompiled and re-cached, but CacheBuilder's change
+//           detection walks only the libraries of the current link (CacheBuilder.kt:271),
+//           so lib2's cache keeps its step-0 state.
+//   step 2: lib2 returns with its byte-identical step-0 klib. No klib recompiles, so
+//           changedFiles contains only main (its source was swapped back) and the dirty
+//           dfs -- which starts only from changed/added/removed files (CacheBuilder.kt:344)
+//           -- never walks lib2's recorded dependency edge lib2|w.kt -> lib1|e.kt. The
+//           edge carries no version or hash of the dependency it was built against, and the
+//           returning-library check staleCacheReason -> computeDependenciesFingerprint
+//           (CacheBuilder.kt:145-170) deliberately excludes per-file cached dependencies
+//           (CacheBuilder.kt:131-137: "changes in the per-file cached dependencies are
+//           tracked by the dirty-file analysis" -- the very tracking that lost the step-1
+//           change). IC therefore reuses lib2's stale when dispatch: E.B now has runtime
+//           ordinal 1, which the old switch maps into the C branch, and the test fails
+//           with Expected <b>, actual <c>. The clean link (fresh cache dir) rebuilds
+//           lib2's w.kt against the new enum and passes, as does the non-IC link.
+//
+// A correct IC must re-walk a returning library's recorded per-file dependency edges
+// against the dependencies' current cache state: `modified cache: w.kt` at step 2 is the
+// fix. The sibling windows of the same root cause found by this campaign -- the itable
+// (interface grows a default method) and the vtable (superclass grows a method) -- are
+// kept as reduced scenarios under
+// build/kn-ic-fuzz/c7-2026-11-08/r2t6-iface-growth-while-dependent-abs/reduce/manual and
+// build/kn-ic-fuzz/c7-2026-11-08/r3t2-r3t2-vtable-slot-stale-when-subc/reduce/manual.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+
+// lib2 is out of the link while its dependency lib1 changes.
+STEP 1:
+    libs: lib1, main
+
+// lib2 returns; its klib and per-file cache are untouched.
+STEP 2:
+    libs: main
