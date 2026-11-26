@@ -5,6 +5,7 @@
 #ifndef LIBLLVMEXT_KOTLIN_LLVM_DIALECT_H
 #define LIBLLVMEXT_KOTLIN_LLVM_DIALECT_H
 
+#include "llvm-c/Core.h"
 #include "llvm-c/ExternC.h"
 #include "llvm-c/Types.h"
 
@@ -25,6 +26,34 @@ LLVM_C_EXTERN_C_BEGIN
 /// to avoid memory leaks.
 LLVMModuleRef LLVMKotlinModuleCreate(const char *ModuleID,
                                      LLVMModuleRef RuntimeModule);
+
+/// Kotlin calling convention.
+///
+/// Only function with this calling convention are allowed to take Kotlin
+/// objects as parameters or return a Kotlin object.
+extern const unsigned LLVMKotlinCallConv;
+
+typedef enum {
+  /// Regular Kotlin function.
+  LLVMKotlinKtFunctionOrigin,
+  /// Kotlin function defined in the runtime library.
+  LLVMKotlinKtRtFunctionOrigin,
+  /// C->Kotlin function bridge.
+  LLVMKotlinCToKtFunctionOrigin,
+  /// A placeholder origin.
+  LLVMKotlinNoFunctionOrigin = 127
+} LLVMKotlinFunctionOrigin;
+
+/// Set the origin for function.
+///
+/// `LLVMKotlinNoFunctionOrigin` erases the origin value.
+void LLVMKotlinSetFunctionOrigin(LLVMValueRef Fn,
+                                 LLVMKotlinFunctionOrigin Origin);
+
+/// Get the origin of Kotlin function.
+///
+/// When no origin is present, returns `LLVMKotlinNoFunctionOrigin`
+LLVMKotlinFunctionOrigin LLVMKotlinGetFunctionOrigin(LLVMValueRef Fn);
 
 LLVM_C_EXTERN_C_END
 

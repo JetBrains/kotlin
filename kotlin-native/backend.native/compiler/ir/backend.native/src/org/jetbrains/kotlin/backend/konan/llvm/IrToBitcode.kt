@@ -452,7 +452,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
-        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage, KotlinFunctionKind.Kt)
         return RuntimeInitializer(generateFunction(codegen, initFunctionProto, code = block))
     }
 
@@ -472,7 +472,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private fun createInitCtor(initNodePtr: LLVMValueRef): LlvmCallable {
-        val ctorProto = ctorFunctionSignature.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+        val ctorProto = ctorFunctionSignature.toProto("", null, LLVMLinkage.LLVMPrivateLinkage, kind = null)
         val ctor = generateFunctionNoRuntime(codegen, ctorProto) {
             call(llvm.appendToInitalizersTail, listOf(initNodePtr))
             ret(null)
@@ -2481,6 +2481,7 @@ internal class CodeGeneratorVisitor(
                 LlvmFunctionSignature(LlvmRetType(llvm.pointerType, isObjectType = false)),
                 origin = FunctionOrigin.OwnedBy(irClass),
                 linkage = LLVMLinkage.LLVMExternalLinkage,
+                kind = null, // C function
                 independent = true // Protocol is header-only declaration.
         )
         val protocolGetter = llvm.externalFunction(protocolGetterProto)
@@ -2772,7 +2773,7 @@ internal class CodeGeneratorVisitor(
         fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
 
         fun ctorProto(ctorName: String): LlvmFunctionProto {
-            return ctorFunctionSignature.toProto(ctorName, null, LLVMLinkage.LLVMExternalLinkage)
+            return ctorFunctionSignature.toProto(ctorName, null, LLVMLinkage.LLVMExternalLinkage, kind = null)
         }
 
         val ctorFunctions = dependencies.flatMap { dependency ->
@@ -2869,7 +2870,8 @@ internal class CodeGeneratorVisitor(
             val ctorProto = ctorFunctionSignature.toProto(
                     name = "_Konan_constructors",
                     origin = null,
-                    linkage = if (context.config.produce == CompilerOutputKind.PROGRAM) LLVMLinkage.LLVMExternalLinkage else LLVMLinkage.LLVMPrivateLinkage
+                    linkage = if (context.config.produce == CompilerOutputKind.PROGRAM) LLVMLinkage.LLVMExternalLinkage else LLVMLinkage.LLVMPrivateLinkage,
+                    kind = null,
             )
             val globalCtorCallable = generateFunctionNoRuntime(codegen, ctorProto) {
                 ctorFunctions.forEach {

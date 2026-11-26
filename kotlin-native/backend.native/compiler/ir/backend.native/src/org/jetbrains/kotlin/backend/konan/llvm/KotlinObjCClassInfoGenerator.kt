@@ -146,7 +146,8 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
         ).toProto(
                 name = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal",
                 origin = null,
-                LLVMLinkage.LLVMPrivateLinkage
+                LLVMLinkage.LLVMPrivateLinkage,
+                kind = null,
         )
         val functionCallable = generateFunctionNoRuntime(codegen, functionProto) {
             ret(classDataPointer.llvm)

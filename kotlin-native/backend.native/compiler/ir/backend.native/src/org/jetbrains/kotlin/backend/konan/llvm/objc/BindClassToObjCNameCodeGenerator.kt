@@ -186,5 +186,5 @@ private fun CodeGenerator.markCachedFileAsUsed(library: KotlinLibrary, fileRefer
 private fun CodeGenerator.importCachedFunctionAddress(name: String): ConstPointer {
     LLVMGetNamedFunction(llvm.module, name)?.let { return constPointer(it) }
     val signature = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false))
-    return addFunctionDefinition(signature.toProto(name, null, LLVMLinkage.LLVMExternalLinkage)).toConstPointer()
+    return addFunctionDefinition(signature.toProto(name, null, LLVMLinkage.LLVMExternalLinkage, kind = null)).toConstPointer()
 }

@@ -173,7 +173,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
             functionAttributes = listOf(LlvmFunctionAttribute.NoInline)
     )
 
-    val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto(this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage)) {
+    val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto(this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage, kind = null)) {
         setupBridgeDebugInfo()
         // Don't generate redundant cleanup landingpad (the generation would fail due to forbidRuntime below):
         forceCleanupLandingpad = false
@@ -564,7 +564,8 @@ internal class ObjCExportCodeGenerator(
         val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
-                linkage = LLVMLinkage.LLVMInternalLinkage
+                linkage = LLVMLinkage.LLVMInternalLinkage,
+                kind = null,
         )
         val imp = generateFunctionNoRuntime(codegen, impProto) {
             unreachable()
@@ -619,7 +620,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     val boxClass = boxClassSymbol.owner
     val name = "${boxClass.name}ToNSNumber"
 
-    val converter = functionGenerator(kotlinToObjCFunctionType.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage)).generate {
+    val converter = functionGenerator(kotlinToObjCFunctionType.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage, KotlinFunctionKind.Kt)).generate {
         val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
@@ -784,7 +785,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
 ): LlvmCallable {
     val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
-    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)) {
+    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage, KotlinFunctionKind.CToKt)) {
         if (debugInfo) {
             this.setupBridgeDebugInfo()
         }
@@ -1063,7 +1064,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val functionType = LlvmFunctionSignature(irFunction, codegen)
     val functionName = "kotlin2objc_${baseIrFunction.computeSymbolName()}"
-    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)).generate {
+    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage, KotlinFunctionKind.Kt)).generate {
         var errorOutPtr: LLVMValueRef? = null
 
         val parameters = irFunction.parameters.mapIndexed { index, parameterDescriptor ->
@@ -1716,7 +1717,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
 
     val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
-    val imp = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)) {
+    val imp = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage, KotlinFunctionKind.CToKt)) {
         switchToRunnable = true
     }.generate {
         block()

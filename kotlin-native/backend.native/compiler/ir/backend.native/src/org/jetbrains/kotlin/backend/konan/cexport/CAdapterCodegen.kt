@@ -46,7 +46,7 @@ internal class CAdapterCodegen(
                 }
                 cname = "_konan_function_${generator.nextFunctionIndex()}"
                 val signature = LlvmFunctionSignature(irFunction, this@CAdapterCodegen)
-                val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)
+                val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage, KotlinFunctionKind.Kt)
                 // If function is virtual, we need to resolve receiver properly.
                 generateFunction(codegen, bridgeFunctionProto) {
                     val callee = if (!originalFunction.isTopLevel && irFunction.isOverridable) {
@@ -69,7 +69,8 @@ internal class CAdapterCodegen(
                 val getTypeFunction = kGetTypeFuncType.toProto(
                         "${cname}_type",
                         null,
-                        LLVMLinkage.LLVMExternalLinkage
+                        LLVMLinkage.LLVMExternalLinkage,
+                        kind = null,
                 ).createLlvmFunction(context, llvm.module)
                 val builder = LLVMCreateBuilderInContext(llvm.llvmContext)!!
                 val bb = getTypeFunction.addBasicBlock(llvm.llvmContext)
@@ -81,7 +82,8 @@ internal class CAdapterCodegen(
                     val functionProto = kGetObjectFuncType.toProto(
                             "${cname}_instance",
                             null,
-                            LLVMLinkage.LLVMExternalLinkage
+                            LLVMLinkage.LLVMExternalLinkage,
+                            KotlinFunctionKind.Kt,
                     )
                     generateFunction(codegen, functionProto) {
                         val value = call(
@@ -102,7 +104,8 @@ internal class CAdapterCodegen(
                 val functionProto = kGetObjectFuncType.toProto(
                         cname,
                         null,
-                        LLVMLinkage.LLVMExternalLinkage
+                        LLVMLinkage.LLVMExternalLinkage,
+                        KotlinFunctionKind.CToKt,
                 )
                 generateFunction(codegen, functionProto) {
                     val irEnumEntry = irSymbol.owner as IrEnumEntry

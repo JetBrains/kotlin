@@ -161,7 +161,8 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
-                LLVMLinkage.LLVMPrivateLinkage
+                LLVMLinkage.LLVMPrivateLinkage,
+                kind = null,
         )
         val initializer = generateFunctionNoRuntime(this, initializerProto) {
             store(value.llvm, global)

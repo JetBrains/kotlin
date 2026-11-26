@@ -115,9 +115,7 @@ internal inline fun generateFunction(
 ) {
     val llvmFunction = codegen.getLlvmFunctionFrom(function) as LlvmFunction.Definition
 
-    val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
-            // TODO: Alternative approach: lowering that changes origin of such functions to C_TO_KOTLIN_BRIDGE?
-            || function.hasAnnotation(RuntimeNames.exportedBridge)
+    val isCToKotlinBridge = function.kotlinFunctionKind === KotlinFunctionKind.CToKt
 
     val functionGenerationContext = DefaultFunctionGenerationContext(
             llvmFunction,
@@ -337,6 +335,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                     name = targetName,
                     signature = LlvmFunctionSignature(irFunction, this),
                     origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass),
+                    kind = KotlinFunctionKind.Kt, // vtable call bridge is a regular Kotlin function
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))

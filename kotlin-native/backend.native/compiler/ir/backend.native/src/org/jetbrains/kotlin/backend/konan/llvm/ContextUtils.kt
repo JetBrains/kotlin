@@ -408,6 +408,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                     name,
                     origin = FunctionOrigin.FromNativeRuntime,
                     linkage = LLVMLinkage.LLVMExternalLinkage,
+                    kind = null, // has to be a C function
                     independent = false
             )
     )
