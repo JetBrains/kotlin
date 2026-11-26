@@ -93,4 +93,12 @@ internal class LLRealPsiSymbolId<S : FirBasedSymbol<*>>(
     }
 
     override fun hashCode(): Int = psi.hashCode()
+
+    override fun toString(): String {
+        // `toString` must not restore the symbol, so a discarded symbol is only represented by its PSI element.
+        val reference = symbolReference
+        val symbolDescription = if (reference == null) "<unbound>" else reference.get()?.toString() ?: "<discarded>"
+        val rangeDescription = psi.textRange?.let { "${it.startOffset}..${it.endOffset}" } ?: "<no text range>"
+        return "${LLRealPsiSymbolId::class.simpleName}($symbolDescription, psi: ${psi::class.simpleName}, $rangeDescription)"
+    }
 }

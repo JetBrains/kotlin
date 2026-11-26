@@ -61,4 +61,9 @@ internal class LLFakePsiSymbolId<S : FirBasedSymbol<*>>(
                 sourceElement == other.sourceElement
 
     override fun hashCode(): Int = sourceElement.hashCode()
+
+    override fun toString(): String {
+        val symbolDescription = if (::_symbol.isInitialized) _symbol.toString() else "<unbound>"
+        return "${LLFakePsiSymbolId::class.simpleName}($symbolDescription, source: $sourceElement)"
+    }
 }

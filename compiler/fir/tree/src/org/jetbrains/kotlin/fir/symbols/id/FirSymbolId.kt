@@ -116,4 +116,12 @@ abstract class FirSymbolId<out S : FirBasedSymbol<*>> {
     abstract override fun equals(other: Any?): Boolean
 
     abstract override fun hashCode(): Int
+
+    /**
+     * A debug representation of the symbol ID, which includes its bound symbol if it is available.
+     *
+     * Since [toString] is called by debuggers and error messages, it must not access [symbol] if that might restore the symbol or fail.
+     * An unbound or discarded symbol should be represented by a placeholder instead.
+     */
+    abstract override fun toString(): String
 }
