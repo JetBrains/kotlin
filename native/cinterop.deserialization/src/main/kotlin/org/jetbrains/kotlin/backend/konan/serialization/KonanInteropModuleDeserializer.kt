@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
+import org.jetbrains.kotlin.backend.common.serialization.and
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.referenceDeserializedSymbol
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -122,7 +125,7 @@ class KonanInteropModuleDeserializer(
 
         override fun onNewFunction(function: IrSimpleFunction) {
             super.onNewFunction(function)
-            onNewCallable(function, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
+            onNewCallable(function, FUNCTION_SYMBOL)
         }
 
         override fun onNewProperty(property: IrProperty) {
@@ -148,9 +151,9 @@ class KonanInteropModuleDeserializer(
         declarationTracker = declarationTracker,
         getNestedKmClass = { classId -> metadataReader.retrieveDeclarationsById(classId.toDeclarationId(), removeMetadataRepresentation = true)?.first() as KmClass? },
         getOrCreateContainingPackageFragment = ::getOrCreateContainingPackageFragment,
-        getReferencedDeclarationSymbol = { signature, kind ->
+        getReferencedDeclarationSymbol = { signatureAndKind ->
             @OptIn(IrLinkerInternalApi::class)
-            linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(signature, kind, this)
+            linker.findAndEnqueueSymbolOrUnbound(signatureAndKind)
         },
         irProviderForLazyAnnotations = linker,
     )
@@ -159,6 +162,66 @@ class KonanInteropModuleDeserializer(
 
     @IrLinkerInternalApi
     override fun finalizeInitialization() = Unit
+
+    @IrLinkerInternalApi
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        if (!signatureAndKind.signature.isInteropSignature() || signatureAndKind.packageFqName != definedPackageFqName)
+            return null
+
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
+            // The signature may have been already deserialized, just return it.
+            return it.symbol
+        }
+
+        // Whether the declaration represented by the given signature and kind can be a member or a nested declaration of an (outer) class.
+        var isNestedInClass = false
+
+
+        // Compute the signature and the kind of the top-level declaration to deserialize.
+        // When looking for a property's accessor, try to deserialize the property instead.
+        // Doing so will, in turn, deserialize its accessors.
+        val propertyOfSelf = signatureAndKind.correspondingPropertyOrNull() ?: signatureAndKind
+
+        val topLevel = propertyOfSelf.topLevelOrNull() ?: return null
+        if (topLevel != propertyOfSelf) {
+            // If the signature is still not a signature of a top-level declaration, then the top-level declaration is a class.
+            isNestedInClass = true
+        }
+
+        val topLevelSignature = topLevel.signature as? IdSignature.CommonSignature
+            ?: // If the top-level signature is something different from `IdSignature.CommonSignature`,
+            // we don't even have to attempt to deserialize it.
+            return null
+
+        val topLevelDeclarationId = MetadataDeclarationId(
+            kind = topLevel.kind,
+            packageFqName = topLevelSignature.packageFqName(),
+            relativeDeclarationName = FqName(topLevelSignature.declarationFqName)
+        )
+
+        if (topLevelDeclarationId !in metadataReader.getDeclaredDeclarationIds()) {
+            // There is definitely no such a declaration.
+            return null
+        }
+
+        // Trigger the deserialization.
+        deserializeTopLevelDeclarations(topLevelDeclarationId)
+
+        // If the deserialization process above found a declaration with the requested signature, it should be stored it in this map.
+        declarationTracker.deserializedDeclarations[signatureAndKind]?.let {
+            return it.symbol
+        }
+
+        if (isNestedInClass) {
+            // There are two possible cases:
+            // 1. A function/property was not found inside a class because the signature actually refers to a fake override.
+            //    Fake overrides are not present in Klib and will be created later, but the symbol must be created right now.
+            // 2. A nested declaration of a class that was removed in a newer version of C-interop library (partial linkage case).
+            return referenceDeserializedSymbol(symbolTable, signatureAndKind)
+        }
+
+        return null
+    }
 
     override fun contains(idSig: IdSignature): Boolean {
         if (!idSig.isInteropSignature()) {
@@ -191,69 +254,11 @@ class KonanInteropModuleDeserializer(
             // If this would indeed happen, it's most likely because the symbol was deserialized by another instance of
             // KonanInteropModuleDeserializer, most likely by its contains() method. At this time we don't consider it a problem,
             // because we usually stop on the first module deserializer to return true, and don't call contains() afterwards.
-            return tryDeserializeIrSymbol(idSig, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) != null ||
-                    tryDeserializeIrSymbol(idSig, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) != null
+            @OptIn(IrLinkerInternalApi::class)
+            return findAndEnqueueSymbolOrNull(idSig and FUNCTION_SYMBOL) != null ||
+                    findAndEnqueueSymbolOrNull(idSig and PROPERTY_SYMBOL) != null
         }
         return false
-    }
-
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        declarationTracker.deserializedDeclarations[idSig]?.let {
-            // The signature may have been already deserialized, just return it.
-            return it.symbol
-        }
-
-        var searchForSymbolKind = symbolKind
-        var commonSig = idSig
-        if (commonSig is IdSignature.AccessorSignature) {
-            // When looking for a property's accessor, try to deserialize the property instead.
-            // Doing so will, in turn, deserialize its accessors.
-            commonSig = commonSig.propertySignature
-            searchForSymbolKind = BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
-        }
-        commonSig = commonSig as? IdSignature.CommonSignature ?: return null
-
-        val declarationFqName = FqName(commonSig.declarationFqName)
-        if (!declarationFqName.isOneSegmentFQN()) {
-            // When looking for a class member, try to deserialize the top-most containing class instead.
-            // Doing so will, in turn, deserialize everything declared inside that class (including nested classes, recursively).
-            // If the sought declaration is indeed defined somewhere inside this class, it will be linked to `symbol` in the process.
-            val topLevelClassSig = commonSig.topLevelSignature()
-            tryDeserializeIrSymbol(topLevelClassSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
-        } else {
-            val packageFqName = FqName(commonSig.packageFqName)
-            when (searchForSymbolKind) {
-                BinarySymbolData.SymbolKind.CLASS_SYMBOL,
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL,
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> {
-                    deserializeTopLevelDeclarations(MetadataDeclarationId(searchForSymbolKind, packageFqName, declarationFqName))
-                }
-
-                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL,
-                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> {
-                    error("This declaration cannot be top-level: $searchForSymbolKind")
-                }
-
-                else -> error("Symbol kind is unsupported by C-interop Klib: $searchForSymbolKind")
-            }
-        }
-
-        // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
-        declarationTracker.deserializedDeclarations[idSig]?.let {
-            return it.symbol
-        }
-
-        if (!declarationFqName.isOneSegmentFQN()) {
-            // If a member was not found inside a class, it may be because the signature actually refers to a fake override.
-            // F/Os are not present in Klib and will be created later, but the symbol for it must be created here.
-            when (symbolKind) {
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> return symbolTable.referenceSimpleFunction(idSig)
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> return symbolTable.referenceProperty(idSig)
-                else -> {}
-            }
-        }
-
-        return null
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
@@ -328,10 +333,10 @@ class KonanInteropModuleDeserializer(
             if (kmClass.inheritsFromCStructOrEnum()) {
                 // Ask linker about the class instead of deserializing it directly from metadata.
                 // This ensures that, if two interop Klibs define a class with the same ID, only one of them will be chosen, deterministically.
-                val classSig = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
+                val signature = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
 
                 @OptIn(IrLinkerInternalApi::class)
-                linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
+                linker.findAndEnqueueSymbolOrUnbound(signature and CLASS_SYMBOL)
             }
         }
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -47,20 +48,24 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val declaredClasses = mutableMapOf<IdSignature.CommonSignature, IrClass?>()
     private val declaredPackageFragments = mutableMapOf<FqName, IrExternalPackageFragment>()
 
-    override fun contains(idSig: IdSignature): Boolean =
-        idSig is IdSignature.CommonSignature && idSig.packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
+    @IrLinkerInternalApi
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        val [signature, kind] = signatureAndKind
 
-    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
+        if (kind != CLASS_SYMBOL) return null
 
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {
-            "Only class could be a Forward declaration $idSig (kind $symbolKind)"
-        }
+        val packageFqName = (signature as? IdSignature.CommonSignature)?.packageFqName() ?: return null
+        if (packageFqName !in contributedPackageNames) return null
 
-        return declaredClasses.computeIfAbsent(idSig as IdSignature.CommonSignature) {
+        return declaredClasses.computeIfAbsent(signature) {
             buildForwardDeclarationClassStub(it)
         }?.symbol
     }
+
+    override fun contains(idSig: IdSignature): Boolean =
+        idSig is IdSignature.CommonSignature && idSig.packageFqName() in contributedPackageNames
+
+    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.packageFqNameToKind.keys
 
     private fun buildForwardDeclarationClassStub(signature: IdSignature.CommonSignature): IrClass? {
         val kind = NativeForwardDeclarationKind.packageFqNameToKind[signature.packageFqName()] ?: return null

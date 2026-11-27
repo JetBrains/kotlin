@@ -290,8 +290,7 @@ abstract class KotlinIrLinker(
             for (symbol: IrSymbol in unbound) {
                 // Symbol could get bound as a side effect of deserializing other symbols.
                 if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
-                    val signature = symbol.signature ?: continue
-                    getSymbolAndPutIntoQueue(signature, symbol.kind())
+                    findAndEnqueueSymbolOrNull(symbol.signatureAndKindOrNull ?: continue)
                 }
             }
             deserializeAllReachableTopLevels()
@@ -338,26 +337,59 @@ abstract class KotlinIrLinker(
     }
 
     /**
-     * Retrieves the symbol associated with the given signature and kind.
+     * Looks up the symbol with the given [signature] and [kind] in the modules known to this linker
+     * and schedules the corresponding declaration for deserialization.
      *
-     * It is guaranteed that the returned symbol is not null if such a symbol belongs to the module represented by the current deserializer.
-     * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
+     * The symbol is taken from the first module that contains [signature].
+     * Whether the declaration is already deserialized when this function returns depends on the linkage phase:
+     * - Before [finalizeIrLinkage]: the declaration is only put into the deserialization queue, so the returned symbol
+     *   may be unbound. It becomes bound when the queue is processed, see [deserializeAllReachableTopLevels]
+     *   and [drainDeserializationQueue].
+     * - After [finalizeIrLinkage]: the queue is processed immediately, so the returned symbol is bound.
      *
-     * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
-     * main part of the deserialization process has been finished, i.e. after [finalizeIrLinkage] was called.
-     *
-     * @return The symbol for the given signature and kind if successfully found; otherwise, null.
+     * @return The symbol, or `null` if none of the modules contains a declaration with the given [signature].
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
         state.checkInitializationCompleted()
 
-        // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
-        val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
-        return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
-            if (state.isFinalized) deserializeAllReachableTopLevels()
+        val symbol = findAndEnqueueSymbolOrNull(signature and kind)
+        if (symbol != null && state.isFinalized) deserializeAllReachableTopLevels()
+
+        return symbol
+    }
+
+    /**
+     * Looks up the symbol with the given [SignatureAndKind.signature] and [SignatureAndKind.kind] in the modules known to this linker
+     * and schedules the corresponding declaration for deserialization.
+     *
+     * The symbol is taken from the first module that contains [SignatureAndKind].
+     *
+     * @return The symbol, or `null` if none of the modules contains a declaration with the given [SignatureAndKind].
+     */
+    private fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        return firstNotNullOfModuleDeserializersOrNull(signatureAndKind.packageFqName) { moduleDeserializer ->
+            moduleDeserializer.findAndEnqueueSymbolOrNull(signatureAndKind)
         }
     }
 
+    /**
+     * Looks up the symbol with the given [SignatureAndKind.signature] and [SignatureAndKind.kind] in the modules known to this linker
+     * and schedules the corresponding declaration for deserialization. Works the same way as [findAndEnqueueSymbolOrNull],
+     * except that it never returns `null`.
+     *
+     * If none of the modules contains a declaration with the given [SignatureAndKind], the symbol is only referenced in [symbolTable]
+     * and nothing is scheduled for deserialization. The linker has no declaration for such a symbol, so it stays unbound until
+     * the partial linkage handles it in [finalizeIrLinkage].
+     *
+     * @return The symbol found in one of the modules, or the symbol referenced in [symbolTable] if there is no such declaration.
+     */
+    @IrLinkerInternalApi
+    fun findAndEnqueueSymbolOrUnbound(signatureAndKind: SignatureAndKind): IrSymbol {
+        state.checkInitializationCompleted()
+
+        return findAndEnqueueSymbolOrNull(signatureAndKind)
+            ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
+    }
 
     /**
      * Drops everything interned by [irInterner] during IR deserialization to free memory.
