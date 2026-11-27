@@ -2622,6 +2622,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerFlagIgnoredByOlderCompiler : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Compiler.Warning) {
+        operator fun invoke(compilerVersion: String, pluginVersion: String) = build {
+            title { "A compiler argument was ignored by the pinned Kotlin compiler" }
+                .description {
+                    "The Kotlin compiler ignored a compiler argument it does not recognize, which may be a flag or language " +
+                            "feature that needs a newer compiler than the one pinned. The errors above may be caused by that " +
+                            "feature being unavailable.\n" +
+                            "This build uses Kotlin compiler $compilerVersion with Kotlin Gradle Plugin $pluginVersion."
+                }
+                .solution {
+                    "Remove the unsupported compiler argument, or align 'kotlin.compilerVersion' with the Kotlin Gradle Plugin version."
+                }
+        }
+    }
+
     internal object KotlinCompilerVersionNotFound : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(compilerVersion: String, attemptedVersion: String, resolutionFailure: String?) = build {
             val message = if (attemptedVersion == compilerVersion) {

@@ -178,6 +178,21 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("A flag unknown to an older pinned compiler is dropped with a hint that it may need a newer compiler")
+    fun compileErrorWithFlagUnknownToOlderCompilerVersion(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, compilerVersion = THROWING_COMPILER) {
+            buildGradle.append("kotlin { compilerOptions.freeCompilerArgs.add(\"-Xnot-a-real-flag\") }")
+            kotlinSourcesDir().resolve("helloWorld.kt").writeText("fun f() = fffffffffffffffff")
+            buildAndFail("compileKotlin") {
+                assertOutputContains("Flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.")
+                assertOutputContains("Unresolved reference 'fffffffffffffffff'")
+                assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilerFlagIgnoredByOlderCompiler)
+                assertOutputContains("This build uses Kotlin compiler $THROWING_COMPILER with Kotlin Gradle Plugin ${defaultBuildOptions.kotlinVersion}.")
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("Unsupported compiler flag with the compiler matching KGP has no version hint")
     fun compileWithUnsupportedFlagAndDefaultCompilerVersion(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
