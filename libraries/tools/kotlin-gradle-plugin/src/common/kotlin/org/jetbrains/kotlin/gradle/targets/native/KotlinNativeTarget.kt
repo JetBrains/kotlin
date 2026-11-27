@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -69,9 +69,10 @@ abstract class KotlinNativeTarget @Inject constructor(
      * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
      */
     internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
-        if (!HostManager.hostIsSupported) return@future false
+        val host = KotlinNativeHost.current()
+        if (!host.isSupported) return@future false
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
-        val isSupportedHost = hostManager.isEnabled(konanTarget)
+        val isSupportedHost = host.canLinkBinaries(konanTarget)
 
         // Supported hosts can always compile
         if (isSupportedHost) return@future true
@@ -164,9 +165,11 @@ abstract class KotlinNativeTarget @Inject constructor(
     }
 }
 
-private val hostManager by lazy { HostManager() }
-
-private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.reduce { acc, targets -> acc intersect targets } }
+private val targetsEnabledOnAllHosts by lazy {
+    KonanTarget.predefinedTargets.values.filterTo(mutableSetOf()) { target ->
+        bundledNativeTargetSupport.supportedHosts.all { it.canLinkBinaries(target) }
+    }
+}
 
 /**
  * The set of konanTargets is considered 'host specific' if the shared compilation of said set can *not* be built

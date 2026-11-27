@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.unzipTo
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.plugin.mpp.isWindows
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupported
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -170,7 +172,7 @@ class NativeCompilerDownloader(
         }
 
 
-        private val simpleOsName = HostManager.platformName()
+        private val simpleOsName = KotlinNativeHost.current().name
 
         private fun getCompilerVersion(project: Project): String {
             return project.nativeProperties.kotlinNativeVersion.get()
@@ -193,7 +195,7 @@ class NativeCompilerDownloader(
                 "tar.gz"
             }
 
-        private val useZip = HostManager.hostIsMingw
+        private val useZip = KotlinNativeHost.current().isWindows
 
     }
 
@@ -354,7 +356,7 @@ class NativeCompilerDownloader(
     level = DeprecationLevel.WARNING
 )
 internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
-    if (!HostManager.hostIsSupported) {
+    if (!KotlinNativeHost.current().isSupported) {
         // No distribution exists for this host, so neither the download nor the
         // platform libs generation can succeed. Resolving 'kotlin-native-prebuilt-<host>'
         // here would fail the whole build at configuration time, even for JVM-only

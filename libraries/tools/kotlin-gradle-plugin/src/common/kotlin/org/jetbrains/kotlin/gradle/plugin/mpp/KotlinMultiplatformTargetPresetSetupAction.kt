@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -32,7 +32,7 @@ internal val KotlinMultiplatformTargetPresetAction = KotlinProjectSetupAction {
             TVOS_X64, TVOS_SIMULATOR_ARM64
         )
 
-        HostManager().targets.forEach { (_, konanTarget) ->
+        KonanTarget.predefinedTargets.values.forEach { konanTarget ->
             val targetToAdd = when (konanTarget) {
                 in nativeTargetsWithHostTests ->
                     KotlinNativeTargetWithHostTestsPreset(konanTarget.presetName, project, konanTarget)

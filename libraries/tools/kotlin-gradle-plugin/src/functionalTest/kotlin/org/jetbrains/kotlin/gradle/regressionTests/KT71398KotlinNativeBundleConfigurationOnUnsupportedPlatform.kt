@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertNull
@@ -18,7 +19,7 @@ class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
 
     @Test
     fun `KT-71398 - project with multiplatform plugin should not add kotlinNativeBundleConfiguration`() {
-        Assumptions.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isSupportedMacOs)
         val project = buildProjectWithMPP(preApplyCode = {
             project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
             project.extraProperties.set("kotlin.native.toolchain.enabled", "true")
