@@ -2079,6 +2079,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("reportMemoryWithoutPerf.args")
+    public void testReportMemoryWithoutPerf() {
+      run("reportMemoryWithoutPerf.args");
+    }
+
+    @Test
     @TestMetadata("reportPerf.args")
     public void testReportPerf() {
       run("reportPerf.args");
@@ -2094,6 +2100,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfJson_detailedPerf.args")
     public void testReportPerfJson_detailedPerf() {
       run("reportPerfJson_detailedPerf.args");
+    }
+
+    @Test
+    @TestMetadata("reportPerfMemory.args")
+    public void testReportPerfMemory() {
+      run("reportPerfMemory.args");
     }
 
     @Test

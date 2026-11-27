@@ -68,6 +68,9 @@ data class UnitStats(
 
     @property:DeprecatedMeasurementForBackCompatibility
     val extendedStats: List<String>? = null,
+
+    // Null if memory tracking is not enabled, see `PerformanceManager.enableMemoryTracking`
+    val memoryStats: List<MemoryStats>? = null,
 ) : Comparable<UnitStats> {
     fun getTotalTime(): Time {
         return Time.ZERO +
@@ -217,6 +220,40 @@ data class GarbageCollectionStats(val kind: String, val millis: Long, val count:
     }
 }
 
+/**
+ * Memory used by a phase ([dynamicPhase] is `null`) or a dynamic phase of [phaseType].
+ *
+ * [allocatedBytes] is allocated by the thread that ran the phase, so it is exact even when phases run in parallel.
+ * [peakHeapBytes] is the peak usage of the whole heap while the phase was running, so it includes whatever
+ * was in use when the phase started. Like [gcCount] and [gcPauseNanos], it is attributed to every phase
+ * running at the time, whatever thread or unit the phase belongs to.
+ *
+ * [peakRssBytes] is the peak resident set size of the whole process, so unlike [peakHeapBytes] it includes the native memory,
+ * like that of LLVM running in the Kotlin/Native compiler. It is sampled, so it may miss short spikes and is `null`
+ * for a phase shorter than the sampling period or a JVM that can't sample it (before JDK 21).
+ * It doesn't include the memory of the processes the compiler runs, like a linker.
+ *
+ * A phase measured several times under the same name, like a lowering applied per file, keeps the highest peak
+ * and sums up the rest.
+ */
+data class MemoryStats(
+    val phaseType: PhaseType,
+    val dynamicPhase: String?,
+    val peakHeapBytes: Long,
+    val allocatedBytes: Long,
+    val gcCount: Int,
+    val gcPauseNanos: Long,
+    val peakRssBytes: Long? = null,
+) {
+    operator fun plus(other: MemoryStats): MemoryStats = copy(
+        peakHeapBytes = maxOf(peakHeapBytes, other.peakHeapBytes),
+        allocatedBytes = allocatedBytes + other.allocatedBytes,
+        gcCount = gcCount + other.gcCount,
+        gcPauseNanos = gcPauseNanos + other.gcPauseNanos,
+        peakRssBytes = listOfNotNull(peakRssBytes, other.peakRssBytes).maxOrNull(),
+    )
+}
+
 data class DynamicStats(val parentPhaseType: PhaseType, val name: String, val time: Time)
 
 data class KlibElementStats(val path: String, val size: Long)
@@ -271,7 +308,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                             "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
                         } else {
                             ""
-                        }
+                        } + memoryOf(phaseType, null)
             )
 
             dynamicStats?.filter { it.parentPhaseType == phaseType }?.let { filteredDynamicStats ->
@@ -283,7 +320,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                                         "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
                                     } else {
                                         " ($dynamicName)"
-                                    }
+                                    } + memoryOf(phaseType, dynamicName)
                         )
                     }
                 } else {
@@ -326,6 +363,16 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
         @OptIn(DeprecatedMeasurementForBackCompatibility::class)
         extendedStats?.forEach { action(it) }
     }
+}
+
+private fun UnitStats.memoryOf(phaseType: PhaseType, dynamicPhase: String?): String {
+    val stats = memoryStats?.find { it.phaseType == phaseType && it.dynamicPhase == dynamicPhase } ?: return ""
+    val mb = 1024 * 1024
+    return ", heap peak %d MB".format(stats.peakHeapBytes / mb) +
+            stats.peakRssBytes?.let { ", RSS peak %d MB".format(it / mb) }.orEmpty() +
+            ", allocated %d MB, %d GCs (%d ms)".format(
+                stats.allocatedBytes / mb, stats.gcCount, TimeUnit.NANOSECONDS.toMillis(stats.gcPauseNanos)
+            )
 }
 
 val nanosInSecond = TimeUnit.SECONDS.toNanos(1)

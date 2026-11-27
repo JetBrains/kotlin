@@ -232,6 +232,8 @@ where advanced options include:
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
   -Xreport-all-warnings      Report all warnings even if errors are found.
+  -Xreport-memory            Add the memory used by each compilation phase to the performance statistics of '-Xreport-perf' and '-Xdump-perf' (Experimental):
+                               the peak heap usage, the bytes allocated, and the number and pause time of garbage collections.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
   -Xreturn-value-checker={check|full|disable|default}

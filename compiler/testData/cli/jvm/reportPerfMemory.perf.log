@@ -1,0 +1,11 @@
+Kotlin to JVM compiler performance report
+                     INIT        $UINT>>$ ms
+                  ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s, heap peak $UINT$ MB, allocated $UINT$ MB, $UINT$ GCs ($UINT$ ms)
+        TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s, heap peak $UINT$ MB, allocated $UINT$ MB, $UINT$ GCs ($UINT$ ms)
+    KLIB METADATA WRITING        $UINT>>$ ms            $REAL>>$ loc/s, heap peak $UINT$ MB, allocated $UINT$ MB, $UINT$ GCs ($UINT$ ms)
+              IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s, heap peak $UINT$ MB, allocated $UINT$ MB, $UINT$ GCs ($UINT$ ms)
+                  BACKEND        $UINT>>$ ms            $REAL>>$ loc/s, heap peak $UINT$ MB, allocated $UINT$ MB, $UINT$ GCs ($UINT$ ms)
+Binary class from Kotlin file performed $UINT$ times, total time $UINT$ ms
+GC time for <GC> is $UINT$ ms, $UINT$ collections
+GC time for <GC> is $UINT$ ms, $UINT$ collections
+JIT time is $UINT$ ms

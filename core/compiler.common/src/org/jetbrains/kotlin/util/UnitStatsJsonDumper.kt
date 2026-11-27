@@ -39,7 +39,7 @@ object UnitStatsJsonDumper {
 
                     dynamicStats?.let {
                         appendArray(::dynamicStats, dynamicStats, indent = 1, trailingComma = true) {
-                            appendKeyValue(it::parentPhaseType, it.parentPhaseType, indent = 3)
+                            appendKeyValue(it::parentPhaseType, it.parentPhaseType.name, indent = 3)
                             appendKeyValue(it::name, it.name, indent = 3)
                             appendTime(it::time, it.time, indent = 3, trailingComma = false)
                         }
@@ -66,6 +66,18 @@ object UnitStatsJsonDumper {
                     }
 
                     // Ignore deprecated `extendedStats` that used in K1 only
+
+                    memoryStats?.let {
+                        appendArray(::memoryStats, memoryStats, indent = 1, trailingComma = true) {
+                            appendKeyValue(it::phaseType, it.phaseType.name, indent = 3)
+                            it.dynamicPhase?.let { name -> appendKeyValue(it::dynamicPhase, name, indent = 3) }
+                            appendKeyValue(it::peakHeapBytes, it.peakHeapBytes, indent = 3)
+                            it.peakRssBytes?.let { bytes -> appendKeyValue(it::peakRssBytes, bytes, indent = 3) }
+                            appendKeyValue(it::allocatedBytes, it.allocatedBytes, indent = 3)
+                            appendKeyValue(it::gcCount, it.gcCount, indent = 3)
+                            appendKeyValue(it::gcPauseNanos, it.gcPauseNanos, indent = 3, trailingComma = false)
+                        }
+                    }
 
                     if (endsWith(TRAILING_COMMA_SUFFIX)) {
                         replace(length - TRAILING_COMMA_SUFFIX.length, length, "\n")

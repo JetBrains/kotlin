@@ -98,6 +98,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val performanceManager = createPerformanceManager(arguments, services).apply { compilerType = CompilerType.K2 }
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableExtendedStats()
+            if (arguments.reportMemory) performanceManager.enableMemoryTracking()
         }
 
         val configuration = CompilerConfiguration.create()
@@ -124,9 +125,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 try {
                     setIdeaIoUseFallback()
 
-                    val code = doExecute(arguments, configuration, rootDisposable, services)
+                    val code = performanceManager.measureCompilation().use {
+                        doExecute(arguments, configuration, rootDisposable, services)
+                    }
 
-                    performanceManager.notifyCompilationFinished()
                     if (arguments.reportPerf) {
                         collector.report(LOGGING, "PERF: " + performanceManager.getTargetInfo())
                         performanceManager.forEachStringMeasurement {
