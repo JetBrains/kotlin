@@ -49,7 +49,8 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
         containingDeclaration = this,
         modifiersBox = GranularModifiersBox(
-            initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+            initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT)
+                .with(PsiModifier.SEALED.takeIf { isSealed }),
             computer = ::computeModifiers
         ),
         annotationsBox = GranularAnnotationsBox(
