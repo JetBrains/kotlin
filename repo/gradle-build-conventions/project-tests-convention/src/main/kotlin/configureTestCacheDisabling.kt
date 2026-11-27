@@ -12,13 +12,21 @@ import kotlin.text.toBoolean
 
 internal fun Project.configureTestCacheDisabling() {
     tasks.withType<AbstractTestTask>().configureEach {
-        val rootDir = project.rootDir
-        val testCacheDisabled = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false").get().toBoolean()
         // `kotlin.build.cache.tests.disabled` property is used for master builds to always run the tests
-        // We don't atually disable the tests, just upToDateWhen, so we still push to the BuildCache
-        outputs.upToDateWhen { !testCacheDisabled }
+        val testCacheDisabled = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false").get().toBoolean()
+
+        val isNightlyBuild: Boolean = providers.gradleProperty("nightly")
+            .orElse(providers.environmentVariable("NIGHTLY"))
+            .map { it.toBooleanStrict() }
+            .getOrElse(false)
+
+        val doNotUseCaches = testCacheDisabled || isNightlyBuild
+
+        // We don't actually disable the tests, just upToDateWhen, so we still push to the BuildCache
+        outputs.upToDateWhen { !doNotUseCaches }
 
         if (this is Test || this is ProcessForkOptions) {
+            val rootDir = project.rootDir
             outputs.doNotCacheIf("Caching tests is disabled because `workingDir` is set to `rootDir`") { workingDir == rootDir }
         }
     }

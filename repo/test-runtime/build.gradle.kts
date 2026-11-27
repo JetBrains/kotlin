@@ -94,6 +94,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.junit4)
+    testImplementation(libs.kotlinx.coroutines.core)
 }
 
 /* Create synthetic test tasks */

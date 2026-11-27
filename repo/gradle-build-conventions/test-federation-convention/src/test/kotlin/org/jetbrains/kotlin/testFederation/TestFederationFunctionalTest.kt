@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
 
 /**
  * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
- * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
+ * Covers full test runs, selection by annotations and automatic sampling.
  */
 class TestFederationFunctionalTest {
 
@@ -95,28 +95,6 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - AllTests`() {
         val result = runTestBuild(AllTests)
-        assertEquals(allTests, result.executedTests)
-    }
-
-    @Test
-    fun `test - AllTests - nightly disabled`() {
-        val result = runTestBuild(AllTests, nightly = false)
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "domain test"),
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "smoke js contract test"),
-                TestResult("PseudoTest", "wasm contract test"),
-                TestResult("PseudoTest", "gradle contract test"),
-            ),
-            result.executedTests
-        )
-    }
-
-    @Test
-    fun `test - AllTests - nightly enabled`() {
-        val result = runTestBuild(AllTests, nightly = true)
         assertEquals(allTests, result.executedTests)
     }
 
@@ -258,7 +236,8 @@ class TestFederationFunctionalTest {
                 setOf(
                     TestResult("PseudoTest", "smoke test"),
                     TestResult("PseudoTest", "smoke js contract test"),
-                ), result.executedTests)
+                ), result.executedTests
+            )
         }
 
         /* Test with federation disabled */
@@ -272,7 +251,6 @@ class TestFederationFunctionalTest {
                     TestResult("PseudoTest", "smoke js contract test"),
                     TestResult("PseudoTest", "wasm contract test"),
                     TestResult("PseudoTest", "gradle contract test"),
-                    TestResult("PseudoTest", "nightly test"),
                 ),
                 result.executedTests
             )
@@ -454,7 +432,8 @@ class TestFederationFunctionalTest {
                 setOf(
                     TestResult("PseudoTest", "smoke test"),
                     TestResult("PseudoTest", "smoke js contract test"),
-                ), executedTests)
+                ), executedTests
+            )
         }
     }
 
@@ -502,7 +481,8 @@ class TestFederationFunctionalTest {
                     TestResult("PseudoTest", "smoke test"),
                     TestResult("PseudoTest", "smoke js contract test"),
                     TestResult("PseudoTest", "wasm contract test"),
-                ), executedTests)
+                ), executedTests
+            )
         }
     }
 
@@ -809,8 +789,7 @@ private val allTests = setOf(
     TestResult("PseudoTest", "js contract test"),
     TestResult("PseudoTest", "smoke js contract test"),
     TestResult("PseudoTest", "wasm contract test"),
-    TestResult("PseudoTest", "gradle contract test"),
-    TestResult("PseudoTest", "nightly test")
+    TestResult("PseudoTest", "gradle contract test")
 )
 
 private data class TestBuildResult(
@@ -834,7 +813,6 @@ private fun runTestBuild(
     mode: TestFederationMode? = null,
     changedDomains: Collection<Domain> = emptySet(),
     testFederationEnabled: Boolean = true,
-    nightly: Boolean? = null,
     rerun: Boolean = true,
     testsFilter: String? = "org.jetbrains.kotlin.testFederation.PseudoTest",
     smokeTestsIncludeAll: Boolean = false,
@@ -877,7 +855,6 @@ private fun runTestBuild(
         add(":repo:test-runtime:test")
         add("-P$TEST_FEDERATION_ENABLED_KEY=$testFederationEnabled")
         if (subsets.isNotEmpty()) add("-P$TEST_FEDERATION_SUBSETS_KEY=${subsets.toList().toArgumentString()}")
-        if (nightly != null) add("-Pnightly=$nightly")
         add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
         if (testsFilter != null) {

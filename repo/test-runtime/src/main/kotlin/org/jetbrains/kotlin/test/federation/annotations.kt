@@ -22,16 +22,6 @@ import org.junit.jupiter.api.Tag
 annotation class MustRunAlways
 
 /**
- * Excludes the annotated tests when nightly tests are disabled, including remote runs and safe-merge builds.
- * Nightly tests are enabled in nightly builds and by default in local Gradle runs.
- * These tests are not required for merging to master.
- *
- * This annotation does not select a test on its own. Test Federation selection and other test filters still apply.
- */
-@Tag("nightly")
-annotation class NightlyTest
-
-/**
  * Marks tests whose behavior depends on the host they run on (e.g. file system, CLI or native tooling specifics).
  * It is useful for pre-merge checks, e.g., the Windows pre-merge task `commonBackendTestOnWindows`.
  *

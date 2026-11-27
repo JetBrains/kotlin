@@ -282,6 +282,11 @@ enum class JunitTag(
     val includeInBatchedGradleVersionTests: Boolean = parent == null,
 
     val maxParallelForks: Int = 0,
+
+    /**
+     * Create separate tasks when @NightlyTest annotation is used.
+     */
+    val nightlyTestSeparateTasks: Boolean = false,
 ) {
     JvmKGP,
     DaemonsKGP(maxParallelForks = 1),
@@ -292,7 +297,7 @@ enum class JunitTag(
     WasmWasiKGP(parent = WasmKGP),
     NativeKGP,
     MppKGP,
-    AndroidKGP,
+    AndroidKGP(nightlyTestSeparateTasks = true),
     OtherKGP,
     SwiftExportKGP(includeInBatchedGradleVersionTests = false),
     SwiftPMImportKGP(includeInBatchedGradleVersionTests = false);
@@ -374,10 +379,23 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
 
     junitTags.forEach { junitTag ->
         val taskPrefix = "kgp${junitTag.name.substringBefore("KGP")}"
-        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
-            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+
+        fun registerTestForGradleTestTask(junitTag: JunitTag, gradleVersion: String, isNightly: Boolean): TaskProvider<Test> {
+            if (isNightly) {
+                check(junitTag.nightlyTestSeparateTasks) {
+                    "Nightly tests for ${junitTag.name} should have the nightlyTestSeparateTasks flag set"
+                }
+            }
+
+            val nightlyTaskPostfix = if (isNightly) "_Nightly" else ""
+            val testsForGradleNameTaskName = "${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}$nightlyTaskPostfix"
+            return tasks.register<Test>(testsForGradleNameTaskName) {
                 group = gradleVersionTaskGroup
-                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                description = if (isNightly) {
+                    "Runs all nightly tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                } else {
+                    "Runs all non-nightly tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                }
                 maxParallelForks = if (junitTag.maxParallelForks > 0) junitTag.maxParallelForks else maxParallelTestForks
 
                 classpath = sourceSets["test"].runtimeClasspath
@@ -388,15 +406,41 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 useJUnitPlatform {
                     includeTags(junitTag.name)
                     excludeTags(junitTag.excludedTags)
+
+                    if (isNightly) {
+                        excludeTags("!nightly")
+                    } else {
+                        if (junitTag.nightlyTestSeparateTasks) {
+                            // Do not exclude the tag while nightlyTestSeparateTasks=false intentionally.
+                            // Once the @NightlyTest is used for the first time, make it an explicit that setup is needed.
+                            // See @NightlyTest for details.
+                            excludeTags("nightly")
+                        }
+                    }
                 }
 
                 applyIntegrationTestConfiguration()
             }
         }
 
+        val tasksByGradleVersion: List<TaskProvider<Test>> = gradleVersions.map { gradleVersion ->
+            registerTestForGradleTestTask(junitTag, gradleVersion, isNightly = false)
+        }
         tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            description = "Tests for ${junitTag.name} grouped by Gradle version"
             group = gradleVersionTaskGroup
             dependsOn(tasksByGradleVersion)
+        }
+
+        if (junitTag.nightlyTestSeparateTasks) {
+            val tasksByGradleVersionNightly: List<TaskProvider<Test>> = gradleVersions.map { gradleVersion ->
+                registerTestForGradleTestTask(junitTag, gradleVersion, isNightly = true)
+            }
+            tasks.register("${taskPrefix}TestsGroupedByGradleVersionNightly") {
+                description = "Nightly tests for ${junitTag.name} grouped by Gradle version"
+                group = gradleVersionTaskGroup
+                dependsOn(tasksByGradleVersionNightly)
+            }
         }
     }
 }

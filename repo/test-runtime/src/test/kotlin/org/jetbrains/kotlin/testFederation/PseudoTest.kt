@@ -71,12 +71,6 @@ class PseudoTest {
         }
     }
 
-    @NightlyTest
-    @Test
-    fun `nightly test`() {
-        assertTrue(testFederationNightly)
-    }
-
     @MustRunAlways
     @MustRunOnChangesInJs
     @Test
