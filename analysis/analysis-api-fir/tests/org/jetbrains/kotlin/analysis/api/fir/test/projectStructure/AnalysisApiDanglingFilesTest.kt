@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.TRANSPARENT_COPY_ORIGIN_KEY
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
+import org.jetbrains.kotlin.analysis.api.projectStructure.isTransparentCopyOrigin
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
@@ -20,10 +25,12 @@ import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.full.isSubclassOf
 import kotlin.time.Duration.Companion.seconds
 
@@ -270,5 +277,111 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
         assertions.assertEquals(method, call.resolveSuccessfulSymbol()?.realPsi)
         assertions.assertEquals(builtinTypes.string, method.symbol.returnType)
         assertions.assertEquals(builtinTypes.string, usage.symbol.returnType)
+    }
+
+    /**
+     * A copy of a [transparent copy origin][isTransparentCopyOrigin] should be analyzed as an independent dangling file in the context of
+     * the origin: it sees its own declarations instead of the ones from the origin, and it has the same access to the context file as the
+     * origin. The same applies to a copy of such a copy when the copy is a transparent copy origin itself.
+     */
+    @Test
+    fun transparentCopyOrigin(mainFile: KtFile, testServices: TestServices) {
+        val assertions = testServices.assertions
+
+        // With the event system enabled, the dangling file becomes the original file of its copies.
+        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
+        val danglingFile = ktPsiFactory.createFile(
+            "dangling.kt",
+            """
+                class DanglingClass {
+                    fun method() = "five"
+
+                    fun usage() = method()
+                }
+
+                fun privateFunctionUsage() = privateFunction()
+            """.trimIndent(),
+        )
+        danglingFile.putUserData(TRANSPARENT_COPY_ORIGIN_KEY, true)
+
+        val fileCopy = danglingFile.copy() as KtFile
+        assertions.assertEquals(danglingFile, fileCopy.copyOrigin)
+
+        // Only a copy with the event system enabled becomes the original file of its own copies. Being a transparent copy origin as
+        // well, it lets them through to the context of the dangling file.
+        val physicalFileCopy = ktPsiFactory.createFile("dangling.kt", danglingFile.text)
+        physicalFileCopy.originalFile = danglingFile
+        physicalFileCopy.putUserData(TRANSPARENT_COPY_ORIGIN_KEY, true)
+
+        val fileCopyOfCopy = physicalFileCopy.copy() as KtFile
+        assertions.assertEquals(physicalFileCopy, fileCopyOfCopy.copyOrigin)
+
+        val contextModule = analyze(mainFile) { useSiteModule }
+        val privateFunction = mainFile.declarations.single() as KtNamedFunction
+
+        for (file in listOf(danglingFile, fileCopy, physicalFileCopy, fileCopyOfCopy)) {
+            analyze(file) {
+                checkFileWithTransparentCopyOrigin(file, contextModule, privateFunction, testServices)
+            }
+        }
+
+        // The resolution mode is forced for the module only: no mode is explicitly set for the copy.
+        assertions.assertEquals(null, fileCopy.danglingFileResolutionMode)
+
+        // An explicitly requested resolution mode cannot make the copy depend on declarations from the origin.
+        analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
+            checkFileWithTransparentCopyOrigin(fileCopy, contextModule, privateFunction, testServices)
+        }
+    }
+
+    context(_: KaSession)
+    private fun checkFileWithTransparentCopyOrigin(
+        file: KtFile,
+        contextModule: KaModule,
+        privateFunction: KtNamedFunction,
+        testServices: TestServices,
+    ) {
+        val assertions = testServices.assertions
+
+        val useSiteModule = useSiteModule as? KaDanglingFileModule
+            ?: error("Expected the use-site module to be a dangling file module")
+
+        assertions.assertEquals(KaDanglingFileResolutionMode.PREFER_SELF, useSiteModule.resolutionMode)
+        assertions.assertEquals(contextModule, useSiteModule.contextModule)
+        assertions.assertEquals(listOf(file), useSiteModule.files)
+
+        val danglingClass = file.declarations.first() as KtClass
+        val method = danglingClass.declarations.first() as KtNamedFunction
+        assertions.assertEquals("method", method.name)
+
+        val usage = danglingClass.declarations.last() as KtNamedFunction
+        assertions.assertEquals("usage", usage.name)
+
+        val privateFunctionUsage = file.declarations.last() as KtNamedFunction
+        assertions.assertEquals("privateFunctionUsage", privateFunctionUsage.name)
+
+        // The call should resolve to the declaration from the analyzed file.
+        val methodCall = usage.bodyExpression as KtCallExpression
+        assertions.assertEquals(method, methodCall.resolveSuccessfulSymbol()?.realPsi)
+        assertions.assertEquals(builtinTypes.string, usage.symbol.returnType)
+
+        // Private declarations of the context file should be visible.
+        val privateFunctionCall = privateFunctionUsage.bodyExpression as KtCallExpression
+        assertions.assertEquals(privateFunction, privateFunctionCall.resolveSuccessfulSymbol()?.realPsi)
+        assertions.assertEquals(builtinTypes.int, privateFunctionUsage.symbol.returnType)
+    }
+
+    /**
+     * A code fragment cannot be a [transparent copy origin][isTransparentCopyOrigin]: the [TRANSPARENT_COPY_ORIGIN_KEY] set for it should
+     * be reported instead of being silently ignored.
+     */
+    @Test
+    @TestMetadata("transparentCopyOrigin")
+    fun transparentCopyOriginCodeFragment(mainFile: KtFile, testServices: TestServices) {
+        val codeFragment = KtPsiFactory(mainFile.project).createExpressionCodeFragment("privateFunction()", mainFile)
+        testServices.assertions.assertFalse(codeFragment.isTransparentCopyOrigin)
+
+        codeFragment.putUserData(TRANSPARENT_COPY_ORIGIN_KEY, true)
+        assertThrows<IllegalStateException> { codeFragment.isTransparentCopyOrigin }
     }
 }

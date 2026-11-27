@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.psi.*
 
@@ -163,6 +164,33 @@ public val PsiFile.copyOrigin: PsiFile?
     get() {
         return originalFile.takeUnless { it == this }
             ?: getUserData(PsiFileFactory.ORIGINAL_FILE)?.takeUnless { it == this }
+    }
+
+/**
+ * Marks a dangling file as a transparent copy origin: its copies are analyzed in the same context as the file, instead of in the context
+ * of the file itself.
+ *
+ * The file remains the [copyOrigin] of its copies, but analysis treats them as independent dangling files. In particular, they are always
+ * analyzed in the [PREFER_SELF][KaDanglingFileResolutionMode.PREFER_SELF] mode.
+ *
+ * The key cannot be set for code fragments.
+ */
+@KaNonPublicApi
+public val TRANSPARENT_COPY_ORIGIN_KEY: Key<Boolean> = Key.create("TRANSPARENT_COPY_ORIGIN")
+
+/**
+ * Whether the file is marked with the [TRANSPARENT_COPY_ORIGIN_KEY].
+ */
+@KaImplementationDetail
+@OptIn(KaNonPublicApi::class)
+public val KtFile.isTransparentCopyOrigin: Boolean
+    get() {
+        if (getUserData(TRANSPARENT_COPY_ORIGIN_KEY) != true) {
+            return false
+        }
+
+        check(this !is KtCodeFragment) { "'TRANSPARENT_COPY_ORIGIN_KEY' cannot be set for code fragments" }
+        return true
     }
 
 /**
