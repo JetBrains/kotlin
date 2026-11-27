@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
@@ -283,7 +284,7 @@ class InlineScopesGenerator {
             override fun inlineNesting(): Int = 0
 
             override fun shouldSkipVariable(variable: LocalVariableNode): Boolean =
-                !variable.name.contains(INLINE_FUN_VAR_SUFFIX)
+                getInlineDepth(variable.name.dropInlineScopeInfo()) == 0
 
             override fun computeInlineScopeInfo(node: InlineScopeNode) {
                 val variable = node.markerVariable!!
@@ -335,7 +336,7 @@ class InlineScopesGenerator {
         callSiteLineNumber: Int?,
         surroundingScopeNumber: Int?
     ): String {
-        val prefix = name.replace(INLINE_FUN_VAR_SUFFIX, "").dropInlineScopeInfo()
+        val prefix = name.dropInlineScopeInfo().dropInlineFunVarSuffixes()
         return buildString {
             append(prefix)
             append(INLINE_SCOPE_NUMBER_SEPARATOR)
@@ -405,7 +406,9 @@ private fun getInlineDepth(variableName: String): Int {
     var depth = 0
 
     val suffixLen = INLINE_FUN_VAR_SUFFIX.length
-    while (endIndex >= suffixLen) {
+    // A suffix never starts in the encoded inline class of the name. For example, `$v$c$kotlin$_UInt$$iv` has no suffix.
+    val sourceNameStart = ValueClassParameterNames.sourceNameStart(variableName)
+    while (endIndex - suffixLen >= sourceNameStart) {
         if (variableName.substring(endIndex - suffixLen, endIndex) != INLINE_FUN_VAR_SUFFIX) {
             break
         }
@@ -416,6 +419,13 @@ private fun getInlineDepth(variableName: String): Int {
 
     return depth
 }
+
+/**
+ * Drops the [INLINE_FUN_VAR_SUFFIX] suffixes at the end of the name.
+ * A `$iv` in the middle of the name belongs to the name itself, for example to a name that encodes a value class,
+ * see [org.jetbrains.kotlin.load.java.ValueClassParameterNames].
+ */
+private fun String.dropInlineFunVarSuffixes(): String = dropLast(getInlineDepth(this) * INLINE_FUN_VAR_SUFFIX.length)
 
 private val String.isInlineLambdaName: Boolean
     get() = startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)

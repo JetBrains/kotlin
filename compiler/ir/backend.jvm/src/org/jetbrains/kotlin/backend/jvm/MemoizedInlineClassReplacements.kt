@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -34,6 +36,16 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
+
+/**
+ * `true` if the name of the parameter must be used as is, without any further adjustments in the codegen
+ * (in particular, without replacing it with the `$this$callableName` extension receiver name).
+ *
+ * It holds for a parameter that has the encoded name of its inline class, see [withValueClassParameterName].
+ * The property reads the name, so a copy of the parameter keeps it, for example in a suspend function view.
+ */
+val IrValueParameter.hasFixedName: Boolean
+    get() = ValueClassParameterNames.decodeValueClassParameterNameOrNull(name.asString()) != null
 
 private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
@@ -266,6 +278,7 @@ class MemoizedInlineClassReplacements(
                         Name.identifier(function.extensionReceiverName())
                     } else parameter.name
                 ).also {
+                    encodeInlineClassIntoName(it)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -283,8 +296,9 @@ class MemoizedInlineClassReplacements(
                         // FAKE_OVERRIDEs have broken dispatch receivers
                         function.parentAsClass.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier("arg0"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            name = Name.identifier(AsmUtil.THIS),
+                            type = function.parentAsClass.defaultType,
+                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
                     }
@@ -310,9 +324,35 @@ class MemoizedInlineClassReplacements(
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }
+                }.also { encodeInlineClassIntoName(it) }
             }
         }
+
+    /**
+     * Gives [parameter] of a replacement function the encoded name of its inline class, see [ValueClassParameterNames],
+     * if the JVM slot of [parameter] holds the underlying value.
+     * A boxed slot keeps the plain name, because it holds an instance of the inline class.
+     */
+    private fun encodeInlineClassIntoName(parameter: IrValueParameter) {
+        if (!parameter.type.holdsUnderlyingInlineClassValue(context)) return
+        parameter.name = parameter.name.withValueClassParameterName(parameter.type.erasedUpperBound)
+    }
+
+    /**
+     * Gives the local [variable] the encoded name of its inline class, see [ValueClassParameterNames],
+     * if the JVM slot of [variable] holds the underlying value.
+     *
+     * The new name also reaches the captured fields of lambdas and local classes, the spilled variables of coroutines,
+     * and the copies of the variable in inlined code.
+     */
+    fun encodeInlineClassIntoName(variable: IrVariable) {
+        val name = variable.name
+        if (name.isSpecial || ValueClassParameterNames.decodeValueClassParameterNameOrNull(name.asString()) != null) return
+        val type = variable.type
+        if (type.holdsUnderlyingInlineClassValue(context)) {
+            variable.name = name.withValueClassParameterName(type.erasedUpperBound)
+        }
+    }
 
     private fun buildReplacement(
         function: IrFunction,

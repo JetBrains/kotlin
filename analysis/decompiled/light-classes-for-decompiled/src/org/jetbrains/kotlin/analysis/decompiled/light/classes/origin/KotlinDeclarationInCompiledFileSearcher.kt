@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.StringValue
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -298,6 +299,13 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
     }
 
+    /**
+     * A parameter holding the underlying value of an inline class is named `$v$c$<class>$$<name>` in the bytecode,
+     * see [ValueClassParameterNames]. Matching against source declarations has to use the original name.
+     */
+    private val PsiParameter.sourceParameterName: String
+        get() = ValueClassParameterNames.originalParameterName(name)
+
     private fun doPropertyMatchByName(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
         if (!doTypeParametersMatchByName(member, property)) return false
         val names = mutableListOf<String>()
@@ -307,7 +315,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
 
         val psiNames = mutableListOf<String>()
-        member.parameterList.parameters.forEach { psiNames.add(it.name) }
+        member.parameterList.parameters.forEach { psiNames.add(it.sourceParameterName) }
 
         if (names.size != psiNames.size) return false
         names.zip(psiNames).forEach { [ktName, psiName] ->
@@ -354,7 +362,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             ktNamedFunction = ktNamedFunction,
             initial = names,
             fromKtParamMapper = { it.name },
-            fromPsiMapper = { it.name },
+            fromPsiMapper = { it.sourceParameterName },
             matcher = { lcName, ktName -> lcName == ktName })
     }
 

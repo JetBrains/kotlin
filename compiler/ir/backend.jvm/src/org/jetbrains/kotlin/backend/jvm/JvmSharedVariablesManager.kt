@@ -92,6 +92,8 @@ class JvmSharedVariablesManager(
                 this.typeArguments[index] = type
             }
         }
+        // The `Ref` keeps the name of the variable. An encoded name tells that `element` holds the underlying value of an inline class,
+        // see [org.jetbrains.kotlin.load.java.ValueClassParameterNames]
         return with(originalDeclaration) {
             IrVariableImpl(
                 startOffset, endOffset, origin, IrVariableSymbolImpl(), name, refType,
