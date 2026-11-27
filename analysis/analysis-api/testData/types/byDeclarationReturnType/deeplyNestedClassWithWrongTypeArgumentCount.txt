@@ -1,0 +1,28 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: [
+    KaNamedClassSymbol(A.B.C)
+  ]
+  errorMessage: Wrong number of type arguments
+  presentableText: A.B.C
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: B
+      symbol: KaNamedClassSymbol(A.B)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(A.B.C)
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+A.B.C

@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -30,9 +32,7 @@ internal object UsualClassTypeQualifierBuilder {
                 withEntry("useSiteSession", builder.rootSession) { it.toString() }
             }
 
-        val designation = coneTypeClassSymbol.fir.let {
-            if (it.isLocal) collectDesignationPathForLocal(it) else collectDesignationPathForNonLocal(it)
-        }
+        val designation = collectDesignation(coneTypeClassSymbol)
 
         /**
          * Returns a number of own type parameters for [this].
@@ -97,11 +97,17 @@ internal object UsualClassTypeQualifierBuilder {
         }
     }
 
+    fun collectDesignation(firSymbol: FirClassLikeSymbol<*>) = if (firSymbol.isLocal) {
+        collectDesignationPathForLocal(firSymbol.fir)
+    } else {
+        collectDesignationPathForNonLocal(firSymbol).map { it.fir }
+    }
+
     /**
-     * Returns the chain of containing classes of the non-local [declaration] ordered outermost-first, [declaration] included.
+     * Returns the chain of containing classes of the non-local [symbol] ordered outermost-first, [symbol] included.
      */
-    private fun collectDesignationPathForNonLocal(declaration: FirClassLikeDeclaration): List<FirClassLikeDeclaration> =
-        generateSequence(declaration.symbol) { it.getContainingClassSymbol() }.map { it.fir }.toList().asReversed()
+    private fun collectDesignationPathForNonLocal(symbol: FirClassLikeSymbol<FirClassLikeDeclaration>) =
+        generateSequence(symbol) { it.getContainingClassSymbol() }.toList().asReversed()
 
     private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)

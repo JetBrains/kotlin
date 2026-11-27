@@ -1,0 +1,20 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: [
+    KaNamedClassSymbol(<local>/Local)
+  ]
+  errorMessage: Wrong number of type arguments
+  presentableText: Local
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Local
+      symbol: KaNamedClassSymbol(<local>/Local)
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+Local

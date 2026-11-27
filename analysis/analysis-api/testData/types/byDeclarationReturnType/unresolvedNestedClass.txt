@@ -1,0 +1,23 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for Outer.Nested.Unknown
+  presentableText: Outer.Nested.Unknown
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: Outer
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: Nested
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: Unknown
+      typeArguments: []
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+Outer.Nested.Unknown

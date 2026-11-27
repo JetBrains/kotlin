@@ -1,0 +1,23 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for unknown.pkg.Unknown
+  presentableText: unknown.pkg.Unknown
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: unknown
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: pkg
+      typeArguments: []
+    KaUnresolvedClassTypeQualifier:
+      name: Unknown
+      typeArguments: []
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+unknown.pkg.Unknown
