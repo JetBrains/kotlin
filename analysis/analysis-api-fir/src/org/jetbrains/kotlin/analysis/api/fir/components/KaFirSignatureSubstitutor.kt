@@ -63,12 +63,12 @@ internal class KaFirSignatureSubstitutor(
     override fun <S : KaFunctionSymbol> asSignature(symbol: S): KaFunctionSignature<S> = entryPointImplementation {
         symbol.assertIsValidAndAccessible()
         val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
-        return KaFirFunctionDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+        return KaFirFunctionDummySignature<S>(firSymbol, analysisSession)
     }
 
     override fun <S : KaVariableSymbol> asSignature(symbol: S): KaVariableSignature<S> = entryPointImplementation {
         symbol.assertIsValidAndAccessible()
         val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
-        return KaFirVariableDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+        return KaFirVariableDummySignature<S>(firSymbol, analysisSession)
     }
 }

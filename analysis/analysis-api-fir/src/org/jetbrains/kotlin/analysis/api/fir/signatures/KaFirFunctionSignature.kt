@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.signatures
 
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
@@ -35,41 +34,39 @@ internal sealed class KaFirFunctionSignature<out S : KaFunctionSymbol> : KaFunct
 }
 
 internal class KaFirFunctionDummySignature<out S : KaFunctionSymbol>(
-    override val token: KaLifetimeToken,
     override val firSymbol: FirFunctionSymbol<*>,
-    override val firSymbolBuilder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaFirFunctionSignature<S>() {
     @Suppress("UNCHECKED_CAST")
-    override val symbol: S get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
-    override val returnType: KaType get() = withValidityAssertion { symbol.returnType }
-    override val receiverType: KaType? get() = withValidityAssertion { symbol.receiverType }
+    override val symbol: S get() = entryPointImplementation { firSymbol.buildSymbol() as S }
+    override val returnType: KaType get() = entryPointImplementation { symbol.returnType }
+    override val receiverType: KaType? get() = entryPointImplementation { symbol.receiverType }
     override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> by cached {
-        firSymbol.fir.valueParameters.map { KaFirVariableDummySignature(token, it.symbol, firSymbolBuilder) }
+        firSymbol.fir.valueParameters.map { KaFirVariableDummySignature(it.symbol, analysisSession) }
     }
 
     override val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> by cached {
-        firSymbol.fir.contextParameters.map { KaFirVariableDummySignature(token, it.symbol, firSymbolBuilder) }
+        firSymbol.fir.contextParameters.map { KaFirVariableDummySignature(it.symbol, analysisSession) }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = entryPointImplementation {
+        if (substitutor is KaSubstitutor.Empty) return@entryPointImplementation this
         require(substitutor is AbstractKaFirSubstitutor<*>)
 
-        KaFirFunctionSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, substitutor.substitutor)
+        KaFirFunctionSubstitutorBasedSignature(firSymbol, analysisSession, substitutor.substitutor)
     }
 }
 
 internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
-    override val token: KaLifetimeToken,
     override val firSymbol: FirFunctionSymbol<*>,
-    override val firSymbolBuilder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
     override val coneSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty,
 ) : KaFirFunctionSignature<S>(), SubstitutorBasedSignature {
     @Suppress("UNCHECKED_CAST")
-    override val symbol: S get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
+    override val symbol: S get() = entryPointImplementation { firSymbol.buildSymbol() as S }
 
     override val returnType: KaType by cached {
-        firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(firSymbol.resolvedReturnType))
+        analysisSession.firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(firSymbol.resolvedReturnType))
     }
 
     override val receiverType: KaType? by cached {
@@ -78,27 +75,27 @@ internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
             else -> firSymbol.resolvedReceiverTypeRef
         }
 
-        receiverTypeRef?.let { firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(it.coneType)) }
+        receiverTypeRef?.let { analysisSession.firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(it.coneType)) }
     }
 
     override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> by cached {
         firSymbol.fir.valueParameters.map {
-            KaFirVariableSubstitutorBasedSignature(token, it.symbol, firSymbolBuilder, coneSubstitutor)
+            KaFirVariableSubstitutorBasedSignature(it.symbol, analysisSession, coneSubstitutor)
         }
     }
 
     override val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> by cached {
         firSymbol.fir.contextParameters.map {
-            KaFirVariableSubstitutorBasedSignature(token, it.symbol, firSymbolBuilder, coneSubstitutor)
+            KaFirVariableSubstitutorBasedSignature(it.symbol, analysisSession, coneSubstitutor)
         }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+    override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = entryPointImplementation {
+        if (substitutor is KaSubstitutor.Empty) return@entryPointImplementation this
         require(substitutor is AbstractKaFirSubstitutor<*>)
         val chainedSubstitutor = ChainedSubstitutor(coneSubstitutor, substitutor.substitutor)
 
-        KaFirFunctionSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, chainedSubstitutor)
+        KaFirFunctionSubstitutorBasedSignature(firSymbol, analysisSession, chainedSubstitutor)
     }
 
     override fun equals(other: Any?): Boolean =

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
@@ -23,29 +23,28 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirTypeParameterType(
     override val coneType: ConeTypeParameterType,
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaTypeParameterType(), KaFirType {
-    override val token: KaLifetimeToken get() = builder.token
-    override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
+    override val name: Name get() = entryPointImplementation { coneType.lookupTag.name }
     override val symbol: KaTypeParameterSymbol
-        get() = withValidityAssertion {
-            builder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.typeParameterSymbol)
+        get() = entryPointImplementation {
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.typeParameterSymbol)
         }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForType.create(coneType, builder)
+        get() = entryPointImplementation {
+            KaFirAnnotationListForType.create(coneType)
         }
 
     override val abbreviation: KaUsualClassType?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
     override fun toString(): String = coneType.renderForDebugging()
 
     @KaExperimentalApi
-    override fun createPointer(): KaTypePointer<KaTypeParameterType> = withValidityAssertion {
-        return createTypePointer(coneType, builder, ::KaFirTypeParameterType)
+    override fun createPointer(): KaTypePointer<KaTypeParameterType> = entryPointImplementation {
+        return createTypePointer(coneType, ::KaFirTypeParameterType)
     }
 }

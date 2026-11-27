@@ -78,7 +78,7 @@ internal class KaFirScopeProvider(
                 withForcedTypeCalculator = false,
                 memberRequiredPhase = FirResolvePhase.STATUS,
             )
-            return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+            return KaFirDelegatingNamesAwareScope(firScope, analysisSession)
         }
 
     override fun combinedMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
@@ -92,7 +92,7 @@ internal class KaFirScopeProvider(
             val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.firSession, getScopeSession())
                 ?: return createEmptyScope()
 
-            return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+            return KaFirDelegatingNamesAwareScope(firScope, analysisSession)
         }
 
     override fun declaredMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
@@ -131,7 +131,7 @@ internal class KaFirScopeProvider(
             else -> getFirKotlinDeclaredMemberScope(symbol, kind)
         }
 
-        return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+        return KaFirDelegatingNamesAwareScope(firScope, analysisSession)
     }
 
     private fun getFirKotlinDeclaredMemberScope(
@@ -225,13 +225,13 @@ internal class KaFirScopeProvider(
                 declaredScope,
                 delegateFields
             )
-            return KaFirDelegatedMemberScope(firScope, analysisSession.firSymbolBuilder)
+            return KaFirDelegatedMemberScope(firScope, analysisSession)
         }
 
     override fun fileScope(symbol: KaFileSymbol): KaScope =
         entryPointImplementation {
             check(symbol is KaFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${symbol::class} was provided" }
-            return KaFirFileScope(symbol, symbol.builder)
+            return KaFirFileScope(symbol, symbol.analysisSession)
         }
 
     private fun createEmptyScope(): KaScope {
@@ -264,7 +264,7 @@ internal class KaFirScopeProvider(
     override fun declarationScope(typeScope: KaTypeScope): KaScope =
         entryPointImplementation {
             return when (typeScope) {
-                is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(typeScope.firScope, analysisSession.firSymbolBuilder)
+                is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(typeScope.firScope, analysisSession)
                 is KaFirCompositeTypeScope -> KaFirCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
                 else -> unexpectedElementError<KaTypeScope>(typeScope)
             }
@@ -413,11 +413,11 @@ internal class KaFirScopeProvider(
 
     private fun convertToKtScope(firScope: FirScope): KaScope {
         return when (firScope) {
-            is FirAbstractSimpleImportingScope -> KaFirNonStarImportingScope(firScope, analysisSession.firSymbolBuilder)
+            is FirAbstractSimpleImportingScope -> KaFirNonStarImportingScope(firScope, analysisSession)
             is FirAbstractStarImportingScope -> KaFirStarImportingScope(firScope, analysisSession)
             is FirDefaultStarImportingScope -> KaFirDefaultStarImportingScope(firScope, analysisSession)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
-            is FirContainingNamesAwareScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
+            is FirContainingNamesAwareScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession)
             else -> TODO(firScope::class.toString())
         }
     }
@@ -452,7 +452,7 @@ internal class KaFirScopeProvider(
 
     private fun convertToKtTypeScope(firScope: FirScope): KaTypeScope {
         return when (firScope) {
-            is FirContainingNamesAwareScope -> KaFirDelegatingTypeScope(firScope, analysisSession.firSymbolBuilder)
+            is FirContainingNamesAwareScope -> KaFirDelegatingTypeScope(firScope, analysisSession)
             else -> TODO(firScope::class.toString())
         }
     }

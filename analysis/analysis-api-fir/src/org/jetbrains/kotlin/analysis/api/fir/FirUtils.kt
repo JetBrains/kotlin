@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.fir.annotations.computeAnnotationArguments
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -51,8 +52,9 @@ internal fun FirFunctionCall.getCandidateSymbols(): Collection<FirBasedSymbol<*>
 internal fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 
-internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KaSymbolByFirBuilder): KaSymbol? =
-    getResolvedSymbolOfNameReference()?.fir?.let(builder::buildSymbol)
+context(analysisSession: KaFirSession)
+internal fun FirReference.getResolvedKtSymbolOfNameReference(): KaSymbol? =
+    getResolvedSymbolOfNameReference()?.fir?.let(firSymbolBuilder::buildSymbol)
 
 internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     diagnostic.getCandidateSymbols()
@@ -75,21 +77,22 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         else -> emptyList()
     }
 
-internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnnotation {
-    val constructorSymbol = findAnnotationConstructor(this, builder.rootSession)
-        ?.let(builder.functionBuilder::buildConstructorSymbol)
+context(analysisSession: KaFirSession)
+internal fun FirAnnotation.toKaAnnotation(): KaAnnotation {
+    val constructorSymbol = findAnnotationConstructor(this, analysisSession.firSession)
+        ?.let(firSymbolBuilder.functionBuilder::buildConstructorSymbol)
 
-    val classId = toAnnotationNonErrorClassId(builder.rootSession)
+    val classId = toAnnotationNonErrorClassId(analysisSession.firSession)
 
     return KaAnnotationImpl(
         classId = classId,
         psi = psi as? KtCallElement,
         lazyArguments = if (this !is FirAnnotationCall || arguments.isNotEmpty())
-            lazy { computeAnnotationArguments(this, builder) }
+            lazy { computeAnnotationArguments(this) }
         else
             lazyOf(emptyList()),
         constructorSymbol = constructorSymbol,
-        token = builder.token,
+        token = analysisSession.token,
     )
 }
 

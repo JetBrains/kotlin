@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -230,7 +230,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildNamedFunctionSignature(firSymbol: FirNamedFunctionSymbol): KaFunctionSignature<KaNamedFunctionSymbol> {
-            return KaFirFunctionSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+            return KaFirFunctionSubstitutorBasedSignature(firSymbol, analysisSession)
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KaAnonymousFunctionSymbol {
@@ -307,7 +307,7 @@ internal class KaSymbolByFirBuilder(
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KaVariableSignature<KaVariableSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            return KaFirVariableSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+            return KaFirVariableSubstitutorBasedSignature(firSymbol, analysisSession)
         }
 
         fun buildLocalVariableSymbol(firSymbol: FirPropertySymbol): KaLocalVariableSymbol {
@@ -469,27 +469,27 @@ internal class KaSymbolByFirBuilder(
                     KaFirClassErrorType(
                         coneType = coneType,
                         coneDiagnostic = ConeUnresolvedSymbolError(coneType.lookupTag.classId),
-                        builder = this@KaSymbolByFirBuilder
+                        analysisSession = analysisSession,
                     )
                 }
-                hasFunctionalClassId(coneType) -> KaFirFunctionType(coneType, this@KaSymbolByFirBuilder)
-                else -> KaFirUsualClassType(coneType, this@KaSymbolByFirBuilder)
+                hasFunctionalClassId(coneType) -> KaFirFunctionType(coneType, analysisSession)
+                else -> KaFirUsualClassType(coneType, analysisSession)
             }
 
-            is ConeTypeParameterType -> KaFirTypeParameterType(coneType, this@KaSymbolByFirBuilder)
+            is ConeTypeParameterType -> KaFirTypeParameterType(coneType, analysisSession)
             is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
                 is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError -> {
-                    KaFirClassErrorType(coneType, diagnostic, this@KaSymbolByFirBuilder)
+                    KaFirClassErrorType(coneType, diagnostic, analysisSession)
                 }
 
-                else -> KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
+                else -> KaFirErrorType(coneType, analysisSession)
             }
 
-            is ConeDynamicType -> KaFirDynamicType(coneType, this@KaSymbolByFirBuilder)
-            is ConeFlexibleType -> KaFirFlexibleType(coneType, this@KaSymbolByFirBuilder)
-            is ConeIntersectionType -> KaFirIntersectionType(coneType, this@KaSymbolByFirBuilder)
-            is ConeDefinitelyNotNullType -> KaFirDefinitelyNotNullType(coneType, this@KaSymbolByFirBuilder)
-            is ConeCapturedType -> KaFirCapturedType(coneType, this@KaSymbolByFirBuilder)
+            is ConeDynamicType -> KaFirDynamicType(coneType, analysisSession)
+            is ConeFlexibleType -> KaFirFlexibleType(coneType, analysisSession)
+            is ConeIntersectionType -> KaFirIntersectionType(coneType, analysisSession)
+            is ConeDefinitelyNotNullType -> KaFirDefinitelyNotNullType(coneType, analysisSession)
+            is ConeCapturedType -> KaFirCapturedType(coneType, analysisSession)
             is ConeIntegerLiteralType -> buildKtType(coneType.getApproximatedType())
 
             is ConeTypeVariableType -> {
@@ -527,9 +527,9 @@ internal class KaSymbolByFirBuilder(
 
         fun buildSubstitutor(substitutor: ConeSubstitutor): KaSubstitutor = when (substitutor) {
             ConeSubstitutor.Empty -> KaFirEmptySubstitutor(token)
-            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
-            is ChainedSubstitutor -> KaFirChainedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
-            else -> KaFirGenericSubstitutor(substitutor, this@KaSymbolByFirBuilder)
+            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(substitutor, analysisSession)
+            is ChainedSubstitutor -> KaFirChainedSubstitutor(substitutor, analysisSession)
+            else -> KaFirGenericSubstitutor(substitutor, analysisSession)
         }
     }
 
@@ -661,9 +661,14 @@ internal class KaSymbolByFirBuilder(
     }
 }
 
-internal fun FirElement.buildSymbol(builder: KaSymbolByFirBuilder): KaSymbol? = (this as? FirDeclaration)?.symbol?.let(builder::buildSymbol)
-internal fun FirDeclaration.buildSymbol(builder: KaSymbolByFirBuilder): KaSymbol = builder.buildSymbol(symbol)
-internal fun FirBasedSymbol<*>.buildSymbol(builder: KaSymbolByFirBuilder): KaSymbol = builder.buildSymbol(this)
+context(analysisSession: KaFirSession)
+internal fun FirElement.buildSymbol(): KaSymbol? = (this as? FirDeclaration)?.symbol?.let(firSymbolBuilder::buildSymbol)
+
+context(analysisSession: KaFirSession)
+internal fun FirDeclaration.buildSymbol(): KaSymbol = firSymbolBuilder.buildSymbol(symbol)
+
+context(analysisSession: KaFirSession)
+internal fun FirBasedSymbol<*>.buildSymbol(): KaSymbol = firSymbolBuilder.buildSymbol(this)
 
 private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration): Set<ConeTypeParameterLookupTag> {
     val allUsedTypeParameters = mutableSetOf<ConeTypeParameterLookupTag>()

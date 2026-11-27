@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -16,11 +15,11 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 
 internal class FirQualifierPartPointer(
     qualifierPart: FirQualifierPart,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
     guard: ConeTypeRecursionGuard,
 ) {
     private val name = qualifierPart.name
-    private val typeArgumentListPointer = FirTypeArgumentListPointer(qualifierPart.typeArgumentList, builder, guard)
+    private val typeArgumentListPointer = FirTypeArgumentListPointer(qualifierPart.typeArgumentList, analysisSession, guard)
 
     context(analysisSession: KaFirSession)
     fun restore(guard: ConeTypeRecursionGuard): FirQualifierPart? {
@@ -31,11 +30,11 @@ internal class FirQualifierPartPointer(
 
 private class FirTypeArgumentListPointer(
     typeArgumentList: FirTypeArgumentList,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
     guard: ConeTypeRecursionGuard,
 ) {
     private val typeArgumentPointers = typeArgumentList.typeArguments
-        .map { ConeTypeProjectionPointer(it.toConeTypeProjection(), builder, guard) }
+        .map { ConeTypeProjectionPointer(it.toConeTypeProjection(), analysisSession, guard) }
 
     context(analysisSession: KaFirSession)
     fun restore(guard: ConeTypeRecursionGuard): FirTypeArgumentList? {

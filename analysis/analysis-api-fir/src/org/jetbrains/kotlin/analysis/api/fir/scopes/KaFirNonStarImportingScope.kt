@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirNonStarImportingScope(
     firScope: FirAbstractSimpleImportingScope,
-    builder: KaSymbolByFirBuilder,
-) : KaFirBasedScope<FirAbstractSimpleImportingScope>(firScope, builder) {
+    analysisSession: KaFirSession,
+) : KaFirBasedScope<FirAbstractSimpleImportingScope>(firScope, analysisSession) {
     private val imports: List<NonStarImport> by cached {
         buildList {
             firScope.simpleImports.values.forEach { imports ->

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
@@ -75,9 +76,9 @@ internal class KaFirValueParameterSymbol private constructor(
 
             val returnType = firSymbol.resolvedReturnType
             if (firSymbol.isVararg) {
-                builder.typeBuilder.buildKtType(returnType.varargElementType())
+                firSymbolBuilder.typeBuilder.buildKtType(returnType.varargElementType())
             } else {
-                builder.typeBuilder.buildKtType(returnType)
+                firSymbolBuilder.typeBuilder.buildKtType(returnType)
             }
         }
 
@@ -120,7 +121,7 @@ internal class KaFirValueParameterSymbol private constructor(
                 }
             }
 
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override val primaryConstructorProperty: KaKotlinPropertySymbol?

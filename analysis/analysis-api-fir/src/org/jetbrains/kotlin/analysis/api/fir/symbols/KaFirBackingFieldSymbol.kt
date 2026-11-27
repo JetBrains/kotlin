@@ -53,12 +53,12 @@ internal class KaFirBackingFieldSymbol private constructor(
         get() = entryPointImplementation { backingOwningProperty.isVal }
 
     override val returnType: KaType
-        get() = entryPointImplementation { firSymbol.returnType(analysisSession.firSymbolBuilder) }
+        get() = entryPointImplementation { firSymbol.returnType() }
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
             if (!backingPsi?.annotationEntries.isNullOrEmpty() || backingOwningProperty.mayHaveBackingFieldAnnotation()) {
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+                KaFirAnnotationListForDeclaration.create(firSymbol)
             } else {
                 KaFirEmptyAnnotationList(this.token)
             }

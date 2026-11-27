@@ -69,14 +69,14 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         get() = entryPointImplementation { firSymbol.visibility.asKaSymbolVisibility }
 
     override val returnType: KaType
-        get() = entryPointImplementation { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = entryPointImplementation { KaFirReceiverParameterSymbol.create(null, this, analysisSession = analysisSession) }
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override val callableId: CallableId?

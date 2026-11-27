@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.compilerPlugins.KaFirCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -39,7 +37,7 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
 
             val topLevelScope = KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
                 generatedDeclarationsSymbolProviderForModule,
-                analysisSession.firSymbolBuilder,
+                analysisSession,
             )
 
             KaFirCompilerPluginGeneratedDeclarations(topLevelScope)
@@ -53,10 +51,8 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
  */
 private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     private val generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider,
-    private val symbolByFirBuilder: KaSymbolByFirBuilder,
-) : KaFirScope() {
-
-    override val token: KaLifetimeToken get() = symbolByFirBuilder.token
+    override val analysisSession: KaFirSession,
+) : KaFirScope(), KaFirSessionBoundOwner {
 
     /**
      * N.B. We expect that this [FirSymbolNamesProvider] is aware of all the names
@@ -65,13 +61,13 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
      */
     private val symbolNamesProvider: FirSymbolNamesProvider = generatedDeclarationsSymbolProvider.symbolNamesProvider
 
-    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = entryPointImplementation {
         callablesImpl { packageFqName ->
             symbolNamesProvider.getTopLevelCallableNamesInPackage(packageFqName)?.filter(nameFilter).orEmpty()
         }
     }
 
-    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
 
         callablesImpl { _ -> names }
@@ -91,7 +87,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
                 val callables = generatedDeclarationsSymbolProvider.getTopLevelCallableSymbols(packageFqName, callableName)
 
                 for (callable in callables) {
-                    val callableSymbol = symbolByFirBuilder.callableBuilder.buildCallableSymbol(callable)
+                    val callableSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(callable)
 
                     yield(callableSymbol)
                 }
@@ -99,13 +95,13 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
         }
     }
 
-    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
         classifiersImpl { packageFqName ->
             symbolNamesProvider.getTopLevelClassifierNamesInPackage(packageFqName)?.filter(nameFilter).orEmpty()
         }
     }
 
-    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
 
         classifiersImpl { _ -> names }
@@ -124,7 +120,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
             for (classifierName in classifierNames) {
                 val classifierId = ClassId(packageFqName, classifierName)
                 val classifier = generatedDeclarationsSymbolProvider.getClassLikeSymbolByClassId(classifierId) ?: continue
-                val classifierSymbol = symbolByFirBuilder.classifierBuilder.buildClassLikeSymbol(classifier)
+                val classifierSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(classifier)
 
                 yield(classifierSymbol)
             }
@@ -132,17 +128,17 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // constructors are not considered to be top-level declarations
             emptySequence()
         }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         // we do not provide generated packages at all, since the semantics and use-cases are not yet clear
         emptySequence()
     }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation {
         buildSet {
             val packagesWithCallables = symbolNamesProvider.getPackageNamesWithTopLevelCallables().orEmpty()
 
@@ -155,7 +151,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
         }
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation {
         buildSet {
             val packagesWithClassifiers = symbolNamesProvider.getPackageNamesWithTopLevelClassifiers().orEmpty()
 

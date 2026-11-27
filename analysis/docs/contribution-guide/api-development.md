@@ -1318,6 +1318,14 @@ override fun symbol(file: KtFile): KaFileSymbol = entryPointImplementation(file)
 }
 ```
 
+A class of the FIR implementation that takes the session as a parameter implements `KaFirSessionBoundOwner` and keeps
+the session itself, not a `KaSymbolByFirBuilder`: the builder is available as `firSymbolBuilder` wherever the session is
+in context. Helpers take the session as `context(analysisSession: KaFirSession)` instead of a session or builder
+parameter. Where no session is in context, as in lazy initializers, visitor callbacks and pointer constructors (pointers
+must not keep the session), pass it as an explicit context argument:
+`annotations(firSymbol, analysisSession = analysisSession)`. `context(analysisSession) { … }` is left for property reads
+there, in the legacy bridges, which only delegate, and where a different session is required explicitly.
+
 Other lifetime owners use `withValidityAssertion` (or `assertIsValidAndAccessible()`). Remember to guard properties you
 declare in the primary constructor: 
 

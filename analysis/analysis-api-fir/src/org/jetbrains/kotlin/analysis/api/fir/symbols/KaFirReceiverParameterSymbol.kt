@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -74,7 +73,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
             if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
                 KaFirEmptyAnnotationList(this.token)
             else
-                KaFirAnnotationListForDeclaration.create(firSymbol = firSymbol, builder = analysisSession.firSymbolBuilder)
+                KaFirAnnotationListForDeclaration.create(firSymbol = firSymbol)
         }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

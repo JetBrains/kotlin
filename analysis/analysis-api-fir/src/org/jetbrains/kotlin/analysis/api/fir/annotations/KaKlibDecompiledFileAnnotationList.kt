@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
@@ -21,47 +21,46 @@ import org.jetbrains.kotlin.name.ClassId
  */
 internal class KaKlibDecompiledFileAnnotationList private constructor(
     private val fileAnnotations: List<FirAnnotation>,
-    private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotation>(), KaAnnotationList {
+    override val analysisSession: KaFirSession,
+) : AbstractList<KaAnnotation>(), KaAnnotationList, KaFirSessionBoundOwner {
     private val backingAnnotations by lazy {
-        fileAnnotations.map { it.toKaAnnotation(builder) }
+        fileAnnotations.map { it.toKaAnnotation(analysisSession = analysisSession) }
     }
-    override val token: KaLifetimeToken
-        get() = builder.token
 
-    override fun isEmpty(): Boolean = withValidityAssertion {
+    override fun isEmpty(): Boolean = entryPointImplementation {
         backingAnnotations.isEmpty()
     }
 
     override val size: Int
-        get() = withValidityAssertion { backingAnnotations.size }
+        get() = entryPointImplementation { backingAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = entryPointImplementation {
         backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotation = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = entryPointImplementation {
         backingAnnotations[index]
     }
 
-    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
-        fileAnnotations.any { it.toAnnotationClassId(builder.rootSession) == classId }
+    override fun contains(classId: ClassId): Boolean = entryPointImplementation {
+        fileAnnotations.any { it.toAnnotationClassId(analysisSession.firSession) == classId }
     }
 
-    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId): List<KaAnnotation> = entryPointImplementation {
         backingAnnotations.filter { it.classId == classId }
     }
 
     override val classIds: Collection<ClassId>
-        get() = withValidityAssertion {
-            fileAnnotations.mapNotNull { it.toAnnotationClassId(builder.rootSession) }
+        get() = entryPointImplementation {
+            fileAnnotations.mapNotNull { it.toAnnotationClassId(analysisSession.firSession) }
         }
 
     companion object {
-        fun create(fileAnnotations: List<FirAnnotation>, builder: KaSymbolByFirBuilder): KaAnnotationList {
+        context(analysisSession: KaFirSession)
+        fun create(fileAnnotations: List<FirAnnotation>): KaAnnotationList {
             return when {
-                fileAnnotations.isEmpty() -> KaFirEmptyAnnotationList(builder.token)
-                else -> KaKlibDecompiledFileAnnotationList(fileAnnotations, builder)
+                fileAnnotations.isEmpty() -> KaFirEmptyAnnotationList(analysisSession.token)
+                else -> KaKlibDecompiledFileAnnotationList(fileAnnotations, analysisSession)
             }
         }
     }

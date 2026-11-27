@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -79,13 +78,14 @@ internal fun FirCallableSymbol<*>.computeImportableName(): FqName? {
     return if (canBeImported) callableId.asSingleFqName() else null
 }
 
-internal fun FirExpression.asKaInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
+context(analysisSession: KaFirSession)
+internal fun FirExpression.asKaInitializerValue(forAnnotationDefaultValue: Boolean): KaInitializerValue {
     val ktExpression = psi as? KtExpression
-    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, builder.rootSession)
+    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, analysisSession.firSession)
 
     return when (evaluated) {
         null -> if (forAnnotationDefaultValue) {
-            val annotationConstantValue = FirAnnotationValueConverter.toConstantValue(this, builder)
+            val annotationConstantValue = FirAnnotationValueConverter.toConstantValue(this)
             if (annotationConstantValue != null) {
                 KaConstantValueForAnnotation(annotationConstantValue, ktExpression)
             } else {

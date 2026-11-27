@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -23,15 +24,14 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class KaFirFileScope(
     private val owner: KaFirFileSymbol,
-    private val builder: KaSymbolByFirBuilder
-) : KaFirScope() {
-    override val token: KaLifetimeToken get() = builder.token
+    override val analysisSession: KaFirSession
+) : KaFirScope(), KaFirSessionBoundOwner {
 
     private val allNamesCached by cached {
         backingCallableNames + _classifierNames
     }
 
-    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
+    override fun getAllPossibleNames(): Set<Name> = entryPointImplementation { allNamesCached }
 
     @OptIn(DirectDeclarationsAccess::class)
     private val backingCallableNames: Set<Name> by cached {
@@ -48,7 +48,7 @@ internal class KaFirFileScope(
         result
     }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion { backingCallableNames }
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation { backingCallableNames }
 
     @OptIn(DirectDeclarationsAccess::class)
     private val _classifierNames: Set<Name> by cached {
@@ -61,10 +61,10 @@ internal class KaFirFileScope(
         result
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion { _classifierNames }
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation { _classifierNames }
 
     @OptIn(DirectDeclarationsAccess::class)
-    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = entryPointImplementation {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val callableDeclaration = when (firDeclaration) {
@@ -74,20 +74,20 @@ internal class KaFirFileScope(
                 }
 
                 if (callableDeclaration != null) {
-                    yield(builder.callableBuilder.buildCallableSymbol(callableDeclaration.symbol))
+                    yield(firSymbolBuilder.callableBuilder.buildCallableSymbol(callableDeclaration.symbol))
                 }
             }
         }
     }
 
-    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
 
     @OptIn(DirectDeclarationsAccess::class)
-    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val classLikeDeclaration = when (firDeclaration) {
@@ -96,22 +96,22 @@ internal class KaFirFileScope(
                     else -> null
                 }
                 if (classLikeDeclaration != null) {
-                    yield(builder.classifierBuilder.buildClassLikeSymbol(classLikeDeclaration.symbol))
+                    yield(firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(classLikeDeclaration.symbol))
                 }
             }
         }
     }
 
-    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = entryPointImplementation { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         emptySequence()
     }
 }

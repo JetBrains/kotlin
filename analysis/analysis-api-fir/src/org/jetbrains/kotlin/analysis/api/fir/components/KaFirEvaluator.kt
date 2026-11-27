@@ -29,7 +29,7 @@ internal class KaFirEvaluator(
 
     override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? = entryPointImplementation(expression) {
         return (expression.getOrBuildFir(resolutionFacade) as? FirExpression)?.let {
-            FirAnnotationValueConverter.toConstantValue(it, analysisSession.firSymbolBuilder)
+            FirAnnotationValueConverter.toConstantValue(it)
         }
     }
 

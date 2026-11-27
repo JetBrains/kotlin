@@ -189,7 +189,7 @@ internal class KaFirSymbolInformationProvider(
 
     override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = entryPointImplementation {
         if (!symbol.isTopLevel) {
-            return KaFirEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
+            return KaFirEmptyAnnotationList(analysisSession.token)
         }
 
         val containingFile = symbol.containingFile
@@ -201,7 +201,7 @@ internal class KaFirSymbolInformationProvider(
          * TODO Once KT-85997 is implemented, [org.jetbrains.kotlin.analysis.api.KaSession.containingFile] will be available also
          * for libraries, making this branch (as well as the entire [containingFileAnnotations] endpoint) obsolete.
          */
-        return KaKlibDecompiledFileAnnotationList.create(symbol.firSymbol.klibFileAnnotations, analysisSession.firSymbolBuilder)
+        return KaKlibDecompiledFileAnnotationList.create(symbol.firSymbol.klibFileAnnotations)
     }
 }
 

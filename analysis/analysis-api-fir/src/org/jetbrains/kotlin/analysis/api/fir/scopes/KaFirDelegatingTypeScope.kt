@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -20,10 +18,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal open class KaFirDelegatingTypeScope(
     val firScope: FirContainingNamesAwareScope,
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaTypeScope, KaFirSessionBoundOwner {
-    final override val analysisSession: KaFirSession get() = builder.analysisSession
-    override val token: KaLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
@@ -40,23 +36,23 @@ internal open class KaFirDelegatingTypeScope(
     }
 
     override fun getCallableSignatures(nameFilter: (Name) -> Boolean): Sequence<KaCallableSignature<*>> = entryPointImplementation {
-        firScope.getCallableSignatures(getPossibleCallableNames().filter(nameFilter), builder)
+        firScope.getCallableSignatures(getPossibleCallableNames().filter(nameFilter))
     }
 
     override fun getCallableSignatures(names: Collection<Name>): Sequence<KaCallableSignature<*>> = entryPointImplementation {
-        firScope.getCallableSignatures(names, builder)
+        firScope.getCallableSignatures(names)
     }
 
     override fun getClassifierSymbols(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
-        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter))
     }
 
     override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
-        firScope.getClassifierSymbols(names, builder)
+        firScope.getClassifierSymbols(names)
     }
 
     override fun getConstructors(): Sequence<KaConstructorSymbol> = entryPointImplementation {
-        firScope.getConstructors(builder)
+        firScope.getConstructors()
     }
 
     override fun mayContainName(name: Name): Boolean = entryPointImplementation {

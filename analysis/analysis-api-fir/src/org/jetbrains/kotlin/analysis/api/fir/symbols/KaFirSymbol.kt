@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -34,7 +33,6 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaFirSessi
      */
     val firSymbol: S
 
-    val builder: KaSymbolByFirBuilder get() = analysisSession.firSymbolBuilder
 
     override val origin: KaSymbolOrigin get() = entryPointImplementation { symbolOrigin() }
     override val psi: PsiElement? get() = entryPointImplementation { findPsi() }

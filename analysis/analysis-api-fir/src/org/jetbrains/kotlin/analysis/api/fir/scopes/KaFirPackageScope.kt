@@ -34,19 +34,19 @@ internal class KaFirPackageScope(
     }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = entryPointImplementation {
-        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), analysisSession.firSymbolBuilder)
+        firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter))
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = entryPointImplementation {
-        firScope.getCallableSymbols(names, analysisSession.firSymbolBuilder)
+        firScope.getCallableSymbols(names)
     }
 
     override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
-        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), analysisSession.firSymbolBuilder)
+        firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter))
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
-        firScope.getClassifierSymbols(names, analysisSession.firSymbolBuilder)
+        firScope.getClassifierSymbols(names)
     }
 
     override val constructors: Sequence<KaConstructorSymbol>

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirPartiallyAppliedSymbol

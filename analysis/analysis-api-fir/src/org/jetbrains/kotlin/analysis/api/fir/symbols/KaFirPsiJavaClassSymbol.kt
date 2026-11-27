@@ -145,12 +145,12 @@ internal class KaFirPsiJavaClassSymbol private constructor(
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
-            if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol)
             else KaFirEmptyAnnotationList(this.token)
         }
 
     override val superTypes: List<KaType>
         get() = entryPointImplementation {
-            firSymbol.superTypesList(builder)
+            firSymbol.superTypesList()
         }
 }

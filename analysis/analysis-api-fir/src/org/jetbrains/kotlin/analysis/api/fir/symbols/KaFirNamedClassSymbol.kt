@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -122,7 +123,7 @@ internal class KaFirNamedClassSymbol private constructor(
             if (backingPsi != null && backingPsi.modifierList?.contextParameterList == null)
                 emptyList()
             else
-                firSymbol.createContextReceivers(builder)
+                firSymbol.createContextReceivers()
         }
 
     override val companionObject: KaNamedClassSymbol?
@@ -139,13 +140,13 @@ internal class KaFirNamedClassSymbol private constructor(
             }
 
             firSymbol.resolvedCompanionObjectSymbol?.let {
-                builder.classifierBuilder.buildNamedClassSymbol(it)
+                firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(it)
             }
         }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = entryPointImplementation {
-            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters()
         }
 
     override val classKind: KaClassKind

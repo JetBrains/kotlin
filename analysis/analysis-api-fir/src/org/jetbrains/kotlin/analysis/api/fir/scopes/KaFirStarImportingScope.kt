@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
     analysisSession: KaFirSession,
-) : KaFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
+) : KaFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession) {
 
     private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->

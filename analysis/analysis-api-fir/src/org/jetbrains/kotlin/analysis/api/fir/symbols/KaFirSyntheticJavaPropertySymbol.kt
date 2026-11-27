@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaSyntheticPropertySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
@@ -30,13 +31,13 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val name: Name get() = entryPointImplementation { firSymbol.name }
     override val isActual: Boolean get() = entryPointImplementation { firSymbol.isActual }
     override val isExpect: Boolean get() = entryPointImplementation { firSymbol.isExpect }
-    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = entryPointImplementation { KaFirReceiverParameterSymbol.create(null, this, analysisSession = analysisSession) }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = entryPointImplementation { firSymbol.createKtTypeParameters(builder) }
+        get() = entryPointImplementation { firSymbol.createKtTypeParameters() }
 
     override val isExtension: Boolean
         get() = entryPointImplementation { false }
@@ -44,14 +45,14 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val origin: KaSymbolOrigin
         get() = entryPointImplementation { KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
-    override val initializer: KaInitializerValue? get() = entryPointImplementation { firSymbol.getKtConstantInitializer(builder) }
+    override val initializer: KaInitializerValue? get() = entryPointImplementation { firSymbol.getKtConstantInitializer() }
 
     override val modality: KaSymbolModality get() = entryPointImplementation { firSymbol.kaSymbolModality }
     override val visibility: KaSymbolVisibility get() = entryPointImplementation { firSymbol.visibility.asKaSymbolVisibility }
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override val callableId: CallableId?
@@ -65,13 +66,13 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val javaGetterSymbol: KaNamedFunctionSymbol
         get() = entryPointImplementation {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return builder.functionBuilder.buildNamedFunctionSymbol(fir.getter.delegate.symbol)
+            return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(fir.getter.delegate.symbol)
         }
 
     override val javaSetterSymbol: KaNamedFunctionSymbol?
         get() = entryPointImplementation {
             val fir = firSymbol.fir as FirSyntheticProperty
-            return fir.setter?.delegate?.let { builder.functionBuilder.buildNamedFunctionSymbol(it.symbol) }
+            return fir.setter?.delegate?.let { firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(it.symbol) }
         }
 
     override val setter: KaPropertySetterSymbol?

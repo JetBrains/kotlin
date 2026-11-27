@@ -142,6 +142,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                     property.visibility == KVisibility.PUBLIC &&
                             !property.hasAnnotation<Deprecated>() &&
                             property.name != "token" &&
+                            property.name != "analysisSession" &&
                             // The multi-call already renders all calls via other properties
                             !(klass.isSubclassOf(KaMultiCall::class) && property.name == KaMultiCall::calls.name) &&
                             /** The call is already covered as a part of [KaCompoundOperation.operationCall] */

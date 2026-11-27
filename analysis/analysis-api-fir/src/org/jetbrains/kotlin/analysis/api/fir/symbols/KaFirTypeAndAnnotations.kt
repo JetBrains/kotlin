@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-internal fun FirClassSymbol<*>.superTypesList(builder: KaSymbolByFirBuilder): List<KaType> = resolvedSuperTypeRefs.mapToKtType(builder)
+context(analysisSession: KaFirSession)
+internal fun FirClassSymbol<*>.superTypesList(): List<KaType> = resolvedSuperTypeRefs.mapToKtType()
 
+context(analysisSession: KaFirSession)
 private fun List<FirTypeRef>.mapToKtType(
-    builder: KaSymbolByFirBuilder,
 ): List<KaType> = map { typeRef ->
-    builder.typeBuilder.buildKtType(typeRef)
+    firSymbolBuilder.typeBuilder.buildKtType(typeRef)
 }
 
-internal fun FirCallableSymbol<*>.returnType(builder: KaSymbolByFirBuilder): KaType =
-    builder.typeBuilder.buildKtType(resolvedReturnType)
+context(analysisSession: KaFirSession)
+internal fun FirCallableSymbol<*>.returnType(): KaType =
+    firSymbolBuilder.typeBuilder.buildKtType(resolvedReturnType)
 

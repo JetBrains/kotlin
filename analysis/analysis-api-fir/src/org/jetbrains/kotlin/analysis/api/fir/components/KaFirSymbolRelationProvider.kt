@@ -251,7 +251,7 @@ internal class KaFirSymbolRelationProvider(
             else -> {
                 val originalDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
                 val unwrappedDeclaration = originalDeclaration.unwrapFakeOverridesOrDelegated()
-                unwrappedDeclaration.buildSymbol(analysisSession.firSymbolBuilder) as KaCallableSymbol
+                unwrappedDeclaration.buildSymbol() as KaCallableSymbol
             }
         } ?: symbol
     }

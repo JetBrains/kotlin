@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.mightHaveAnnotations
@@ -17,17 +17,14 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
-    private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotation>(), KaAnnotationList {
-    private val backingAnnotations by lazy { annotations(firSymbol, builder) }
-
-    override val token: KaLifetimeToken
-        get() = builder.token
+    override val analysisSession: KaFirSession,
+) : AbstractList<KaAnnotation>(), KaAnnotationList, KaFirSessionBoundOwner {
+    private val backingAnnotations by lazy { annotations(firSymbol, analysisSession = analysisSession) }
 
     private val useSiteSession: FirSession
-        get() = builder.rootSession
+        get() = analysisSession.firSession
 
-    override fun isEmpty(): Boolean = withValidityAssertion {
+    override fun isEmpty(): Boolean = entryPointImplementation {
         // isEmpty check needs to be performed on an analyzed declaration
         // (annotations can move to a nested declaration after code analysis).
         // See 'FirTypeResolveTransformer.moveOrDeleteIrrelevantAnnotations()'
@@ -35,33 +32,34 @@ internal class KaFirAnnotationListForDeclaration private constructor(
     }
 
     override val size: Int
-        get() = withValidityAssertion { backingAnnotations.size }
+        get() = entryPointImplementation { backingAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = entryPointImplementation {
         return backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotation = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = entryPointImplementation {
         return backingAnnotations[index]
     }
 
-    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = entryPointImplementation {
         return hasAnnotation(firSymbol, classId, useSiteSession)
     }
 
-    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
-        return annotationsByClassId(firSymbol, classId, builder)
+    override fun get(classId: ClassId): List<KaAnnotation> = entryPointImplementation {
+        return annotationsByClassId(firSymbol, classId)
     }
 
     override val classIds: Collection<ClassId>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             annotationClassIds(firSymbol, useSiteSession)
         }
 
     companion object {
-        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList = when {
-            firSymbol.mightHaveAnnotations -> KaFirAnnotationListForDeclaration(firSymbol, builder)
-            else -> KaFirEmptyAnnotationList(builder.token)
+        context(analysisSession: KaFirSession)
+        fun create(firSymbol: FirBasedSymbol<*>): KaAnnotationList = when {
+            firSymbol.mightHaveAnnotations -> KaFirAnnotationListForDeclaration(firSymbol, analysisSession)
+            else -> KaFirEmptyAnnotationList(analysisSession.token)
         }
     }
 }
