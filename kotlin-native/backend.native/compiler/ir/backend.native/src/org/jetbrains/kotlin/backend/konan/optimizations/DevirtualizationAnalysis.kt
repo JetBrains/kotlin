@@ -1131,11 +1131,13 @@ internal object DevirtualizationAnalysis {
         // A virtual dispatch slot: all call sites with the same key (even from different function) resolve to
         // the same set of possible callees (which depends only on the receiver's static type, the slot in the vtable
         // and the set of instantiated classes), so they can share one fan-out to those callees.
-        private data class VirtualDispatchKey(val receiverTypeIndex: Int, val interfaceId: Int, val slot: Int) {
+        // [interfaceId] is null for a vtable call. Before GHA an interface classId is a hash of its fqName,
+        // and that hash can be 0, so 0 cannot stand in for "not an itable".
+        internal data class VirtualDispatchKey(val receiverTypeIndex: Int, val interfaceId: Int?, val slot: Int) {
             companion object {
                 fun create(node: DataFlowIR.Node.VirtualCall) = when (node) {
                     is DataFlowIR.Node.VtableCall ->
-                        VirtualDispatchKey(node.receiverType.index, 0 /* Invalid value */, node.calleeVtableIndex)
+                        VirtualDispatchKey(node.receiverType.index, null, node.calleeVtableIndex)
 
                     is DataFlowIR.Node.ItableCall ->
                         VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeItableIndex)
