@@ -6,22 +6,23 @@
 package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
-import org.jetbrains.kotlin.ir.builders.declarations.addGetter
-import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
@@ -64,33 +65,35 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             this += buildConstructor(klass)
 
             if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasExtension") }) {
-                this += context.irFactory.buildFun {
+                this += context.irFactory.irFunction {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                     name = Name.identifier("hasExtension")
                     returnType = context.irBuiltIns.unitType
-                }.apply {
                     parent = klass
-                    parameters += createDispatchReceiverParameterWithClassParent()
-                    parameters += createExtensionReceiver(context.irBuiltIns.stringType)
+                    syntheticDispatchReceiver(klass)
+                    extensionReceiver {
+                        name = "receiver".synthesizedName
+                        type = context.irBuiltIns.stringType
+                    }
+                }.apply {
                     body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
                     context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
                 }
             }
             if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasContext") }) {
-                this += context.irFactory.buildFun {
+                this += context.irFactory.irFunction {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                     name = Name.identifier("hasContext")
                     returnType = context.irBuiltIns.unitType
-                }.apply {
                     parent = klass
-                    parameters += createDispatchReceiverParameterWithClassParent()
-                    parameters += buildValueParameter(this) {
-                        kind = IrParameterKind.Context
+                    syntheticDispatchReceiver(klass)
+                    contextParameter {
                         name = Name.identifier("c")
                         type = context.irBuiltIns.stringType
                     }
+                }.apply {
                     body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
                     context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
                 }
@@ -117,67 +120,74 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
 
     private fun buildPropertiesCountProperty(klass: IrClass): IrProperty {
         val propertiesCount = klass.properties.toList().size
-        return context.irFactory.buildProperty {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
-            name = Name.identifier("propertiesCount")
-        }.apply {
-            parent = klass
-            val field = addBackingField {
-                startOffset = SYNTHETIC_OFFSET
-                endOffset = SYNTHETIC_OFFSET
-                type = context.irBuiltIns.intType
-                isFinal = true
-            }
-            field.initializer = context.irFactory.createExpressionBody(
+        return buildPropertyWithBackingField(klass, Name.identifier("propertiesCount"), context.irBuiltIns.intType).apply {
+            backingField!!.initializer = context.irFactory.createExpressionBody(
                 IrConstImpl.int(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.intType, propertiesCount)
             )
-            buildBackingFieldGetter(this, field)
-            context.metadataDeclarationRegistrar.registerPropertyAsMetadataVisible(this)
         }
     }
 
-    private fun buildBackingFieldGetter(property: IrProperty, field: IrField) {
-        property.addGetter {
+    private fun buildPropertyWithBackingField(klass: IrClass, name: Name, type: IrType): IrProperty {
+        val field: IrFieldSymbol
+        val getterSymbol: IrSimpleFunctionSymbol
+        val dispatch: IrValueParameterSymbol
+        return context.irFactory.irProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            returnType = field.type
-            origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            this.name = name
+            parent = klass
+            field = backingField {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                this.type = type
+                isFinal = true
+            }
+            getterSymbol = getter {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                returnType = type
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                dispatch = syntheticDispatchReceiver(klass)
+            }
         }.apply {
-            val dispatch = createDispatchReceiverParameterWithClassParent()
-            parameters += dispatch
-            body = context.irFactory.createBlockBody(
+            getterSymbol.owner.body = context.irFactory.createBlockBody(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 listOf(
                     IrReturnImpl(
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                         context.irBuiltIns.nothingType,
-                        symbol,
+                        getterSymbol,
                         IrGetFieldImpl(
                             SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                            field.symbol, field.type,
-                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, dispatch.symbol)
+                            field, type,
+                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, dispatch)
                         )
                     )
                 )
             )
+            context.metadataDeclarationRegistrar.registerPropertyAsMetadataVisible(this)
         }
     }
 
     private fun buildExtensionProperty(klass: IrClass): IrProperty {
-        return context.irFactory.buildProperty {
+        val getterSymbol: IrSimpleFunctionSymbol
+        return context.irFactory.irProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("extensionProp")
-        }.apply {
             parent = klass
-            addGetter {
+            getterSymbol = getter {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 returnType = context.irBuiltIns.stringType
-            }.apply {
-                parameters += createDispatchReceiverParameterWithClassParent()
-                parameters += createExtensionReceiver(context.irBuiltIns.stringType)
+                syntheticDispatchReceiver(klass)
+                extensionReceiver {
+                    name = "receiver".synthesizedName
+                    type = context.irBuiltIns.stringType
+                }
+            }
+        }.apply {
+            getterSymbol.owner.apply {
                 body = context.irFactory.createBlockBody(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     listOf(
@@ -197,28 +207,32 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
     }
 
     private fun buildGenericExtensionProperty(klass: IrClass): IrProperty {
-        return context.irFactory.buildProperty {
+        val getterSymbol: IrSimpleFunctionSymbol
+        val extReceiver: IrValueParameterSymbol
+        return context.irFactory.irProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("genericExtensionProp")
-        }.apply {
             parent = klass
-            addGetter {
+            getterSymbol = getter {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
-                returnType = context.irBuiltIns.unitType // placeholder, fixed below
-            }.apply {
-                val typeParam = addTypeParameter {
+                val typeParam = typeParameter {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                     name = Name.identifier("T")
-                    superTypes += context.irBuiltIns.anyNType
+                    superTypes = listOf(context.irBuiltIns.anyNType)
                 }
                 val tType = typeParam.defaultType
                 returnType = tType
-                parameters += createDispatchReceiverParameterWithClassParent()
-                val extReceiver = createExtensionReceiver(tType)
-                parameters += extReceiver
+                syntheticDispatchReceiver(klass)
+                extReceiver = extensionReceiver {
+                    name = "receiver".synthesizedName
+                    type = tType
+                }
+            }
+        }.apply {
+            getterSymbol.owner.apply {
                 body = context.irFactory.createBlockBody(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     listOf(
@@ -226,7 +240,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                             SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                             context.irBuiltIns.nothingType,
                             symbol,
-                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, extReceiver.symbol)
+                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, extReceiver)
                         )
                     )
                 )
@@ -238,42 +252,29 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
     private fun buildOuterTypeProperty(klass: IrClass): IrProperty {
         val outerTypeParameter = klass.typeParameters[0]
         val outerType = outerTypeParameter.defaultType
-        return context.irFactory.buildProperty {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
-            name = Name.identifier("outerTypeProp")
-        }.apply {
-            parent = klass
-            val field = addBackingField {
-                startOffset = SYNTHETIC_OFFSET
-                endOffset = SYNTHETIC_OFFSET
-                type = outerType
-                isFinal = true
-            }
-            buildBackingFieldGetter(this, field)
-            context.metadataDeclarationRegistrar.registerPropertyAsMetadataVisible(this)
-        }
+        return buildPropertyWithBackingField(klass, Name.identifier("outerTypeProp"), outerType)
     }
 
     private fun buildContextProperty(klass: IrClass): IrProperty {
-        return context.irFactory.buildProperty {
+        val getterSymbol: IrSimpleFunctionSymbol
+        val contextParam: IrValueParameterSymbol
+        return context.irFactory.irProperty {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("contextProp")
-        }.apply {
             parent = klass
-            addGetter {
+            getterSymbol = getter {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 returnType = context.irBuiltIns.stringType
-            }.apply {
-                parameters += createDispatchReceiverParameterWithClassParent()
-                val contextParam = buildValueParameter(this) {
-                    kind = IrParameterKind.Context
+                syntheticDispatchReceiver(klass)
+                contextParam = contextParameter {
                     name = Name.identifier("c")
                     type = context.irBuiltIns.stringType
                 }
-                parameters += contextParam
+            }
+        }.apply {
+            getterSymbol.owner.apply {
                 body = context.irFactory.createBlockBody(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     listOf(
@@ -281,7 +282,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                             SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                             context.irBuiltIns.nothingType,
                             symbol,
-                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, contextParam.symbol)
+                            IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, contextParam)
                         )
                     )
                 )
@@ -339,6 +340,18 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             context.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
         }
     }
+
+    /**
+     * The members are built detached and added to the class by [visitClass], so they don't get the implicit dispatch receiver
+     * of `IrClass.irFunction {}`. The same as `createDispatchReceiverParameterWithClassParent()` of a member with synthetic offsets.
+     */
+    private fun IrFunctionBuilder.syntheticDispatchReceiver(klass: IrClass): IrValueParameterSymbol =
+        dispatchReceiver {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            origin = klass.origin
+            type = klass.defaultType
+        }
 
     private fun IrClass.hasAnnotation(): Boolean {
         return annotations.hasAnnotation(ANNOTATION_FQN)
