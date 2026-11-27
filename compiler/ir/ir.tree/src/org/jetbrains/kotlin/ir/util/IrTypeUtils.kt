@@ -243,8 +243,11 @@ private fun collectAllSuperclasses(irClass: IrClass, set: MutableSet<IrClass>) {
     }
 }
 
+/**
+ * Returns all superclasses of this class in the depth-first order of the declared supertypes.
+ */
 fun IrClass.getAllSuperclasses(): Set<IrClass> {
-    val result = HashSet<IrClass>()
+    val result = LinkedHashSet<IrClass>()
     collectAllSuperclasses(this, result)
     return result
 }

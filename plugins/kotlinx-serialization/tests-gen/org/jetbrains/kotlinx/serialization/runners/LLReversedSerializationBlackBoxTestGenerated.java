@@ -525,6 +525,12 @@ public class LLReversedSerializationBlackBoxTestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("InheritableSerialInfoOrder.kt")
+    public void testInheritableSerialInfoOrder() {
+      run("InheritableSerialInfoOrder.kt");
+    }
+
+    @Test
     @TestMetadata("Intrinsics.kt")
     public void testIntrinsics() {
       run("Intrinsics.kt");
