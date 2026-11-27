@@ -25,6 +25,7 @@ abstract class YarnBasics internal constructor(
      *
      * The network mutex (`--mutex network`) is not used, because Yarn waiting for it may silently exit
      * without doing anything on Node.js 18+ (KT-82693).
+     * See https://github.com/yarnpkg/yarn/issues/8960.
      */
     private val mutexFile: File,
 ) : NpmApiExecution<YarnEnvironment> {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.getExecOperations
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -106,20 +107,20 @@ internal class YarnPluginApplier(
 
         val upgradeLockTaskName = platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME)
 
-        val kotlinNpmInstall = project.tasks.named(platformDisambiguate.extensionName(KotlinNpmInstallTask.BASE_NAME))
+        val kotlinNpmInstall = project.tasks.named<KotlinNpmInstallTask>(
+            platformDisambiguate.extensionName(KotlinNpmInstallTask.BASE_NAME)
+        )
         kotlinNpmInstall.configure { task ->
             task.dependsOn(setupTask)
             task.inputs.property("yarnIgnoreScripts", yarnRootExtension.ignoreScriptsProperty)
 
-            if (task is KotlinNpmInstallTask) {
-                // This works around the problem when yarn upgrade changes lock file format, but not the content.
-                // And the same yarn version, package.json and package.lock files can produce different results:
-                // 1. old lock file + provisioned node_modules + yarn install -> lock remained untouched
-                // 2. old lock file + empty node_modules + yarn install -> lock file format changed
-                // So when `kotlinUpgradeYarnLock` is requested we should yarn install with --force to have a consistent lock file
-                // FIXME: This property should be removed during KT-84782 (Improve KGP JS UX)
-                task.withForce.set(project.provider { project.gradle.taskGraph.hasTask(":$upgradeLockTaskName") })
-            }
+            // This works around the problem when yarn upgrade changes lock file format, but not the content.
+            // And the same yarn version, package.json and package.lock files can produce different results:
+            // 1. old lock file + provisioned node_modules + yarn install -> lock remained untouched
+            // 2. old lock file + empty node_modules + yarn install -> lock file format changed
+            // So when `kotlinUpgradeYarnLock` is requested we should yarn install with --force to have a consistent lock file
+            // FIXME: This property should be removed during KT-84782 (Improve KGP JS UX)
+            task.withForce.set(project.provider { project.gradle.taskGraph.hasTask(":$upgradeLockTaskName") })
         }
 
         yarnRootExtension.nodeJsEnvironment.value(
@@ -141,7 +142,10 @@ internal class YarnPluginApplier(
                 task.fileName.set(yarnRootExtension.lockFileNameProperty)
             }
 
-        project.tasks.register(platformDisambiguate.extensionName(STORE_YARN_LOCK_BASE_NAME), YarnLockStoreTask::class.java) { task ->
+        val storeYarnLock = project.tasks.register(
+            platformDisambiguate.extensionName(STORE_YARN_LOCK_BASE_NAME),
+            YarnLockStoreTask::class.java
+        ) { task ->
             task.dependsOn(kotlinNpmInstall)
             task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectoryProperty)
@@ -159,6 +163,12 @@ internal class YarnPluginApplier(
             task.mismatchMessage.value(
                 YarnPlugin.yarnLockMismatchMessage(upgradeYarnLock.name)
             )
+        }
+
+        kotlinNpmInstall.configure { task ->
+            // Yarn is expected to create the lock file only if it is going to be stored.
+            // So it is still possible to use `--no-lockfile` with unset `inputFile` of the store task.
+            task.expectedLockFile.set(storeYarnLock.flatMap { it.inputFile })
         }
 
         project.tasks.register(platformDisambiguate.extensionName(RESTORE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) {

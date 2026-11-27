@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -55,6 +57,13 @@ abstract class KotlinNpmInstallTask :
     @get:Internal // tracks below
     internal val withForce: Property<Boolean> = project.objects.property<Boolean>().convention(false)
 
+    /**
+     * Lock file which Yarn is expected to create during the installation.
+     * If it is set and does not exist after the installation, the task fails.
+     */
+    @get:Internal
+    internal abstract val expectedLockFile: RegularFileProperty
+
     init {
         // When --force flag is set, task must re-run; when not set, use previous state
         outputs.upToDateWhen { !withForce.get() }
@@ -76,6 +85,19 @@ abstract class KotlinNpmInstallTask :
                 nodeJsEnvironment.get(),
                 packageManagerEnv.get(),
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
+
+        val expectedLockFile = expectedLockFile.orNull?.asFile
+        if (expectedLockFile != null && !expectedLockFile.exists()) {
+            throw GradleException(
+                "Yarn finished without errors, but did not create '$expectedLockFile'. " +
+                        "Most likely the Yarn process exited before installing the dependencies. " +
+                        "Try to rerun the build. " +
+                        "If the problem persists, please submit an issue at https://kotl.in/issue " +
+                        "and attach the build log produced with '--debug'. " +
+                        "Note that the default package manager is going to be switched to npm (https://kotl.in/issue/KT-84662). " +
+                        "You can switch to npm now by setting 'kotlin.js.yarn=false' in 'gradle.properties'."
+            )
+        }
     }
 
     companion object {

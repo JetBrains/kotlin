@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
@@ -86,16 +85,6 @@ class YarnWorkspaces internal constructor(
             NpmApiExecution.resolveOperationDescription("yarn"),
             cliArgs
         )
-
-        val yarnLock = nodeJsWorldDir.get().resolve(LockCopyTask.YARN_LOCK)
-        if (!yarnLock.exists()) {
-            throw GradleException(
-                "Yarn finished without errors, but did not create '$yarnLock'. " +
-                        "Most likely the Yarn process exited before installing the dependencies. " +
-                        "Try to rerun the build. " +
-                        "If the problem persists, switch to npm by setting 'kotlin.js.yarn=false' in 'gradle.properties'."
-            )
-        }
     }
 
     private fun saveRootProjectWorkspacesPackageJson(
