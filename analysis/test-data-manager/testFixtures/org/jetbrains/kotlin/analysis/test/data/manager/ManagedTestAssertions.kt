@@ -42,15 +42,16 @@ object ManagedTestAssertions {
         val existedBefore = file.exists()
         block()
         if (recordFileActions) {
-            recordedFileActions.add(RecordedFileAction(context.testDataPath, file, existedBefore, file.exists()))
+            recordedFileActions.add(RecordedFileAction(context.reportedTestDataPath, file, existedBefore, file.exists()))
         }
     }
 
     /**
      * Whether the current environment allows file modifications (create, update, delete).
      *
-     * UPDATE always modifies. CHECK is read-only on TeamCity and when requested explicitly (`checkTestData`);
-     * only plain local test runs, where the mode is not set, keep creating and deleting files in CHECK.
+     * UPDATE always modifies. CHECK is read-only on TeamCity, when requested explicitly (`checkTestData`) and in an assertion of
+     * `updateTestData` (e.g., of a muted test); only plain local test runs, where the mode is not set, keep creating and deleting files in
+     * CHECK.
      *
      * This is an environment-level gate. Individual handlers may impose additional conditions
      * (e.g., [handleMissingFile] also requires [isGoldenTest] in CHECK mode).
@@ -58,7 +59,7 @@ object ManagedTestAssertions {
     context(context: TestDataContext)
     private val isModificationAllowed: Boolean
         get() = context.mode == TestDataManagerMode.UPDATE ||
-                !(TestDataManagerMode.isUnderTeamCity || TestDataManagerMode.isExplicitCheck)
+                !(TestDataManagerMode.isUnderTeamCity || TestDataManagerMode.isExplicitCheck || TestDataManagerMode.isExplicitUpdate)
 
 
     /** Whether this is a golden (base) test with no variant chain. */
@@ -94,15 +95,15 @@ object ManagedTestAssertions {
      *
      * ## Behavior Matrix
      *
-     * | Scenario                  | UPDATE | CHECK (local test run) | CHECK (`checkTestData`, TeamCity) |
-     * |---------------------------|--------|------------------------|-----------------------------------|
-     * | actual=null, file missing | Pass   | Pass                   | Pass                              |
-     * | actual=null, file exists  | Delete | Delete + throw         | Throw                             |
-     * | File missing (golden)     | Create | Create + throw         | Throw                             |
-     * | File missing (secondary)  | Create | Throw                  | Throw                             |
-     * | Content matches           | Pass   | Pass                   | Pass                              |
-     * | Write-target redundant    | Delete | Delete + throw         | Throw                             |
-     * | Content mismatch          | Update | Throw                  | Throw                             |
+     * | Scenario                  | UPDATE | CHECK (local test run) | CHECK (`checkTestData`, `updateTestData`, TeamCity) |
+     * |---------------------------|--------|------------------------|-----------------------------------------------------|
+     * | actual=null, file missing | Pass   | Pass                   | Pass                                                |
+     * | actual=null, file exists  | Delete | Delete + throw         | Throw                                               |
+     * | File missing (golden)     | Create | Create + throw         | Throw                                               |
+     * | File missing (secondary)  | Create | Throw                  | Throw                                               |
+     * | Content matches           | Pass   | Pass                   | Pass                                                |
+     * | Write-target redundant    | Delete | Delete + throw         | Throw                                               |
+     * | Content mismatch          | Update | Throw                  | Throw                                               |
      *
      * "Local test run" is a test started without the mode set (plain `test` task, IDE gutter): CHECK is its fallback.
      *
@@ -123,6 +124,48 @@ object ManagedTestAssertions {
         sanitizer: (String) -> String = { it },
     ): Unit =
         assertEqualsToTestDataFile(actual, context = TestDataContext.build(testDataPath, variantChain, extension, mode, sanitizer))
+
+    /**
+     * Updates [file] to [actual] like [assertEqualsToTestDataFile] updates a golden file in [TestDataManagerMode.UPDATE] mode. [file] is
+     * test data which the test of [testDataPath] edits besides its own output, e.g., a directive in a variant of the test data: the run
+     * reports the change for [testDataPath], like the other changes of that test.
+     */
+    fun updateTestDataFile(testDataPath: Path, file: Path, actual: String) {
+        val context = TestDataContext.build(
+            testDataPath = file,
+            variantChain = emptyList(),
+            extension = file.extension,
+            mode = TestDataManagerMode.UPDATE,
+            sanitizer = { it },
+            reportedTestDataPath = testDataPath,
+        )
+
+        assertEqualsToTestDataFile(actual, context = context)
+    }
+
+    /**
+     * Returns the expected file [assertEqualsToTestDataFile] compares the actual content with: the most specific existing file of the
+     * [variantChain] (e.g., `.js.txt` → `.knm.txt` → `.txt` for `["knm", "js"]`), or the default file if none of them exists.
+     */
+    fun findExpectedFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path {
+        val context = TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it })
+        return context.readTargetFile ?: context.readableFiles.last()
+    }
+
+    /**
+     * Returns the only file [assertEqualsToTestDataFile] creates, updates or deletes: the file of the last variant of the [variantChain]
+     * (e.g., `.js.txt` for `["knm", "js"]`), or the default file for an empty chain.
+     */
+    fun getWriteTargetFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path =
+        TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it }).writeTargetFile
+
+    /**
+     * Returns the file [assertEqualsToTestDataFile] would compare the actual content with if the [write target][getWriteTargetFile]
+     * didn't exist: the most specific existing file of the [variantChain] except the write target (e.g., `.knm.txt` → `.txt` for
+     * `["knm", "js"]`), or `null` if none of them exists.
+     */
+    fun findFallbackFile(testDataPath: Path, variantChain: TestVariantChain, extension: String): Path? =
+        TestDataContext.build(testDataPath, variantChain, extension, TestDataManagerMode.currentMode, sanitizer = { it }).fallbackFile
 
     context(context: TestDataContext)
     private fun assertEqualsToTestDataFile(actual: String?) {

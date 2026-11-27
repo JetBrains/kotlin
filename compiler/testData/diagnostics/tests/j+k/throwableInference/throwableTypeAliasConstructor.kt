@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +InferThrowableTypeParameterToUpperBound
 // FIR_DUMP
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
-//  ^ difference in DEBUG_INFO_EXPRESSION_TYPE
 // ISSUE: KT-82961
 
 // FILE: ThrowableComputable.java

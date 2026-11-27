@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_SPEC
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
-import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
+import org.jetbrains.kotlin.test.directives.getOwnDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -48,7 +48,7 @@ class FirDumpHandler(
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
             val isFirDumpEnabled = FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives ||
-                    testServices.moduleStructure.getClassifiedDumpFile(getDumpExtension()).exists()
+                    testServices.getOwnDumpFile(getDumpExtension()).exists()
 
             if (!isFirDumpEnabled) return
 

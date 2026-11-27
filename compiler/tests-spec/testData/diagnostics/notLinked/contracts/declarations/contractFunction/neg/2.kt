@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +UnnamedLocalVariables
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 //  ^ suspicious changes in behavior when +EagerLambdaAnalysis
 //  ^ testing collection literals in both versions
 

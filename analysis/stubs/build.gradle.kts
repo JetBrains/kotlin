@@ -75,6 +75,10 @@ tasks.compileTestKotlin {
     }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.stubs")
+}
+
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
         testFederation {

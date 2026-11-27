@@ -42,7 +42,7 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
         val actualDump =
             if (resultingDump.isEmpty()) null
             else CompilerTestUtil.normalizeCompilerOutput(resultingDump, testServices.temporaryDirectoryManager.rootDir.path)
-        testServices.assertions.assertEqualsToDump(testServices.moduleStructure, extension = ".cli.out", actualDump)
+        testServices.assertEqualsToDump(extension = ".cli.out", actualDump, dependsOnAnalysis = false)
     }
 }
 

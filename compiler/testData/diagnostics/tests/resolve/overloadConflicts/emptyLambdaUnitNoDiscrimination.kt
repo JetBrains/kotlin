@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-63596
-// LATEST_LV_DIFFERENCE
 
 fun e(block: () -> String): String = ""
 fun e(block: () -> Unit): Int = 0

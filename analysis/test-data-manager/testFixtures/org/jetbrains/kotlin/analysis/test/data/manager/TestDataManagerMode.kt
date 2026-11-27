@@ -54,6 +54,21 @@ enum class TestDataManagerMode {
 
         private val isExplicitCheckOverrideThreadLocal = ThreadLocal<Boolean?>()
 
+        /**
+         * Whether [UPDATE] was requested explicitly (by `updateTestData`). An assertion it makes in [CHECK] mode, e.g., of a muted test,
+         * is read-only, as under `checkTestData`.
+         */
+        internal val isExplicitUpdate: Boolean
+            get() = isExplicitUpdateOverride ?: (currentModeOrNull == UPDATE)
+
+        @get:TestOnly
+        @set:TestOnly
+        internal var isExplicitUpdateOverride: Boolean?
+            get() = isExplicitUpdateOverrideThreadLocal.get()
+            set(value) = isExplicitUpdateOverrideThreadLocal.set(value)
+
+        private val isExplicitUpdateOverrideThreadLocal = ThreadLocal<Boolean?>()
+
         val isUnderIde: Boolean
             get() = System.getProperty("idea.active") != null
     }

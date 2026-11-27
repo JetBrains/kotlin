@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.test.services.jvm
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.SOURCE_RETENTION_ANNOTATIONS
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.baseTestDataFile
 import org.jetbrains.kotlin.test.utils.isDirectiveDefined
 
 class ForeignAnnotationAgainstCompiledJavaTestSuppressor(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {
-        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
-        return testFile.isDirectiveDefined("// ${SOURCE_RETENTION_ANNOTATIONS.name}")
+        // The test data rather than the variant the test reads, so that a variant diverging from it is still checked
+        return testServices.baseTestDataFile.isDirectiveDefined("// ${SOURCE_RETENTION_ANNOTATIONS.name}")
     }
 }

@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -46,6 +47,10 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.allopen")
+}
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0))

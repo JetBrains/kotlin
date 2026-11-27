@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50386
-// LATEST_LV_DIFFERENCE
 
 interface Flow<T>
 interface MutableSharedFlow<T> : Flow<T>

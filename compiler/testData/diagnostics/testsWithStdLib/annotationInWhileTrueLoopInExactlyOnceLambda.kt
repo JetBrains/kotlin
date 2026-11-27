@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // DUMP_CFG
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 
 class Bar<T> {
     var result: T? = null

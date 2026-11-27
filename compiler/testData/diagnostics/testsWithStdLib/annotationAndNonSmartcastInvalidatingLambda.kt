@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 
 fun cond(): Boolean = true
 fun materialize(): Any = Any()

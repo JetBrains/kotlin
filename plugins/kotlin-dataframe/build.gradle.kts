@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val dataframeRuntimeClasspath = configurations.create("dataframeRuntimeClasspath")
@@ -37,6 +38,10 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.fir.dataframe")
 }
 
 projectTests {

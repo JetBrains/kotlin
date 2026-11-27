@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
-//  ^ difference in diagnostic renderer output
 
 class MyList1<T> {
     typealias Self<U> = MyList1<U>

@@ -6,6 +6,7 @@ plugins {
     id("java-test-fixtures")
     id("test-inputs-check")
     id("test-coverage-convention")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -13,6 +14,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
     testFixturesApi(project(":compiler:config.jvm"))
     testFixturesApi(project(":core:language.targets.jvm"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
@@ -55,6 +57,10 @@ sourceSets {
     main { none() }
     testFixtures { projectDefault() }
     test { projectDefault() }
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.test.runners")
 }
 
 projectTests {

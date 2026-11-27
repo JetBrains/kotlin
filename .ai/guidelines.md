@@ -69,7 +69,8 @@ If you're not sure about the area, ask the user.
 
 **MANDATORY: First check the [Areas](#areas) table above — some areas have specialized test tooling.**
 
-Managed test data (most of `analysis/`, and `compiler/psi/psi-impl`) is checked and updated only with
+Managed test data (most of `analysis/`, `compiler/psi/psi-impl`, and the diagnostic test data of the compiler and its
+plugins) is checked and updated only with
 `python3 analysis/test-data-manager/test-data-manager.py check|update --path <dir-or-file>`, never with the commands below;
 see [Working with Test Data](../analysis/AGENTS.md#working-with-test-data).
 

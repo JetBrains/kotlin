@@ -193,6 +193,39 @@ class WrapperTest(unittest.TestCase):
                 tdm.main(["check", "--module", invalid], root=self.root)
             self.assertEqual(2, exit.exception.code, invalid)
 
+    def test_modules_with_custom_project_directories(self) -> None:
+        self.write("settings.gradle.kts", textwrap.dedent('''\
+            project(":custom-plugin").projectDir = File("$rootDir/plugins/custom")
+            project(":other-plugin").projectDir =
+                file("$rootDir/plugins/other")
+        '''))
+        self.write("plugins/custom/build.gradle.kts", 'plugins { id("test-data-manager") }\n')
+        self.write("plugins/custom/testData/file.kt", "")
+        self.generated_tests("plugins/custom", "plugins/custom/testData")
+        git(self.root, "add", "-A")
+
+        self.assertEqual({":custom-plugin": "plugins/custom", ":other-plugin": "plugins/other"},
+                         tdm.custom_project_directories(self.root))
+        self.assertEqual([":custom-plugin", *ALL_MODULES], tdm.managed_modules(self.root))
+        self.assertEqual(self.root / "plugins" / "custom", tdm.module_directory(self.root, ":custom-plugin"))
+
+        stub = {module: {} for module in ALL_MODULES + [":custom-plugin"]}
+        exit_code, summary = self.run_wrapper(stub, "update", "--path", "plugins/custom/testData")
+        self.assertEqual((0, "PASSED"), (exit_code, summary["status"]))
+        self.assertIn(":custom-plugin:updateTestData", self.gradle_args())
+
+        # A directory given as `--module` is the project in it
+        exit_code, summary = self.run_wrapper(stub, "check", "--module", "plugins/custom")
+        self.assertEqual((0, [":custom-plugin"]), (exit_code, [module["project"] for module in summary["modules"]]))
+        self.assertEqual(["-q", "--continue", ":custom-plugin:checkTestData"], self.gradle_args()[:3])
+
+        # Any spelling of the directory, and the project path itself, are the same module
+        exit_code, summary = self.run_wrapper(
+            stub, "check", "--module", "plugins/other/../custom/", "--module", str(self.root / "plugins" / "custom"),
+            "--module", ":custom-plugin",
+        )
+        self.assertEqual((0, [":custom-plugin"]), (exit_code, [module["project"] for module in summary["modules"]]))
+
     def test_run_id_names_the_reports_and_the_log(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--run-id", "my-run.1")
         self.assertEqual((0, "my-run.1"), (exit_code, summary["runId"]))
@@ -432,7 +465,8 @@ class WrapperTest(unittest.TestCase):
         self.assertEqual(self.root / "build" / "test-data-manager" / f"{summary['runId']}.summary.json", summary_file)
         self.assertEqual(summary, json.loads(summary_file.read_text()))
         self.assertEqual([{"project": ":mod-b", "status": "PASSED", "tests": {"discovered": 1, "passed": 1, "failed": 0, "skipped": 0},
-                           "report": str(self.root / "mod-b" / "build" / "test-data-manager" / f"{summary['runId']}.json")}],
+                           "report": str(self.root / "mod-b" / "build" / "test-data-manager" / f"{summary['runId']}.json"),
+                           "buildFile": "mod-b/build.gradle.kts"}],
                          summary["modules"])
         self.assertTrue(self.run_text({":mod-b": {}}, "check", "--module", ":mod-b")[1].endswith("Summary: <path>\n"))
 
@@ -625,6 +659,8 @@ class WrapperTest(unittest.TestCase):
             for module in ["--module", ":mod-a"], []:
                 self.run_wrapper({":mod-a": {}}, "check", "--path", f"{link}/mod-a/testData/", *module)
                 self.assertIn(f"-P{tdm.OPTION_PREFIX}.testDataPath=mod-a/testData/", self.gradle_args())
+            # So is a module directory
+            self.assertEqual(":mod-a:nested", tdm.requested_project(self.root, str(link / "mod-a" / "nested")))
             outside = Path(directory) / "file.kt"
             outside.write_text("")
             self.assertEqual(([], [f"testDataPath '{outside}' is outside the repository root {self.root}"]),
@@ -740,8 +776,37 @@ class WrapperTest(unittest.TestCase):
     def test_filters_matching_nothing_are_an_error(self) -> None:
         empty = {"report": {"tests": {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}}}
         stub = {module: empty for module in ALL_MODULES}
+        hint = ("A module finds its managed tests only in the packages of `testDataManager { testPackages }` (`org.jetbrains.kotlin` "
+                "by default): if the tests exist, check their packages there, in ")
         exit_code, summary = self.run_wrapper(stub, "check", "--class-pattern", ".*Nope.*")
-        self.assertEqual((2, ["No managed test in any module matches the filters"]), (exit_code, summary["runErrors"]))
+        self.assertEqual(
+            (2, ["No managed test in any module matches the filters. " + hint
+                 + "mod-a/build.gradle.kts, mod-a/nested/build.gradle.kts, mod-b/build.gradle.kts"]),
+            (exit_code, summary["runErrors"]),
+        )
+
+        # With `--path`, only the modules that ran are named; a module without generated tests always runs
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.generated_tests("mod-a/nested", "mod-a/nested/testData")
+        self.generated_tests("mod-b", "mod-b/testData")
+        self.write("mod-b/testData/file.kt", "")
+        exit_code, summary = self.run_wrapper(stub, "check", "--path", "mod-b/testData/file.kt")
+        self.assertEqual(
+            (2, ["No managed test in any module matches the filters. " + hint + "mod-b/build.gradle.kts"]),
+            (exit_code, summary["runErrors"]),
+        )
+        self.assertEqual(
+            [(":mod-b", "mod-b/build.gradle.kts"), (":mod-a", "mod-a/build.gradle.kts"), (":mod-a:nested", "mod-a/nested/build.gradle.kts")],
+            [(module["project"], module["buildFile"]) for module in summary["modules"]],
+        )
+
+        # Too many modules to name: the summary has the build file of each
+        self.assertEqual(
+            "No managed test in any module matches the filters. " + hint
+            + "the build file of each module that ran (`buildFile` of the modules in the summary)",
+            tdm.no_match_error([f"mod-{index}/build.gradle.kts" for index in range(tdm.MAX_NAMED_BUILD_FILES + 1)]),
+        )
+
         exit_code, summary = self.run_wrapper(stub, "check")
         self.assertEqual((0, []), (exit_code, summary["runErrors"]))
 

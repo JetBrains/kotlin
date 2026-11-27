@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LATEST_LV_DIFFERENCE
 // FILE: JavaClass.java
 
 public class JavaClass<R> {

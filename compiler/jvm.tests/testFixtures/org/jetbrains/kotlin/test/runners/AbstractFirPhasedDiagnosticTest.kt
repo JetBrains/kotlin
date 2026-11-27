@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker
 import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
@@ -62,7 +65,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         }
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-        useAfterAnalysisCheckers(::NonSourceErrorMessagesHandler)
+        useAfterAnalysisCheckers(::NonSourceErrorMessagesHandler, ::FirTestDataConsistencyHandler)
         useFailureSuppressors(::PhasedPipelineChecker, ::FirFailingTestSuppressor)
         enableMetaInfoHandler()
         useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null, null))
@@ -70,9 +73,16 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
 }
 
 open class AbstractPhasedJvmDiagnosticKmpTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.KmpTree)
-open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
+
+/**
+ * The golden test of the compiler diagnostic test data: low-level API tests of the same test data are its variants.
+ */
+open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest
 
 open class AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest : AbstractPhasedJvmDiagnosticLightTreeTest() {
+    override val variantChain: TestVariantChain
+        get() = DiagnosticsVariantChains.CONTEXT_SENSITIVE
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {

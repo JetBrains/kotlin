@@ -1,4 +1,3 @@
-// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: J1.java
 import io.reactivex.rxjava3.annotations.*;

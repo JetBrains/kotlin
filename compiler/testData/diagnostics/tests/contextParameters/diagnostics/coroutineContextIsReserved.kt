@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
 // WITH_STDLIB
 
 import kotlin.coroutines.CoroutineContext

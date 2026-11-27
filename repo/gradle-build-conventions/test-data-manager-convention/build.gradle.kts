@@ -23,6 +23,20 @@ kotlin {
 
 dependencies {
     implementation(project(":java-flight-recorder"))
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(kotlin("test-junit5"))
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
+tasks.register("checkBuild") {
+    description = "Runs the tests of the test data manager convention."
+    dependsOn("test")
 }
 
 listOf(

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -33,21 +35,43 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
+/**
+ * A variant of the compiler diagnostic test data with the latest language version: `.latestLV.kt` if it differs from the test data.
+ */
+abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest :
+    AbstractFirDiagnosticTestBase(FirParser.LightTree), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = DiagnosticsVariantChains.LATEST_LV
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLatestLanguageVersion()
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
+/**
+ * A variant of the compiler diagnostic test data with the language feature of `LANGUAGE_FEATURE_TOGGLED` disabled: `.disabled.kt` if it
+ * differs from the test data, which is analyzed with the feature enabled.
+ */
+abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest :
+    AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = DiagnosticsVariantChains.LF_DISABLED
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLanguageFeatureDisabled()
     }
 }
 
-open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
+/**
+ * A variant of the compiler diagnostic test data with type aliases without their expansion: `.noAliasExpansion.kt` if it differs from the
+ * test data.
+ */
+open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = DiagnosticsVariantChains.NO_ALIAS_EXPANSION
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -61,7 +85,14 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
     }
 }
 
-open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest() {
+/**
+ * A variant of the multiplatform compiler diagnostic test data with the latest language version, see
+ * [AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest].
+ */
+open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = DiagnosticsVariantChains.LATEST_LV
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS

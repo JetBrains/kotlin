@@ -11,6 +11,7 @@ plugins {
     id("android-sdk-provisioner")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 /**
@@ -119,6 +120,10 @@ val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencie
 val prepareRobolectricDependencies = tasks.register("prepareRobolectricDependencies", Copy::class) {
     from(robolectricDependency)
     into(robolectricDependencyDir)
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.parcelize.test.runners")
 }
 
 projectTests {

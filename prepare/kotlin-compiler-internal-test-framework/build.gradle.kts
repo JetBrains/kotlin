@@ -5,6 +5,7 @@ plugins {
 }
 
 val testFixturesModules = listOf(
+    ":analysis:test-data-manager",
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure-utils.common",
     ":compiler:test-infrastructure-utils",

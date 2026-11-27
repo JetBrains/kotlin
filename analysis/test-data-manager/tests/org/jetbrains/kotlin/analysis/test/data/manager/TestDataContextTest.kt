@@ -19,9 +19,10 @@ class TestDataContextTest {
         expectedReadable: String,
         expectedWriteTarget: String,
         extension: String = ".txt",
+        testDataFileName: String = "test.kt",
         sanitizer: (String) -> String = { it },
     ) {
-        val testDataPath = tempDir.resolve("test.kt")
+        val testDataPath = tempDir.resolve(testDataFileName)
         val context = TestDataContext.build(testDataPath, prefixes, extension, TestDataManagerMode.CHECK, sanitizer)
         val actualReadable = context.readableFiles.joinToString(", ") { it.fileName.toString() }
         assertEquals(expectedReadable, actualReadable)
@@ -84,6 +85,72 @@ class TestDataContextTest {
             extension = ".pretty.txt",
             expectedReadable = "test.js.pretty.txt, test.knm.pretty.txt, test.pretty.txt",
             expectedWriteTarget = "test.js.pretty.txt",
+        )
+    }
+
+    // ========== Test data with the extension ==========
+
+    @Test
+    fun `test data extension - golden only`() {
+        assertTestDataContext(
+            prefixes = emptyList(),
+            extension = ".kt",
+            expectedReadable = "test.kt",
+            expectedWriteTarget = "test.kt",
+        )
+    }
+
+    @Test
+    fun `test data extension - multiple prefixes`() {
+        assertTestDataContext(
+            prefixes = listOf("ll", "reversed"),
+            extension = ".kt",
+            expectedReadable = "test.reversed.kt, test.ll.kt, test.kt",
+            expectedWriteTarget = "test.reversed.kt",
+        )
+    }
+
+    @Test
+    fun `compound test data extension - golden only`() {
+        assertTestDataContext(
+            prefixes = emptyList(),
+            extension = ".test.kts",
+            testDataFileName = "test.test.kts",
+            expectedReadable = "test.test.kts",
+            expectedWriteTarget = "test.test.kts",
+        )
+    }
+
+    @Test
+    fun `compound test data extension - multiple prefixes`() {
+        assertTestDataContext(
+            prefixes = listOf("ll", "reversed"),
+            extension = ".test.kts",
+            testDataFileName = "test.test.kts",
+            expectedReadable = "test.reversed.test.kts, test.ll.test.kts, test.test.kts",
+            expectedWriteTarget = "test.reversed.test.kts",
+        )
+    }
+
+    @Test
+    fun `compound test data extension - without a dot`() {
+        assertTestDataContext(
+            prefixes = listOf("ll"),
+            extension = "repl.kts",
+            testDataFileName = "test.repl.kts",
+            expectedReadable = "test.ll.repl.kts, test.repl.kts",
+            expectedWriteTarget = "test.ll.repl.kts",
+        )
+    }
+
+    @Test
+    fun `compound test data extension - another extension replaces only the last one`() {
+        assertTestDataContext(
+            prefixes = listOf("ll"),
+            extension = ".txt",
+            testDataFileName = "test.test.kts",
+            expectedReadable = "test.test.ll.txt, test.test.txt",
+            expectedWriteTarget = "test.test.ll.txt",
         )
     }
 }

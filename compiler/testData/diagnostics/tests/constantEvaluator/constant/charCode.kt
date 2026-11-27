@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: IntrinsicConstEvaluation
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // WITH_STDLIB
 
 const val charLiteralCode = 'c'.code

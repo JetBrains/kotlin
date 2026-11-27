@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.Directive
@@ -14,10 +13,13 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.ManagedTestData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.managedTestData
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.utils.LL_FIR_VARIANT
 import org.jetbrains.kotlin.test.utils.isLatestLVTestData
 import org.jetbrains.kotlin.test.utils.isLfDisabledTestData
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
@@ -29,15 +31,40 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
 
     override fun check(thereWereFailures: Boolean) {
         val moduleStructure = testServices.moduleStructure
+        val managedTestData = testServices.managedTestData
+        if (managedTestData != null) {
+            checkManagedVariant(managedTestData)
+            return
+        }
+
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return
         val directives = moduleStructure.allDirectives
-        if (LATEST_LV_DIFFERENCE in directives && testData.isLatestLVTestData) {
+        if (testData.isLatestLVTestData) {
             checkFirAndLatestLVTestData(testData)
         }
         if (LANGUAGE_FEATURE_TOGGLED in directives && testData.isLfDisabledTestData) {
             checkFirAndDisabledLfTestData(testData)
         }
+    }
+
+    /**
+     * Checks that the variant a managed test writes, e.g., `.latestLV.kt`, differs from the test data it falls back to only in the
+     * diagnostics and the phase: the variant repeats the code of the test data. `updateTestData` might have created the variant from the
+     * actual output of this run, or deleted it as redundant.
+     */
+    private fun checkManagedVariant(managedTestData: ManagedTestData) {
+        // LL variants, e.g., `.ll.kt` with its `LL_FIR_DIVERGENCE` directive, are checked by the LL tests themselves
+        if (managedTestData.variantChain.isEmpty() || LL_FIR_VARIANT in managedTestData.variantChain) return
+        val variant = managedTestData.writeTargetFile
+        if (variant.extension == "kts" || !variant.exists()) return
+        val fallback = managedTestData.fallbackFile ?: return
+        checkTwoFiles(
+            originalTestData = fallback,
+            secondTestData = variant,
+            message = "`${fallback.name}` and its variant `${variant.name}` aren't identical. ",
+            ignoredDirectives = listOf(RUN_PIPELINE_TILL),
+        )
     }
 
     private fun checkFirAndLatestLVTestData(latestLVTestData: File) {

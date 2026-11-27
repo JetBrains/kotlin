@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.SUPPRESS_NO
 import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.baseTestDataFile
 
 class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : TestFailureSuppressorBySingleDirective(
     suppressDirective = SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE,
@@ -21,7 +21,8 @@ class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : TestF
 
 class OnlyTestsWithTypeAliasesMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {
-        val testText = testServices.moduleStructure.originalTestDataFiles.first().readText()
+        // The test data rather than the variant the test reads, so that a variant diverging from it is still checked
+        val testText = testServices.baseTestDataFile.readText()
         return !testText.contains("typealias")
     }
 }

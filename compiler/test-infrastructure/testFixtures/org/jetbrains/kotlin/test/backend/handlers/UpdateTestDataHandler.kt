@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.managedTestData
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler
 import org.opentest4j.AssertionFailedError
@@ -32,6 +33,9 @@ private val updateTestData = enabled || System.getProperty("kotlin.test.update.t
  *
  * No rewrite happens on muted tests.
  *
+ * Test data files of managed tests that their managed assertions write (see
+ * [ManagedTestData.isWriteTarget][org.jetbrains.kotlin.test.services.ManagedTestData.isWriteTarget]) are left to `updateTestData`.
+ *
  * For example, if you want to update IR text test data by K2 with the JVM backend, you need to run:
  * ```
  * ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.ir.FirPsiJvmIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
@@ -52,8 +56,9 @@ class UpdateTestDataHandler(
 ) : TestFailureSuppressor(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (updateTestData) {
+            val managedTestData = testServices.managedTestData
             failedAssertions.forEach {
-                it.cause.tryUpdateTestData()
+                it.cause.tryUpdateTestData { file -> managedTestData?.isWriteTarget(file) != true }
             }
         }
         return failedAssertions
@@ -62,14 +67,16 @@ class UpdateTestDataHandler(
     override fun checkIfTestShouldBeUnmuted() {}
 }
 
-private fun Throwable.tryUpdateTestData() {
+private fun Throwable.tryUpdateTestData(isWritable: (File) -> Boolean = { true }) {
     when {
-        this is AssertionFailedError -> tryUpdateTestData()
-        this is MultipleFailuresError -> this.failures.forEach { it.tryUpdateTestData() }
+        this is AssertionFailedError -> tryUpdateTestData(isWritable)
+        this is MultipleFailuresError -> this.failures.forEach { it.tryUpdateTestData(isWritable) }
     }
 }
 
-private fun AssertionFailedError.tryUpdateTestData() {
+private fun AssertionFailedError.tryUpdateTestData(isWritable: (File) -> Boolean) {
     val path = (expected?.value as? FileInfo)?.path ?: return
-    File(path).writeText(actual.stringRepresentation)
+    val file = File(path)
+    if (!isWritable(file)) return
+    file.writeText(actual.stringRepresentation)
 }

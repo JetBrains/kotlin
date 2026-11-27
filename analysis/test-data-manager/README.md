@@ -2,7 +2,9 @@
 
 Automated system for managing test data files across multiple test configurations.
 
-It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix).
+It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix). It discovers them in
+`org.jetbrains.kotlin`, or in the packages the module declares in `testDataManager { testPackages }` (see the
+[convention plugin](../../repo/gradle-build-conventions/test-data-manager-convention/README.md#test-packages)).
 
 ## Core Concepts
 
@@ -105,6 +107,18 @@ Why this hierarchy?
    In most cases the output is the same as the golden one, so there is no need to share it with `lib`. `[kmp]` could be used as the shared variant,
    but effectively there are no such cases that it would help to deduplicate the data.
 
+#### Compiler tests with inline diagnostics
+
+A compiler test ([AbstractKotlinCompilerTest](../../compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/runners/AbstractKotlinCompilerTest.kt))
+implementing `ManagedTest` gets [ManagedTestData](../../compiler/test-infrastructure/testFixtures/org/jetbrains/kotlin/test/services/ManagedTestData.kt):
+its test data file is both the input and the expected output, so the variants go before the extension of the test data (`foo.ll.kt`,
+`foo.ll.test.kts`), and the test reads the expected file of its chain. The compiler's phased light tree diagnostic test is the golden one
+(`[]`), the LL diagnostic tests are `[ll]`, `[ll, reversed]` and `[ll, partialBody]`; the chains of all configurations are in
+[compiler/testData/diagnostics/AGENTS.md](../../compiler/testData/diagnostics/AGENTS.md#variant-files).
+
+The dumps of such a test (`foo.fir.txt`, `foo.dot`, …) are managed with the same chain, the variant before the dump extension
+(`foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt`), via `ManagedTestData.assertEqualsToDump`.
+
 ### Convergence Loop
 
 Within each group, tests may update files that other tests depend on.
@@ -146,7 +160,9 @@ python3 analysis/test-data-manager/test-data-manager.py check --path analysis/an
 ```
 
 On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
-crashed) and when no test in any module matches the filters. The Gradle output goes to
+crashed) and when no test in any module matches the filters. As a module finds its managed tests only in its
+`testDataManager { testPackages }`, the latter error names the build files of the modules that ran, up to three of them;
+for more, it points to the `buildFile` of each module in the summary. The Gradle output goes to
 `build/test-data-manager/<runId>.gradle.log` and the summary to `build/test-data-manager/<runId>.summary.json`. Both
 paths are printed to stderr, each on its own line, before Gradle starts, so a long run can be followed. The summary path
 is also the last line of the output (`--json` prints the file instead of the text). The summary is written at once

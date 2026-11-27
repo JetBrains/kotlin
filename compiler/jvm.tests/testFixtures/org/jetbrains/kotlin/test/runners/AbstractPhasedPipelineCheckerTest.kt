@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
+import org.jetbrains.kotlin.test.services.fir.LanguageFeatureDisabledTestDataConfigurator
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
@@ -99,5 +100,6 @@ open class AbstractPhasedPipelineCheckerWithLanguageFeatureDisabledTest : Abstra
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLanguageFeatureDisabled()
+        builder.useMetaTestConfigurators(::LanguageFeatureDisabledTestDataConfigurator)
     }
 }

@@ -2,7 +2,7 @@
 // FULL_JDK
 
 // This file doesn't contain LANGUAGE directive because it's expected
-// to work independently of language-version-settings configuration, so there should be no LATEST_LV_DIFFERENCE.
+// to work independently of language-version-settings configuration, so there should be no `.latestLV.kt` variant.
 
 interface IBase
 interface IDerived : IBase

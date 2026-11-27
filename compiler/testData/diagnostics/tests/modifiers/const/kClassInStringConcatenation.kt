@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 annotation class Anno(val str: String)
 
 @Anno("${<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>A::class<!>}")

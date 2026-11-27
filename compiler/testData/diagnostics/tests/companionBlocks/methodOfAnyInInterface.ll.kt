@@ -4,7 +4,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +CompanionBlocks
 // ISSUE: KT-88007
-// LATEST_LV_DIFFERENCE
 
 interface A {
     companion {

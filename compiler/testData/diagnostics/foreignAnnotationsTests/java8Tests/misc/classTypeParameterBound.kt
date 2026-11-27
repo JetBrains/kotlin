@@ -1,6 +1,5 @@
 // LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: ClassTypeParameterBound.java
 

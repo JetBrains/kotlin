@@ -120,6 +120,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.lombok")
+}
+
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
 

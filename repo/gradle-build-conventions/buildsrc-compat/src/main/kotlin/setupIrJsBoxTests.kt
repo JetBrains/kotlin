@@ -2,6 +2,8 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
@@ -22,32 +24,27 @@ fun Test.useJsIrBoxTests(
             setupV8()
         }
     }
-    val stdLibJsClasses = project.configurations.maybeCreate("stdLibJsClasses").apply {
-        isTransitive = false
-        attributes {
-            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
-        }
-    }
-    val jsDomApiCompatClasses = project.configurations.maybeCreate("jsDomApiCompatClasses").apply {
-        isTransitive = false
-        attributes {
-            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
-        }
-    }
-    val stdlibJsIrMinimalForTestClasses = project.configurations.maybeCreate("stdlibJsIrMinimalForTestClasses").apply {
-        isTransitive = false
-        attributes {
-            attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
-        }
-    }
-    project.dependencies {
-        add(stdLibJsClasses.name, project(":kotlin-stdlib", "jsRuntimeElements"))
-        add(jsDomApiCompatClasses.name, project(":kotlin-dom-api-compat", "jsRuntimeElements"))
-        add(stdlibJsIrMinimalForTestClasses.name, project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements"))
-    }
+    val stdLibJsClasses = project.jsRuntimeClasses("stdLibJsClasses", ":kotlin-stdlib")
+    val jsDomApiCompatClasses = project.jsRuntimeClasses("jsDomApiCompatClasses", ":kotlin-dom-api-compat")
+    val stdlibJsIrMinimalForTestClasses = project.jsRuntimeClasses("stdlibJsIrMinimalForTestClasses", ":kotlin-stdlib-js-ir-minimal-for-test")
     addClasspathProperty(stdLibJsClasses, "kotlin.js.full.stdlib.path")
     addClasspathProperty(jsDomApiCompatClasses, "kotlin.js.dom.api.compat")
     addClasspathProperty(stdlibJsIrMinimalForTestClasses, "kotlin.js.reduced.stdlib.path")
 
     systemProperty("kotlin.js.test.root.out.dir", "${buildDir.get().asFile.relativeTo(project.projectDir)}/")
 }
+
+/**
+ * The configuration [name] with the unpacked JS runtime of the project [projectPath], configured only when it is created: [useJsIrBoxTests]
+ * runs for every test task configured like `test` (e.g., the carrier of the test data manager), possibly after the configuration was
+ * resolved, and a resolved configuration can't be modified.
+ */
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+private fun Project.jsRuntimeClasses(name: String, projectPath: String): Configuration =
+    configurations.findByName(name) ?: configurations.create(name) {
+        isTransitive = false
+        attributes {
+            attribute(KlibPackaging.ATTRIBUTE, objects.named(KlibPackaging.NON_PACKED))
+        }
+        dependencies.add(project.dependencies.project(projectPath, "jsRuntimeElements"))
+    }
