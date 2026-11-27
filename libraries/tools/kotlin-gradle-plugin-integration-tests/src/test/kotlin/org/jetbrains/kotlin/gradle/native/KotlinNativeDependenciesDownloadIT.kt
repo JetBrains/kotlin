@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit
 )
 @DisplayName("This test class contains different scenarios with downloading dependencies for Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     @TempDir
