@@ -21,11 +21,19 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.readText
+import kotlin.io.path.writeBytes
 import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 import org.jetbrains.kotlin.importmodels.proto.error as importModelError
 import org.jetbrains.kotlin.importmodels.proto.result as resultModel
 
-private val GOLDEN_FILES_ROOT = Path.of("src/test/resources/importModels")
+internal val GOLDEN_FILES_ROOT = Path.of("src/test/resources/importModels")
+
+/**
+ * Returns the path of the serialized `Result` bytes checked in beside the golden file [golden].
+ */
+internal fun resultBytesFile(golden: Path): Path =
+    golden.resolveSibling(golden.fileName.toString().removeSuffix(".txt") + ".bin")
 
 private fun importModelsDumpRoot(projectPath: Path): Path = projectPath.resolve("build/kotlin/import-models")
 
@@ -92,6 +100,8 @@ internal fun assertExpectedImportModelsPresentInDump(
             if (updateTestData) {
                 goldenFile.parent.createDirectories()
                 goldenFile.writeText(actual)
+                // The serialized Result bytes beside the golden file are the fixture for IDEA-side tests that do not run Gradle
+                resultBytesFile(goldenFile).writeBytes(binFile.readBytes())
             } else if (modelId in goldenModelIds) {
                 val expected = goldenFile.readText().trimTrailingWhitespacesAndAddNewlineAtEOF()
                 if (expected != actual) {
@@ -108,6 +118,61 @@ private fun importModelIds(directory: Path): List<String> =
 
 private val updateTestData: Boolean
     get() = System.getProperty("kotlin.test.update.test.data")?.toBoolean() == true
+
+/**
+ * Compares the normalized TextFormat of a `Result` served through the Tooling API with the
+ * checked-in golden file for [projectName]. No update mode: the dump task owns the goldens.
+ */
+internal fun assertImportModelsGoldenResult(
+    resultBytes: ByteArray,
+    projectPath: Path,
+    projectName: String,
+    goldenFileName: String,
+) {
+    val actual = normalizeImportModelsResultText(
+        Result.parseFrom(resultBytes),
+        projectPath.toRealPath().toString(),
+    ).trimTrailingWhitespacesAndAddNewlineAtEOF()
+    assertMatchesGoldenFile(
+        GOLDEN_FILES_ROOT / projectName / goldenFileName,
+        actual,
+        "add the model to KotlinImportModelsDumpIT and run that test with -Pkotlin.test.update.test.data=true",
+    )
+}
+
+/**
+ * Asserts the serialized `Result` bytes checked in beside a golden file hold the golden file's
+ * model, type URL included. The comparison runs both sides through [normalizeResult], so the
+ * embedded plugin version and set-like field order are not content; every other difference fails.
+ */
+internal fun assertFixtureMatchesGolden(golden: Path, bytesFile: Path) {
+    val result = Result.parseFrom(bytesFile.readBytes())
+    assertEquals(
+        Result.ResultCase.MODEL,
+        result.resultCase,
+        "The fixture beside the golden file $golden holds no model",
+    )
+    val goldenResult = ImportModelsTextFormat.parseResult(golden.readText())
+    assertEquals(
+        goldenResult.model.typeUrl,
+        result.model.typeUrl,
+        "The fixture beside the golden file $golden holds a different type URL",
+    )
+    assertEquals(
+        ImportModelsTextFormat.printResult(normalizeResult(goldenResult)),
+        ImportModelsTextFormat.printResult(normalizeResult(result)),
+        "The fixture beside the golden file $golden holds a different model",
+    )
+}
+
+private fun assertMatchesGoldenFile(goldenFile: Path, actual: String, missingGoldenHint: String) {
+    if (!goldenFile.isRegularFile()) {
+        throw AssertionError(
+            "Missing golden file $goldenFile: $missingGoldenHint",
+        )
+    }
+    assertEquals(goldenFile.readText().trimTrailingWhitespacesAndAddNewlineAtEOF(), actual)
+}
 
 /**
  * Normalizes a dumped `Result` for comparison as readable TextFormat: the KGP version becomes a
