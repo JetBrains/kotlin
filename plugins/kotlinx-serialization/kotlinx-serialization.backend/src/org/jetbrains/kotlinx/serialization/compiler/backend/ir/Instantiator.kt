@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetObjectValue
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
@@ -85,7 +87,7 @@ internal class Instantiator(
             polymorphicSerializerId -> Args(listOf(classReferenceOf(kType)), listOf(kType))
             contextSerializerId -> argsForContextSerializer(kType, genericIndex, typeArgumentsAsTypes) ?: return null
             objectSerializerId -> Args(
-                args = listOf(irBuilder.irString(kType.serialName()), irBuilder.irGetObject(kType.classOrUpperBound()!!)),
+                args = listOf(irBuilder.irString(kType.serialName()), irBuilder.irGetObjectValue(kType.classOrUpperBound()!!)),
                 typeArgs = listOf(kType),
             )
             sealedSerializerId -> return instantiateSealedSerializer(serializerClass, kType)
@@ -225,7 +227,7 @@ internal class Instantiator(
 
         val enumArgs = mutableListOf(
             irBuilder.irString(kType.serialName()),
-            irBuilder.irCall(enumDescriptor.owner.findEnumValuesMethod()),
+            irBuilder.irCall(enumDescriptor.owner.findEnumValuesMethod().symbol),
         )
 
         if (!hasEnumFactories) return instantiateLegacyEnumSerializer(serializerClass, enumArgs, typeArgs)
@@ -310,7 +312,7 @@ internal class Instantiator(
                             null,
                             irTypeArgOfSealedClass,
                             genericIndex,
-                        ) ?: irBuilder.irGetObject(compilerContext.unitSerializerClass!!)
+                        ) ?: irBuilder.irGetObjectValue(compilerContext.unitSerializerClass!!)
                     }
 
                     irTypeArgOfSealedClass != null && !irTypeArgOfSealedClass.isTypeParameter() -> {
@@ -320,13 +322,13 @@ internal class Instantiator(
                             serializer,
                             irTypeArgOfSealedClass,
                             null,
-                        ) ?: irBuilder.irGetObject(compilerContext.unitSerializerClass!!)
+                        ) ?: irBuilder.irGetObjectValue(compilerContext.unitSerializerClass!!)
                     }
 
                     else -> {
                         // for star projection we can't pick serializer so use Unit serializer
                         // do the same in other unknown cases
-                        irBuilder.irGetObject(compilerContext.unitSerializerClass!!)
+                        irBuilder.irGetObjectValue(compilerContext.unitSerializerClass!!)
                     }
                 }
             }
@@ -483,7 +485,7 @@ internal class Instantiator(
         val sameFileAccess = serializerClass.getPackageFragment() == rootSerializableClass?.getPackageFragment()
         return if (rootSerializableClass == null || serializerClass.visibility != DescriptorVisibilities.PRIVATE || sameFileAccess) {
             // we can access the serializer object directly only if it is not private, or is located in the same file as the class using it
-            irBuilder.irGetObject(serializerClassOriginal)
+            irBuilder.irGetObjectValue(serializerClassOriginal)
         } else {
             val simpleType = (kType as? IrSimpleType) ?: error("Don't know how to work with type ${kType.classFqName}")
 

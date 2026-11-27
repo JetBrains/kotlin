@@ -6,12 +6,14 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.getRichPropertyReferenceForOptimizableDelegatedProperty
 import org.jetbrains.kotlin.backend.jvm.lower.getSingletonOrConstantForOptimizableDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irBlockBody
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -23,22 +25,15 @@ import org.jetbrains.kotlin.ir.util.superTypes
 fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
     val type = declaration.returnType as? IrSimpleType ?: return null
 
-    val delegatingAnyCall = IrDelegatingConstructorCallImpl(
-        -1,
-        -1,
-        irBuiltIns.anyType,
-        irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null,
-        typeArgumentsCount = 0,
-    )
-
-    val initializerCall = IrInstanceInitializerCallImpl(
-        -1,
-        -1,
-        (declaration.parent as? IrClass)?.symbol ?: return null,
-        irBuiltIns.unitType,
-    )
-
-    return irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
+    val anyConstructor = irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null
+    val classSymbol = (declaration.parent as? IrClass)?.symbol ?: return null
+    val irBuilder = DeclarationIrBuilder(this, declaration.symbol, -1, -1)
+    return irFactory.irBlockBody {
+        statements += irBuilder.irDelegatingConstructorCall(anyConstructor) {
+            this.type = irBuiltIns.anyType
+        }
+        statements += irBuilder.irInstanceInitializerCall(classSymbol)
+    }
 }
 
 fun IrClass.addDefaultConstructorBodyIfAbsent(ctx: IrPluginContext) {

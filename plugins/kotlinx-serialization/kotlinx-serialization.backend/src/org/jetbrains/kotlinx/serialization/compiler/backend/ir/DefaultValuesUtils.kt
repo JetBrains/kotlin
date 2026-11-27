@@ -6,8 +6,9 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetField
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetValue
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -25,10 +27,15 @@ import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty, expectedPropertyType: IrType? = null): IrExpression {
-    return if (property.getter != null)
-        irGet(expectedPropertyType ?: property.getter!!.returnType, receiver, property.getter!!.symbol)
+    val getter = property.getter
+    return if (getter != null)
+        irCall(getter.symbol) {
+            type = expectedPropertyType ?: getter.returnType
+            origin = IrStatementOrigin.GET_PROPERTY
+            arguments[0] = receiver
+        }
     else
-        irGetField(receiver, property.backingField!!)
+        irGetField(property.backingField!!.symbol) { this.receiver = receiver }
 }
 
 /*
@@ -42,12 +49,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
 ): (IrValueParameterSymbol) -> IrExpression? {
     fun IrSerializableProperty.irGet(): IrExpression {
         val ownerType = instance.symbol.owner.type
-        return getProperty(
-            irGet(
-                type = ownerType,
-                variable = instance.symbol
-            ), ir
-        )
+        return getProperty(irGetValue(instance.symbol) { type = ownerType }, ir)
     }
 
     val serialPropertiesMap = serialProperties.associateBy { it.ir }
@@ -65,10 +67,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
             val value = serialPropertiesMap[propertyDescriptor]
             value?.irGet() ?: run {
                 if (propertyDescriptor in transientPropertiesSet)
-                    getProperty(
-                        irGet(instance),
-                        propertyDescriptor
-                    )
+                    getProperty(irGetValue(instance.symbol), propertyDescriptor)
                 else null
             }
         } else {

@@ -8,15 +8,12 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -54,51 +51,45 @@ class IrPreGenerator(
                 serializerClass.findPluginGeneratedMethod(SerialEntityNames.SAVE)
             }) return
         if (irClass.findWriteSelfMethod() != null) return
-        val method = irClass.addFunction {
+        val serialDescriptorSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
+        val kSerializerSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.KSERIALIZER_CLASS)
+        val method = irClass.irFunction {
             name = SerialEntityNames.WRITE_SELF_NAME
             returnType = compilerContext.irBuiltIns.unitType
             visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
+
+            val typeParamsAsArguments = irClass.typeParameters.map {
+                typeParameter(it.name.asString(), compilerContext.irBuiltIns.anyNType).defaultType
+            }
+            // Despite this function should be static in bytecode, registerFunctionAsMetadataVisible needs a correct dispatch receiver
+            // to handle function metadata correctly. This dispatchReceiverParameter will be removed later.
+            // Its type is the class type with the type parameters of the function instead of the ones of the class.
+            dispatchReceiver {
+                copyFrom(irClass.thisReceiver!!)
+                type = irClass.typeWith(typeParamsAsArguments)
+            }
+
+            fun addParameter(name: String, type: IrType) {
+                valueParameter {
+                    this.name = Name.identifier(name)
+                    this.type = type
+                    origin = SERIALIZATION_PLUGIN_ORIGIN
+                }
+            }
+            // object
+            addParameter("self", irClass.typeWith(typeParamsAsArguments))
+            // encoder
+            addParameter("output", compilerContext.getClassFromRuntime(SerialEntityNames.STRUCTURE_ENCODER_CLASS).defaultType)
+            // descriptor
+            addParameter("serialDesc", serialDescriptorSymbol.defaultType)
+            // KSerializer<Tn>
+            typeParamsAsArguments.forEachIndexed { i, it ->
+                addParameter("${SerialEntityNames.typeArgPrefix}$i", kSerializerSymbol.typeWith(it))
+            }
         }
         method.excludeFromJsExport()
-
-        val typeParamsMap = irClass.typeParameters.associateWith {
-            method.addTypeParameter(
-                it.name.asString(), compilerContext.irBuiltIns.anyNType
-            )
-        }
-        // Despite this function should be static in bytecode, registerFunctionAsMetadataVisible needs a correct dispatch receiver
-        // to handle function metadata correctly. This dispatchReceiverParameter will be removed later.
-        method.parameters = listOfNotNull(irClass.thisReceiver?.copyTo(method, remapTypeMap = typeParamsMap))
-        val typeParamsAsArguments = typeParamsMap.values.map { it.defaultType }
-
-        // object
-        method.addValueParameter(
-            Name.identifier("self"), irClass.typeWith(typeParamsAsArguments),
-            SERIALIZATION_PLUGIN_ORIGIN
-        )
-        // encoder
-        method.addValueParameter(
-            Name.identifier("output"),
-            compilerContext.getClassFromRuntime(SerialEntityNames.STRUCTURE_ENCODER_CLASS).defaultType,
-            SERIALIZATION_PLUGIN_ORIGIN
-        )
-        // descriptor
-        val serialDescriptorSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
-        method.addValueParameter(
-            Name.identifier("serialDesc"), serialDescriptorSymbol.defaultType,
-            SERIALIZATION_PLUGIN_ORIGIN
-        )
-        // KSerializer<Tn>
-        val kSerializerSymbol = compilerContext.getClassFromRuntime(SerialEntityNames.KSERIALIZER_CLASS)
-        typeParamsAsArguments.forEachIndexed { i, it ->
-            method.addValueParameter(
-                Name.identifier("${SerialEntityNames.typeArgPrefix}$i"),
-                kSerializerSymbol.typeWith(it),
-                SERIALIZATION_PLUGIN_ORIGIN
-            )
-        }
 
         compilerContext.finderForBuiltins().findClass(StandardClassIds.Annotations.jvmStatic)
             ?.let { method.annotations += method.createAnnotationCallWithoutArgs(it) }
@@ -118,25 +109,31 @@ class IrPreGenerator(
         ) return
         if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = !compilerContext.platform.isJvm())) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
-        val ctor = irClass.addConstructor {
-            origin = SERIALIZATION_PLUGIN_ORIGIN
-            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
-        }.apply { excludeFromJsExport() }
         val markerClassSymbol =
             compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_CTOR_MARKER_NAME.asString())
         val serializableProperties = serializablePropertiesForIrBackend(irClass).serializableProperties
         val bitMaskSlotsCount = serializableProperties.bitMaskSlotCount()
 
-        repeat(bitMaskSlotsCount) {
-            ctor.addValueParameter(Name.identifier("seen$it"), compilerContext.irBuiltIns.intType, SERIALIZATION_PLUGIN_ORIGIN)
-        }
+        val ctor = irClass.irConstructor {
+            origin = SERIALIZATION_PLUGIN_ORIGIN
+            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
 
-        for (prop in serializableProperties) {
-            // SerialName can contain illegal identifier characters, so we use original source code name for parameter
-            ctor.addValueParameter(prop.originalDescriptorName, prop.type.makeNullableIfNotPrimitive(), SERIALIZATION_PLUGIN_ORIGIN)
-        }
-
-        ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable(), SERIALIZATION_PLUGIN_ORIGIN)
+            fun addParameter(name: Name, type: IrType) {
+                valueParameter {
+                    this.name = name
+                    this.type = type
+                    origin = SERIALIZATION_PLUGIN_ORIGIN
+                }
+            }
+            repeat(bitMaskSlotsCount) {
+                addParameter(Name.identifier("seen$it"), compilerContext.irBuiltIns.intType)
+            }
+            for (prop in serializableProperties) {
+                // SerialName can contain illegal identifier characters, so we use original source code name for parameter
+                addParameter(prop.originalDescriptorName, prop.type.makeNullableIfNotPrimitive())
+            }
+            addParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable())
+        }.apply { excludeFromJsExport() }
         compilerContext.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
     }
 

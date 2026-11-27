@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irProperty
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -29,19 +32,24 @@ class SerialInfoImplJvmIrGenerator(
     private val javaLangClass = createClass(createPackage("java.lang"), "Class", ClassKind.CLASS)
 
     private val jvmName: IrClassSymbol = createClass(createPackage("kotlin.jvm"), "JvmName", ClassKind.ANNOTATION_CLASS) { klass ->
-        klass.addConstructor().apply {
-            addValueParameter("name", context.irBuiltIns.stringType)
+        klass.irConstructor {
+            valueParameter("name", context.irBuiltIns.stringType)
         }
     }
 
     private val kClassJava: IrPropertySymbol =
-        IrFactoryImpl.buildProperty {
+        IrFactoryImpl.irProperty {
             name = Name.identifier("java")
-        }.apply {
             parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
-            addGetter().apply {
+            getter {
+                returnType = javaLangClass.starProjectedType
+                extensionReceiver {
+                    name = "receiver".synthesizedName
+                    type = context.irBuiltIns.kClassClass.starProjectedType
+                }
                 annotations = listOf(
-                    IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                    buildAnnotation(jvmName.constructors.single()) {
+                        type = jvmName.typeWith()
                         arguments[0] = IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
@@ -50,8 +58,6 @@ class SerialInfoImplJvmIrGenerator(
                         )
                     }
                 )
-                parameters += createExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
-                returnType = javaLangClass.starProjectedType
             }
         }.symbol
 
@@ -67,20 +73,19 @@ class SerialInfoImplJvmIrGenerator(
 
         val properties = annotationClass.declarations.filterIsInstance<IrProperty>()
 
-        val subclass = context.irFactory.buildClass {
+        val subclass = context.irFactory.irClass {
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
             name = SerialEntityNames.IMPL_NAME
             origin = SERIALIZATION_PLUGIN_ORIGIN
             visibility = DescriptorVisibilities.PUBLIC
-        }.apply {
             parent = annotationClass
-            createThisReceiverParameter()
             superTypes = listOf(annotationClass.defaultType)
+            thisReceiver()
         }
         annotationClass.declarations.add(subclass)
 
-        val ctor = subclass.addConstructor {
+        val ctor = subclass.irConstructor {
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
             visibility = DescriptorVisibilities.PUBLIC
@@ -101,13 +106,13 @@ class SerialInfoImplJvmIrGenerator(
         shortName: String,
         classKind: ClassKind,
         block: (IrClass) -> Unit = {}
-    ): IrClassSymbol = IrFactoryImpl.buildClass {
+    ): IrClassSymbol = IrFactoryImpl.irClass {
         name = Name.identifier(shortName)
         kind = classKind
         modality = Modality.FINAL
-    }.apply {
         parent = irPackage
-        createThisReceiverParameter()
+        thisReceiver()
+    }.apply {
         block(this)
     }.symbol
 }

@@ -12,13 +12,26 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addGetter
-import org.jetbrains.kotlin.ir.builders.declarations.addProperty
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irAnonymousInitializer
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irBackingField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irGetter
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irProperty
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildAnnotation
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildClassReference
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irExpressionBody
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irFunctionAccessExpression
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irFunctionExpression
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetEnumValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetField
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irReturn
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irSetField
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irVararg
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -52,31 +65,30 @@ interface IrBuilderWithPluginContext {
         type: IrType,
         bodyGen: IrBlockBodyBuilder.() -> Unit
     ): IrFunctionExpression {
-        val function = compilerContext.irFactory.buildFun {
+        val function = compilerContext.irFactory.irFunction {
             this.startOffset = this@createLambdaExpression.startOffset
             this.endOffset = this@createLambdaExpression.endOffset
             this.returnType = type
             name = Name.identifier("<anonymous>")
             visibility = DescriptorVisibilities.LOCAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
+            parent = this@createLambdaExpression
         }
-        function.body = DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
+        val irBuilder = DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset)
+        function.body = irBuilder.irBlockBody(startOffset, endOffset) {
             val expr = addAndGetLastExpression(bodyGen)
-            +irReturn(expr)
+            +irReturn { value = expr }
         }
-        function.parent = this
 
         val f0Type = compilerContext.irBuiltIns.functionN(0)
         val f0ParamSymbol = f0Type.typeParameters[0].symbol
         val f0IrType = f0Type.defaultType.substitute(mapOf(f0ParamSymbol to type))
 
-        return IrFunctionExpressionImpl(
-            startOffset,
-            endOffset,
-            f0IrType,
-            function,
-            IrStatementOrigin.LAMBDA
-        )
+        return irBuilder.irFunctionExpression {
+            this.type = f0IrType
+            this.function = function
+            origin = IrStatementOrigin.LAMBDA
+        }
     }
 
     fun addLazyValProperty(
@@ -88,53 +100,51 @@ interface IrBuilderWithPluginContext {
     ): IrProperty {
         val lazyIrType = lazyType(targetIrType)
 
-        val field = containingClass.factory.buildField {
-            startOffset = containingClass.startOffset
-            endOffset = containingClass.endOffset
-            name = Name.identifier(propertyName.asString() + "\$delegate")
-            type = lazyIrType
-            origin = SERIALIZATION_PLUGIN_ORIGIN
-            isFinal = true
-            this.visibility = DescriptorVisibilities.PRIVATE
-        }.also { it.parent = containingClass }
-
-        containingClass.addAnonymousInit {
-            val invokeLazyExpr = createLazyDelegate(targetIrType, containingClass, initializerBuilder)
-            +irSetField(irGet(containingClass.thisReceiver!!), field, invokeLazyExpr)
-        }
-
-
-        val prop = containingClass.addProperty {
+        val prop = containingClass.irProperty {
             startOffset = containingClass.startOffset
             endOffset = containingClass.endOffset
             name = propertyName
             this.visibility = visibility
             this.isVar = false
             origin = SERIALIZATION_PLUGIN_ORIGIN
-        }.apply {
-            field.correspondingPropertySymbol = this.symbol
-            backingField = field
+            backingField {
+                startOffset = containingClass.startOffset
+                endOffset = containingClass.endOffset
+                name = Name.identifier(propertyName.asString() + "\$delegate")
+                type = lazyIrType
+                origin = SERIALIZATION_PLUGIN_ORIGIN
+                isFinal = true
+            }
+            getter {
+                startOffset = containingClass.startOffset
+                endOffset = containingClass.endOffset
+                returnType = targetIrType
+                origin = SERIALIZATION_PLUGIN_ORIGIN
+                this.visibility = visibility
+                modality = Modality.FINAL
+            }
+        }
+        val field = prop.backingField!!
+
+        containingClass.addAnonymousInit {
+            val invokeLazyExpr = createLazyDelegate(targetIrType, containingClass, initializerBuilder)
+            +irSetField(field.symbol) {
+                receiver = irGetValue(containingClass.thisReceiver!!.symbol)
+                value = invokeLazyExpr
+            }
         }
 
-        val getter = prop.addGetter {
-            startOffset = containingClass.startOffset
-            endOffset = containingClass.endOffset
-            returnType = targetIrType
-            origin = SERIALIZATION_PLUGIN_ORIGIN
-            this.visibility = visibility
-            modality = Modality.FINAL
-        }
-
-        getter.apply {
-            parameters = listOf(containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType))
+        prop.getter!!.apply {
             body = compilerContext.irBuiltIns.createIrBuilder(symbol, containingClass.startOffset, containingClass.endOffset).irBlockBody {
-                +irReturn(
-                    irInvoke(
+                +irReturn {
+                    value = irInvoke(
                         compilerContext.lazyValueGetter,
-                        irGetField(irGet(dispatchReceiverParameter!!), field),
+                        irGetField(field.symbol) {
+                            receiver = irGetValue(dispatchReceiverParameter!!.symbol)
+                        },
                         returnTypeHint = targetIrType
                     )
-                )
+                }
             }
         }
         return prop
@@ -144,7 +154,12 @@ interface IrBuilderWithPluginContext {
         val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
         val annotationType = annotationSymbol.defaultType
 
-        return IrAnnotationImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        val element = this
+        return buildAnnotation(annotationCtor) {
+            startOffset = element.startOffset
+            endOffset = element.endOffset
+            type = annotationType
+        }
     }
 
     fun IrClass.addValPropertyWithJvmField(
@@ -157,7 +172,10 @@ interface IrBuilderWithPluginContext {
             val field = backingField!!
             addAnonymousInit {
                 val resultExpression = addAndGetLastExpression(initializerBuilder)
-                +irSetField(irGet(thisReceiver!!), field, resultExpression)
+                +irSetField(field.symbol) {
+                    receiver = irGetValue(thisReceiver!!.symbol)
+                    value = resultExpression
+                }
             }
             field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
@@ -178,7 +196,12 @@ interface IrBuilderWithPluginContext {
                 field.startOffset,
                 field.endOffset
             )
-            field.initializer = factory.createExpressionBody(builder.initializer())
+            val initializerExpression = builder.initializer()
+            field.initializer = factory.irExpressionBody {
+                startOffset = initializerExpression.startOffset
+                endOffset = initializerExpression.endOffset
+                expression = initializerExpression
+            }
             field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
@@ -199,9 +222,10 @@ interface IrBuilderWithPluginContext {
         vararg arguments: IrExpression,
         returnTypeHint: IrType? = null,
     ): IrFunctionAccessExpression {
-        val call = irBuilder.irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
-        call.arguments.assignFrom(arguments.toList())
-        return call
+        return irBuilder.irFunctionAccessExpression(callee) {
+            type = returnTypeHint ?: callee.owner.returnType
+            this.arguments.assignFrom(arguments.toList())
+        }
     }
 
     context(irBuilder: IrBuilderWithScope) fun irInvoke(
@@ -210,10 +234,11 @@ interface IrBuilderWithPluginContext {
         typeArguments: List<IrType?> = emptyList(),
         returnTypeHint: IrType? = null,
     ): IrFunctionAccessExpression {
-        val call = irBuilder.irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
-        call.arguments.assignFrom(arguments.toList())
-        call.typeArguments.assignFrom(typeArguments)
-        return call
+        return irBuilder.irFunctionAccessExpression(callee) {
+            type = returnTypeHint ?: callee.owner.returnType
+            this.arguments.assignFrom(arguments.toList())
+            this.typeArguments.assignFrom(typeArguments)
+        }
     }
 
     context(irBuilder: IrBuilderWithScope) fun createArrayOfExpression(
@@ -222,10 +247,15 @@ interface IrBuilderWithPluginContext {
     ): IrExpression {
 
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(arrayElementType)
-        val arg0 = IrVarargImpl(irBuilder.startOffset, irBuilder.endOffset, arrayType, arrayElementType, arrayElements)
-        val typeArguments = listOf(arrayElementType)
+        val arg0 = irBuilder.irVararg {
+            type = arrayType
+            varargElementType = arrayElementType
+            elements += arrayElements
+        }
 
-        return irBuilder.irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
+        return irBuilder.irCall(compilerContext.irBuiltIns.arrayOf) {
+            type = arrayType
+            this.typeArguments[0] = arrayElementType
             arguments[0] = arg0
         }
     }
@@ -233,19 +263,23 @@ interface IrBuilderWithPluginContext {
     fun IrBuilderWithScope.createIntArrayOfExpression(arrayElements: List<IrExpression>): IrExpression {
         val elementType = compilerContext.irBuiltIns.intType
         val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
-        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
-        return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
+        val arg0 = irVararg {
+            type = arrayType
+            varargElementType = elementType
+            elements += arrayElements
+        }
+        return irCall(compilerContext.intArrayOfFunctionSymbol) {
+            type = arrayType
             arguments[0] = arg0
         }
     }
 
     fun IrClass.addAnonymousInit(body: IrBlockBodyBuilder.() -> Unit) {
-        val anonymousInit = this.run {
-            val symbol = IrAnonymousInitializerSymbolImpl(symbol)
-            this.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
-                it.parent = this
-                declarations.add(it)
-            }
+        val irClass = this
+        val anonymousInit = irAnonymousInitializer {
+            startOffset = irClass.startOffset
+            endOffset = irClass.endOffset
+            origin = SERIALIZATION_PLUGIN_ORIGIN
         }
 
         anonymousInit.body =
@@ -266,54 +300,26 @@ interface IrBuilderWithPluginContext {
         return irInvoke(symbol, lhs, rhs)
     }
 
-    fun IrBuilderWithScope.irGetObject(irObject: IrClass) =
-        IrGetObjectValueImpl(
-            startOffset,
-            endOffset,
-            irObject.defaultType,
-            irObject.symbol
-        )
-
-    class BranchBuilder(
-        val irWhen: IrWhen,
-        context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int,
-        endOffset: Int
-    ) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
-        operator fun IrBranch.unaryPlus() {
-            irWhen.branches.add(this)
-        }
-    }
-
-    fun IrBuilderWithScope.irWhen(typeHint: IrType? = null, block: BranchBuilder.() -> Unit): IrWhen {
-        val whenExpr = IrWhenImpl(startOffset, endOffset, typeHint ?: compilerContext.irBuiltIns.unitType)
-        val builder = BranchBuilder(whenExpr, context, scope, startOffset, endOffset)
-        builder.block()
-        return whenExpr
-    }
-
-    fun BranchBuilder.elseBranch(result: IrExpression): IrElseBranch =
-        IrElseBranchImpl(
-            IrConstImpl.boolean(result.startOffset, result.endOffset, compilerContext.irBuiltIns.booleanType, true),
-            result
-        )
-
     fun IrBuilderWithScope.setProperty(receiver: IrExpression, property: IrProperty, value: IrExpression): IrExpression {
-        return if (property.setter != null)
-            irSet(property.setter!!.returnType, receiver, property.setter!!.symbol, value)
+        val setter = property.setter
+        return if (setter != null)
+            irCall(setter.symbol) {
+                type = setter.returnType
+                origin = IrStatementOrigin.EQ
+                arguments[0] = receiver
+                arguments[1] = value
+            }
         else
-            irSetField(receiver, property.backingField!!, value)
+            irSetField(property.backingField!!.symbol) {
+                this.receiver = receiver
+                this.value = value
+            }
     }
 
     fun IrBuilderWithScope.generateAnySuperConstructorCall(toBuilder: IrBlockBodyBuilder) {
         val anyConstructor = compilerContext.irBuiltIns.anyClass.owner.declarations.single { it is IrConstructor } as IrConstructor
         with(toBuilder) {
-            +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                startOffset, endOffset,
-                compilerContext.irBuiltIns.unitType,
-                anyConstructor.symbol
-            )
+            +irDelegatingConstructorCall(anyConstructor.symbol)
         }
     }
 
@@ -331,17 +337,7 @@ interface IrBuilderWithPluginContext {
         propertyParent: IrClass,
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
     ): IrProperty {
-        val field = property?.backingField ?: propertyParent.factory.buildField {
-            startOffset = propertyParent.startOffset
-            endOffset = propertyParent.endOffset
-            name = propertyName
-            type = propertyType
-            origin = SERIALIZATION_PLUGIN_ORIGIN
-            isFinal = true
-            this.visibility = DescriptorVisibilities.PRIVATE
-        }.also { it.parent = propertyParent }
-
-        val prop = property ?: propertyParent.addProperty {
+        val prop = property ?: propertyParent.irProperty {
             startOffset = propertyParent.startOffset
             endOffset = propertyParent.endOffset
             name = propertyName
@@ -349,12 +345,16 @@ interface IrBuilderWithPluginContext {
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
 
-        prop.apply {
-            field.correspondingPropertySymbol = this.symbol
-            backingField = field
+        val field = prop.backingField ?: prop.irBackingField {
+            startOffset = propertyParent.startOffset
+            endOffset = propertyParent.endOffset
+            name = propertyName
+            type = propertyType
+            origin = SERIALIZATION_PLUGIN_ORIGIN
+            isFinal = true
         }
 
-        val getter = prop.getter ?: prop.addGetter {
+        val getter = prop.getter ?: prop.irGetter {
             startOffset = propertyParent.startOffset
             endOffset = propertyParent.endOffset
             returnType = propertyType
@@ -368,20 +368,23 @@ interface IrBuilderWithPluginContext {
                 parameters = listOf(propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType))
             if (body == null)
                 body = compilerContext.irBuiltIns.createIrBuilder(symbol, propertyParent.startOffset, propertyParent.endOffset).irBlockBody {
-                        +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
+                        +irReturn {
+                            value = irGetField(field.symbol) {
+                                receiver = irGetValue(dispatchReceiverParameter!!.symbol)
+                            }
+                        }
                     }
         }
         return prop
     }
 
     fun createClassReference(classType: IrType, startOffset: Int, endOffset: Int): IrClassReference {
-        return IrClassReferenceImpl(
-            startOffset,
-            endOffset,
-            compilerContext.irBuiltIns.kClassClass.starProjectedType,
-            classType.classifierOrFail,
-            classType
-        )
+        return buildClassReference(classType.classifierOrFail) {
+            this.startOffset = startOffset
+            this.endOffset = endOffset
+            type = compilerContext.irBuiltIns.kClassClass.starProjectedType
+            this.classType = classType
+        }
     }
 
     context(irBuilder: IrBuilderWithScope) fun classReference(classSymbol: IrClassSymbol): IrClassReference =
@@ -429,12 +432,9 @@ interface IrBuilderWithPluginContext {
     ): IrExpression {
         val lazyIrType = lazyType(returnType)
 
-        val enumElement = IrGetEnumValueImpl(
-            startOffset,
-            endOffset,
-            compilerContext.lazyModeClass.defaultType,
-            compilerContext.lazyModePublicationEnumEntry.symbol
-        )
+        val enumElement = irGetEnumValue(compilerContext.lazyModePublicationEnumEntry.symbol) {
+            type = compilerContext.lazyModeClass.defaultType
+        }
         val lambdaExpression = containingClass.createLambdaExpression(returnType, initializerBuilder)
         return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
     }

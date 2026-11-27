@@ -6,19 +6,26 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
-import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irVariable
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildAnnotation
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irBranch
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irElseBranch
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetField
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetObjectValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irGetValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irWhen
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -68,14 +75,9 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val jsExportIgnore = compilerContext.jsExportIgnoreClass ?: return
         val jsExportIgnoreCtor = jsExportIgnore.primaryConstructor ?: return
 
-        annotations += IrAnnotationImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            jsExportIgnore.defaultType,
-            jsExportIgnoreCtor.symbol,
-            jsExportIgnore.typeParameters.size,
-            jsExportIgnoreCtor.typeParameters.size,
-        )
+        annotations += buildAnnotation(jsExportIgnoreCtor.symbol) {
+            type = jsExportIgnore.defaultType
+        }
     }
 
 
@@ -124,33 +126,41 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
             throwErrorExpr = irInvoke(
                 throwMissedFieldExceptionFunc,
-                irGet(seenVars[0]),
+                irGetValue(seenVars[0].symbol),
                 irInt(goldenMask),
                 serialDescriptor,
                 returnTypeHint = compilerContext.irBuiltIns.unitType
             )
 
-            fieldsMissedTest = irNotEquals(
-                irInt(goldenMask),
-                irBinOp(
-                    OperatorNameConventions.AND,
-                    irInt(goldenMask),
-                    irGet(seenVars[0])
-                )
-            )
+            fieldsMissedTest = irCall(context.irBuiltIns.booleanNotSymbol) {
+                origin = IrStatementOrigin.EXCLEQ
+                arguments[0] = irCall(context.irBuiltIns.eqeqSymbol) {
+                    origin = IrStatementOrigin.EXCLEQ
+                    arguments[0] = irInt(goldenMask)
+                    arguments[1] = irBinOp(
+                        OperatorNameConventions.AND,
+                        irInt(goldenMask),
+                        irGetValue(seenVars[0].symbol)
+                    )
+                }
+            }
         } else {
             val goldenMaskList = properties.goldenMaskList
 
             var compositeExpression: IrExpression? = null
             for (i in goldenMaskList.indices) {
-                val singleCheckExpr = irNotEquals(
-                    irInt(goldenMaskList[i]),
-                    irBinOp(
-                        OperatorNameConventions.AND,
-                        irInt(goldenMaskList[i]),
-                        irGet(seenVars[i])
-                    )
-                )
+                val singleCheckExpr = irCall(context.irBuiltIns.booleanNotSymbol) {
+                    origin = IrStatementOrigin.EXCLEQ
+                    arguments[0] = irCall(context.irBuiltIns.eqeqSymbol) {
+                        origin = IrStatementOrigin.EXCLEQ
+                        arguments[0] = irInt(goldenMaskList[i])
+                        arguments[1] = irBinOp(
+                            OperatorNameConventions.AND,
+                            irInt(goldenMaskList[i]),
+                            irGetValue(seenVars[i].symbol)
+                        )
+                    }
+                }
 
                 compositeExpression = if (compositeExpression == null) {
                     singleCheckExpr
@@ -168,7 +178,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             throwErrorExpr = irBlock {
                 +irInvoke(
                     throwMissedFieldExceptionArrayFunc,
-                    createIntArrayOfExpression(goldenMaskList.indices.map { irGet(seenVars[it]) }),
+                    createIntArrayOfExpression(goldenMaskList.indices.map { irGetValue(seenVars[it].symbol) }),
                     createIntArrayOfExpression(goldenMaskList.map { irInt(it) }),
                     serialDescriptor,
                     returnTypeHint = compilerContext.irBuiltIns.unitType
@@ -176,7 +186,13 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             }
         }
 
-        +irIfThen(compilerContext.irBuiltIns.unitType, fieldsMissedTest, throwErrorExpr)
+        +irWhen {
+            type = compilerContext.irBuiltIns.unitType
+            branches += irBranch {
+                condition = fieldsMissedTest
+                result = throwErrorExpr
+            }
+        }
     }
 
     fun IrBlockBodyBuilder.serializeAllProperties(
@@ -193,7 +209,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val ownerType = objectToSerialize.type
 
         fun IrSerializableProperty.irGet(substitutedPropertyType: IrType): IrExpression = getProperty(
-            receiver = irGet(ownerType, objectToSerialize.symbol),
+            receiver = irGetValue(objectToSerialize.symbol) { type = ownerType },
             property = ir,
             expectedPropertyType = substitutedPropertyType
         )
@@ -203,12 +219,12 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             // output.writeXxxElementValue(classDesc, index, value)
             val substitutedPropertyType = property.getSubstitutedType(ownerType.classOrFail.owner, currentClass)
             val elementCall = formEncodeDecodePropertyCall(
-                irGet(localOutput),
+                irGetValue(localOutput.symbol),
                 property, { innerSerial, sti ->
                     val f =
                         kOutputClass.functionByName("${CallingConventions.encode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
                     f to listOf(
-                        irGet(localSerialDesc),
+                        irGetValue(localSerialDesc.symbol),
                         irInt(index),
                         innerSerial,
                         property.irGet(substitutedPropertyType)
@@ -216,7 +232,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 }, {
                     val f =
                         kOutputClass.functionByName("${CallingConventions.encode}${it.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                    val args: MutableList<IrExpression> = mutableListOf(irGet(localSerialDesc), irInt(index))
+                    val args: MutableList<IrExpression> = mutableListOf(irGetValue(localSerialDesc.symbol), irInt(index))
                     if (it.elementMethodPrefix != "Unit") args.add(property.irGet(substitutedPropertyType))
                     f to args
                 },
@@ -244,12 +260,27 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                     // if (if (output.shouldEncodeElementDefault(this.descriptor, i)) true else {obj.prop != DEFAULT_VALUE} ) {
                     //    output.encodeIntElement(this.descriptor, i, obj.prop)// block {obj.prop != DEFAULT_VALUE} may contain several statements
                     val shouldEncodeFunc = kOutputClass.functionByName(CallingConventions.shouldEncodeDefault)
-                    val partA = irInvoke(shouldEncodeFunc, irGet(localOutput), irGet(localSerialDesc), irInt(index))
+                    val partA = irInvoke(shouldEncodeFunc, irGetValue(localOutput.symbol), irGetValue(localSerialDesc.symbol), irInt(index))
                     // Ir infrastructure does not have dedicated symbol for ||, so
                     //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
-                    irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
+                    irWhen {
+                        type = compilerContext.irBuiltIns.booleanType
+                        branches += irBranch {
+                            condition = partA
+                            result = irTrue()
+                        }
+                        branches += irElseBranch {
+                            result = partB
+                        }
+                    }
                 }
-                +irIfThen(condition, elementCall)
+                +irWhen {
+                    type = context.irBuiltIns.unitType
+                    branches += irBranch {
+                        this.condition = condition
+                        result = elementCall
+                    }
+                }
             }
         }
     }
@@ -257,23 +288,39 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
     private fun IrBuilderWithScope.irNotEqualsConsideringArrayContent(
         type: IrType, value: IrExpression, default: IrExpression,
     ): IrExpression {
+        fun notEquals(): IrExpression =
+            irCall(context.irBuiltIns.booleanNotSymbol) {
+                origin = IrStatementOrigin.EXCLEQ
+                arguments[0] = irCall(context.irBuiltIns.eqeqSymbol) {
+                    origin = IrStatementOrigin.EXCLEQ
+                    arguments[0] = value
+                    arguments[1] = default
+                }
+            }
+
         val notNull = type.makeNotNull()
         return when {
             notNull.isArray() -> {
-                val symbol = compilerContext.contentDeepEqualsFunctionSymbol ?: return irNotEquals(value, default)
+                val symbol = compilerContext.contentDeepEqualsFunctionSymbol ?: return notEquals()
                 // `contentDeepEquals` is generic (`fun <T> Array<out T>?.contentDeepEquals(...)`), so bind `T` to the array
                 // element type — otherwise the produced IrCall would carry a null type-argument slot (malformed IR).
                 val elementType = (notNull as? IrSimpleType)?.arguments?.singleOrNull()?.typeOrNull
-                    ?: return irNotEquals(value, default)
-                irNot(irInvoke(symbol, listOf(value, default), typeArguments = listOf(elementType)))
+                    ?: return notEquals()
+                irCall(context.irBuiltIns.booleanNotSymbol) {
+                    origin = IrStatementOrigin.EXCL
+                    arguments[0] = irInvoke(symbol, listOf(value, default), typeArguments = listOf(elementType))
+                }
             }
             // Primitive (`IntArray`…) and unsigned (`UIntArray`…) `contentEquals` overloads are non-generic — no type args.
             notNull.isPrimitiveArray() || notNull.isUnsignedArray() -> {
                 val symbol = compilerContext.contentEqualsFunctionByArrayClassifier[notNull.classifierOrNull]
-                    ?: return irNotEquals(value, default)
-                irNot(irInvoke(symbol, listOf(value, default)))
+                    ?: return notEquals()
+                irCall(context.irBuiltIns.booleanNotSymbol) {
+                    origin = IrStatementOrigin.EXCL
+                    arguments[0] = irInvoke(symbol, listOf(value, default))
+                }
             }
-            else -> irNotEquals(value, default)
+            else -> notEquals()
         }
     }
 
@@ -320,7 +367,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val adjustedArgs: List<IrExpression> =
             if (replaceArgsWithUnitSerializer) {
                 val serializer = compilerContext.unitSerializerClass!!
-                List(baseClass.typeParameters.size) { irBuilder.irGetObject(serializer) }
+                List(baseClass.typeParameters.size) { irBuilder.irGetObjectValue(serializer) }
             } else {
                 args
             }
@@ -331,7 +378,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             // Note that [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
             return irInvoke(
                 symbol,
-                listOf(irBuilder.irGetObject(companionClass)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
+                listOf(irBuilder.irGetObjectValue(companionClass.symbol)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
                 adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
                 kSerializerType(thisIrType)
             )
@@ -351,7 +398,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         with(serializerProviderFunction as IrFunction) {
             return irInvoke(
                 symbol,
-                listOf(irBuilder.irGetObject(baseClass)) + args.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
+                listOf(irBuilder.irGetObjectValue(baseClass.symbol)) + args.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
             )
         }
     }
@@ -384,7 +431,9 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 property.ir.parentClassOrNull,
             ) { it, _ ->
                 val ir = generator.localSerializersFieldsDescriptors[it]
-                irGetField(irGet(dispatchReceiverParameter), ir.backingField!!)
+                irGetField(ir.backingField!!.symbol) {
+                    receiver = irGetValue(dispatchReceiverParameter.symbol)
+                }
             }
         }
 
@@ -462,14 +511,18 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val kSerializerType = this@BaseIrGenerator.kSerializerType(compilerContext.irBuiltIns.anyType)
 
         val variable =
-            irTemporary(irInvoke(cacheProperty.getter!!.symbol, irGetObject(containingClassProducer())), "cached")
+            irVariable {
+                initializer = irInvoke(cacheProperty.getter!!.symbol, irGetObjectValue(containingClassProducer().symbol))
+                name = Name.identifier(scope.inventNameForTemporary(nameHint = "cached"))
+                origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            }.also { +it }
 
         return { index: Int ->
             if (cacheableSerializers[index]) {
                 val arrayType = (variable.type as IrSimpleType).arguments.last().typeOrFail
                 val lazyDelegate = irInvoke(
                     compilerContext.arrayValueGetter.symbol,
-                    irGet(variable),
+                    irGetValue(variable.symbol),
                     irInt(index),
                     returnTypeHint = arrayType
                 )
