@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.*
 
 @DisplayName("KMP/Android: project compilation")
 @AndroidGradlePluginTests
 @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
+@MustRunOnChangesInGradle
 class KotlinAndroidMppCompilationIT : KGPBaseTest() {
 
     @TestMetadata("new-mpp-android")
