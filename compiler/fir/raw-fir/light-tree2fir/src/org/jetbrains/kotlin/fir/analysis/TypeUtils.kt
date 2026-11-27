@@ -34,6 +34,7 @@ fun SyntaxId.isExpression(): Boolean = when (this) {
     KotlinSyntaxNodeTypeIds.FUNCTION_TYPE_RECEIVER,
     KotlinSyntaxNodeTypeIds.NULLABLE_TYPE,
     KotlinSyntaxNodeTypeIds.INTERSECTION_TYPE,
+    KotlinSyntaxNodeTypeIds.UNION_TYPE,
     KotlinSyntaxNodeTypeIds.TYPE_PROJECTION,
     KotlinSyntaxNodeTypeIds.LONG_STRING_TEMPLATE_ENTRY,
     KotlinSyntaxNodeTypeIds.SHORT_STRING_TEMPLATE_ENTRY,
@@ -54,8 +55,11 @@ fun SyntaxId.isExpression(): Boolean = when (this) {
     KotlinSyntaxNodeTypeIds.IMPORT_ALIAS,
         -> false
 
-    else -> {
-        // All stub-based element types that are not `KtExpression` are listed above
-        this in KotlinSyntaxNodeTypeIds.FILE..KotlinSyntaxNodeTypeIds.BLOCK_CODE_FRAGMENT
-    }
+    // `BLOCK` is `KtExpression` in PSI, but `ElementTypeUtils.isExpression` doesn't treat it as an expression,
+    // and the result must be the same for both implementations (see `IsExpressionConsistencyTest`)
+    KotlinSyntaxNodeTypeIds.BLOCK -> false
+
+    // All the other node types except the roots, which are `KtFile` (`FILE` and the code fragments that follow `SCRIPT`).
+    // Declarations are `KtExpression` too. Other node types that are not `KtExpression` are listed above.
+    else -> this in KotlinSyntaxNodeTypeIds.CLASS..KotlinSyntaxNodeTypeIds.SCRIPT
 }
