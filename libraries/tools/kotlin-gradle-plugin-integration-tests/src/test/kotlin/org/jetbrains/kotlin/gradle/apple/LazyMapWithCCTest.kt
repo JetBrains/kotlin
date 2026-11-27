@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.withConfigurationCache
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertEquals
 
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class LazyMapWithCCTest : KGPBaseTest() {
 
     @GradleTest
