@@ -32,6 +32,7 @@ import java.nio.file.Paths
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithMuteInDatabase
 @TagsCountValidator
+@MustRunOnChangesValidator
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
 @OsCondition(allowRunningOnMacosOnCI = true)
 abstract class KGPBaseTest {
