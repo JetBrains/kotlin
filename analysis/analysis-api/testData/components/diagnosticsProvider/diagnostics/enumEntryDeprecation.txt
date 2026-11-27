@@ -1,0 +1,7 @@
+Diagnostics from E.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
+  for PSI element of type KtNameReferenceExpression at (13,15-30)
+    DEPRECATION_ERROR      text ranges: [(66,81)]
+      PSI: KtNameReferenceExpression at (13,15-30)
