@@ -283,7 +283,10 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
                 }
             }
         }
+        // With kapt.fir.apt, the stub generation task runs the processors over FIR.
+        val firApt = KaptProperties.isFirApt(project).get()
         taskConfigAction.configureTask { task ->
+            if (firApt) task.onlyIf { false }
             task.stubsDir.set(getKaptStubsDir())
             task.destinationDir.set(sourcesOutputDir)
             task.kotlinSourcesDestinationDir.set(kotlinSourcesOutputDir)
@@ -499,7 +502,7 @@ internal fun getNonAndroidDslApOptions(
     }
 }
 
-private fun encodeList(options: Map<String, String>): String {
+internal fun encodeList(options: Map<String, String>): String {
     val os = ByteArrayOutputStream()
     val oos = ObjectOutputStream(os)
 

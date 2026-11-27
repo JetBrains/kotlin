@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDirectory
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDirectory
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDirectory
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -28,9 +32,13 @@ import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
+    /** The source set whose KAPT output directories annotation processing over FIR (`kapt.fir.apt`) writes to. */
+    private var firAptSourceSetName: String? = null
+
     constructor(
         compilation: KotlinCompilation<*>
     ) : super(KotlinCompilationInfo(compilation)) {
+        firAptSourceSetName = compilation.compilationName
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
 
         configureTask { kaptGenerateStubsTask ->
@@ -70,18 +78,35 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         val javacOptions = project.provider { kaptExtension.getJavacOptions() }
         return project.provider {
             val compilerPluginOptions = CompilerPluginOptions()
+            // With kapt.fir.apt, the stub task also runs the processors, over a model built from FIR, and writes the generated
+            // sources where the kapt task would; the kapt task is skipped.
+            val firAptSourceSet = firAptSourceSetName?.takeIf { KaptProperties.isFirApt(project).get() }
             buildKaptSubpluginOptions(
                 kaptExtension,
                 project,
                 javacOptions.get(),
-                aptMode = "stubs",
-                generatedSourcesDir = objectFactory.fileCollection().from(task.destinationDirectory.asFile),
-                generatedClassesDir = objectFactory.fileCollection().from(task.destinationDirectory.asFile),
+                aptMode = if (firAptSourceSet != null) "stubsAndApt" else "stubs",
+                generatedSourcesDir = objectFactory.fileCollection().from(
+                    firAptSourceSet?.let { project.getKaptGeneratedSourcesDirectory(it) } ?: task.destinationDirectory.asFile
+                ),
+                generatedClassesDir = objectFactory.fileCollection().from(
+                    firAptSourceSet?.let { project.getKaptGeneratedClassesDirectory(it) } ?: task.destinationDirectory.asFile
+                ),
                 incrementalDataDir = objectFactory.fileCollection().from(task.destinationDirectory.asFile),
                 includeCompileClasspath = isIncludeCompileClasspath(kaptExtension),
                 kaptStubsDir = objectFactory.fileCollection().from(task.stubsDir.asFile)
             ).forEach {
                 compilerPluginOptions.addPluginArgument(KAPT_SUBPLUGIN_ID, it)
+            }
+            if (firAptSourceSet != null) {
+                task.kaptClasspath.files.forEach {
+                    compilerPluginOptions.addPluginArgument(KAPT_SUBPLUGIN_ID, SubpluginOption("apclasspath", it.absolutePath))
+                }
+                val kotlinSources = project.getKaptGeneratedKotlinSourcesDirectory(firAptSourceSet).get().asFile.absolutePath
+                compilerPluginOptions.addPluginArgument(
+                    KAPT_SUBPLUGIN_ID, SubpluginOption("apoptions", encodeList(mapOf("kapt.kotlin.generated" to kotlinSources)))
+                )
+                compilerPluginOptions.addPluginArgument(KAPT_SUBPLUGIN_ID, SubpluginOption("firApt", "true"))
             }
             return@provider compilerPluginOptions
         }

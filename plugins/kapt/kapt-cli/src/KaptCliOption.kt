@@ -234,6 +234,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-header-mode", FLAG)
     ),
 
+    FIR_APT_OPTION(
+        "firApt",
+        "true | false",
+        "Run annotation processors over a model built from FIR, without stubs and javac; implies header mode (prototype)",
+        cliToolOption = CliToolOption("-Kapt-fir-apt", FLAG)
+    ),
+
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",

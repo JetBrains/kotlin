@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
+import org.jetbrains.kotlin.kapt.firapt.AptEnv
+import org.jetbrains.kotlin.kapt.firapt.AptProcessorLoader
+import org.jetbrains.kotlin.kapt.firapt.AptRunner
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
@@ -70,6 +73,10 @@ open class FirKaptAnalysisHandlerExtension(
         options = optionsBuilder.build()
         if (options[KaptFlag.VERBOSE]) {
             logger.info(options.logString())
+        }
+
+        if (options[KaptFlag.FIR_APT] && options.mode.generateStubs && options.mode.runAnnotationProcessing) {
+            return runFirAnnotationProcessing(configuration)
         }
 
         if (options.mode.generateStubs) {
@@ -145,6 +152,40 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
         runMemoryLeakDetection(options, processors, logger)
+    }
+
+    /** Runs the frontend and the processors over its FIR: no stubs, no javac. */
+    private fun runFirAnnotationProcessing(configuration: CompilerConfiguration): Boolean {
+        val updatedConfiguration = configuration.copy().apply {
+            skipBodies = true
+            @OptIn(CompilerConfiguration.Internals::class)
+            registerExtensionStorage()
+        }
+        updatedConfiguration.moduleChunk = ModuleChunk(updatedConfiguration.modules)
+        val disposable = Disposer.newDisposable("K2KaptSession.project")
+        try {
+            val start = System.currentTimeMillis()
+            val frontend = runFrontendForFirApt(disposable, updatedConfiguration, ::checkForSyntaxErrorsAndReport) ?: return true
+            logger.info { "FIR annotation processing: the frontend took ${System.currentTimeMillis() - start} ms" }
+            val processors = AptProcessorLoader.load(options, logger)
+            if (processors.isEmpty()) return true
+            val processingStart = System.currentTimeMillis()
+            val outputs = frontend.frontendOutput.outputs
+            val env = AptEnv(
+                outputs.last().session, outputs.last().scopeSession, outputs.flatMap { it.fir }, frontend.configuration,
+                options[KaptFlag.STRIP_METADATA],
+            )
+            val succeeded = try {
+                AptRunner(options, logger, env).use { it.run(processors) }
+            } catch (e: Throwable) {
+                logger.exception(e)
+                false
+            }
+            logger.info { "FIR annotation processing took ${System.currentTimeMillis() - processingStart} ms" }
+            return succeeded
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
     }
 
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {

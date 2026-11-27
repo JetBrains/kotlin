@@ -18,6 +18,21 @@ import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.util.PhaseType
 
+/** Runs only the frontend, always in header mode, for annotation processing over FIR. */
+internal fun runFrontendForFirApt(
+    disposable: Disposable,
+    configuration: CompilerConfiguration,
+    onFrontendOutput: (JvmFrontendPipelineArtifact) -> Boolean = { false },
+): JvmFrontendPipelineArtifact? {
+    configuration.languageVersionSettings = configuration.languageVersionSettings.withStubGenerationHeaderMode()
+    val frontendInput = ConfigurationPipelineArtifact(configuration, disposable)
+        .withNewDiagnosticCollector(DiagnosticsCollectorImpl())
+    val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
+    if (onFrontendOutput(frontendOutput)) return null
+    configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
+    return frontendOutput
+}
+
 internal fun compileForStubGeneration(
     disposable: Disposable,
     configuration: CompilerConfiguration,

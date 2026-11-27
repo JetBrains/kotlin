@@ -99,6 +99,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
                 ?: throw CliOptionProcessingException("Invalid value $value for option ${option.optionName}: a positive integer expected")
             ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH_OPTION -> setFlag(KaptFlag.ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, value)
             HEADER_MODE_OPTION -> setFlag(KaptFlag.HEADER_MODE, value)
+            FIR_APT_OPTION -> setFlag(KaptFlag.FIR_APT, value)
             STUB_GENERATION_SCHEME_OPTION -> setSelector(enumValues<StubGenerationScheme>(), value) { stubGenerationScheme = it }
             USE_K2 -> {}
 
