@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFileDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
+import org.jetbrains.kotlin.backend.common.serialization.and
+import org.jetbrains.kotlin.backend.common.serialization.signatureAndKindOrNull
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -25,14 +28,14 @@ internal class IdSignatureSource(
 }
 
 internal fun addParentSignatures(
-    signatures: Collection<IdSignature>,
-    idSignatureToFile: Map<IdSignature, IdSignatureSource>,
+    signatures: Collection<SignatureAndKind>,
+    idSignatureToFile: Map<SignatureAndKind, IdSignatureSource>,
     importerLibFile: KotlinLibraryFile,
     importerSrcFile: KotlinSourceFile
-): Set<IdSignature> {
-    val allSignatures = HashSet<IdSignature>(signatures.size)
+): Set<SignatureAndKind> {
+    val allSignatures = HashSet<SignatureAndKind>(signatures.size)
 
-    fun addAllParents(sig: IdSignature) {
+    fun addAllParents(sig: SignatureAndKind) {
         val signatureSrc = idSignatureToFile[sig] ?: return
         if (signatureSrc.lib == importerLibFile && signatureSrc.srcFile == importerSrcFile) {
             return
@@ -40,7 +43,7 @@ internal fun addParentSignatures(
         if (allSignatures.add(sig)) {
             (signatureSrc.symbol.owner as? IrDeclaration)?.let { declaration ->
                 (declaration.parent as? IrSymbolOwner)?.let { parent ->
-                    parent.symbol.signature?.let(::addAllParents)
+                    parent.symbol.signatureAndKindOrNull?.let(::addAllParents)
                 }
             }
         }
@@ -51,18 +54,18 @@ internal fun addParentSignatures(
     return allSignatures
 }
 
-internal fun resolveFakeOverrideFunction(symbol: IrSymbol): IdSignature? {
+internal fun resolveFakeOverrideFunction(symbol: IrSymbol): SignatureAndKind? {
     return (symbol.owner as? IrSimpleFunction)?.let { overridable ->
         if (overridable.isFakeOverride) {
-            overridable.resolveFakeOverride()?.symbol?.signature
+            overridable.resolveFakeOverride()?.symbol?.signatureAndKindOrNull
         } else {
             null
         }
     }
 }
 
-private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
-    return HashMap<IdSignature, IrSymbol>(deserializedSymbols.size).apply {
+private fun collectImplementedSymbol(deserializedSymbols: Map<SignatureAndKind, IrSymbol>): Map<SignatureAndKind, IrSymbol> {
+    return HashMap<SignatureAndKind, IrSymbol>(deserializedSymbols.size).apply {
         for ([signature, symbol] in deserializedSymbols) {
             put(signature, symbol)
 
@@ -73,7 +76,7 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
                     DescriptorVisibilities.PRIVATE_TO_THIS -> return false
                 }
 
-                val sig = decl.symbol.signature
+                val sig = decl.symbol.signatureAndKindOrNull
                 if (sig != null && sig !in deserializedSymbols) {
                     return put(sig, decl.symbol) == null
                 }
@@ -108,8 +111,8 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
  */
 internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: KotlinSourceFile) {
     abstract fun getSignatureToIndexMapping(): Map<IdSignature, Int>
-    abstract fun getReachableSignatures(): Set<IdSignature>
-    abstract fun getImplementedSymbols(): Map<IdSignature, IrSymbol>
+    abstract fun getReachableSignatures(): Set<SignatureAndKind>
+    abstract fun getImplementedSymbols(): Map<SignatureAndKind, IrSymbol>
 
     /**
      * This is a basic implementation that allows retrieving signatures from a deserialized klib via [IrFileDeserializer].
@@ -119,11 +122,20 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
             return fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
         }
 
-        override fun getReachableSignatures(): Set<IdSignature> {
-            return getSignatureToIndexMapping().keys
+        override fun getReachableSignatures(): Set<SignatureAndKind> {
+            val symbolDeserializer = fileDeserializer.symbolDeserializer
+            return buildSet {
+                for (symbolData in symbolDeserializer.symbolCache.keys) {
+                    val signature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+                    val signatureAndKind = signature and symbolData.kind
+                    add(signatureAndKind)
+                    // A reference to an accessor is also treated as a reference to its property.
+                    signatureAndKind.correspondingPropertyOrNull()?.let(::add)
+                }
+            }
         }
 
-        override fun getImplementedSymbols(): Map<IdSignature, IrSymbol> {
+        override fun getImplementedSymbols(): Map<SignatureAndKind, IrSymbol> {
             // Sometimes linker may leave unbound symbols in IrSymbolDeserializer::deserializedSymbols map.
             // Generally, all unbound symbols must be caught in KotlinIrLinker::checkNoUnboundSymbols,
             // unfortunately it does not work properly in the current implementation.
@@ -131,7 +143,14 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
             // Filter unbound symbols here, because an error from IC infrastructure about the unbound symbols looks pretty wired
             // and if the unbound symbol is really reachable from IR the error will be fired from IrValidator later.
             // Otherwise, the unbound symbol is unreachable, and it cannot appear in IC dependency graph, so we can ignore them.
-            val deserializedSymbols = fileDeserializer.symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile.filter { it.value.isBound }
+            val deserializedSymbols = fileDeserializer.symbolDeserializer
+                .deserializedSymbolsWithOwnersInCurrentFile
+                .values
+                .mapNotNull { symbol ->
+                    if (!symbol.isBound) return@mapNotNull null
+                    val signatureAndKind = symbol.signatureAndKindOrNull ?: return@mapNotNull null
+                    signatureAndKind to symbol
+                }.toMap()
             return collectImplementedSymbol(deserializedSymbols)
         }
     }
@@ -147,7 +166,7 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
         private val allSignatures = run {
             val topLevelSymbols = buildMap {
                 for (declaration in irFile.declarations) {
-                    val signature = declaration.symbol.signature ?: continue
+                    val signature = declaration.symbol.signatureAndKindOrNull ?: continue
                     put(signature, declaration.symbol)
                 }
             }
@@ -155,7 +174,7 @@ internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: Kot
         }
 
         override fun getSignatureToIndexMapping(): Map<IdSignature, Int> = emptyMap()
-        override fun getReachableSignatures(): Set<IdSignature> = allSignatures.keys
-        override fun getImplementedSymbols(): Map<IdSignature, IrSymbol> = allSignatures
+        override fun getReachableSignatures(): Set<SignatureAndKind> = allSignatures.keys
+        override fun getImplementedSymbols(): Map<SignatureAndKind, IrSymbol> = allSignatures
     }
 }

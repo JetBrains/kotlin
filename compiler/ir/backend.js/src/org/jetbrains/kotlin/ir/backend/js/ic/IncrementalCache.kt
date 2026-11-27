@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -43,7 +44,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         }
     }
 
-    private val filesWithStubbedSignatures: Map<KotlinSourceFile, Set<IdSignature>> by lazy {
+    private val filesWithStubbedSignatures: Map<KotlinSourceFile, Set<SignatureAndKind>> by lazy {
         fetchFilesWithStubbedSymbols()
     }
 
@@ -83,8 +84,8 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     }
 
     private class KotlinSourceFileMetadataFromDisk(
-        override val inverseDependencies: KotlinSourceFileMap<Set<IdSignature>>,
-        override val directDependencies: KotlinSourceFileMap<Map<IdSignature, ICHash>>,
+        override val inverseDependencies: KotlinSourceFileMap<Set<SignatureAndKind>>,
+        override val directDependencies: KotlinSourceFileMap<Map<SignatureAndKind, ICHash>>,
     ) : KotlinSourceFileMetadata()
 
     private fun KotlinSourceFile.getCacheFile(suffix: String): File {
@@ -94,7 +95,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     fun buildAndCommitCacheArtifact(
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>,
-        stubbedSignatures: Set<IdSignature>
+        stubbedSignatures: Set<SignatureAndKind>
     ): IncrementalCacheArtifact {
         val klibSrcFiles = if (cacheHeaderShouldBeUpdated) {
             val newCacheHeader = CacheHeader(library)
@@ -109,14 +110,14 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             removedFile.getCacheFile(METADATA_SUFFIX).delete()
         }
 
-        val updatedFilesWithStubbedSignatures = hashMapOf<KotlinSourceFile, Set<IdSignature>>()
+        val updatedFilesWithStubbedSignatures = hashMapOf<KotlinSourceFile, Set<SignatureAndKind>>()
 
         val fileArtifacts = klibSrcFiles.map { srcFile ->
             val signatureMapping = signatureToIndexMapping[srcFile] ?: emptyMap()
             val artifact = commitSourceFileMetadata(srcFile, signatureMapping)
 
             val fileStubbedSignatures = when (artifact) {
-                is SourceFileCacheArtifact.CommitMetadata -> signatureMapping.keys.filterTo(hashSetOf()) { it in stubbedSignatures }
+                is SourceFileCacheArtifact.CommitMetadata -> stubbedSignatures.filterTo(hashSetOf()) { it.signature in signatureMapping }
                 else -> filesWithStubbedSignatures[srcFile] ?: emptySet()
             }
             if (fileStubbedSignatures.isNotEmpty()) {
@@ -174,11 +175,11 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         kotlinLibrarySourceFileMetadata[srcFile] = sourceFileMetadata
     }
 
-    fun collectFilesWithStubbedSignatures(): Map<KotlinSourceFile, Set<IdSignature>> {
+    fun collectFilesWithStubbedSignatures(): Map<KotlinSourceFile, Set<SignatureAndKind>> {
         return filesWithStubbedSignatures
     }
 
-    private fun fetchFilesWithStubbedSymbols(): Map<KotlinSourceFile, Set<IdSignature>> {
+    private fun fetchFilesWithStubbedSymbols(): Map<KotlinSourceFile, Set<SignatureAndKind>> {
         return stubbedSymbolsFile.useCodedInputIfExists {
             buildMapUntil(readInt32()) {
                 val srcFile = KotlinSourceFile.fromProtoStream(this@useCodedInputIfExists)
@@ -198,7 +199,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     }
 
     private fun commitFilesWithStubbedSignatures(
-        updatedFilesWithStubbedSignatures: Map<KotlinSourceFile, Set<IdSignature>>,
+        updatedFilesWithStubbedSignatures: Map<KotlinSourceFile, Set<SignatureAndKind>>,
         signatureToIndexMapping: Map<KotlinSourceFile, Map<IdSignature, Int>>,
     ) {
         if (updatedFilesWithStubbedSignatures.isEmpty()) {
@@ -308,7 +309,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             }
         }
 
-        fun CodedOutputStream.writeDirectDependencies(depends: KotlinSourceFileMap<Map<IdSignature, ICHash>>) = writeDependencies(depends) {
+        fun CodedOutputStream.writeDirectDependencies(depends: KotlinSourceFileMap<Map<SignatureAndKind, ICHash>>) = writeDependencies(depends) {
             writeInt32NoTag(it.size)
             for ([signature, hash] in it) {
                 serializer.serializeIdSignature(this@writeDirectDependencies, signature)
@@ -316,7 +317,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
             }
         }
 
-        fun CodedOutputStream.writeInverseDependencies(depends: KotlinSourceFileMap<Set<IdSignature>>) = writeDependencies(depends) {
+        fun CodedOutputStream.writeInverseDependencies(depends: KotlinSourceFileMap<Set<SignatureAndKind>>) = writeDependencies(depends) {
             writeInt32NoTag(it.size)
             for (signature in it) {
                 serializer.serializeIdSignature(this@writeInverseDependencies, signature)
