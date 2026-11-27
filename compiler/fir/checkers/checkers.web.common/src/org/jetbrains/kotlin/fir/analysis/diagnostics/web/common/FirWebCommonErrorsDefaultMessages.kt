@@ -118,10 +118,10 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_OBJECT_IN_EXTERNAL_INTERFACE,
             """
-            Accessing a companion object of an external interface currently produces an empty JavaScript object.
-            This behavior will change in the future: references to the companion object will compile to JavaScript code that references the interface name and will fail at runtime if that name is not defined.
+            Companion objects of external interfaces are supported since language version 2.6.
+            Currently, references to the companion object compile to JavaScript code that references the interface name and fail at runtime if that name is not defined.
 
-            To keep the current behavior, annotate the interface with '@JsName("Object")'.
+            To keep the behavior of older Kotlin versions for a companion object without a JavaScript counterpart, annotate the interface with '@JsName("Object")'.
 
             Read more: https://kotl.in/e4vlc5
             """.trimIndent()

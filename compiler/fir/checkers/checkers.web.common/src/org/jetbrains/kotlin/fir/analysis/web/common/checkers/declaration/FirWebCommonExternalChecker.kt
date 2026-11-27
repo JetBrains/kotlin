@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
-abstract class FirWebCommonExternalChecker(
-    private val allowCompanionInInterface: Boolean
-) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -53,6 +51,9 @@ abstract class FirWebCommonExternalChecker(
     abstract fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean
 
     abstract fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean
+
+    context(context: CheckerContext)
+    abstract fun isCompanionObjectInExternalInterfaceAllowed(): Boolean
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
@@ -99,7 +100,7 @@ abstract class FirWebCommonExternalChecker(
             container.isInterface
         ) {
             if (declaration.status.isCompanion) {
-                if (!allowCompanionInInterface) {
+                if (!isCompanionObjectInExternalInterfaceAllowed()) {
                     // KT-87862 K/Wasm: introduce a separate diagnostic ID for companion object inside external interface
                     reporter.reportOn(declaration.source, FirWebCommonErrors.COMPANION_OBJECT_IN_EXTERNAL_INTERFACE)
                 } else if (declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {

@@ -595,6 +595,7 @@ enum class LanguageFeature(
     ReportDeprecationsOnSamConstructorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-433"),
     ReportMissingErrorsOnForLoopOperatorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-432"),
     ProhibitVarInJsModuleFile(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-88343"),
+    WasmAllowCompanionObjectInExternalInterface(sinceVersion = KOTLIN_2_6, "KT-76462"),
     ProhibitJsQualifierOnMembersAndNonExternals(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-90277"),
 
     // End of 2.* language features --------------------------------------------------

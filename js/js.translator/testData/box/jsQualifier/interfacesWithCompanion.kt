@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
+// LANGUAGE: +WasmAllowCompanionObjectInExternalInterface
 // FILE: bar.kt
 @file:JsQualifier("bar")
 package bar
