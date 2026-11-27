@@ -95,6 +95,18 @@ dependencyResolutionManagement {
                 }
             }
         }
+
+        withModule("commons-codec:commons-codec") {
+            allVariants {
+                withDependencies {
+                    add("commons-codec:commons-codec") {
+                        version {
+                            require(buildProperties.versionsProperty("commons-codec").get())
+                        }
+                    }
+                }
+            }
+        }
     }
 
     versionCatalogs {
