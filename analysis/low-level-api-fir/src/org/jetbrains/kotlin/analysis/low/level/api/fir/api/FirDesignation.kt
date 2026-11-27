@@ -391,8 +391,7 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
     val targetPsiFile = targetModule.files.singleOrNull() ?: return null
 
-    val contextModule = targetModule.contextModule
-    val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
+    val contextResolutionFacade = targetModule.getResolutionFacade(targetPsiFile.project)
 
     return buildList {
         for (targetPathDeclaration in targetPath) {

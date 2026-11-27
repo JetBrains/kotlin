@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.projectStructure
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -240,6 +242,44 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
 
         analyze(fileCopy) {
             checkInMemoryFileCopyPreferSelf(fileCopy, testServices)
+        }
+    }
+
+    /**
+     * A copy of a dangling file is a dangling file itself, but its context module is the *base* context module (the module of the original
+     * physical file), not the dangling file module of the copy origin. Designation patching for an
+     * [IGNORE_SELF][KaDanglingFileResolutionMode.IGNORE_SELF] copy must therefore resolve the original declarations in the context of the
+     * copy's own module: the base context module has no resolution strategy for dangling file modules.
+     *
+     * This test covers the class branch of designation patching. See [danglingScriptCopyScopeContext] for the script branch. (see KT-91890)
+     */
+    @Test
+    fun danglingClassCopyScopeContext(mainFile: KtFile, testServices: TestServices) {
+        val factory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
+        val danglingFile = factory.createFile("fragment.kt", mainFile.text)
+        val fileCopy = danglingFile.copy() as KtFile
+        fileCopy.originalFile = danglingFile
+        val position = PsiTreeUtil.findChildOfType(fileCopy, KtConstantExpression::class.java)!!
+
+        analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
+            testServices.assertions.assertTrue(fileCopy.scopeContext(position).scopes.isNotEmpty())
+        }
+    }
+
+    /**
+     * The script counterpart of [danglingClassCopyScopeContext]. The `.kts` extension is essential here: it puts a [KtScript] into the
+     * designation path, which is patched differently from a [KtClassOrObject].
+     */
+    @Test
+    fun danglingScriptCopyScopeContext(mainFile: KtFile, testServices: TestServices) {
+        val factory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
+        val danglingFile = factory.createFile("fragment.kts", mainFile.text)
+        val fileCopy = danglingFile.copy() as KtFile
+        fileCopy.originalFile = danglingFile
+        val position = PsiTreeUtil.findChildOfType(fileCopy, KtConstantExpression::class.java)!!
+
+        analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
+            testServices.assertions.assertTrue(fileCopy.scopeContext(position).scopes.isNotEmpty())
         }
     }
 
