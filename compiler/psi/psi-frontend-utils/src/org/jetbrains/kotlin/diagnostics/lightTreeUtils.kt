@@ -13,6 +13,10 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.COLONCOLON
+import org.jetbrains.kotlin.lexer.KtTokens.DOT
+import org.jetbrains.kotlin.lexer.KtTokens.ERROR_SAFE_ACCESS
+import org.jetbrains.kotlin.lexer.KtTokens.SAFE_ACCESS
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.syntax.isExpression
@@ -150,4 +154,28 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(
     collectDescendantByType(node)
 
     return result
+}
+
+/**
+ * Returns the selector of a qualified expression or a double colon expression [node]:
+ * the first expression after `.`, `?.` or `::` among its direct children (`b` in `a.b`, `a?.b` or `a::b`).
+ * Returns `null` if there is no such child, e.g., for a node of another kind or when the selector is missing.
+ */
+fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    val children = childrenRef.get() ?: return null
+    var dotOrDoubleColonFound = false
+    for (child in children) {
+        if (child == null) continue
+        val tokenType = child.tokenType
+        if (tokenType == DOT || tokenType == COLONCOLON || tokenType == SAFE_ACCESS || tokenType == ERROR_SAFE_ACCESS) {
+            dotOrDoubleColonFound = true
+            continue
+        }
+        if (dotOrDoubleColonFound && child.isExpression()) {
+            return child
+        }
+    }
+    return null
 }

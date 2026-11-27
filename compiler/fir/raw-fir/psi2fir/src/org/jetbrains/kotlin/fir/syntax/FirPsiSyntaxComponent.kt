@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -131,6 +132,20 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
         return unwrap().psi.getExplicitReceiverOfDotQualified()?.toKtPsiSourceElement()
+    }
+
+    override fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement? {
+        val source = unwrap()
+        val selectorExpression = (source.psi as? KtQualifiedExpression)?.selectorExpression
+        return selectorExpression?.let { KtRealPsiSourceElement(it) }
+    }
+
+    override fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement? {
+        return unwrap().psi.parent?.toKtPsiSourceElement(newKind)
+    }
+
+    override fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement? {
+        return (unwrap().psi as? KtOperationExpression)?.operationReference?.toKtPsiSourceElement(newKind)
     }
 
     override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -123,6 +124,23 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.findValOrVarKeywordSource(): KtSourceElement?
 
     abstract fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement?
+
+    /**
+     * Returns the selector of a qualified expression (`b` in `a.b` or `a?.b`), or `null` if it's missing.
+     * This should only be called for a source element corresponding to a qualified expression.
+     */
+    abstract fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement?
+
+    /**
+     * Returns the parent of the element in the syntax tree as a source element of the given [newKind], or `null` if it's the root.
+     */
+    abstract fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement?
+
+    /**
+     * Returns the operation reference of an operation expression (`+` in `a + b`, `!` in `!a`, `as` in `a as T`, `is` in `a is T`)
+     * as a source element of the given [newKind], or `null` if the element is not an operation expression.
+     */
+    abstract fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement?
 
     /**
      * Returns whether the operand of this assignment is parenthesized, labeled or annotated.

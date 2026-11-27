@@ -1727,26 +1727,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
     return null
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    val children = childrenRef.get() ?: return null
-    var dotOrDoubleColonFound = false
-    for (child in children) {
-        if (child == null) continue
-        val tokenType = child.tokenType
-        if (tokenType == DOT || tokenType == COLONCOLON || tokenType == SAFE_ACCESS || tokenType == ERROR_SAFE_ACCESS) {
-            dotOrDoubleColonFound = true
-            continue
-        }
-        if (dotOrDoubleColonFound && child.isExpression()) {
-            return child
-        }
-    }
-    return null
-
-}
-
 fun FlyweightCapableTreeStructure<LighterASTNode>.firstChildExpression(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
