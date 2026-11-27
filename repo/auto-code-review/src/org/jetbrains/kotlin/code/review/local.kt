@@ -18,9 +18,9 @@ suspend fun main(args: Array<String>) {
 
     val jetbrainsCentralBinary = System.getProperty("kotlin.autoCodeReview.useJetBrainsCentralCLI")
     val agentAuthMethod = if (jetbrainsCentralBinary != null) {
-        LocalClaudeAgent.AuthMethod.JetBrainsCentralRun(jetbrainsCentralBinary)
+        Agent.AuthMethod.JetBrainsCentralRun(jetbrainsCentralBinary)
     } else {
-        LocalClaudeAgent.AuthMethod.LocalConfiguration
+        Agent.AuthMethod.LocalConfiguration
     }
 
     val gitTree = GitWorkingTree(repoRoot, GitCLI)

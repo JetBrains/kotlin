@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.code.review
 
+import org.jetbrains.kotlin.code.review.Agent.AuthMethod
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.schema.generator.json.serialization.SerializationClassJsonSchemaGenerator
@@ -27,19 +28,6 @@ class LocalClaudeAgent private constructor(
     private val authMethod: AuthMethod,
     private val command: List<String>,
 ) : Agent {
-    sealed class AuthMethod {
-        /**
-         * Use the authentication configured for Claude Code in `~/.claude/settings.json` or environment variables.
-         */
-        object LocalConfiguration : AuthMethod()
-
-        /**
-         * Run Claude Code with `central run`, which provides the authentication.
-         * See https://www.jetbrains.com/help/central-cli/cli-agents.html.
-         */
-        class JetBrainsCentralRun(val binary: String) : AuthMethod()
-    }
-
     companion object {
         suspend fun create(project: LocalProject, authMethod: AuthMethod): LocalClaudeAgent =
             LocalClaudeAgent(project, authMethod, createCommand(authMethod))

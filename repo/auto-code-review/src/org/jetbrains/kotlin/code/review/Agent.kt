@@ -8,6 +8,19 @@ package org.jetbrains.kotlin.code.review
 class AgentInfo(val name: String, val model: String, val effort: String)
 
 interface Agent {
+    sealed class AuthMethod {
+        /**
+         * Use the authentication configured for the agent locally.
+         */
+        object LocalConfiguration : AuthMethod()
+
+        /**
+         * Run the agent with `central run`, which provides the authentication.
+         * See https://www.jetbrains.com/help/central-cli/cli-agents.html.
+         */
+        class JetBrainsCentralRun(val binary: String) : AuthMethod()
+    }
+
     val info: AgentInfo
 
     suspend fun checkRule(
