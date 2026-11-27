@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSourceProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 
 internal class KaFirSourceProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsSourceProvider {
-    override fun klibSourceFileName(symbol: KaDeclarationSymbol): String? = withValidityAssertion {
+    override fun klibSourceFileName(symbol: KaDeclarationSymbol): String? = entryPointImplementation {
         symbol.firSymbol.klibSourceFile?.name
     }
 }

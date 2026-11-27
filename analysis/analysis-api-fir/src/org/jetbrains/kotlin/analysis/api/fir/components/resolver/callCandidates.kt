@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
-import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
-import org.jetbrains.kotlin.analysis.api.fir.components.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirApplicableCallCandidate
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirInapplicableCallCandidate
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 internal fun FirElement.collectCallCandidates(
     psi: KtElement,
     resolveCalleeExpressionOfFunctionCall: Boolean,
@@ -82,7 +82,7 @@ internal fun FirElement.collectCallCandidates(
     }
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun FirResolvedQualifier.toKaCallCandidates(): List<KaCallCandidate> {
     return toKaCalls(findQualifierConstructors()).map {
         KaFirInapplicableCallCandidate(
@@ -93,7 +93,7 @@ private fun FirResolvedQualifier.toKaCallCandidates(): List<KaCallCandidate> {
     }
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun FirQualifiedAccessExpression.collectCallCandidates(
     psi: KtElement,
     resolveFragmentOfCall: Boolean,
@@ -160,7 +160,7 @@ private fun FirQualifiedAccessExpression.collectCallCandidates(
     }
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
     psi: KtElement,
     resolveFragmentOfCall: Boolean,
@@ -214,7 +214,7 @@ private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate>
     null -> emptyList()
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun convertToKaCallCandidate(
     resolvable: FirResolvable,
     element: KtElement,

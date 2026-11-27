@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptions
 import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptionsBuilder
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.*
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerFacility
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -66,22 +67,24 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsCompilerFacility {
-    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
+    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = entryPointImplementation(file) {
         val opts = options as KaFirCompilationOptions
-        return withPsiValidityAssertion(file) {
-            compileWithRetry(file, opts)
-        }
+        compileWithRetry(file, opts)
     }
 
     @OptIn(LLFirInternals::class)
-    override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.createForAnalysisApi()).apply(init).build()
+    override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = entryPointImplementation {
+        KaFirCompilationOptionsBuilder(token, CompilerConfiguration.createForAnalysisApi()).apply(init).build()
     }
 
-    override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return (options as KaFirCompilationOptions).modify(init)
+    override fun modify(
+        options: KaCompilationOptions,
+        init: KaCompilationOptionsBuilder.() -> Unit,
+    ): KaCompilationOptions = entryPointImplementation {
+        (options as KaFirCompilationOptions).modify(init)
     }
 
+    context(analysisSession: KaFirSession)
     private fun compileWithRetry(
         file: KtFile,
         options: KaFirCompilationOptions,
@@ -120,6 +123,7 @@ internal class KaFirCompilerFacility(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun compileUnsafe(
         mainFile: KtFile,
         options: KaFirCompilationOptions,
@@ -251,6 +255,7 @@ internal class KaFirCompilerFacility(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun detectNonLocalReturnsInEvaluatingLambdas(inlineStackData: InlineStackData): List<KaDiagnostic> {
         val reporter = DiagnosticsCollectorImpl()
         inlineStackData.inlineLambdaParameterMapping.values.forEach {
@@ -296,6 +301,7 @@ internal class KaFirCompilerFacility(
         return null
     }
 
+    context(analysisSession: KaFirSession)
     private fun collectCompilationChunks(
         chunkRegistrar: CompilationChunkRegistrar,
         compilationPeerData: CompilationPeerData,
@@ -317,6 +323,7 @@ internal class KaFirCompilerFacility(
         return chunkRegistrar.computeChunks()
     }
 
+    context(analysisSession: KaFirSession)
     private fun compileChunk(
         module: KaModule,
         chunk: CompilationChunk,
@@ -430,6 +437,7 @@ internal class KaFirCompilerFacility(
         return result
     }
 
+    context(analysisSession: KaFirSession)
     private fun computeErrors(
         diagnostics: Collection<KtDiagnostic>,
         allowedErrorFilter: (KaDiagnostic) -> Boolean,

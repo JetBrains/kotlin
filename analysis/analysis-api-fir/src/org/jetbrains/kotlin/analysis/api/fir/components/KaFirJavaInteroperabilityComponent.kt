@@ -13,17 +13,17 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.lightClassBridge
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.analysisScope
@@ -87,7 +87,7 @@ internal class KaFirJavaInteroperabilityComponent(
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
         allowNonJvmPlatforms: Boolean,
-    ): PsiType? = withValidityAssertion {
+    ): PsiType? = entryPointImplementation {
         val coneType = type.coneType
 
         with(rootModuleSession.typeContext) {
@@ -114,14 +114,12 @@ internal class KaFirJavaInteroperabilityComponent(
         val psiType = typeElement.type
         if (!preserveAnnotations) return psiType
 
-        return context(analysisSession) {
-            annotateByKtType(
-                psiType = psiType,
-                ktType = type,
-                annotationParent = typeElement,
-                inferNullabilityForTypeArguments = !mappingMode.ignoreTypeArgumentsBounds,
-            )
-        }
+        return annotateByKtType(
+            psiType = psiType,
+            ktType = type,
+            annotationParent = typeElement,
+            inferNullabilityForTypeArguments = !mappingMode.ignoreTypeArgumentsBounds,
+        )
     }
 
     private fun ConeKotlinType.asPsiTypeElement(
@@ -157,6 +155,7 @@ internal class KaFirJavaInteroperabilityComponent(
         return SyntheticTypeElement(useSitePosition, typeText)
     }
 
+    context(analysisSession: KaFirSession)
     private fun KaTypeMappingMode.toTypeMappingMode(
         type: KaType,
         isAnnotationMethod: Boolean,
@@ -198,7 +197,7 @@ internal class KaFirJavaInteroperabilityComponent(
      * [useSitePosition] is used as pure psi, so there is no need to validate it.
      * Also, it might represent some complex expressions like light classes or UAST
      */
-    override fun asKaType(psiType: PsiType, useSitePosition: PsiElement): KaType? = withValidityAssertion {
+    override fun asKaType(psiType: PsiType, useSitePosition: PsiElement): KaType? = entryPointImplementation {
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
@@ -237,7 +236,7 @@ internal class KaFirJavaInteroperabilityComponent(
 
                     if (member != null) {
                         @OptIn(DirectDeclarationsAccess::class)
-                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(context(analysisSession) { analysisScope }) == member } as? FirCallableSymbol<*>
+                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
                             memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { [typeParamSymbol, typeParam] ->
@@ -261,28 +260,26 @@ internal class KaFirJavaInteroperabilityComponent(
         return jvmTypeMapper.mapType(type.coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
     }
 
-    override fun isPrimitiveBacked(type: KaType): Boolean = withValidityAssertion {
+    override fun isPrimitiveBacked(type: KaType): Boolean = entryPointImplementation {
         if (analysisSession.targetPlatform.has<JvmPlatform>()) {
             return jvmTypeMapper.isPrimitiveBacked(type.coneType)
         }
 
-        context(analysisSession) {
-            if (!type.isNullable) {
-                if (type.classId in KaStandardTypeClassIds.PRIMITIVES) {
+        if (!type.isNullable) {
+            if (type.classId in KaStandardTypeClassIds.PRIMITIVES) {
+                return true
+            }
+
+            val classSymbol = type.symbol
+            if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
+                // Kotlin metadata doesn't record which properties come from the primary constructor, so a deserialized
+                // inline class, e.g., `UInt` from a klib, has no such property. The underlying type is stored explicitly
+                // and ends up in the class representation, which works for both source and deserialized classes
+                val representation = (classSymbol.firSymbol as? FirRegularClassSymbol)?.valueClassRepresentation
+                val underlyingType = (representation as? InlineClassRepresentation)?.underlyingType
+
+                if (underlyingType != null && isPrimitiveBacked(underlyingType.asKaType())) {
                     return true
-                }
-
-                val classSymbol = type.symbol
-                if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
-                    // Kotlin metadata doesn't record which properties come from the primary constructor, so a deserialized
-                    // inline class, e.g., `UInt` from a klib, has no such property. The underlying type is stored explicitly
-                    // and ends up in the class representation, which works for both source and deserialized classes
-                    val representation = (classSymbol.firSymbol as? FirRegularClassSymbol)?.valueClassRepresentation
-                    val underlyingType = (representation as? InlineClassRepresentation)?.underlyingType
-
-                    if (underlyingType != null && isPrimitiveBacked(underlyingType.asKaType())) {
-                        return true
-                    }
                 }
             }
         }
@@ -290,43 +287,43 @@ internal class KaFirJavaInteroperabilityComponent(
         return false
     }
 
-    override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = withValidityAssertion {
+    override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = entryPointImplementation {
         lightClassBridge.getLightClass(classSymbol, session = analysisSession)
     }
 
-    override fun asFacadePsiClass(fileSymbol: KaFileSymbol): PsiClass? = withValidityAssertion {
+    override fun asFacadePsiClass(fileSymbol: KaFileSymbol): PsiClass? = entryPointImplementation {
         lightClassBridge.getLightFacade(fileSymbol, session = analysisSession)
     }
 
-    override fun asFacadePsiClass(scriptSymbol: KaScriptSymbol): PsiClass? = withValidityAssertion {
+    override fun asFacadePsiClass(scriptSymbol: KaScriptSymbol): PsiClass? = entryPointImplementation {
         lightClassBridge.getLightFacade(scriptSymbol, session = analysisSession)
     }
 
-    override fun asPsiMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod> = withValidityAssertion {
+    override fun asPsiMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod> = entryPointImplementation {
         lightClassBridge.getLightClassMethods(functionSymbol, session = analysisSession)
     }
 
-    override fun asPsiTypeParameters(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter> = withValidityAssertion {
+    override fun asPsiTypeParameters(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter> = entryPointImplementation {
         lightClassBridge.getLightClassTypeParameter(typeParameterSymbol, session = analysisSession)
     }
 
-    override fun asPsiParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter> = withValidityAssertion {
+    override fun asPsiParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter> = entryPointImplementation {
         lightClassBridge.getLightClassParameters(parameterSymbol, session = analysisSession)
     }
 
-    override fun asPsiField(backingFieldSymbol: KaBackingFieldSymbol): PsiField? = withValidityAssertion {
+    override fun asPsiField(backingFieldSymbol: KaBackingFieldSymbol): PsiField? = entryPointImplementation {
         lightClassBridge.getLightClassBackingField(backingFieldSymbol, session = analysisSession)
     }
 
-    override fun asPsiField(classSymbol: KaClassSymbol): PsiField? = withValidityAssertion {
+    override fun asPsiField(classSymbol: KaClassSymbol): PsiField? = entryPointImplementation {
         lightClassBridge.getLightClassBackingField(classSymbol, session = analysisSession)
     }
 
-    override fun asPsiField(enumEntrySymbol: KaEnumEntrySymbol): PsiEnumConstant? = withValidityAssertion {
+    override fun asPsiField(enumEntrySymbol: KaEnumEntrySymbol): PsiEnumConstant? = entryPointImplementation {
         lightClassBridge.getLightClassBackingField(enumEntrySymbol, session = analysisSession) as? PsiEnumConstant
     }
 
-    override fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol? = psiClass.withPsiValidityAssertion {
+    override fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol? = entryPointImplementation(psiClass) {
         if (psiClass is PsiTypeParameter) return null
         if (psiClass is KtLightElement<*, *>) return null
         if (psiClass.qualifiedName == null) return null
@@ -340,21 +337,19 @@ internal class KaFirJavaInteroperabilityComponent(
     private fun PsiClass.isKotlinCompiledClass() =
         this is ClsElementImpl && hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
 
-    override fun callableSymbol(psiMember: PsiMember): KaCallableSymbol? = psiMember.withPsiValidityAssertion {
+    override fun callableSymbol(psiMember: PsiMember): KaCallableSymbol? = entryPointImplementation(psiMember) {
         if (psiMember !is PsiMethod && psiMember !is PsiField) return null
         if (psiMember is KtLightElement<*, *>) return null
 
         val containingClass = psiMember.containingClass ?: return null
         val classSymbol = namedClassSymbol(containingClass) ?: return null
-        return context(analysisSession) {
-            val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
-            if ((psiMember as? PsiMethod)?.isConstructor == true) {
-                combinedMemberScope.constructors.firstOrNull { it.psi == psiMember }
-            } else {
-                val name = psiMember.name?.let(Name::identifier) ?: return null
-                combinedMemberScope.callables(name).firstOrNull { it.psi == psiMember }
-                    ?: findJavaAccessorMethodBySyntheticProperty(psiMember, name, combinedMemberScope)
-            }
+        val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
+        return if ((psiMember as? PsiMethod)?.isConstructor == true) {
+            combinedMemberScope.constructors.firstOrNull { it.psi == psiMember }
+        } else {
+            val name = psiMember.name?.let(Name::identifier) ?: return null
+            combinedMemberScope.callables(name).firstOrNull { it.psi == psiMember }
+                ?: findJavaAccessorMethodBySyntheticProperty(psiMember, name, combinedMemberScope)
         }
     }
 
@@ -365,59 +360,54 @@ internal class KaFirJavaInteroperabilityComponent(
      * these methods are represented as a [KaSyntheticJavaPropertySymbol] in the scope.
      * This function retrieves the underlying getter/setter symbol for such cases.
      */
-    context(analysisSession: KaFirSession)
     private fun findJavaAccessorMethodBySyntheticProperty(psiMember: PsiMember, name: Name, scope: KaScope): KaCallableSymbol? {
         return scope.findSyntheticJavaPropertyAccessor(name) { propertySymbol, accessorKind, _ ->
             accessorKind.getJavaAccessorSymbol(propertySymbol)?.takeIf { it.psi == psiMember }
         }
     }
 
-    override fun containingJvmClassName(symbol: KaCallableSymbol): String? = withValidityAssertion {
+    override fun containingJvmClassName(symbol: KaCallableSymbol): String? = entryPointImplementation {
         if (symbol.origin == KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR) return null
 
-        context(analysisSession) {
-            val platform = symbol.containingModule.targetPlatform
-            if (!platform.has<JvmPlatform>()) return null
+        val platform = symbol.containingModule.targetPlatform
+        if (!platform.has<JvmPlatform>()) return null
 
-            val containingSymbolOrSelf = when (symbol) {
-                is KaParameterSymbol -> when (val owner = symbol.containingDeclaration) {
-                    is KaPropertyAccessorSymbol -> owner.containingDeclaration as? KaPropertySymbol ?: owner
-                    is KaCallableSymbol -> owner
-                    else -> symbol
-                }
-                is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
-                is KaBackingFieldSymbol -> symbol.owningProperty
+        val containingSymbolOrSelf = when (symbol) {
+            is KaParameterSymbol -> when (val owner = symbol.containingDeclaration) {
+                is KaPropertyAccessorSymbol -> owner.containingDeclaration as? KaPropertySymbol ?: owner
+                is KaCallableSymbol -> owner
                 else -> symbol
             }
+            is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
+            is KaBackingFieldSymbol -> symbol.owningProperty
+            else -> symbol
+        }
 
-            val firSymbol = containingSymbolOrSelf.firSymbol
+        val firSymbol = containingSymbolOrSelf.firSymbol
 
-            firSymbol.jvmClassNameIfDeserialized()?.let {
-                return it.fqNameForClassNameWithoutDollars.asString()
-            }
+        firSymbol.jvmClassNameIfDeserialized()?.let {
+            return it.fqNameForClassNameWithoutDollars.asString()
+        }
 
-            return if (containingSymbolOrSelf.isTopLevel) {
-                (firSymbol.fir.getContainingFile()?.psi as? KtFile)
-                    ?.takeUnless { it.isScript() }
-                    ?.javaFileFacadeFqName?.asString()
-            } else {
-                val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
-                    ?: containingSymbolOrSelf.callableId?.classId
-                classId?.takeUnless { it.shortClassName.isSpecial }
-                    ?.asFqNameString()
-            }
+        return if (containingSymbolOrSelf.isTopLevel) {
+            (firSymbol.fir.getContainingFile()?.psi as? KtFile)
+                ?.takeUnless { it.isScript() }
+                ?.javaFileFacadeFqName?.asString()
+        } else {
+            val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
+                ?: containingSymbolOrSelf.callableId?.classId
+            classId?.takeUnless { it.shortClassName.isSpecial }
+                ?.asFqNameString()
         }
     }
 
-    override fun javaMethodName(function: KaFunctionSymbol): String? = withValidityAssertion {
-        context(analysisSession) {
-            val defaultName = defaultJavaMethodName(function) ?: return null
-            lightClassBridge.computeJavaMethodName(
-                symbol = function,
-                defaultName = defaultName,
-                ignoreInlineClassMangling = false
-            )?.takeIf(StringUtil::isJavaIdentifier)
-        }
+    override fun javaMethodName(function: KaFunctionSymbol): String? = entryPointImplementation {
+        val defaultName = defaultJavaMethodName(function) ?: return null
+        lightClassBridge.computeJavaMethodName(
+            symbol = function,
+            defaultName = defaultName,
+            ignoreInlineClassMangling = false
+        )?.takeIf(StringUtil::isJavaIdentifier)
     }
 
     /**
@@ -425,7 +415,7 @@ internal class KaFirJavaInteroperabilityComponent(
      *
      * @return `null` if [function] has no method visible from Java
      */
-    context(_: KaSession)
+    context(analysisSession: KaFirSession)
     private fun defaultJavaMethodName(function: KaFunctionSymbol): String? = when (function) {
         is KaNamedFunctionSymbol -> {
             // Names of local declarations are invented during lowering, so they cannot be computed from a symbol
@@ -445,7 +435,7 @@ internal class KaFirJavaInteroperabilityComponent(
     /**
      * @see defaultJavaMethodName
      */
-    context(_: KaSession)
+    context(analysisSession: KaFirSession)
     private fun defaultJavaAccessorName(accessor: KaPropertyAccessorSymbol): String? {
         val property = accessor.containingDeclaration as? KaPropertySymbol ?: return null
         if (property is KaSyntheticJavaPropertySymbol) {

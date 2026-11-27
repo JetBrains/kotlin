@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsAnalysisScopeProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 
 internal class KaFirAnalysisScopeProviderImpl(
@@ -17,9 +17,9 @@ internal class KaFirAnalysisScopeProviderImpl(
     private val resolutionScope: KaResolutionScope,
 ) : KaFirSessionComponent(), KaInternalsAnalysisScopeProvider {
     override val analysisScope: GlobalSearchScope
-        get() = withValidityAssertion { resolutionScope }
+        get() = entryPointImplementation { resolutionScope }
 
-    override fun canBeAnalysed(element: PsiElement): Boolean = withValidityAssertion {
+    override fun canBeAnalysed(element: PsiElement): Boolean = entryPointImplementation {
         canBeAnalysedImpl(element)
     }
 

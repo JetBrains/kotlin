@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(relationProvider: KaFirSymbolRelationProvider, analysisSession: KaFirSession)
 internal fun computeExpectsForActual(symbol: KaDeclarationSymbol): List<KaDeclarationSymbol> {
     symbol.getExpectsForActualSpecial()?.let { return it }
 
@@ -133,7 +134,7 @@ private inline fun <reified P : KaSymbol, R : KaSymbol> KaDeclarationSymbol.getE
         .mapNotNull(transformer)
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun computeExpectsForLibraryClass(
     actualSymbol: FirClassLikeSymbol<*>,
     actualModule: KaModule,
@@ -163,7 +164,7 @@ private fun computeExpectsForLibraryClass(
     }
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun computeExpectsForLibraryCallable(
     actualSymbol: FirCallableSymbol<*>,
     actualModule: KaModule,

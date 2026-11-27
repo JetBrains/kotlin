@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
@@ -38,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
-context(resolver: KaFirResolver)
+context(analysisSession: KaFirSession)
 private fun FirCollectionLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
     val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
     val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
@@ -53,7 +55,7 @@ private val unresolvedArrayOfDiagnostic: KaDiagnostic
         token = resolver.token
     )
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
     val arrayOfSymbol = run {
         val type = resolvedType as? ConeClassLikeType ?: return run {
@@ -89,7 +91,7 @@ internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttem
 
     val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
     val partiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
-        backingSignature = context(analysisSession) { arrayOfSymbol.substitute(substitutor) },
+        backingSignature = arrayOfSymbol.substitute(substitutor),
         dispatchReceiver = null,
         extensionReceiver = null,
         contextArguments = emptyList(),
@@ -104,7 +106,7 @@ internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttem
     )
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
     val firSymbol = arrayOfSymbol.firSymbol
     // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
@@ -115,7 +117,7 @@ private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbo
     return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 internal fun FirEqualityOperatorCall.toKaResolutionAttempt(psi: KtElement): KaCallResolutionAttempt? {
     val binaryExpression = deparenthesize(psi as? KtExpression) as? KtBinaryExpression ?: return null
     val leftPsi = binaryExpression.left ?: return null
@@ -148,14 +150,12 @@ internal fun FirEqualityOperatorCall.toKaResolutionAttempt(psi: KtElement): KaCa
     }
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
     var equalsSymbol: FirNamedFunctionSymbol? = null
-    context(analysisSession) {
-        processEqualsFunctions(analysisSession.firSession) {
-            if (equalsSymbol != null) return@processEqualsFunctions
-            equalsSymbol = it
-        }
+    processEqualsFunctions(analysisSession.firSession) {
+        if (equalsSymbol != null) return@processEqualsFunctions
+        equalsSymbol = it
     }
 
     return equalsSymbol ?: resolver.equalsSymbolInAny

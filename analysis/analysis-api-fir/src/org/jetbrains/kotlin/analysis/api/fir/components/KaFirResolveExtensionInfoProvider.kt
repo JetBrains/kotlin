@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolveExtensionInfoProvider
@@ -26,21 +27,21 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 internal class KaFirResolveExtensionInfoProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsResolveExtensionInfoProvider {
-    override fun resolveExtensionScopeWithTopLevelDeclarations(): KaScope = withValidityAssertion {
+    override fun resolveExtensionScopeWithTopLevelDeclarations(): KaScope = entryPointImplementation {
         val tools = analysisSession.extensionTools
         if (tools.isEmpty()) return KaFirEmptyScope(token)
         return KaFirResolveExtensionScope(analysisSession, tools)
     }
 
-    override fun isResolveExtensionFile(virtualFile: VirtualFile): Boolean = withValidityAssertion {
+    override fun isResolveExtensionFile(virtualFile: VirtualFile): Boolean = entryPointImplementation {
         virtualFile.navigationTargetsProvider != null
     }
 
-    override fun isFromResolveExtension(element: KtElement): Boolean = withValidityAssertion {
+    override fun isFromResolveExtension(element: KtElement): Boolean = entryPointImplementation {
         element.containingKtFile.virtualFile?.let { isResolveExtensionFile(it) } == true
     }
 
-    override fun resolveExtensionNavigationElements(element: KtElement): Collection<PsiElement> = withValidityAssertion {
+    override fun resolveExtensionNavigationElements(element: KtElement): Collection<PsiElement> = entryPointImplementation {
         val targetsProvider = element.containingFile?.virtualFile?.navigationTargetsProvider ?: return emptyList()
         return with(targetsProvider) { analysisSession.getNavigationTargets(element) }
     }

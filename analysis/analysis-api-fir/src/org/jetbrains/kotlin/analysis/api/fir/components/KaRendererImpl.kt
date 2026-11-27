@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsRenderer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
@@ -19,16 +19,12 @@ import org.jetbrains.kotlin.types.Variance
 internal class KaRendererImpl(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaInternalsRenderer, KaFirSessionComponent() {
-    override fun render(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String = withValidityAssertion {
-        return context(analysisSession) {
-            prettyPrint { renderer.renderDeclaration(useSiteSession, symbol, this) }
-        }
+    override fun render(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String = entryPointImplementation {
+        return prettyPrint { renderer.renderDeclaration(useSiteSession, symbol, this) }
     }
 
-    override fun render(type: KaType, renderer: KaTypeRenderer, position: Variance): String = withValidityAssertion {
-        return context(analysisSession) {
-            val approximatedType = renderer.typeApproximator.approximateType(useSiteSession, type, position)
-            prettyPrint { renderer.renderType(useSiteSession, approximatedType, this) }
-        }
+    override fun render(type: KaType, renderer: KaTypeRenderer, position: Variance): String = entryPointImplementation {
+        val approximatedType = renderer.typeApproximator.approximateType(useSiteSession, type, position)
+        return prettyPrint { renderer.renderType(useSiteSession, approximatedType, this) }
     }
 }

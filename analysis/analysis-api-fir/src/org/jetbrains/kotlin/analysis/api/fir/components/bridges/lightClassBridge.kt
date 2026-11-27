@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.project
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.light.classes.symbol.KaInternalsLightClassBridge
 
-context(component: KaFirSessionComponent)
+context(analysisSession: KaFirSession)
 internal val lightClassBridge: KaInternalsLightClassBridge
     get() = KotlinAsJavaSupport.getInstance(project) as KaInternalsLightClassBridge

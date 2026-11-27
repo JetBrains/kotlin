@@ -9,8 +9,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.getExpressionTypeByPsiOrNull
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
@@ -48,7 +50,7 @@ internal class KaFirExpressionTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsExpressionTypeProvider {
 
-    override fun expressionType(expression: KtExpression): KaType? = expression.withPsiValidityAssertion {
+    override fun expressionType(expression: KtExpression): KaType? = entryPointImplementation(expression) {
         expression.getExpressionTypeByPsiOrNull(noExpectedType = false, analysisSession = analysisSession)?.let { return it }
 
         val unwrappedElement = expression.unwrap()
@@ -91,6 +93,7 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KaType? = when (fir) {
         is FirFunctionCall -> getArrayElementIncrementDecrementExpressionType(expression, fir) ?: fir.resolvedType.asKaType()
         is FirSuperReceiverExpression -> {
@@ -99,7 +102,7 @@ internal class KaFirExpressionTypeProvider(
             val superTypes = containingClass?.resolvedSuperTypes
             when (superTypes?.size) {
                 null -> fir.resolvedType.asKaType()
-                0 -> context(analysisSession) { builtinTypes.any }
+                0 -> builtinTypes.any
                 1 -> superTypes.single().asKaType()
                 else -> @OptIn(DelicateIntersectionConstructor::class) ConeIntersectionType(superTypes, null).asKaType()
             }
@@ -111,12 +114,12 @@ internal class KaFirExpressionTypeProvider(
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
                 fir.rValue.resolvedType.asKaType()
             } else {
-                context(analysisSession) { builtinTypes.unit }
+                builtinTypes.unit
             }
         }
         is FirExpression -> fir.resolvedType.asKaType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKaType()
-        is FirStatement -> context(analysisSession) { builtinTypes.unit }
+        is FirStatement -> builtinTypes.unit
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
         // `listOf<_>(1)` where `expression` is `_`
@@ -147,6 +150,7 @@ internal class KaFirExpressionTypeProvider(
      * So the user will only be able to see the type
      * of the whole expression instead, and that is not what he wants.
      */
+    context(analysisSession: KaFirSession)
     private fun FirNamedReference.getCorrespondingTypeIfPossible(): ConeKotlinType? =
         findOuterPropertyAccessExpression()?.resolvedType
 
@@ -155,6 +159,7 @@ internal class KaFirExpressionTypeProvider(
      *
      * Otherwise, return null.
      */
+    context(analysisSession: KaFirSession)
     private fun FirNamedReference.findOuterPropertyAccessExpression(): FirExpression? {
         val referenceExpression = psi as? KtExpression ?: return null
         val outerExpression = referenceExpression.getOutermostParenthesizerOrThis().parent as? KtElement ?: return null
@@ -178,6 +183,7 @@ internal class KaFirExpressionTypeProvider(
      * val x = <expr>a[0]++</expr>
      * ```
      */
+    context(analysisSession: KaFirSession)
     private fun getArrayElementIncrementDecrementExpressionType(expression: KtExpression, fir: FirFunctionCall): KaType? {
         // ++foo[i], bar[j]-- or similar
         if (expression !is KtUnaryExpression) return null
@@ -193,6 +199,7 @@ internal class KaFirExpressionTypeProvider(
     /**
      * Compute the expression type of [lhsExpression], an assignment target, e.g.: `lhsExpression = ...`.
      */
+    context(analysisSession: KaFirSession)
     private fun getAssignmentLhsType(lhsExpression: KtExpression, fir: FirElement, isAugmented: Boolean): KaType? {
         return when (fir) {
             is FirFunctionCall -> {
@@ -229,6 +236,7 @@ internal class KaFirExpressionTypeProvider(
      * }
      * ```
      */
+    context(analysisSession: KaFirSession)
     private fun getReturnTypeForPluginModifiedAssignment(firCall: FirFunctionCall): KaType? {
         if (firCall.calleeReference.source?.kind != KtFakeSourceElementKind.AssignmentPluginAltered) return null
         val firArgument = firCall.resolvedArgumentMapping?.keys?.lastOrNull() ?: return null
@@ -249,23 +257,25 @@ internal class KaFirExpressionTypeProvider(
      * foo[0] = -1
      * ```
      */
+    context(analysisSession: KaFirSession)
     private fun getReturnTypeForArrayElementAssignmentTarget(lhsExpression: KtExpression, firCall: FirFunctionCall): KaType? {
         if (lhsExpression !is KtArrayAccessExpression) return null
         return getLastArgumentType(firCall)
     }
 
+    context(analysisSession: KaFirSession)
     private fun getLastArgumentType(firCall: FirFunctionCall): KaType? {
         return firCall.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType?.asKaType()
     }
 
-    override fun returnType(declaration: KtDeclarationWithReturnType): KaType = declaration.withPsiValidityAssertion {
+    override fun returnType(declaration: KtDeclarationWithReturnType): KaType = entryPointImplementation(declaration) {
         // Function type parameters have no symbol
         if (declaration is KtParameter && declaration.isFunctionTypeParameter) {
             val firParameter = declaration.getOrBuildFirOfType<FirFunctionTypeParameter>(resolutionFacade)
             return firParameter.returnTypeRef.coneType.asKaType()
         }
 
-        return when (val symbol = context(analysisSession) { declaration.symbol }) {
+        return when (val symbol = declaration.symbol) {
             // The symbol has the element type, while the declaration is consumed as an array at the use site
             is KaFirValueParameterSymbol if symbol.isVararg -> symbol.firSymbol.resolvedReturnType.asKaType()
             is KaCallableSymbol -> symbol.returnType
@@ -276,21 +286,21 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
-    override fun functionType(function: KtFunction): KaType = function.withPsiValidityAssertion {
+    override fun functionType(function: KtFunction): KaType = entryPointImplementation(function) {
         val firFunction = function.resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir as FirFunction
         firFunction.symbol.calculateReturnType()
         return firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(resolutionFacade.useSiteFirSession)).asKaType()
     }
 
-    override fun expectedType(element: PsiElement): KaType? = element.withPsiValidityAssertion {
+    override fun expectedType(element: PsiElement): KaType? = entryPointImplementation(element) {
         computeExpectedType(element)
     }
 
     override fun isDefinitelyNull(expression: KtExpression): Boolean =
-        expression.withPsiValidityAssertion { getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NULL }
+        entryPointImplementation(expression) { getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NULL }
 
     override fun isDefinitelyNotNull(expression: KtExpression): Boolean =
-        expression.withPsiValidityAssertion { getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL }
+        entryPointImplementation(expression) { getDefiniteNullability(expression) == DefiniteNullability.DEFINITELY_NOT_NULL }
 
     private fun getDefiniteNullability(expression: KtExpression): DefiniteNullability {
         fun FirExpression.isNotNullable() = with(analysisSession.firSession.typeContext) {
@@ -316,7 +326,7 @@ internal class KaFirExpressionTypeProvider(
 
 internal data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)
 
-context(expressionTypeProvider: KaFirExpressionTypeProvider)
+context(analysisSession: KaFirSession)
 internal fun FirCall.argumentsToSubstitutedValueParameters(
     substituteWithErrorTypes: Boolean = true,
 ): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
