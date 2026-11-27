@@ -1,0 +1,24 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: [
+    KaNamedClassSymbol(Outer.Inner)
+  ]
+  errorMessage: Wrong number of type arguments
+  presentableText: Inner.Outer
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(Outer.Inner)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Outer
+      symbol: KaNamedClassSymbol(Outer)
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+Inner.Outer

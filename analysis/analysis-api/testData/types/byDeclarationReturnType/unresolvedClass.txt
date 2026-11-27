@@ -1,0 +1,17 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for Unknown
+  presentableText: Unknown
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: Unknown
+      typeArguments: []
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+Unknown

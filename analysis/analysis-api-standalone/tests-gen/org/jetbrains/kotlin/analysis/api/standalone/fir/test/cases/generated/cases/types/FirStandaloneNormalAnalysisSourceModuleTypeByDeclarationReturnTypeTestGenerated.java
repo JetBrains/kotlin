@@ -74,6 +74,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("deeplyNestedClassWithWrongTypeArgumentCount.kt")
+  public void testDeeplyNestedClassWithWrongTypeArgumentCount() {
+    run("deeplyNestedClassWithWrongTypeArgumentCount.kt");
+  }
+
+  @Test
   @TestMetadata("functionTypeWithReceiverAndNamedParameters.kt")
   public void testFunctionTypeWithReceiverAndNamedParameters() {
     run("functionTypeWithReceiverAndNamedParameters.kt");
@@ -110,6 +116,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("innerClassWithWrongTypeArgumentCount.kt")
+  public void testInnerClassWithWrongTypeArgumentCount() {
+    run("innerClassWithWrongTypeArgumentCount.kt");
+  }
+
+  @Test
   @TestMetadata("javaNestedAndInnerGenericClasses.kt")
   public void testJavaNestedAndInnerGenericClasses() {
     run("javaNestedAndInnerGenericClasses.kt");
@@ -119,6 +131,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   @TestMetadata("lambdaWithAnnotatedParameterName.kt")
   public void testLambdaWithAnnotatedParameterName() {
     run("lambdaWithAnnotatedParameterName.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassInMemberFunctionWithWrongTypeArgumentCount.kt")
+  public void testLocalClassInMemberFunctionWithWrongTypeArgumentCount() {
+    run("localClassInMemberFunctionWithWrongTypeArgumentCount.kt");
   }
 
   @Test
@@ -176,6 +194,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("localInnerClassInMemberFunctionWithWrongTypeArgumentCount.kt")
+  public void testLocalInnerClassInMemberFunctionWithWrongTypeArgumentCount() {
+    run("localInnerClassInMemberFunctionWithWrongTypeArgumentCount.kt");
+  }
+
+  @Test
   @TestMetadata("localInnerClassWithTwoGenerics.kt")
   public void testLocalInnerClassWithTwoGenerics() {
     run("localInnerClassWithTwoGenerics.kt");
@@ -212,9 +236,21 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("nestedClassFromMissingDependency.kt")
+  public void testNestedClassFromMissingDependency() {
+    run("nestedClassFromMissingDependency.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClassInsideGeneratedTopLevelClass.kt")
   public void testNestedClassInsideGeneratedTopLevelClass() {
     run("nestedClassInsideGeneratedTopLevelClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithWrongTypeArgumentCount.kt")
+  public void testNestedClassWithWrongTypeArgumentCount() {
+    run("nestedClassWithWrongTypeArgumentCount.kt");
   }
 
   @Test
@@ -239,5 +275,29 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   @TestMetadata("referenceToMemberFunctionOfStarProjectionType.kt")
   public void testReferenceToMemberFunctionOfStarProjectionType() {
     run("referenceToMemberFunctionOfStarProjectionType.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedClass.kt")
+  public void testUnresolvedClass() {
+    run("unresolvedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedNestedClass.kt")
+  public void testUnresolvedNestedClass() {
+    run("unresolvedNestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedPackageQualifiedClass.kt")
+  public void testUnresolvedPackageQualifiedClass() {
+    run("unresolvedPackageQualifiedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedQualifiedClassWithTypeArguments.kt")
+  public void testUnresolvedQualifiedClassWithTypeArguments() {
+    run("unresolvedQualifiedClassWithTypeArguments.kt");
   }
 }

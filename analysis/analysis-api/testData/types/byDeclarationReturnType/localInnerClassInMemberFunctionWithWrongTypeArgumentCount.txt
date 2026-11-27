@@ -1,0 +1,24 @@
+KaClassErrorType:
+  abbreviation: null
+  annotations: []
+  candidateSymbols: [
+    KaNamedClassSymbol(<local>/Inner)
+  ]
+  errorMessage: Wrong number of type arguments
+  presentableText: Inner.Local
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(<local>/Inner)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Local
+      symbol: KaNamedClassSymbol(<local>/Local)
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+Inner.Local
