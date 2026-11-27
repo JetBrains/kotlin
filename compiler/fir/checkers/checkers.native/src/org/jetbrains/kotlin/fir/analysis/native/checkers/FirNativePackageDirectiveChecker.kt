@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
-import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
+import org.jetbrains.kotlin.fir.syntax.forEachChildOfType
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeIdentifierChecker.checkNameAndReport
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.name.Name

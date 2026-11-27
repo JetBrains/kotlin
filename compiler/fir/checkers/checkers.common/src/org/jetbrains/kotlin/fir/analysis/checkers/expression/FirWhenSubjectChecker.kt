@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.syntax.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 
 object FirWhenSubjectChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
