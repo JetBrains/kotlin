@@ -96,8 +96,8 @@ internal enum class WasiAdapterToolchainMode {
     DISABLE,
 }
 
-internal fun Project.requestDefaultWasiAdapter(): WasiAdapterRequest =
+internal fun Project.requestDefaultWasiAdapter(flavor: WasiAdapterFlavor = WasiAdapterFlavor.COMMAND): WasiAdapterRequest =
     objects.newInstance<WasiAdapterRequest>().also {
         it.version.convention(WasiAdapterVersion(WASMTIME_VERSION))
-        it.flavor.convention(WasiAdapterFlavor.COMMAND)
+        it.flavor.convention(flavor)
     }
