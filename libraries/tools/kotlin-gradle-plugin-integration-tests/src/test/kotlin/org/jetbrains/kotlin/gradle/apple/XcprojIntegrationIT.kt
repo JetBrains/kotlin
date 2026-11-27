@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.absolutePathString
@@ -23,6 +24,7 @@ import kotlin.test.assertContains
 @RequiredXCodeVersion(minSupportedMajor = 27, minSupportedMinor = 2)
 @SwiftPMImportGradlePluginTests
 @DisplayName("Xcode JSON project end-to-end integration")
+@MustRunOnChangesInNative
 class XcprojIntegrationIT : KGPBaseTest() {
     @TestMetadata("emptyxcproj")
     @GradleTest
