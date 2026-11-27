@@ -9,13 +9,19 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolvePackageManagerEnvironment
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.gradle.utils.use
@@ -37,11 +43,16 @@ import java.nio.file.StandardOpenOption
  * Having multiple tasks of this type is unnecessary and may lead to conflicts or redundant work.
  *
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 @DisableCachingByDefault
 abstract class KotlinToolingSetupTask
 internal constructor() :
     DefaultTask(),
-    NodeJsEnvironmentTask {
+    NodeJsEnvironmentTask,
+    UsesNodeJsToolchainService {
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = project.requestDefaultNodeJs()
 
     @get:Input
     internal abstract val versionsHash: Property<String>
@@ -83,12 +94,18 @@ internal constructor() :
 
                 toolingPackageJson.saveTo(packageJsonFile)
 
-                nodeJsEnvironment.get().packageManager.prepareTooling(destinationDir)
+                val (nodeJs, packageManager) = nodeJsToolchainService.get().resolvePackageManagerEnvironment(
+                    nodeJsEnvironment.get(),
+                    packageManagerEnv.get(),
+                    nodeJsRequest,
+                )
 
-                nodeJsEnvironment.get().packageManager.packageManagerExec(
+                nodeJs.packageManager.prepareTooling(destinationDir)
+
+                nodeJs.packageManager.packageManagerExec(
                     logger = logger,
-                    nodeJs = nodeJsEnvironment.get(),
-                    environment = packageManagerEnv.get(),
+                    nodeJs = nodeJs,
+                    environment = packageManager,
                     dir = destination.locationOnly.map { it.asFile },
                     description = "Setup of tooling dependencies",
                     args = args.get(),

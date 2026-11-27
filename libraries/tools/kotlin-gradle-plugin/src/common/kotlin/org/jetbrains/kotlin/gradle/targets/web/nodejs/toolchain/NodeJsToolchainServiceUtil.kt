@@ -17,9 +17,14 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNpmScriptFile
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -184,6 +189,47 @@ internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
     npmProject.nodeExecutable
 } else {
     request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
+}
+
+/**
+ * Returns [legacyNodeJs] and [legacyPackageManagerEnv] of the old (non-toolchain) setup when the toolchain is disabled.
+ *
+ * Otherwise, the old setup does not download Node.js (KT-55620), so its environment points to node and npm from the PATH.
+ * Then the Node.js executable is replaced by the one provisioned by this service,
+ * and npm is run from npm-cli.js bundled with the provisioned Node.js, if there is one (KT-91711).
+ *
+ * Provisions Node.js, so it must only be called at execution time.
+ */
+@ObsoleteNpmDependencyModel
+internal fun NodeJsToolchainService<*>.resolvePackageManagerEnvironment(
+    legacyNodeJs: NodeJsEnvironment,
+    legacyPackageManagerEnv: PackageManagerEnvironment,
+    nodeJsRequest: Provider<NodeJsRequest>,
+): Pair<NodeJsEnvironment, PackageManagerEnvironment> {
+    if (isNodeJsToolchainDisabled()) return legacyNodeJs to legacyPackageManagerEnv
+
+    val nodeJs = request(nodeJsRequest.get()).get()
+    val nodeExecutable = nodeJs.executable.orNull ?: error("Node js executable should be provisioned")
+    val npmCli = nodeJs.bundledNpmCliFile()
+    val packageManagerEnv = if (legacyPackageManagerEnv is NpmEnvironment && npmCli != null) {
+        legacyPackageManagerEnv.copy(executable = npmCli.absolutePath, standalone = false)
+    } else {
+        legacyPackageManagerEnv
+    }
+    return legacyNodeJs.copy(nodeExecutable = nodeExecutable) to packageManagerEnv
+}
+
+/**
+ * The npm-cli.js bundled with this Node.js distribution,
+ * or null when Node.js is used from the PATH, or the distribution does not bundle npm.
+ */
+internal fun NodeJsExecutable.bundledNpmCliFile(): File? {
+    val nodeFile = File(executable.get())
+    if (!nodeFile.isAbsolute) return null
+    val isWindows = platform.get().isWindows
+    val nodeBinDir = nodeFile.parentFile
+    val nodeDir = if (isWindows) nodeBinDir else nodeBinDir.parentFile
+    return computeNpmScriptFile(nodeDir.toPath(), "npm", isWindows).toFile().takeIf { it.isFile }
 }
 
 internal fun NodeJsToolchainService<*>.isNodeJsToolchainDisabled(): Boolean = this is DisabledNodeJsToolchainServiceImpl

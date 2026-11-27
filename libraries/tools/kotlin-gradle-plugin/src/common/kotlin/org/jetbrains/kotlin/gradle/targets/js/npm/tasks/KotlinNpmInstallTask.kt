@@ -9,24 +9,32 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolvePackageManagerEnvironment
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.property
 
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 @DisableCachingByDefault
 abstract class KotlinNpmInstallTask :
     DefaultTask(),
     NodeJsEnvironmentTask,
     PackageJsonFilesTask,
-    UsesKotlinNpmResolutionManager {
+    UsesKotlinNpmResolutionManager,
+    UsesNodeJsToolchainService {
     init {
         checkIsJsToolingProject(project) {
             "Cannot register ${KotlinNpmInstallTask::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
@@ -50,6 +58,9 @@ abstract class KotlinNpmInstallTask :
     @get:Internal
     abstract val nodeModules: DirectoryProperty
 
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = project.requestDefaultNodeJs()
+
     private val isOffline = project.gradle.startParameter.isOffline()
 
     @get:Internal // tracks below
@@ -69,12 +80,18 @@ abstract class KotlinNpmInstallTask :
             if (withForce.get()) add("--force")
         }
 
+        val (nodeJs, packageManager) = nodeJsToolchainService.get().resolvePackageManagerEnvironment(
+            nodeJsEnvironment.get(),
+            packageManagerEnv.get(),
+            nodeJsRequest,
+        )
+
         npmResolutionManager.get()
             .installIfNeeded(
                 args = args,
                 logger = logger,
-                nodeJsEnvironment.get(),
-                packageManagerEnv.get(),
+                nodeJs,
+                packageManager,
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Action
 import org.gradle.api.initialization.resolve.RepositoriesMode
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.appendText
 
 
@@ -147,4 +149,54 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-91711: npm install with the downloading Node.js toolchain does not need npm on PATH")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testNpmInstallWithDownloadingNodeJsToolchainWithoutHostNpm(gradleVersion: GradleVersion) {
+        testPackageManagerInstallWithDownloadingNodeJsToolchainWithoutHostNodeJs(gradleVersion, useYarn = false)
+    }
+
+    @DisplayName("KT-91711: yarn install with the downloading Node.js toolchain does not need Node.js on PATH")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testYarnInstallWithDownloadingNodeJsToolchainWithoutHostNodeJs(gradleVersion: GradleVersion) {
+        testPackageManagerInstallWithDownloadingNodeJsToolchainWithoutHostNodeJs(gradleVersion, useYarn = true)
+    }
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    private fun testPackageManagerInstallWithDownloadingNodeJsToolchainWithoutHostNodeJs(
+        gradleVersion: GradleVersion,
+        useYarn: Boolean,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(jsOptions = defaultBuildOptions.jsOptions?.copy(yarn = useYarn)),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js { nodejs() }
+                    sourceSets.jsMain.dependencies { implementation(npm("is-number", "7.0.0")) }
+                }
+            }
+
+            build(
+                ":kotlinNpmInstall",
+                "-Pkotlin.js.nodeJsToolchainMode=download",
+                environmentVariables = EnvironmentalVariables { it + ("PATH" to pathWithoutNodeJs(it)) },
+            ) {
+                assertTasksSkipped(":kotlinNodeJsSetup")
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+        }
+    }
 }
+
+private fun pathWithoutNodeJs(environment: Map<String, String>): String =
+    environment.getValue("PATH").split(File.pathSeparator)
+        .filterNot { dir -> listOf("node", "node.exe", "npm", "npm.cmd").any { File(dir, it).exists() } }
+        .joinToString(File.pathSeparator)

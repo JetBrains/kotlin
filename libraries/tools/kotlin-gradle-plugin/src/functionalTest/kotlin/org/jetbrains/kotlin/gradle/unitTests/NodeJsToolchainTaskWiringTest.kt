@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
@@ -110,6 +112,36 @@ class NodeJsToolchainTaskWiringTest {
             assertIs<UsesNodeJsToolchainService>(task)
             assertNull(task.executable, "Expected ${task.name} to resolve Node.js only at execution time")
             assertTrue(!task.nodeExecutable.isPresent, "Expected no legacy executable when the toolchain is enabled")
+            assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, task.nodeJsRequest.get().version.get().version)
+        }
+    }
+
+    @Test
+    fun `npm install and tooling setup tasks use the node js toolchain service`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE, "download")
+            }
+        ) {
+            with(multiplatformExtension) {
+                js { nodejs() }
+                wasmJs { nodejs() }
+            }
+        }
+        project.evaluate()
+        assertIs<DefaultNodeJsToolchainServiceImpl>(project.registeredService())
+
+        val npmInstallTasks = project.tasks.withType(KotlinNpmInstallTask::class.java).toList()
+        val toolingSetupTasks = project.tasks.withType(KotlinToolingSetupTask::class.java).toList()
+        assertTrue(npmInstallTasks.isNotEmpty(), "Expected at least one KotlinNpmInstallTask")
+        assertTrue(toolingSetupTasks.isNotEmpty(), "Expected at least one KotlinToolingSetupTask")
+
+        npmInstallTasks.forEach { task ->
+            assertIs<DefaultNodeJsToolchainServiceImpl>(task.nodeJsToolchainService.get(), "Expected ${task.name} to use the toolchain")
+            assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, task.nodeJsRequest.get().version.get().version)
+        }
+        toolingSetupTasks.forEach { task ->
+            assertIs<DefaultNodeJsToolchainServiceImpl>(task.nodeJsToolchainService.get(), "Expected ${task.name} to use the toolchain")
             assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, task.nodeJsRequest.get().version.get().version)
         }
     }

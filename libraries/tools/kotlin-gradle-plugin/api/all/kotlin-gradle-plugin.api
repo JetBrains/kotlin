@@ -4306,7 +4306,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpm
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpmCachesSetup$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpmInstallTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask, org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonFilesTask, org/jetbrains/kotlin/gradle/targets/js/npm/UsesKotlinNpmResolutionManager {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpmInstallTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask, org/jetbrains/kotlin/gradle/targets/js/npm/PackageJsonFilesTask, org/jetbrains/kotlin/gradle/targets/js/npm/UsesKotlinNpmResolutionManager, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinNpmInstallTask$Companion;
 	public fun <init> ()V
 	public abstract fun getAdditionalFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
@@ -4334,7 +4334,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinPackag
 	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingSetupTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingSetupTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironmentTask, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/tasks/KotlinToolingSetupTask$Companion;
 	public abstract fun getArgs ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getDestination ()Lorg/gradle/api/file/DirectoryProperty;
