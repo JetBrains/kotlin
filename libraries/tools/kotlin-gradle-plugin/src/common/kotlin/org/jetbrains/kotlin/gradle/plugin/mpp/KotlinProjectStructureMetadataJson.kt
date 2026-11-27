@@ -15,6 +15,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.gradle.internal.json.removeBom
 
 /**
  * JSON shape of `META-INF/kotlin-project-structure-metadata.json`.
@@ -89,11 +90,8 @@ private val projectStructureMetadataJson = Json {
     allowComments = true
 }
 
-/** kotlinx-serialization fails on a leading byte order mark. */
-private const val BOM = "\uFEFF"
-
 internal fun KotlinProjectStructureMetadataJson.encodeToString(): String =
     projectStructureMetadataJson.encodeToString(KotlinProjectStructureMetadataJson.serializer(), this)
 
 internal fun decodeKotlinProjectStructureMetadataJson(string: String): KotlinProjectStructureMetadataJson =
-    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string.removePrefix(BOM))
+    projectStructureMetadataJson.decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string.removeBom())
