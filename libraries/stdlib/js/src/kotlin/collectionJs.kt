@@ -248,3 +248,39 @@ internal fun checkBuilderCapacity(capacity: Int) {
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
 public actual fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
+
+/**
+ * Removes all elements of this [MutableIterable] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = true)
+
+/**
+ * Retains only elements of this [MutableIterable] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = false)
+
+/**
+ * Removes all elements of this [MutableList] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = true)
+
+/**
+ * Retains only elements of this [MutableList] that match the given [predicate].
+ *
+ * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
+ */
+@IgnorableReturnValue
+public actual fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean =
+    filterInPlace(predicate, predicateResultToRemove = false)
