@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.condition.OS
 @DisplayName("Tests for running Swift Export XCTests")
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
+@MustRunOnChangesInGradle
 class SwiftExportXCIT : KGPBaseTest() {
 
     @DisplayName("run XCTests for testing Swift Export")
