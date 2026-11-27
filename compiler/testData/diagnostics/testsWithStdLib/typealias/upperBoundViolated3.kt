@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ReportUpperBoundViolatedWithSamTypealiasedConstructors
+// LANGUAGE_FEATURE_TOGGLED: ProperlyUnwrapTypealiasedSamConstructorsWhenBuildingFreshVariables
 // FIR_DUMP
 // FILE: A.kt
 package a
@@ -27,8 +28,7 @@ fun interface SamBox<B> {
 typealias SamAlias<K> = SamBox<K>
 
 val a = Alias<Any>()
-// TODO(KT-92053): currently, resolves to a.SamAlias
-val sa = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>SamAlias<Any> { }<!>
+val sa = SamAlias<Any> { }
 
 /* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
 typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

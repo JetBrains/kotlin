@@ -265,8 +265,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         toFreshVariables: ConeSubstitutor,
         freshTypeVariables: List<ConeTypeParameterBasedTypeVariable>,
     ): List<Pair<ConeKotlinType, ConeKotlinType>> {
-        // TODO(KT-92053): missed typealias-to-SAM constructor
-        val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
+        val typeAliasConstructorInfo = (declaration as? FirFunction)?.typeAliasConstructorInfo
+            ?.takeIf { declaration is FirConstructor || LanguageFeature.ProperlyUnwrapTypealiasedSamConstructorsWhenBuildingFreshVariables.isEnabled() }
         val isTypealiasConstructor = typeAliasConstructorInfo != null
 
         val [typeArgumentsForConstraining, typeParametersForConstraining] = when {

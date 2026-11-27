@@ -30,8 +30,8 @@ FILE: B.kt
     public final typealias SamAlias<K> = R|b/SamBox<K>|
     public final val a: R|{b/Alias<kotlin/Any>=} b/Box<kotlin/Any>| = R|b/Box.Box|<R|kotlin/Any|>()
         public get(): R|{b/Alias<kotlin/Any>=} b/Box<kotlin/Any>|
-    public final val sa: R|{a/SamAlias<kotlin/Any>=} a/Sam<kotlin/collections/List<kotlin/Any>>| = R|a/SamAlias|<R|kotlin/Any|>(<L> = SamAlias@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    public final val sa: R|{b/SamAlias<kotlin/Any>=} b/SamBox<kotlin/Any>| = R|b/SamAlias|<R|kotlin/Any|>(<L> = SamAlias@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         ^@SamAlias Unit
     }
     )
-        public get(): R|{a/SamAlias<kotlin/Any>=} a/Sam<kotlin/collections/List<kotlin/Any>>|
+        public get(): R|{b/SamAlias<kotlin/Any>=} b/SamBox<kotlin/Any>|
