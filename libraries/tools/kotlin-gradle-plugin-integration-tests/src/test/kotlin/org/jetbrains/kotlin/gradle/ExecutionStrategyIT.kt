@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.absolutePathString
@@ -359,6 +360,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
     protected abstract fun BuildResult.checkOutputAfterChange(project: TestProject)
 }
 
+@MustRunOnChangesInBuildToolsApi
 class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
     @DisplayName("KT-84152: [BTA] In-process compilation should not leave active threads")
     @Disabled("FIXME: cover with tests when KT-84566 is fixed")
