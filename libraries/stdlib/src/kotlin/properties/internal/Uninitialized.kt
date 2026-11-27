@@ -18,4 +18,8 @@ package kotlin.properties.internal
  */
 @PublishedApi
 @SinceKotlin("2.5")
-internal expect object UNINITIALIZED
+internal object UNINITIALIZED : Serializable {
+    private const val serialVersionUID: Long = 0L
+
+    private fun readResolve(): Any = UNINITIALIZED
+}
