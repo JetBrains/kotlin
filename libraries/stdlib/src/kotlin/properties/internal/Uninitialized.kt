@@ -8,7 +8,7 @@ package kotlin.properties.internal
 /**
  * A sentinel value representing an uninitialized `lateinit val` property state.
  *
- * Refer to [KEEP-0445](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0455-lateinit-val.md#compilation-strategy)
+ * Refer to [KEEP-0455](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0455-lateinit-val.md#compilation-strategy)
  * for additional information about `lateinit val`s and `UNINITIALIZED` value.
  *
  * ### Implementation details

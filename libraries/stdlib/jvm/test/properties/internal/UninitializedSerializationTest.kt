@@ -17,7 +17,6 @@ class UninitializedSerializationTest {
         ObjectOutputStream(out).use {
             it.writeObject(UNINITIALIZED)
         }
-        println(out.toByteArray().toHexString())
         ObjectInputStream(ByteArrayInputStream(out.toByteArray())).use {
             assertSame(UNINITIALIZED, it.readObject())
         }
