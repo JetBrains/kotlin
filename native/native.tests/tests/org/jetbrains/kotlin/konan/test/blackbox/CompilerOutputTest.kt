@@ -106,6 +106,31 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testObjCExportDiagnosticsIgnoredStdlibCollisions() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnosticsStdlib")
+        val settings = testRunSettings
+        val lib = compileLibrary(settings, rootDir.resolve("lib.kt")).assertSuccess().resultingArtifact
+
+        val freeCompilerArgs = TestCompilerArgs(
+            listOf(
+                "-Xinclude=${lib.path}",
+                "-Xbinary=objcExportErrorOnNameCollisions=true",
+            )
+        )
+        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnosticsStdlib")
+
+        ObjCFrameworkCompilation(
+            settings,
+            freeCompilerArgs,
+            sourceModules = emptyList(),
+            dependencies = emptyList(),
+            expectedArtifact,
+        ).result.assertSuccess()
+    }
+
+    @Test
     fun testLogging() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
         val testCase = generateTestCaseWithSingleFile(

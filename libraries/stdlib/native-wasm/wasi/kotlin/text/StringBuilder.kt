@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.native.ObjCExportIgnoreNameCollision
+
 /**
  * A mutable sequence of characters.
  *
@@ -20,11 +22,13 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     public actual constructor(capacity: Int) : this(CharArray(capacity))
 
     /** Constructs a string builder that contains the same characters as the specified [content] string. */
+    @ObjCExportIgnoreNameCollision
     public actual constructor(content: String) : this(content.toCharArray()) {
         _length = array.size
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
+    @ObjCExportIgnoreNameCollision
     public actual constructor(content: CharSequence): this(content.length) {
         append(content)
     }
@@ -44,6 +48,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
 
     // Of Appenable.
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     actual override fun append(value: Char) : StringBuilder {
         ensureExtraCapacity(1)
         array[_length++] = value
@@ -51,6 +56,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     }
 
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     actual override fun append(value: CharSequence?): StringBuilder {
         // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = value ?: "null"
@@ -145,6 +151,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Any?): StringBuilder = append(value.toString())
 
     // TODO: optimize the append overloads with primitive value!
@@ -156,6 +163,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Boolean): StringBuilder = append(value.toString())
 
     /**
@@ -165,6 +173,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun append(value: Byte): StringBuilder = append(value.toString())
 
     /**
@@ -174,6 +183,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun append(value: Short): StringBuilder = append(value.toString())
 
     /**
@@ -183,6 +193,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Int): StringBuilder {
         ensureExtraCapacity(11)
         _length += insertInt(array, _length, value)
@@ -196,6 +207,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Long): StringBuilder = append(value.toString())
 
     /**
@@ -205,6 +217,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Float): StringBuilder = append(value.toString())
 
     /**
@@ -214,6 +227,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * and then that string was appended to this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Double): StringBuilder = append(value.toString())
 
     /**
@@ -222,6 +236,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * Characters are appended in order, starting at the index 0.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: CharArray): StringBuilder {
         ensureExtraCapacity(value.size)
         value.copyInto(array, _length)
@@ -235,6 +250,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * If [value] is `null`, then the four characters `"null"` are appended.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: String?): StringBuilder {
         val toAppend = value ?: "null"
         ensureExtraCapacity(toAppend.length)
@@ -317,6 +333,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
 
     /**
@@ -328,6 +345,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
 
     /**
@@ -339,6 +357,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
 
     /**
@@ -350,6 +369,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Int): StringBuilder = insert(index, value.toString())
 
     /**
@@ -361,6 +381,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Long): StringBuilder = insert(index, value.toString())
 
     /**
@@ -372,6 +393,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Float): StringBuilder = insert(index, value.toString())
 
     /**
@@ -383,6 +405,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Double): StringBuilder = insert(index, value.toString())
 
     /**
@@ -391,6 +414,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Char): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(1)
@@ -411,6 +435,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: CharArray): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(value.size)
@@ -433,6 +458,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: CharSequence?): StringBuilder {
         // Kotlin/JVM inserts the "null" string if the argument is null.
         val toInsert = value ?: "null"
@@ -448,6 +474,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
 
     /**
@@ -458,6 +485,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun insert(index: Int, value: String?): StringBuilder {
         val toInsert = value ?: "null"
         AbstractList.checkPositionIndex(index, _length)
@@ -629,6 +657,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     @SinceKotlin("1.4")
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
         val extraLength = endIndex - startIndex
@@ -649,6 +678,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     @SinceKotlin("1.4")
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         val extraLength = endIndex - startIndex
@@ -678,6 +708,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     @SinceKotlin("1.4")
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
@@ -710,6 +741,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      */
     @SinceKotlin("1.4")
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)

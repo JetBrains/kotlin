@@ -165,6 +165,21 @@ public actual annotation class ObjCEnum(actual val name: String = "", actual val
 }
 
 /**
+ * Instructs the Kotlin compiler to suppress name collision errors when generating Objective-C headers
+ * with the `-Xbinary=objcExportErrorOnNameCollisions=true` compiler option.
+ *
+ * This annotation is intended for standard library functions and constructors with inherent overloads
+ * (e.g., Appendable, StringBuilder) where name mangling is unavoidable but should not prevent users
+ * from using these types in their public APIs.
+ */
+@Target(
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.CONSTRUCTOR
+)
+@Retention(AnnotationRetention.BINARY)
+internal actual annotation class ObjCExportIgnoreNameCollision
+
+/**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.
  *
  * Annotation processors that refine the public Objective-C API can annotate their annotations with this meta-annotation

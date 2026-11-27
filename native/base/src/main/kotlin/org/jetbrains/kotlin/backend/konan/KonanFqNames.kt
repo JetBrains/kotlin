@@ -40,6 +40,7 @@ object KonanFqNames {
     val objCName = FqName("kotlin.native.ObjCName")
     val objCEnum = FqName("kotlin.native.ObjCEnum")
     val objCEnumEntryName = FqName("kotlin.native.ObjCEnum.EntryName")
+    val objCExportIgnoreNameCollision = FqName("kotlin.native.ObjCExportIgnoreNameCollision")
     val hidesFromObjC = FqName("kotlin.native.HidesFromObjC")
     val refinesInSwift = FqName("kotlin.native.RefinesInSwift")
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")
