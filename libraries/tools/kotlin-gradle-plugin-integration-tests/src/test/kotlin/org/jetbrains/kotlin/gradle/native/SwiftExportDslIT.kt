@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.publishMultiplatformLibrary
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.gradle.util.swiftSourceLines
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -29,6 +30,7 @@ import kotlin.test.assertNotNull
 @DisplayName("Tests for Swift Export DSL")
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
+@MustRunOnChangesInGradle
 class SwiftExportDslIT : KGPBaseTest() {
 
     @DisplayName("Changing an exported module name override invalidates the Swift Export task")
