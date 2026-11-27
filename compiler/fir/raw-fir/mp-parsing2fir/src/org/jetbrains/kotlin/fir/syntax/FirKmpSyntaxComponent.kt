@@ -38,6 +38,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
         notYetImplemented()
     }

@@ -73,6 +73,10 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
         }
     }
 
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        return unwrap().psi.containingFile == fileSource.unwrap().psi
+    }
+
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
         val source = unwrap()
         // todo this code is buggy. psi for fake declarations (e.g. ImplicitConstructor, EnumGeneratedDeclaration) means a completely different thing

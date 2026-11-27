@@ -103,6 +103,11 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
         }
     }
 
+    /**
+     * Returns whether the element belongs to the file with the [fileSource] source.
+     */
+    abstract fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean
+
     abstract fun KtSourceElement.extractModifierList(): FirModifierList?
 
     abstract fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement>

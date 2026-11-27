@@ -75,6 +75,13 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         }
     }
 
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        val source = unwrap()
+        val fileNode = fileSource.unwrap().lighterASTNode
+        val tree = source.treeStructure
+        return generateSequence(tree.getParent(source.lighterASTNode)) { tree.getParent(it) }.any { it == fileNode }
+    }
+
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
         val source = unwrap()
         val tree = source.treeStructure
