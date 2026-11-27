@@ -256,8 +256,8 @@ internal class KaFirJavaInteroperabilityComponent(
         return coneKotlinType.asKaType()
     }
 
-    override fun mapToJvmTypeDescriptor(type: KaType): String {
-        return jvmTypeMapper.mapType(type.coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
+    override fun mapToJvmTypeDescriptor(type: KaType): String = entryPointImplementation {
+        jvmTypeMapper.mapType(type.coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
     }
 
     override fun isPrimitiveBacked(type: KaType): Boolean = entryPointImplementation {

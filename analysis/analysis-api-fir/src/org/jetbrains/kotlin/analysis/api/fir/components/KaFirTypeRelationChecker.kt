@@ -65,7 +65,7 @@ internal class KaFirTypeRelationChecker(
         type: KaType,
         classId: ClassId,
         errorTypePolicy: KaSubtypingErrorTypePolicy,
-    ): Boolean = context(analysisSession) {
+    ): Boolean = entryPointImplementation {
         if (type is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
         return type.isClassSubtypeOf(classId, errorTypePolicy)
@@ -75,7 +75,7 @@ internal class KaFirTypeRelationChecker(
         type: KaType,
         symbol: KaClassLikeSymbol,
         errorTypePolicy: KaSubtypingErrorTypePolicy,
-    ): Boolean = context(analysisSession) {
+    ): Boolean = entryPointImplementation {
         symbol.assertIsValidAndAccessible()
 
         if (type is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.KaMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
+import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -60,13 +61,9 @@ internal class KaFirChainedSubstitutor(
     substitutor: ChainedSubstitutor,
     analysisSession: KaFirSession,
 ) : AbstractKaFirSubstitutor<ChainedSubstitutor>(substitutor, analysisSession), KaChainedSubstitutor {
-    override val first
-        get(): KaSubstitutor {
-            return analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(substitutor.first)
-        }
+    override val first: KaSubstitutor
+        get() = entryPointImplementation { substitutor.first.toKaSubstitutor() }
 
-    override val second
-        get(): KaSubstitutor {
-            return analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(substitutor.second)
-        }
+    override val second: KaSubstitutor
+        get() = entryPointImplementation { substitutor.second.toKaSubstitutor() }
 }
