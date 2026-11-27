@@ -20,6 +20,14 @@ import java.io.File
 abstract class YarnBasics internal constructor(
     private val execOps: ExecOperations,
     private val objects: ObjectFactory,
+    /**
+     * File used by Yarn as an inter-process mutex (`--mutex file:<path>`).
+     *
+     * The network mutex (`--mutex network`) is not used, because Yarn waiting for it may silently exit
+     * without doing anything on Node.js 18+ (KT-82693).
+     * See https://github.com/yarnpkg/yarn/issues/8960.
+     */
+    private val mutexFile: File,
 ) : NpmApiExecution<YarnEnvironment> {
 
     override fun packageManagerExec(
@@ -45,10 +53,12 @@ abstract class YarnBasics internal constructor(
                         "--network-concurrency",
                         "1",
                         "--mutex",
-                        "network",
+                        "file:${mutexFile.absolutePath}",
                     )
                 )
                 .filter { it.isNotEmpty() }
+
+            mutexFile.parentFile.mkdirs()
 
             val nodeExecutable = nodeJs.nodeExecutable
             if (!environment.ignoreScripts) {

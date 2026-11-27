@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.file.RegularFile
+import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_YARN
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
@@ -15,15 +19,15 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockStoreTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.notExists
-import kotlin.io.path.readText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
@@ -188,6 +192,77 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
             // upgradeTaskName is requested, so --force flag is set
             build(upgradeTaskName) {
                 assertTasksExecuted(":kotlinNpmInstall")
+            }
+        }
+    }
+
+    @DisplayName("npm install fails when Yarn exits successfully without creating yarn.lock")
+    @GradleTest
+    @JsGradlePluginTests
+    fun yarnExitWithoutLockFileFailsInstall(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-package-lock-project",
+            gradleVersion,
+        ) {
+            useFakeYarnExitingWithoutAction()
+
+            buildAndFail(":kotlinNpmInstall") {
+                assertTasksFailed(":kotlinNpmInstall")
+                assertOutputContains("Yarn finished without errors, but did not create")
+                assertOutputContains("https://kotl.in/issue")
+                assertOutputContains("KT-84662")
+                assertOutputContains("${KOTLIN_JS_YARN}=false")
+            }
+        }
+    }
+
+    @DisplayName("npm install does not require yarn.lock when it is not going to be stored")
+    @GradleTest
+    @JsGradlePluginTests
+    fun yarnExitWithoutLockFileWithoutStoringLockFile(gradleVersion: GradleVersion) {
+        project(
+            "kotlin-js-package-lock-project",
+            gradleVersion,
+        ) {
+            useFakeYarnExitingWithoutAction()
+
+            // The same as using `--no-lockfile` without storing the lock file
+            buildScriptInjection {
+                project.rootProject.tasks.withType<YarnLockStoreTask>().configureEach {
+                    it.inputFile.set(null as RegularFile?)
+                }
+            }
+
+            build(":kotlinNpmInstall") {
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+        }
+    }
+
+    /**
+     * Fake Yarn which does nothing and exits with 0,
+     * the same as Yarn waiting for `--mutex network` on Node.js 18+
+     */
+    private fun TestProject.useFakeYarnExitingWithoutAction() {
+        val fakeYarn = if (OS.WINDOWS.isCurrentOs) {
+            projectPath.resolve("fake-yarn.cmd").apply {
+                writeText("@exit /b 0\r\n")
+            }
+        } else {
+            projectPath.resolve("fake-yarn").apply {
+                writeText("#!/bin/sh\nexit 0\n")
+                toFile().setExecutable(true)
+            }
+        }
+
+        val fakeYarnAbsolutePath = fakeYarn.absolute().invariantSeparatorsPathString
+
+        buildScriptInjection {
+            project.rootProject.plugins.withType<YarnPlugin> {
+                project.rootProject.the<YarnRootEnvSpec>().apply {
+                    download.set(false)
+                    command.set(fakeYarnAbsolutePath)
+                }
             }
         }
     }
