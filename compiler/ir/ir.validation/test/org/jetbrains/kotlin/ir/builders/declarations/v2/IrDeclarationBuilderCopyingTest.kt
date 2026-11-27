@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.copyDefaultValuesFrom
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -104,6 +106,11 @@ class IrDeclarationBuilderCopyingTest {
         assertEquals(annotationClass.symbol, x.annotations.single().type.classOrNull)
         assertNotSame(source.parameters[1].annotations.single(), x.annotations.single())
         assertEquals(source.parameters.map { it.symbol }.zip(copy.parameters.map { it.symbol }).toMap(), mapping.parameters)
+
+        copy.copyDefaultValuesFrom(mapping.parameters, mapping.typeSubstitution)
+        val defaultValue = x.defaultValue!!.expression
+        assertNotSame(source.parameters[1].defaultValue!!.expression, defaultValue)
+        assertEquals(0, (defaultValue as IrConst).value)
     }
 
     @Test

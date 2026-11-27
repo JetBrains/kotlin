@@ -765,24 +765,12 @@ fun IrValueParameter.copyTo(
     remapDefaultValueSymbolMap: Map<IrValueParameterSymbol, IrValueParameterSymbol> = mapOf(),
 ): IrValueParameter {
     val symbol = IrValueParameterSymbolImpl()
-    val defaultValueCopy = defaultValue?.let { originalDefault ->
-        factory.createExpressionBody(
-            startOffset = originalDefault.startOffset,
-            endOffset = originalDefault.endOffset,
-            expression = originalDefault.expression.run {
-                val symbolRemapper = object : DeepCopySymbolRemapper() {
-                    val remapTypeSymbolMap = remapTypeMap.map { [key, value] -> key.symbol to value.symbol }.toMap()
-                    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
-                        remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
-
-                    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
-                        remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
-                }
-                acceptVoid(symbolRemapper)
-                transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(irFunction)
-            },
-        )
-    }
+    val defaultValueCopy = defaultValue?.copyDefaultValue(
+        factory,
+        irFunction,
+        remapTypeMap.map { [key, value] -> key.symbol to value.symbol }.toMap(),
+        remapDefaultValueSymbolMap,
+    )
     return factory.createValueParameter(
         startOffset = startOffset,
         endOffset = endOffset,
@@ -802,6 +790,46 @@ fun IrValueParameter.copyTo(
         it.copyAnnotationsFrom(this)
     }
 }
+
+/**
+ * Copies the default values of the [parameters] (source parameters mapped to the parameters of this function), e.g. after copying
+ * a signature with v2 builders, which don't copy default values. References to the source type parameters and parameters
+ * in the default values are replaced according to [typeSubstitution] and [parameters].
+ */
+fun IrFunction.copyDefaultValuesFrom(
+    parameters: Map<IrValueParameterSymbol, IrValueParameterSymbol>,
+    typeSubstitution: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+) {
+    val typeParameters = typeSubstitution.entries.mapNotNull { [from, to] ->
+        ((to as? IrSimpleType)?.classifier as? IrTypeParameterSymbol)?.let { from to it }
+    }.toMap()
+    for ([from, to] in parameters) {
+        val defaultValue = from.owner.defaultValue ?: continue
+        to.owner.defaultValue = defaultValue.copyDefaultValue(from.owner.factory, this, typeParameters, parameters)
+    }
+}
+
+private fun IrExpressionBody.copyDefaultValue(
+    factory: IrFactory,
+    target: IrFunction,
+    typeParameters: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>,
+    valueParameters: Map<IrValueParameterSymbol, IrValueParameterSymbol>,
+): IrExpressionBody =
+    factory.createExpressionBody(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        expression = expression.run {
+            val symbolRemapper = object : DeepCopySymbolRemapper() {
+                override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
+                    typeParameters[symbol] ?: super.getReferencedTypeParameter(symbol)
+
+                override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
+                    valueParameters[symbol] ?: super.getReferencedValueParameter(symbol)
+            }
+            acceptVoid(symbolRemapper)
+            transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(target)
+        },
+    )
 
 fun IrTypeParameter.copyToWithoutSuperTypes(
     target: IrTypeParametersContainer,
