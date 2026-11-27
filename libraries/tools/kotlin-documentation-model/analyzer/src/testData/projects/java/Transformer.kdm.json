@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "example/Transformer/convert/#T#R/PointingToDeclaration/": {
+        "example/Transformer#convert#E4M-CFCxlLE": {
           "kind": "function",
           "name": "convert",
           "isCompanion": false,
@@ -18,7 +18,7 @@
           "returnType": {
             "kind": "typeParameter",
             "name": "R",
-            "containerElementId": "example/Transformer/convert/#T#R/PointingToDeclaration/",
+            "containerElementId": "example/Transformer#convert#E4M-CFCxlLE",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -35,7 +35,7 @@
                       "typeArguments": []
                     }
                   ],
-                  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                  "classLikeId": "kotlin/Any",
                   "isMarkedNullable": false,
                   "annotations": []
                 }
@@ -50,7 +50,7 @@
               "type": {
                 "kind": "typeParameter",
                 "name": "T",
-                "containerElementId": "example/Transformer///PointingToDeclaration/",
+                "containerElementId": "example/Transformer",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -65,7 +65,7 @@
               "type": {
                 "kind": "typeParameter",
                 "name": "R",
-                "containerElementId": "example/Transformer/convert/#T#R/PointingToDeclaration/",
+                "containerElementId": "example/Transformer#convert#E4M-CFCxlLE",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -86,7 +86,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/Transformer/transform/#T/PointingToDeclaration/": {
+        "example/Transformer#transform#CeXHNJTbLxc": {
           "kind": "function",
           "name": "transform",
           "isCompanion": false,
@@ -100,7 +100,7 @@
           "returnType": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/Transformer///PointingToDeclaration/",
+            "containerElementId": "example/Transformer",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -111,7 +111,7 @@
               "type": {
                 "kind": "typeParameter",
                 "name": "T",
-                "containerElementId": "example/Transformer///PointingToDeclaration/",
+                "containerElementId": "example/Transformer",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -132,7 +132,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/Transformer///PointingToDeclaration/": {
+        "example/Transformer": {
           "kind": "class",
           "name": "Transformer",
           "classKind": "INTERFACE",
@@ -157,7 +157,7 @@
                       "typeArguments": []
                     }
                   ],
-                  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                  "classLikeId": "kotlin/Any",
                   "isMarkedNullable": false,
                   "annotations": []
                 }
@@ -168,8 +168,8 @@
           ],
           "superTypes": [],
           "declarations": [
-            "example/Transformer/convert/#T#R/PointingToDeclaration/",
-            "example/Transformer/transform/#T/PointingToDeclaration/"
+            "example/Transformer#convert#E4M-CFCxlLE",
+            "example/Transformer#transform#CeXHNJTbLxc"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -177,19 +177,19 @@
           "deprecated": null,
           "annotations": []
         },
-        "example////PointingToDeclaration/": {
+        "example": {
           "kind": "package",
           "name": "example",
           "declarations": [
-            "example/Transformer///PointingToDeclaration/"
+            "example/Transformer"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "Transformer",
           "packages": [
-            "example////PointingToDeclaration/"
+            "example"
           ],
           "annotations": []
         }

@@ -1,5 +1,5 @@
 fragment main
-constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+constructor() [example/JavaTypes##skRkTaxiOaI].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,12 +8,12 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var unbounded: MutableList<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].type:
+var unbounded: MutableList<*> [example/JavaTypes#unbounded#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -26,12 +26,12 @@ var unbounded: MutableList<*> [example/JavaTypes/unbounded/#/PointingToDeclarati
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var upperBound: MutableList<out T> [example/JavaTypes/upperBound/#/PointingToDeclaration/].type:
+var upperBound: MutableList<out T> [example/JavaTypes#upperBound#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -43,7 +43,7 @@ var upperBound: MutableList<out T> [example/JavaTypes/upperBound/#/PointingToDec
           "type": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "containerElementId": "example/JavaTypes",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -51,12 +51,12 @@ var upperBound: MutableList<out T> [example/JavaTypes/upperBound/#/PointingToDec
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var lowerBound: MutableList<in String> [example/JavaTypes/lowerBound/#/PointingToDeclaration/].type:
+var lowerBound: MutableList<in String> [example/JavaTypes#lowerBound#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -73,7 +73,7 @@ var lowerBound: MutableList<in String> [example/JavaTypes/lowerBound/#/PointingT
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -81,12 +81,12 @@ var lowerBound: MutableList<in String> [example/JavaTypes/lowerBound/#/PointingT
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var raw: MutableList<Any?> [example/JavaTypes/raw/#/PointingToDeclaration/].type:
+var raw: MutableList<Any?> [example/JavaTypes#raw#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -103,7 +103,7 @@ var raw: MutableList<Any?> [example/JavaTypes/raw/#/PointingToDeclaration/].type
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Any///PointingToDeclaration/",
+            "classLikeId": "kotlin/Any",
             "isMarkedNullable": true,
             "annotations": []
           }
@@ -111,12 +111,12 @@ var raw: MutableList<Any?> [example/JavaTypes/raw/#/PointingToDeclaration/].type
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+class JavaTypes [example/JavaTypes].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -125,8 +125,7 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": false,
   "annotations": []
 }
-

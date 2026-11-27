@@ -1,24 +1,21 @@
 fragment main
-fun introducedFunction(): Unit [sample/Introduced/introducedFunction/#/PointingToDeclaration/].since:
+fun introducedFunction(): Unit [sample/Introduced#introducedFunction#KK4ERoLQuv0].since:
 "1.3"
 
-fun getIntroducedProperty(): String [sample/Introduced/getIntroducedProperty/#/PointingToDeclaration/].since:
+val introducedProperty: String [sample/Introduced#introducedProperty#ctE8McQtNZQ].since:
 "release-three"
 
-val introducedProperty: String [sample/Introduced/introducedProperty/#/PointingToDeclaration/].since:
-"release-three"
-
-class Introduced [sample/Introduced///PointingToDeclaration/].since:
+class Introduced [sample/Introduced].since:
 "release-one"
 
-constructor() [sample/IntroducedJava/IntroducedJava/#/PointingToDeclaration/].since:
+constructor() [sample/IntroducedJava##KK4ERoLQuv0].since:
 "java-two"
 
-fun introducedMethod(): Unit [sample/IntroducedJava/introducedMethod/#/PointingToDeclaration/].since:
+fun introducedMethod(): Unit [sample/IntroducedJava#introducedMethod#KK4ERoLQuv0].since:
 "java-three"
 
-class IntroducedJava [sample/IntroducedJava///PointingToDeclaration/].since:
+class IntroducedJava [sample/IntroducedJava].since:
 "java-one"
 
-typealias IntroducedAlias = String [sample/IntroducedAlias///PointingToDeclaration/].since:
+typealias IntroducedAlias = String [sample/IntroducedAlias].since:
 "release-four"

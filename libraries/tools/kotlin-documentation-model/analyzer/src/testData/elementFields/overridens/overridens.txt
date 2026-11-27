@@ -1,47 +1,47 @@
 fragment main
-fun transform(value: String): String [sample/Base/transform/#kotlin.String/PointingToDeclaration/].overridens:
+fun transform(value: String): String [sample/Base#transform#P7n-P2YFLsg].overridens:
 [
-  "sample/First/transform/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/",
-  "sample/Second/transform/#kotlin.String/PointingToDeclaration/"
+  "sample/First#transform#Yxai-43B-g4",
+  "sample/Second#transform#P7n-P2YFLsg"
 ]
 
-fun toString(): String [sample/Base/toString/#/PointingToDeclaration/].overridens:
+fun toString(): String [sample/Base#toString#KK4ERoLQuv0].overridens:
 [
-  "kotlin/Any/toString/#/PointingToDeclaration/"
+  "kotlin/Any#toString#KK4ERoLQuv0"
 ]
 
-var text: String [sample/Base/text/#/PointingToDeclaration/].overridens:
+var text: String [sample/Base#text#ctE8McQtNZQ].overridens:
 [
-  "sample/First/text/#/PointingToDeclaration/",
-  "sample/Second/text/#/PointingToDeclaration/"
+  "sample/First#text#ctE8McQtNZQ",
+  "sample/Second#text#ctE8McQtNZQ"
 ]
 
-fun transform(value: String): String [sample/Child/transform/#kotlin.String/PointingToDeclaration/].overridens:
+fun transform(value: String): String [sample/Child#transform#P7n-P2YFLsg].overridens:
 [
-  "sample/Base/transform/#kotlin.String/PointingToDeclaration/"
+  "sample/Base#transform#P7n-P2YFLsg"
 ]
 
-var text: String [sample/Child/text/#/PointingToDeclaration/].overridens:
+var text: String [sample/Child#text#ctE8McQtNZQ].overridens:
 [
-  "sample/Base/text/#/PointingToDeclaration/"
+  "sample/Base#text#ctE8McQtNZQ"
 ]
 
-val length: Int [sample/Text/length/#/PointingToDeclaration/].overridens:
+val length: Int [sample/Text#length#ctE8McQtNZQ].overridens:
 [
-  "kotlin/CharSequence/length/#/PointingToDeclaration/"
+  "kotlin/CharSequence#length#ctE8McQtNZQ"
 ]
 
-fun transform(value: String): String [sample/KotlinChild/transform/#kotlin.String/PointingToDeclaration/].overridens:
+fun transform(value: String): String [sample/KotlinChild#transform#P7n-P2YFLsg].overridens:
 [
-  "sample/JavaBase/transform/#T/PointingToDeclaration/"
+  "sample/JavaBase#transform#CeXHNJTbLxc"
 ]
 
-fun transform(value: String): String [sample/JavaChild/transform/#java.lang.String/PointingToDeclaration/].overridens:
+fun transform(value: String): String [sample/JavaChild#transform#VMudsCHwk_c].overridens:
 [
-  "sample/JavaBase/transform/#T/PointingToDeclaration/"
+  "sample/JavaBase#transform#CeXHNJTbLxc"
 ]
 
-fun transform(value: String): String [sample/JavaGrandChild/transform/#java.lang.String/PointingToDeclaration/].overridens:
+fun transform(value: String): String [sample/JavaGrandChild#transform#VMudsCHwk_c].overridens:
 [
-  "sample/JavaChild/transform/#java.lang.String/PointingToDeclaration/"
+  "sample/JavaChild#transform#VMudsCHwk_c"
 ]

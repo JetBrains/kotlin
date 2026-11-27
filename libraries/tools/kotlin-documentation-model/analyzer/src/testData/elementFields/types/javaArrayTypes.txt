@@ -1,5 +1,5 @@
 fragment main
-fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].valueParameters[0].type:
+fun varargs(values: String): Unit [example/JavaTypes#varargs#m-RkKhNyGtA].valueParameters[0].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,11 +8,11 @@ fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String..
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].returnType:
+fun varargs(values: String): Unit [example/JavaTypes#varargs#m-RkKhNyGtA].returnType:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -21,12 +21,12 @@ fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String..
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+  "classLikeId": "kotlin/Unit",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var primitiveArray: IntArray [example/JavaTypes/primitiveArray/#/PointingToDeclaration/].type:
+var primitiveArray: IntArray [example/JavaTypes#primitiveArray#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -35,12 +35,12 @@ var primitiveArray: IntArray [example/JavaTypes/primitiveArray/#/PointingToDecla
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/IntArray///PointingToDeclaration/",
+  "classLikeId": "kotlin/IntArray",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/PointingToDeclaration/].type:
+var referenceArray: Array<Array<String>> [example/JavaTypes#referenceArray#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -65,7 +65,7 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
                           "typeArguments": []
                         }
                       ],
-                      "classLikeId": "kotlin/String///PointingToDeclaration/",
+                      "classLikeId": "kotlin/String",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -73,7 +73,7 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
                 ]
               }
             ],
-            "classLikeId": "kotlin/Array///PointingToDeclaration/",
+            "classLikeId": "kotlin/Array",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -81,8 +81,7 @@ var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/Poi
       ]
     }
   ],
-  "classLikeId": "kotlin/Array///PointingToDeclaration/",
+  "classLikeId": "kotlin/Array",
   "isMarkedNullable": false,
   "annotations": []
 }
-

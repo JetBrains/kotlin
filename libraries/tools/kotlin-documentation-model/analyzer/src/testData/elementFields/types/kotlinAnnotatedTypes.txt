@@ -1,5 +1,5 @@
 fragment main
-val annotated: String [example/Types/annotated/#/PointingToDeclaration/].type:
+val annotated: String [example/Types#annotated#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,13 +8,12 @@ val annotated: String [example/Types/annotated/#/PointingToDeclaration/].type:
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String",
   "isMarkedNullable": false,
   "annotations": [
     {
-      "classLikeId": "example/TypeLabel///PointingToDeclaration/",
+      "classLikeId": "example/TypeLabel",
       "arguments": {}
     }
   ]
 }
-

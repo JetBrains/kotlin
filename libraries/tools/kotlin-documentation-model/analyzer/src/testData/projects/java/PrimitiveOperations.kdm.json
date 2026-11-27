@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "example/PrimitiveOperations/accept/#boolean#byte#short#char/PointingToDeclaration/": {
+        "example/PrimitiveOperations#accept#tdKD9_dllgM": {
           "kind": "function",
           "name": "accept",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+            "classLikeId": "kotlin/Boolean",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+                "classLikeId": "kotlin/Boolean",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -59,7 +59,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Byte///PointingToDeclaration/",
+                "classLikeId": "kotlin/Byte",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -79,7 +79,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Short///PointingToDeclaration/",
+                "classLikeId": "kotlin/Short",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -99,7 +99,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Char///PointingToDeclaration/",
+                "classLikeId": "kotlin/Char",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -120,7 +120,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/acceptBoxed/#java.lang.Boolean#java.lang.Byte#java.lang.Short#java.lang.Character/PointingToDeclaration/": {
+        "example/PrimitiveOperations#acceptBoxed#mSnu5f7GHZ8": {
           "kind": "function",
           "name": "acceptBoxed",
           "isCompanion": false,
@@ -139,7 +139,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+            "classLikeId": "kotlin/Boolean",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -155,7 +155,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+                "classLikeId": "kotlin/Boolean",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -175,7 +175,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Byte///PointingToDeclaration/",
+                "classLikeId": "kotlin/Byte",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -195,7 +195,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Short///PointingToDeclaration/",
+                "classLikeId": "kotlin/Short",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -215,7 +215,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Char///PointingToDeclaration/",
+                "classLikeId": "kotlin/Char",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -236,7 +236,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/calculate/#float#double/PointingToDeclaration/": {
+        "example/PrimitiveOperations#calculate#NYuyfJDfRMg": {
           "kind": "function",
           "name": "calculate",
           "isCompanion": false,
@@ -255,7 +255,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Double///PointingToDeclaration/",
+            "classLikeId": "kotlin/Double",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -271,7 +271,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Float///PointingToDeclaration/",
+                "classLikeId": "kotlin/Float",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -291,7 +291,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Double///PointingToDeclaration/",
+                "classLikeId": "kotlin/Double",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -312,7 +312,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/calculateBoxed/#java.lang.Float#java.lang.Double/PointingToDeclaration/": {
+        "example/PrimitiveOperations#calculateBoxed#EieyttLv7N0": {
           "kind": "function",
           "name": "calculateBoxed",
           "isCompanion": false,
@@ -331,7 +331,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Double///PointingToDeclaration/",
+            "classLikeId": "kotlin/Double",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -347,7 +347,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Float///PointingToDeclaration/",
+                "classLikeId": "kotlin/Float",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -367,7 +367,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Double///PointingToDeclaration/",
+                "classLikeId": "kotlin/Double",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -388,7 +388,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/count/#int#long/PointingToDeclaration/": {
+        "example/PrimitiveOperations#count#KMj79VPctLI": {
           "kind": "function",
           "name": "count",
           "isCompanion": false,
@@ -407,7 +407,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Long///PointingToDeclaration/",
+            "classLikeId": "kotlin/Long",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -423,7 +423,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -443,7 +443,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                "classLikeId": "kotlin/Long",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -464,7 +464,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/countBoxed/#java.lang.Integer#java.lang.Long/PointingToDeclaration/": {
+        "example/PrimitiveOperations#countBoxed#WCGWmGlOCXM": {
           "kind": "function",
           "name": "countBoxed",
           "isCompanion": false,
@@ -483,7 +483,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Long///PointingToDeclaration/",
+            "classLikeId": "kotlin/Long",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -499,7 +499,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -519,7 +519,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                "classLikeId": "kotlin/Long",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -540,7 +540,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/reset/#/PointingToDeclaration/": {
+        "example/PrimitiveOperations#reset#KK4ERoLQuv0": {
           "kind": "function",
           "name": "reset",
           "isCompanion": false,
@@ -559,7 +559,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+            "classLikeId": "kotlin/Unit",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -575,7 +575,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations/resetBoxed/#/PointingToDeclaration/": {
+        "example/PrimitiveOperations#resetBoxed#KK4ERoLQuv0": {
           "kind": "function",
           "name": "resetBoxed",
           "isCompanion": false,
@@ -594,7 +594,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "java.lang/Void///PointingToDeclaration/",
+            "classLikeId": "java.lang/Void",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -610,7 +610,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/PrimitiveOperations///PointingToDeclaration/": {
+        "example/PrimitiveOperations": {
           "kind": "class",
           "name": "PrimitiveOperations",
           "classKind": "INTERFACE",
@@ -625,14 +625,14 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "example/PrimitiveOperations/accept/#boolean#byte#short#char/PointingToDeclaration/",
-            "example/PrimitiveOperations/acceptBoxed/#java.lang.Boolean#java.lang.Byte#java.lang.Short#java.lang.Character/PointingToDeclaration/",
-            "example/PrimitiveOperations/calculate/#float#double/PointingToDeclaration/",
-            "example/PrimitiveOperations/calculateBoxed/#java.lang.Float#java.lang.Double/PointingToDeclaration/",
-            "example/PrimitiveOperations/count/#int#long/PointingToDeclaration/",
-            "example/PrimitiveOperations/countBoxed/#java.lang.Integer#java.lang.Long/PointingToDeclaration/",
-            "example/PrimitiveOperations/reset/#/PointingToDeclaration/",
-            "example/PrimitiveOperations/resetBoxed/#/PointingToDeclaration/"
+            "example/PrimitiveOperations#accept#tdKD9_dllgM",
+            "example/PrimitiveOperations#acceptBoxed#mSnu5f7GHZ8",
+            "example/PrimitiveOperations#calculate#NYuyfJDfRMg",
+            "example/PrimitiveOperations#calculateBoxed#EieyttLv7N0",
+            "example/PrimitiveOperations#count#KMj79VPctLI",
+            "example/PrimitiveOperations#countBoxed#WCGWmGlOCXM",
+            "example/PrimitiveOperations#reset#KK4ERoLQuv0",
+            "example/PrimitiveOperations#resetBoxed#KK4ERoLQuv0"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -640,19 +640,19 @@
           "deprecated": null,
           "annotations": []
         },
-        "example////PointingToDeclaration/": {
+        "example": {
           "kind": "package",
           "name": "example",
           "declarations": [
-            "example/PrimitiveOperations///PointingToDeclaration/"
+            "example/PrimitiveOperations"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "PrimitiveOperations",
           "packages": [
-            "example////PointingToDeclaration/"
+            "example"
           ],
           "annotations": []
         }

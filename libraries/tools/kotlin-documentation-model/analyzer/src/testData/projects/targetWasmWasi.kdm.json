@@ -4,7 +4,7 @@
     {
       "name": "wasmWasiMain",
       "elements": {
-        "pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/": {
+        "pkg#randomGet#BurVeEXUv5c": {
           "kind": "function",
           "name": "randomGet",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -59,7 +59,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -80,7 +80,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/": {
+        "pkg#add#BurVeEXUv5c": {
           "kind": "function",
           "name": "add",
           "isCompanion": false,
@@ -99,7 +99,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -115,7 +115,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -135,7 +135,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -156,7 +156,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/": {
+        "pkg/WasiClock##WG9WACtuWJU": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -173,7 +173,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                "classLikeId": "kotlin/Long",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -190,7 +190,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/WasiClock/resolution/#/PointingToDeclaration/": {
+        "pkg/WasiClock#resolution#ctE8McQtNZQ": {
           "kind": "property",
           "name": "resolution",
           "isLateinit": false,
@@ -212,7 +212,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Long///PointingToDeclaration/",
+            "classLikeId": "kotlin/Long",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -227,11 +227,11 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/WasiClock/_hashCode/#/PointingToDeclaration/": {
+        "pkg/WasiClock#_hashCode#ctE8McQtNZQ": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/_hashCode/#/PointingToDeclaration/"
+          "originalId": "kotlin/Any#_hashCode#ctE8McQtNZQ"
         },
-        "pkg/WasiClock///PointingToDeclaration/": {
+        "pkg/WasiClock": {
           "kind": "class",
           "name": "WasiClock",
           "classKind": "CLASS",
@@ -246,9 +246,9 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/WasiClock/WasiClock/#kotlin.Long/PointingToDeclaration/",
-            "pkg/WasiClock/resolution/#/PointingToDeclaration/",
-            "pkg/WasiClock/_hashCode/#/PointingToDeclaration/"
+            "pkg/WasiClock##WG9WACtuWJU",
+            "pkg/WasiClock#resolution#ctE8McQtNZQ",
+            "pkg/WasiClock#_hashCode#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -256,27 +256,27 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//randomGet/#kotlin.Int#kotlin.Int/PointingToDeclaration/",
-            "pkg//add/#kotlin.Int#kotlin.Int/PointingToDeclaration/",
-            "pkg/WasiClock///PointingToDeclaration/"
+            "pkg#randomGet#BurVeEXUv5c",
+            "pkg#add#BurVeEXUv5c",
+            "pkg/WasiClock"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "targetWasmWasi",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }
       },
       "embeddedElements": {
-        "kotlin/Any/_hashCode/#/PointingToDeclaration/": {
+        "kotlin/Any#_hashCode#ctE8McQtNZQ": {
           "kind": "property",
           "name": "_hashCode",
           "isLateinit": false,
@@ -298,7 +298,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },

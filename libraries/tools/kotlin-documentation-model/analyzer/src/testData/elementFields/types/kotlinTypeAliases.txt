@@ -1,5 +1,5 @@
 fragment main
-val alias: Names [example//alias/#/PointingToDeclaration/].type:
+val alias: Names [example#alias#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,12 +8,12 @@ val alias: Names [example//alias/#/PointingToDeclaration/].type:
       "typeArguments": []
     }
   ],
-  "classLikeId": "example/Names///PointingToDeclaration/",
+  "classLikeId": "example/Names",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-typealias Names = List<String?> [example/Names///PointingToDeclaration/].underlyingType:
+typealias Names = List<String?> [example/Names].underlyingType:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -30,7 +30,7 @@ typealias Names = List<String?> [example/Names///PointingToDeclaration/].underly
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": true,
             "annotations": []
           }
@@ -38,8 +38,7 @@ typealias Names = List<String?> [example/Names///PointingToDeclaration/].underly
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/List",
   "isMarkedNullable": false,
   "annotations": []
 }
-

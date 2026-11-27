@@ -4,7 +4,7 @@
     {
       "name": "jvmMain",
       "elements": {
-        "pkg//javaClassName/#kotlin.Any/PointingToDeclaration/": {
+        "pkg#javaClassName#mEVIg5dwN18": {
           "kind": "function",
           "name": "javaClassName",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                "classLikeId": "kotlin/Any",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -60,7 +60,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/": {
+        "pkg/JvmService##BkAGU63BPB0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -77,7 +77,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -97,7 +97,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -120,12 +120,12 @@
           "throws": [],
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/JvmOverloads///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/JvmOverloads",
               "arguments": {}
             }
           ]
         },
-        "pkg/JvmService/read/#java.io.File/PointingToDeclaration/": {
+        "pkg/JvmService#read#PJOAzG-Benw": {
           "kind": "function",
           "name": "read",
           "isCompanion": false,
@@ -144,7 +144,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/ByteArray///PointingToDeclaration/",
+            "classLikeId": "kotlin/ByteArray",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -160,7 +160,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "java.io/File///PointingToDeclaration/",
+                "classLikeId": "java.io/File",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -180,17 +180,17 @@
           "deprecated": null,
           "throws": [
             {
-              "classLikeId": "java.io/IOException///PointingToDeclaration/"
+              "classLikeId": "java.io/IOException"
             }
           ],
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/Synchronized///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/Synchronized",
               "arguments": {}
             }
           ]
         },
-        "pkg/JvmService/name/#/PointingToDeclaration/": {
+        "pkg/JvmService#name#ctE8McQtNZQ": {
           "kind": "property",
           "name": "name",
           "isLateinit": false,
@@ -212,7 +212,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -227,7 +227,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JvmService/retries/#/PointingToDeclaration/": {
+        "pkg/JvmService#retries#ctE8McQtNZQ": {
           "kind": "property",
           "name": "retries",
           "isLateinit": false,
@@ -249,7 +249,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -264,7 +264,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JvmService/counter/#/PointingToDeclaration/": {
+        "pkg/JvmService#counter#ctE8McQtNZQ": {
           "kind": "property",
           "name": "counter",
           "isLateinit": false,
@@ -286,7 +286,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "java.util.concurrent.atomic/AtomicInteger///PointingToDeclaration/",
+            "classLikeId": "java.util.concurrent.atomic/AtomicInteger",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -301,12 +301,12 @@
           "throws": [],
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/JvmField///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/JvmField",
               "arguments": {}
             }
           ]
         },
-        "pkg/JvmService/state/#/PointingToDeclaration/": {
+        "pkg/JvmService#state#ctE8McQtNZQ": {
           "kind": "property",
           "name": "state",
           "isLateinit": false,
@@ -328,7 +328,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -343,12 +343,12 @@
           "throws": [],
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/Volatile///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/Volatile",
               "arguments": {}
             }
           ]
         },
-        "pkg/JvmService.Companion/create/#/PointingToDeclaration/": {
+        "pkg/JvmService.Companion#create#KK4ERoLQuv0": {
           "kind": "function",
           "name": "create",
           "isCompanion": false,
@@ -367,7 +367,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "pkg/JvmService///PointingToDeclaration/",
+            "classLikeId": "pkg/JvmService",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -383,12 +383,12 @@
           "throws": [],
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/JvmStatic///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/JvmStatic",
               "arguments": {}
             }
           ]
         },
-        "pkg/JvmService.Companion///PointingToDeclaration/": {
+        "pkg/JvmService.Companion": {
           "kind": "class",
           "name": "Companion",
           "classKind": "OBJECT",
@@ -403,7 +403,7 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JvmService.Companion/create/#/PointingToDeclaration/"
+            "pkg/JvmService.Companion#create#KK4ERoLQuv0"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -411,7 +411,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/JvmService///PointingToDeclaration/": {
+        "pkg/JvmService": {
           "kind": "class",
           "name": "JvmService",
           "classKind": "CLASS",
@@ -426,13 +426,13 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JvmService/JvmService/#kotlin.String#kotlin.Int/PointingToDeclaration/",
-            "pkg/JvmService/read/#java.io.File/PointingToDeclaration/",
-            "pkg/JvmService/name/#/PointingToDeclaration/",
-            "pkg/JvmService/retries/#/PointingToDeclaration/",
-            "pkg/JvmService/counter/#/PointingToDeclaration/",
-            "pkg/JvmService/state/#/PointingToDeclaration/",
-            "pkg/JvmService.Companion///PointingToDeclaration/"
+            "pkg/JvmService##BkAGU63BPB0",
+            "pkg/JvmService#read#PJOAzG-Benw",
+            "pkg/JvmService#name#ctE8McQtNZQ",
+            "pkg/JvmService#retries#ctE8McQtNZQ",
+            "pkg/JvmService#counter#ctE8McQtNZQ",
+            "pkg/JvmService#state#ctE8McQtNZQ",
+            "pkg/JvmService.Companion"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -440,7 +440,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/": {
+        "pkg/JvmId##WG9WACtuWJU": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -457,7 +457,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Long///PointingToDeclaration/",
+                "classLikeId": "kotlin/Long",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -474,7 +474,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JvmId/raw/#/PointingToDeclaration/": {
+        "pkg/JvmId#raw#ctE8McQtNZQ": {
           "kind": "property",
           "name": "raw",
           "isLateinit": false,
@@ -496,7 +496,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Long///PointingToDeclaration/",
+            "classLikeId": "kotlin/Long",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -511,7 +511,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JvmId///PointingToDeclaration/": {
+        "pkg/JvmId": {
           "kind": "class",
           "name": "JvmId",
           "classKind": "CLASS",
@@ -526,8 +526,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JvmId/JvmId/#kotlin.Long/PointingToDeclaration/",
-            "pkg/JvmId/raw/#/PointingToDeclaration/"
+            "pkg/JvmId##WG9WACtuWJU",
+            "pkg/JvmId#raw#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -535,26 +535,26 @@
           "deprecated": null,
           "annotations": [
             {
-              "classLikeId": "kotlin.jvm/JvmInline///PointingToDeclaration/",
+              "classLikeId": "kotlin.jvm/JvmInline",
               "arguments": {}
             }
           ]
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//javaClassName/#kotlin.Any/PointingToDeclaration/",
-            "pkg/JvmService///PointingToDeclaration/",
-            "pkg/JvmId///PointingToDeclaration/"
+            "pkg#javaClassName#mEVIg5dwN18",
+            "pkg/JvmService",
+            "pkg/JvmId"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "targetJvm",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }

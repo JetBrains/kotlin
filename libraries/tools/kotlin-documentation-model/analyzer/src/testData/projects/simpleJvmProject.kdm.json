@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/": {
+        "pkg/Greeter##P7n-P2YFLsg": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -21,7 +21,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -38,7 +38,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Greeter/greet/#/PointingToDeclaration/": {
+        "pkg/Greeter#greet#KK4ERoLQuv0": {
           "kind": "function",
           "name": "greet",
           "isCompanion": false,
@@ -57,7 +57,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -73,7 +73,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Greeter/name/#/PointingToDeclaration/": {
+        "pkg/Greeter#name#ctE8McQtNZQ": {
           "kind": "property",
           "name": "name",
           "isLateinit": false,
@@ -95,7 +95,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -110,7 +110,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Greeter///PointingToDeclaration/": {
+        "pkg/Greeter": {
           "kind": "class",
           "name": "Greeter",
           "classKind": "CLASS",
@@ -125,9 +125,9 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/",
-            "pkg/Greeter/greet/#/PointingToDeclaration/",
-            "pkg/Greeter/name/#/PointingToDeclaration/"
+            "pkg/Greeter##P7n-P2YFLsg",
+            "pkg/Greeter#greet#KK4ERoLQuv0",
+            "pkg/Greeter#name#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -135,19 +135,19 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg/Greeter///PointingToDeclaration/"
+            "pkg/Greeter"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "simpleJvmProject",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }

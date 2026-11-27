@@ -1,8 +1,8 @@
 fragment main
-constructor() [sample/Annotated/Annotated/#/PointingToDeclaration/].annotations:
+constructor() [sample/Annotated##KK4ERoLQuv0].annotations:
 [
   {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
+    "classLikeId": "sample/Label",
     "arguments": {
       "text": {
         "kind": "const",
@@ -18,10 +18,10 @@ constructor() [sample/Annotated/Annotated/#/PointingToDeclaration/].annotations:
   }
 ]
 
-fun annotated(): Unit [sample/Annotated/annotated/#/PointingToDeclaration/].annotations:
+fun annotated(): Unit [sample/Annotated#annotated#KK4ERoLQuv0].annotations:
 [
   {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
+    "classLikeId": "sample/Label",
     "arguments": {
       "text": {
         "kind": "const",
@@ -47,10 +47,10 @@ fun annotated(): Unit [sample/Annotated/annotated/#/PointingToDeclaration/].anno
   }
 ]
 
-val property: String [sample/Annotated/property/#/PointingToDeclaration/].annotations:
+val property: String [sample/Annotated#property#ctE8McQtNZQ].annotations:
 [
   {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
+    "classLikeId": "sample/Label",
     "arguments": {
       "text": {
         "kind": "const",
@@ -66,48 +66,10 @@ val property: String [sample/Annotated/property/#/PointingToDeclaration/].annota
   }
 ]
 
-fun getAccessors(): String [sample/Annotated/getAccessors/#/PointingToDeclaration/].annotations:
+class Annotated [sample/Annotated].annotations:
 [
   {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
-    "arguments": {
-      "text": {
-        "kind": "const",
-        "expression": {
-          "value": {
-            "kind": "string",
-            "value": "getter"
-          },
-          "expression": null
-        }
-      }
-    }
-  }
-]
-
-fun setAccessors(value: String): Unit [sample/Annotated/setAccessors/#kotlin.String/PointingToDeclaration/].annotations:
-[
-  {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
-    "arguments": {
-      "text": {
-        "kind": "const",
-        "expression": {
-          "value": {
-            "kind": "string",
-            "value": "setter"
-          },
-          "expression": null
-        }
-      }
-    }
-  }
-]
-
-class Annotated [sample/Annotated///PointingToDeclaration/].annotations:
-[
-  {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
+    "classLikeId": "sample/Label",
     "arguments": {
       "text": {
         "kind": "const",
@@ -123,68 +85,68 @@ class Annotated [sample/Annotated///PointingToDeclaration/].annotations:
   }
 ]
 
-constructor(value: String) [sample/PackageLabel/PackageLabel/#kotlin.String/PointingToDeclaration/].annotations:
+constructor(value: String) [sample/PackageLabel##P7n-P2YFLsg].annotations:
 [
   {
-    "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+    "classLikeId": "java.lang.annotation/Documented",
     "arguments": {}
   },
   {
-    "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+    "classLikeId": "java.lang.annotation/Target",
     "arguments": {
       "value": {
         "kind": "enumEntry",
-        "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+        "enumEntryId": "java.lang.annotation/ElementType#PACKAGE#CDaqKadASEI"
       }
     }
   }
 ]
 
-annotation class PackageLabel [sample/PackageLabel///PointingToDeclaration/].annotations:
+annotation class PackageLabel [sample/PackageLabel].annotations:
 [
   {
-    "classLikeId": "java.lang.annotation/Documented///PointingToDeclaration/",
+    "classLikeId": "java.lang.annotation/Documented",
     "arguments": {}
   },
   {
-    "classLikeId": "java.lang.annotation/Target///PointingToDeclaration/",
+    "classLikeId": "java.lang.annotation/Target",
     "arguments": {
       "value": {
         "kind": "enumEntry",
-        "enumEntryId": "java.lang.annotation/ElementType///PointingToDeclaration/"
+        "enumEntryId": "java.lang.annotation/ElementType#PACKAGE#CDaqKadASEI"
       }
     }
   }
 ]
 
-constructor() [sample/AnnotatedJava/AnnotatedJava/#/PointingToDeclaration/].annotations:
+constructor() [sample/AnnotatedJava##KK4ERoLQuv0].annotations:
 [
   {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "classLikeId": "java.lang/Deprecated",
     "arguments": {}
   }
 ]
 
-fun annotated(): Unit [sample/AnnotatedJava/annotated/#/PointingToDeclaration/].annotations:
+fun annotated(): Unit [sample/AnnotatedJava#annotated#KK4ERoLQuv0].annotations:
 [
   {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "classLikeId": "java.lang/Deprecated",
     "arguments": {}
   }
 ]
 
-class AnnotatedJava [sample/AnnotatedJava///PointingToDeclaration/].annotations:
+class AnnotatedJava [sample/AnnotatedJava].annotations:
 [
   {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "classLikeId": "java.lang/Deprecated",
     "arguments": {}
   }
 ]
 
-typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration/].annotations:
+typealias AnnotatedAlias = String [sample/AnnotatedAlias].annotations:
 [
   {
-    "classLikeId": "sample/Label///PointingToDeclaration/",
+    "classLikeId": "sample/Label",
     "arguments": {
       "text": {
         "kind": "const",
@@ -200,14 +162,14 @@ typealias AnnotatedAlias = String [sample/AnnotatedAlias///PointingToDeclaration
   }
 ]
 
-package sample [sample////PointingToDeclaration/].annotations:
+package sample [sample].annotations:
 [
   {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "classLikeId": "java.lang/Deprecated",
     "arguments": {}
   },
   {
-    "classLikeId": "sample/PackageLabel///PointingToDeclaration/",
+    "classLikeId": "sample/PackageLabel",
     "arguments": {
       "value": {
         "kind": "const",
@@ -223,14 +185,14 @@ package sample [sample////PointingToDeclaration/].annotations:
   }
 ]
 
-package <root> [package:////PointingToDeclaration/].annotations:
+package <root> [/].annotations:
 [
   {
-    "classLikeId": "java.lang/Deprecated///PointingToDeclaration/",
+    "classLikeId": "java.lang/Deprecated",
     "arguments": {}
   },
   {
-    "classLikeId": "sample/PackageLabel///PointingToDeclaration/",
+    "classLikeId": "sample/PackageLabel",
     "arguments": {
       "value": {
         "kind": "const",

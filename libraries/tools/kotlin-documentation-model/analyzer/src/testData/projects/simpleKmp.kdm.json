@@ -4,7 +4,7 @@
     {
       "name": "commonMain",
       "elements": {
-        "pkg//platformName/#/PointingToDeclaration/": {
+        "pkg#platformName#KK4ERoLQuv0": {
           "kind": "function",
           "name": "platformName",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//platformVersion/#/PointingToDeclaration/": {
+        "pkg#platformVersion#ctE8McQtNZQ": {
           "kind": "property",
           "name": "platformVersion",
           "isLateinit": false,
@@ -61,7 +61,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -76,7 +76,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/": {
+        "pkg/Shared##hDKzvCWNlUY": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -93,7 +93,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -110,7 +110,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared/id/#/PointingToDeclaration/": {
+        "pkg/Shared#id#ctE8McQtNZQ": {
           "kind": "property",
           "name": "id",
           "isLateinit": false,
@@ -132,7 +132,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -147,7 +147,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared///PointingToDeclaration/": {
+        "pkg/Shared": {
           "kind": "class",
           "name": "Shared",
           "classKind": "CLASS",
@@ -162,8 +162,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/",
-            "pkg/Shared/id/#/PointingToDeclaration/"
+            "pkg/Shared##hDKzvCWNlUY",
+            "pkg/Shared#id#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -171,7 +171,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/Platform///PointingToDeclaration/": {
+        "pkg/Platform": {
           "kind": "class",
           "name": "Platform",
           "classKind": "CLASS",
@@ -192,22 +192,22 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//platformName/#/PointingToDeclaration/",
-            "pkg//platformVersion/#/PointingToDeclaration/",
-            "pkg/Shared///PointingToDeclaration/",
-            "pkg/Platform///PointingToDeclaration/"
+            "pkg#platformName#KK4ERoLQuv0",
+            "pkg#platformVersion#ctE8McQtNZQ",
+            "pkg/Shared",
+            "pkg/Platform"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "simpleKmp",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }
@@ -217,7 +217,7 @@
     {
       "name": "jvmMain",
       "elements": {
-        "pkg//jvmOnly/#/PointingToDeclaration/": {
+        "pkg#jvmOnly#KK4ERoLQuv0": {
           "kind": "function",
           "name": "jvmOnly",
           "isCompanion": false,
@@ -236,7 +236,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -252,7 +252,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//platformName/#/PointingToDeclaration/": {
+        "pkg#platformName#KK4ERoLQuv0": {
           "kind": "function",
           "name": "platformName",
           "isCompanion": false,
@@ -271,7 +271,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -287,7 +287,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//platformVersion/#/PointingToDeclaration/": {
+        "pkg#platformVersion#ctE8McQtNZQ": {
           "kind": "property",
           "name": "platformVersion",
           "isLateinit": false,
@@ -309,7 +309,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -324,7 +324,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/": {
+        "pkg/Shared##hDKzvCWNlUY": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -341,7 +341,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -358,7 +358,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared/id/#/PointingToDeclaration/": {
+        "pkg/Shared#id#ctE8McQtNZQ": {
           "kind": "property",
           "name": "id",
           "isLateinit": false,
@@ -380,7 +380,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -395,7 +395,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Shared///PointingToDeclaration/": {
+        "pkg/Shared": {
           "kind": "class",
           "name": "Shared",
           "classKind": "CLASS",
@@ -410,8 +410,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/Shared/Shared/#kotlin.Int/PointingToDeclaration/",
-            "pkg/Shared/id/#/PointingToDeclaration/"
+            "pkg/Shared##hDKzvCWNlUY",
+            "pkg/Shared#id#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -419,7 +419,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/Platform/Platform/#/PointingToDeclaration/": {
+        "pkg/Platform##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -432,7 +432,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/Platform///PointingToDeclaration/": {
+        "pkg/Platform": {
           "kind": "class",
           "name": "Platform",
           "classKind": "CLASS",
@@ -447,7 +447,7 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/Platform/Platform/#/PointingToDeclaration/"
+            "pkg/Platform##KK4ERoLQuv0"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -455,23 +455,23 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//jvmOnly/#/PointingToDeclaration/",
-            "pkg//platformName/#/PointingToDeclaration/",
-            "pkg//platformVersion/#/PointingToDeclaration/",
-            "pkg/Shared///PointingToDeclaration/",
-            "pkg/Platform///PointingToDeclaration/"
+            "pkg#jvmOnly#KK4ERoLQuv0",
+            "pkg#platformName#KK4ERoLQuv0",
+            "pkg#platformVersion#ctE8McQtNZQ",
+            "pkg/Shared",
+            "pkg/Platform"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "simpleKmp",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }
@@ -482,26 +482,26 @@
   "expectActualMappings": [
     {
       "expectIds": {
-        "commonMain": "pkg//platformVersion/#/PointingToDeclaration/"
+        "commonMain": "pkg#platformVersion#ctE8McQtNZQ"
       },
       "actualIds": {
-        "jvmMain": "pkg//platformVersion/#/PointingToDeclaration/"
+        "jvmMain": "pkg#platformVersion#ctE8McQtNZQ"
       }
     },
     {
       "expectIds": {
-        "commonMain": "pkg//platformName/#/PointingToDeclaration/"
+        "commonMain": "pkg#platformName#KK4ERoLQuv0"
       },
       "actualIds": {
-        "jvmMain": "pkg//platformName/#/PointingToDeclaration/"
+        "jvmMain": "pkg#platformName#KK4ERoLQuv0"
       }
     },
     {
       "expectIds": {
-        "commonMain": "pkg/Platform///PointingToDeclaration/"
+        "commonMain": "pkg/Platform"
       },
       "actualIds": {
-        "jvmMain": "pkg/Platform///PointingToDeclaration/"
+        "jvmMain": "pkg/Platform"
       }
     }
   ]

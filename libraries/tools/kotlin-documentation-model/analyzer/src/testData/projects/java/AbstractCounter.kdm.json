@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "example/AbstractCounter/AbstractCounter/#/PointingToDeclaration/": {
+        "example/AbstractCounter##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -17,7 +17,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/AbstractCounter/count/#/PointingToDeclaration/": {
+        "example/AbstractCounter#count#KK4ERoLQuv0": {
           "kind": "function",
           "name": "count",
           "isCompanion": false,
@@ -36,7 +36,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -52,7 +52,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/AbstractCounter/reset/#/PointingToDeclaration/": {
+        "example/AbstractCounter#reset#KK4ERoLQuv0": {
           "kind": "function",
           "name": "reset",
           "isCompanion": false,
@@ -71,7 +71,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+            "classLikeId": "kotlin/Unit",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -87,7 +87,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/AbstractCounter///PointingToDeclaration/": {
+        "example/AbstractCounter": {
           "kind": "class",
           "name": "AbstractCounter",
           "classKind": "CLASS",
@@ -102,9 +102,9 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "example/AbstractCounter/AbstractCounter/#/PointingToDeclaration/",
-            "example/AbstractCounter/count/#/PointingToDeclaration/",
-            "example/AbstractCounter/reset/#/PointingToDeclaration/"
+            "example/AbstractCounter##KK4ERoLQuv0",
+            "example/AbstractCounter#count#KK4ERoLQuv0",
+            "example/AbstractCounter#reset#KK4ERoLQuv0"
           ],
           "visibility": "PUBLIC",
           "modality": "ABSTRACT",
@@ -112,19 +112,19 @@
           "deprecated": null,
           "annotations": []
         },
-        "example////PointingToDeclaration/": {
+        "example": {
           "kind": "package",
           "name": "example",
           "declarations": [
-            "example/AbstractCounter///PointingToDeclaration/"
+            "example/AbstractCounter"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "AbstractCounter",
           "packages": [
-            "example////PointingToDeclaration/"
+            "example"
           ],
           "annotations": []
         }

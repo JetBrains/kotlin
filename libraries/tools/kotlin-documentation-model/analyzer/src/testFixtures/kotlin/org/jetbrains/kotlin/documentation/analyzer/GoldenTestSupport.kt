@@ -209,8 +209,9 @@ internal fun KdAnnotationArgumentValue.renderSource(): String = when (this) {
     is KdAnnotationArgumentValue.Annotation -> annotation.renderSource()
     is KdAnnotationArgumentValue.Array -> elements.joinToString(", ", "[", "]") { it.renderSource() }
     is KdAnnotationArgumentValue.Classlike -> classLikeId.value.split('/')[1] + "::class"
-    is KdAnnotationArgumentValue.EnumEntry -> enumEntryId.value.split('/').let { parts ->
-        parts[1] + parts[2].takeIf(String::isNotEmpty)?.let { name -> ".$name" }.orEmpty()
+    is KdAnnotationArgumentValue.EnumEntry -> enumEntryId.value.split('/', '#').let { parts ->
+        // `pkg/EnumClass#ENTRY#<hash>`: the class name, then the entry name if present.
+        parts[1] + parts.getOrNull(2)?.takeIf(String::isNotEmpty)?.let { name -> ".$name" }.orEmpty()
     }
     is KdAnnotationArgumentValue.Const -> when (val value = expression.value) {
         is KdConstValue.String -> JsonPrimitive(value.value).toString()
@@ -300,7 +301,7 @@ internal fun StringBuilder.appendSignature(
             }
             val superTypes = element.superTypes.filterNot {
                 element.classKind == KdClassKind.ENUM_CLASS &&
-                        (it as? KdClassLikeType)?.classLikeId?.value == "kotlin/Enum///PointingToDeclaration/"
+                        (it as? KdClassLikeType)?.classLikeId?.value == "kotlin/Enum"
             }
             if (superTypes.isNotEmpty()) {
                 append(superTypes.joinToString(", ", " : ") { it.render() })
