@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -168,7 +169,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 expression.argument
 
             builtIns.longType ->
-                builder.irCall(symbols.intToLong).apply {
+                builder.irCall(symbols.intToLong) {
                     arguments[0] = expression.argument
                 }
 
@@ -287,12 +288,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toType == symbols.voidType) {
-            return builder.irCall(symbols.consumeAnyIntoVoid).apply {
+            return builder.irCall(symbols.consumeAnyIntoVoid) {
                 arguments[0] = value
             }
         }
 
-        return builder.irCall(symbols.refCastNull, type = toType).apply {
+        return builder.irCall(symbols.refCastNull) {
+            type = toType
             typeArguments[0] = toType
             arguments[0] = value
         }
@@ -384,7 +386,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         return typeParameter.superTypes.fold(builder.irTrue() as IrExpression) { r, t ->
             val check = generateTypeCheckNonNull(argument.shallowCopy(), t.makeNotNull())
-            builder.irCall(symbols.booleanAnd).apply {
+            builder.irCall(symbols.booleanAnd) {
                 arguments[0] = r
                 arguments[1] = check
             }
@@ -392,7 +394,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
-        return builder.irCall(symbols.wasmIsInterface).apply {
+        return builder.irCall(symbols.wasmIsInterface) {
             arguments[0] = argument
             typeArguments[0] = toType
         }
@@ -435,7 +437,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsSubClassTest(argument: IrExpression, toType: IrType): IrCall {
-        return builder.irCall(symbols.refTest).apply {
+        return builder.irCall(symbols.refTest) {
             arguments[0] = argument
             typeArguments[0] = toType
         }

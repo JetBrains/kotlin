@@ -21,13 +21,17 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -131,34 +135,33 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
 
-        val jsFunction = context.irFactory.buildFun {
+        val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
+        val jsFunction = context.irFactory.irFunction {
             origin = JS_CALL_INTEROP_FUNCTION
             name = function.name
             visibility = DescriptorVisibilities.PUBLIC
             returnType = resultAdapter?.fromType ?: function.returnType
             modality = Modality.FINAL
             isExternal = true
+            parent = function.parent
+            if (jsFunAnnotation != null) annotations = listOf(jsFunAnnotation)
+            // All parameters of the JS function are regular, including the receivers of the adapted function.
+            function.parameters.forEachIndexed { index, functionParameter ->
+                val adapter = valueParametersAdapters[index]
+                valueParameter {
+                    origin = JS_CALL_INTEROP_FUNCTION
+                    name = functionParameter.name
+                    type = adapter?.toType ?: functionParameter.type
+                }
+            }
         }
         function.jsFunctionForExternalAdapterFunction = jsFunction
 
-        jsFunction.parent = function.parent
         function.isExternal = false
         function.name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__externalAdapter")
 
-        val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
         if (jsFunAnnotation != null) {
             function.annotations = function.annotations.filter { it.classSymbol != jsFunAnnotation.classSymbol }
-            jsFunction.annotations = listOf(jsFunAnnotation)
-        }
-
-        function.parameters.forEachIndexed { index, functionParameter ->
-            val adapter = valueParametersAdapters[index]
-            jsFunction.addValueParameter {
-                origin = JS_CALL_INTEROP_FUNCTION
-                kind = functionParameter.kind
-                name = functionParameter.name
-                type = adapter?.toType ?: functionParameter.type
-            }
         }
 
         val builder = context.createIrBuilder(function.symbol)
@@ -528,21 +531,14 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.irFunction {
             name = Name.identifier("$CALL_FUNCTION${info.signatureString}")
             returnType = info.adaptedResultType
             origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
-        }
-        result.parent = currentParent
-        result.addValueParameter {
-            name = Name.identifier("f")
-            type = context.wasmSymbols.wasmStructRefType
-        }
-        var count = 0
-        info.adaptedParameterTypes.forEach { type ->
-            result.addValueParameter {
-                this.name = Name.identifier("p" + count++.toString())
-                this.type = type
+            parent = currentParent
+            valueParameter("f", context.wasmSymbols.wasmStructRefType)
+            info.adaptedParameterTypes.forEachIndexed { index, type ->
+                valueParameter("p$index", type)
             }
         }
         val builder = context.createIrBuilder(result.symbol)
@@ -567,19 +563,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createKotlinToJsClosureConvertor(arity: Int): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.irFunction {
             name = Name.identifier("__convertKotlinClosureToJsClosure_${arity}")
             returnType = jsRelatedSymbols.jsAnyType
             isExternal = true
-        }
-        result.parent = currentParent
-        result.addValueParameter {
-            name = Name.identifier("f")
-            type = context.wasmSymbols.wasmStructRefType
-        }
-        result.addValueParameter {
-            name = Name.identifier("trampoline")
-            type = context.wasmSymbols.wasmFuncRefType
+            parent = currentParent
+            valueParameter("f", context.wasmSymbols.wasmStructRefType)
+            valueParameter("trampoline", context.wasmSymbols.wasmFuncRefType)
         }
         val builder = context.createIrBuilder(result.symbol)
         val jsCode = buildString {
@@ -606,58 +596,49 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         jsClosureCaller: IrSimpleFunction,
     ): IrSimpleFunction {
         val functionType = info.functionType
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.irFunction {
             name = Name.identifier("__convertJsClosureToKotlinClosure_${info.signatureString}")
             returnType = functionType
-        }
-        result.parent = currentParent
-        result.addValueParameter {
-            name = Name.identifier("f")
-            type = jsRelatedSymbols.jsAnyType
+            parent = currentParent
+            valueParameter("f", jsRelatedSymbols.jsAnyType)
         }
 
-        val closureClass = context.irFactory.buildClass {
+        val closureClass = context.irFactory.irClass {
             name = Name.identifier("__JsClosureToKotlinClosure_${info.signatureString}")
-        }.apply {
-            createThisReceiverParameter()
             superTypes = listOf(functionType)
             parent = currentParent
+            thisReceiver()
         }
 
-        val closureClassField = closureClass.addField {
+        val closureClassField = closureClass.irField {
             name = Name.identifier("jsClosure")
             type = jsRelatedSymbols.jsAnyType
             visibility = DescriptorVisibilities.PRIVATE
             isFinal = true
         }
 
-        val closureClassConstructor = closureClass.addConstructor {
+        val parameter: IrValueParameterSymbol
+        val closureClassConstructor = closureClass.irConstructor {
             isPrimary = true
+            parameter = valueParameter(closureClassField.name, closureClassField.type)
         }.apply {
-            val parameter = addValueParameter {
-                name = closureClassField.name
-                type = closureClassField.type
-            }
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                +irSetField(irGet(closureClass.thisReceiver!!), closureClassField, irGet(parameter))
+                +irSetField(irGet(closureClass.thisReceiver!!), closureClassField, irGet(parameter.owner))
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, closureClass.symbol, context.irBuiltIns.unitType)
             }
         }
 
-        closureClass.addFunction {
+        closureClass.irFunction {
             name = Name.identifier("invoke")
             returnType = info.originalResultType
-        }.apply {
-            parameters += buildReceiverParameter {
-                type = closureClass.defaultType
-            }
+            // Not the implicit copy of `thisReceiver`: its origin is `INSTANCE_RECEIVER`.
+            dispatchReceiver { type = closureClass.defaultType }
             info.originalParameterTypes.forEachIndexed { index, irType ->
-                addValueParameter {
-                    name = Name.identifier("p$index")
-                    type = irType
-                }
+                valueParameter("p$index", irType)
             }
+            overriddenSymbols = listOf(functionType.classOrNull!!.functions.single { it.owner.name == Name.identifier("invoke") })
+        }.apply {
             val lambdaBuilder = context.createIrBuilder(symbol)
             body = lambdaBuilder.irBlockBody {
                 val jsClosureCallerCall = irCall(jsClosureCaller)
@@ -671,9 +652,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 }
                 +irReturn(info.resultAdapter.adaptIfNeeded(jsClosureCallerCall, lambdaBuilder))
             }
-
-            overriddenSymbols =
-                overriddenSymbols + functionType.classOrNull!!.functions.single { it.owner.name == Name.identifier("invoke") }
         }
 
         val builder = context.createIrBuilder(result.symbol)
@@ -687,23 +665,17 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     private fun createJsClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
-        val result = context.irFactory.buildFun {
+        val result = context.irFactory.irFunction {
             name = Name.identifier("__callJsClosure_${info.signatureString}")
             returnType = info.adaptedResultType
             isExternal = true
-        }
-        result.parent = currentParent
-        result.addValueParameter {
-            name = Name.identifier("f")
-            type = jsRelatedSymbols.jsAnyType
-        }
-        val arity = info.adaptedParameterTypes.size
-        repeat(arity) { paramIndex ->
-            result.addValueParameter {
-                name = Name.identifier("p$paramIndex")
-                type = info.adaptedParameterTypes[paramIndex]
+            parent = currentParent
+            valueParameter("f", jsRelatedSymbols.jsAnyType)
+            info.adaptedParameterTypes.forEachIndexed { index, type ->
+                valueParameter("p$index", type)
             }
         }
+        val arity = info.adaptedParameterTypes.size
         val builder = context.createIrBuilder(result.symbol)
         val jsFun = buildString {
             append("(f, ")

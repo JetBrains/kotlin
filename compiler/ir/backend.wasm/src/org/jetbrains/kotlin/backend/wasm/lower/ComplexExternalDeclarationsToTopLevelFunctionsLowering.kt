@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrSimpleFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
@@ -129,10 +129,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 "_\$external_prop_getter",
                 resultType = getter.returnType,
                 jsCode = jsCode
-            )
-
-            if (dispatchReceiver != null) {
-                res.addValueParameter("_this", dispatchReceiver.type)
+            ) {
+                if (dispatchReceiver != null) {
+                    valueParameter("_this", dispatchReceiver.type)
+                }
             }
 
             getter.topLevelFunctionForNestedExternal = res
@@ -146,18 +146,18 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 else
                     "(_this, v) => ${propName.toSavePropertyAccess("_this")} = v"
 
+            val setterParameter = setter.parameters.first { it.kind == IrParameterKind.Regular }.type
             val res = createExternalJsFunction(
                 property.name,
                 "_\$external_prop_setter",
                 resultType = setter.returnType,
                 jsCode = jsCode
-            )
-
-            if (dispatchReceiver != null) {
-                res.addValueParameter("_this", dispatchReceiver.type)
+            ) {
+                if (dispatchReceiver != null) {
+                    valueParameter("_this", dispatchReceiver.type)
+                }
+                valueParameter("v", setterParameter)
             }
-            val setterParameter = setter.parameters.first { it.kind == IrParameterKind.Regular }.type
-            res.addValueParameter("v", setterParameter)
 
             setter.topLevelFunctionForNestedExternal = res
         }
@@ -369,20 +369,20 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             "_\$external_fun",
             resultType = returnType,
             jsCode = jsCode
-        )
-        if (dispatchReceiver != null) {
-            res.addValueParameter("_this", dispatchReceiver.type)
-        }
-        valueParameters.forEach {
-            res.addValueParameter(
-                name = it.name,
-                type = if (it.type.isPrimitiveType(false)) it.type else it.type.makeNullable()
-            ).apply {
-                varargElementType = it.varargElementType
+        ) {
+            if (dispatchReceiver != null) {
+                valueParameter("_this", dispatchReceiver.type)
             }
+            for (parameter in valueParameters) {
+                valueParameter {
+                    this.name = parameter.name
+                    type = if (parameter.type.isPrimitiveType(false)) parameter.type else parameter.type.makeNullable()
+                    varargElementType = parameter.varargElementType
+                }
+            }
+            // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
+            repeat(numDefaultParameters) { valueParameter("isDefault$it", context.irBuiltIns.intType) }
         }
-        // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
-        repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         function.topLevelFunctionForNestedExternal = res
     }
 
@@ -412,8 +412,8 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                     appendExternalClassReference(klass)
                 }
             }
-        ).also {
-            it.addValueParameter("x", context.irBuiltIns.anyType)
+        ) {
+            valueParameter("x", context.irBuiltIns.anyType)
         }
     }
 
@@ -434,9 +434,12 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         suffix: String,
         resultType: IrType,
         jsCode: String,
+        builder: IrSimpleFunctionBuilder.() -> Unit = {},
     ): IrSimpleFunction {
-        val res = createExternalJsFunction(context, originalName, suffix, resultType, jsCode)
-        res.parent = currentFile
+        val res = createExternalJsFunction(context, originalName, suffix, resultType, jsCode) {
+            parent = currentFile
+            builder()
+        }
         addedDeclarations += res
         return res
     }
@@ -470,11 +473,13 @@ fun createExternalJsFunction(
     suffix: String,
     resultType: IrType,
     jsCode: String,
+    builder: IrSimpleFunctionBuilder.() -> Unit = {},
 ): IrSimpleFunction {
-    val res = context.irFactory.buildFun {
+    val res = context.irFactory.irFunction {
         name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
         returnType = resultType
         isExternal = true
+        builder()
     }
     val builder = context.createIrBuilder(res.symbol)
     res.annotations += builder.irAnnotation(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
