@@ -36,11 +36,22 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
 
         if (file is KtFile && file.isDangling) {
             val contextModule = computeContextModule(file)
-            val resolutionMode = file.danglingFileResolutionMode ?: computeDefaultDanglingFileResolutionMode(file)
+            val resolutionMode = computeDanglingFileResolutionMode(file)
             return KaDanglingFileModuleImpl(listOf(file), contextModule, resolutionMode)
         }
 
         return null
+    }
+
+    @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+    private fun computeDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode {
+        val copyOrigin = file.copyOrigin
+        if (copyOrigin is KtFile && copyOrigin.isTransparentCopyOrigin) {
+            // 'IGNORE_SELF' takes declarations of the copy origin from the context module, which doesn't contain a transparent copy origin
+            return KaDanglingFileResolutionMode.PREFER_SELF
+        }
+
+        return file.danglingFileResolutionMode ?: computeDefaultDanglingFileResolutionMode(file)
     }
 
     @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.api.projectStructure.isTransparentCopyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
@@ -330,9 +331,18 @@ internal val PsiElement.parentsCodeFragmentAware: Sequence<PsiElement>
 /**
  * The file which a dangling file stands in for: the original of a file copy, otherwise the file of the [KtFile.analysisContext],
  * or `null` if there is neither.
+ *
+ * A [transparent][isTransparentCopyOrigin] original is replaced with its own context file.
  */
 internal val PsiFile.danglingFileContextFile: PsiFile?
-    get() = copyOrigin ?: (this as? KtFile)?.analysisContext?.containingFile
+    get() {
+        val copyOrigin = copyOrigin
+        if (copyOrigin is KtFile && copyOrigin.isTransparentCopyOrigin) {
+            return copyOrigin.danglingFileContextFile
+        }
+
+        return copyOrigin ?: (this as? KtFile)?.analysisContext?.containingFile
+    }
 
 /**
  * The file at the base of the [danglingFileContextFile] chain, skipping context files which are themselves dangling files, or `null` if
