@@ -20,6 +20,37 @@ internal inline val pointerSize: Int
 @TypedIntrinsic(IntrinsicType.INTEROP_GET_POINTER_SIZE)
 internal external fun getPointerSize(): Int
 
+private const val bulkArrayThresholdBytes = 16
+private const val interopChunkBytes = 256 * 1024
+
+// A loop in Kotlin gives the runtime a safepoint between bulk operations.
+private inline fun forEachInteropChunk(byteCount: Long, action: (bytesDone: Long, chunkBytes: Int) -> Unit) {
+    var bytesDone = 0L
+    while (bytesDone < byteCount) {
+        val chunkBytes = minOf(byteCount - bytesDone, interopChunkBytes.toLong()).toInt()
+        action(bytesDone, chunkBytes)
+        bytesDone += chunkBytes
+    }
+}
+
+@GCUnsafeCall("Kotlin_interop_getByteArrayChunk")
+private external fun getByteArrayChunk(source: NativePtr, dest: ByteArray, byteCount: Long, bytesDone: Long, chunkBytes: Int)
+
+@GCUnsafeCall("Kotlin_interop_putByteArrayChunk")
+private external fun putByteArrayChunk(source: ByteArray, dest: NativePtr, byteCount: Long, bytesDone: Long, chunkBytes: Int)
+
+@GCUnsafeCall("Kotlin_interop_getCharArrayChunk")
+private external fun getCharArrayChunk(source: NativePtr, dest: CharArray, byteCount: Long, bytesDone: Long, chunkBytes: Int)
+
+@GCUnsafeCall("Kotlin_interop_putCharArrayChunk")
+private external fun putCharArrayChunk(source: CharArray, dest: NativePtr, byteCount: Long, bytesDone: Long, chunkBytes: Int)
+
+@GCUnsafeCall("Kotlin_interop_zeroMemoryChunk")
+private external fun zeroMemoryChunk(dest: NativePtr, chunkBytes: Int)
+
+@GCUnsafeCall("Kotlin_interop_copyMemoryChunk")
+private external fun copyMemoryChunk(dest: NativePtr, src: NativePtr, byteCount: Long, bytesDone: Long, chunkBytes: Int)
+
 // TODO: do not use singleton because it leads to init-check on any access.
 @PublishedApi
 @UsedFromCompilerGeneratedCode
@@ -48,64 +79,91 @@ internal object nativeMemUtils {
     @TypedIntrinsic(IntrinsicType.INTEROP_READ_PRIMITIVE) external fun getVector(mem: NativePointed): Vector128
     @TypedIntrinsic(IntrinsicType.INTEROP_WRITE_PRIMITIVE) external fun putVector(mem: NativePointed, value: Vector128)
 
-    // TODO: optimize
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
-        val sourceArray = source.reinterpret<ByteVar>().ptr
-        var index = 0
-        while (index < length) {
-            dest[index] = sourceArray[index]
-            ++index
+        if (length < bulkArrayThresholdBytes || length > dest.size) {
+            val sourceArray = source.reinterpret<ByteVar>().ptr
+            var index = 0
+            while (index < length) {
+                dest[index] = sourceArray[index]
+                ++index
+            }
+            return
+        }
+
+        val src = source.rawPtr
+        val byteCount = length.toLong()
+        forEachInteropChunk(byteCount) { bytesDone, chunkBytes ->
+            getByteArrayChunk(src, dest, byteCount, bytesDone, chunkBytes)
         }
     }
 
-    // TODO: optimize
     fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
-        val destArray = dest.reinterpret<ByteVar>().ptr
-        var index = 0
-        while (index < length) {
-            destArray[index] = source[index]
-            ++index
+        if (length < bulkArrayThresholdBytes || length > source.size) {
+            val destArray = dest.reinterpret<ByteVar>().ptr
+            var index = 0
+            while (index < length) {
+                destArray[index] = source[index]
+                ++index
+            }
+            return
+        }
+
+        val dst = dest.rawPtr
+        val byteCount = length.toLong()
+        forEachInteropChunk(byteCount) { bytesDone, chunkBytes ->
+            putByteArrayChunk(source, dst, byteCount, bytesDone, chunkBytes)
         }
     }
 
-    // TODO: optimize
     fun getCharArray(source: NativePointed, dest: CharArray, length: Int) {
-        val sourceArray = source.reinterpret<ShortVar>().ptr
-        var index = 0
-        while (index < length) {
-            dest[index] = sourceArray[index].toInt().toChar()
-            ++index
+        if (length < bulkArrayThresholdBytes / Char.SIZE_BYTES || length > dest.size) {
+            val sourceArray = source.reinterpret<ShortVar>().ptr
+            var index = 0
+            while (index < length) {
+                dest[index] = sourceArray[index].toInt().toChar()
+                ++index
+            }
+            return
+        }
+
+        val src = source.rawPtr
+        val byteCount = length.toLong() * Char.SIZE_BYTES
+        forEachInteropChunk(byteCount) { bytesDone, chunkBytes ->
+            getCharArrayChunk(src, dest, byteCount, bytesDone, chunkBytes)
         }
     }
 
-    // TODO: optimize
     fun putCharArray(source: CharArray, dest: NativePointed, length: Int) {
-        val destArray = dest.reinterpret<ShortVar>().ptr
-        var index = 0
-        while (index < length) {
-            destArray[index] = source[index].code.toShort()
-            ++index
+        if (length < bulkArrayThresholdBytes / Char.SIZE_BYTES || length > source.size) {
+            val destArray = dest.reinterpret<ShortVar>().ptr
+            var index = 0
+            while (index < length) {
+                destArray[index] = source[index].code.toShort()
+                ++index
+            }
+            return
+        }
+
+        val dst = dest.rawPtr
+        val byteCount = length.toLong() * Char.SIZE_BYTES
+        forEachInteropChunk(byteCount) { bytesDone, chunkBytes ->
+            putCharArrayChunk(source, dst, byteCount, bytesDone, chunkBytes)
         }
     }
 
-    // TODO: optimize
-    fun zeroMemory(dest: NativePointed, length: Int): Unit {
-        val destArray = dest.reinterpret<ByteVar>().ptr
-        var index = 0
-        while (index < length) {
-            destArray[index] = 0
-            ++index
+    fun zeroMemory(dest: NativePointed, length: Int) {
+        val dst = dest.rawPtr
+        forEachInteropChunk(length.toLong()) { bytesDone, chunkBytes ->
+            zeroMemoryChunk(dst + bytesDone, chunkBytes)
         }
     }
 
-    // TODO: optimize
-    fun copyMemory(dest: NativePointed, length: Int, src: NativePointed): Unit {
-        val destArray = dest.reinterpret<ByteVar>().ptr
-        val srcArray = src.reinterpret<ByteVar>().ptr
-        var index = 0
-        while (index < length) {
-            destArray[index] = srcArray[index]
-            ++index
+    fun copyMemory(dest: NativePointed, length: Int, src: NativePointed) {
+        val dst = dest.rawPtr
+        val source = src.rawPtr
+        val byteCount = length.toLong()
+        forEachInteropChunk(byteCount) { bytesDone, chunkBytes ->
+            copyMemoryChunk(dst, source, byteCount, bytesDone, chunkBytes)
         }
     }
 
