@@ -1,0 +1,65 @@
+#+Title: Compose milestone-1 harness: hot vs plain benchmark
+#+Date: 2026-11-26
+
+* Setup
+
+- *Harness*: headless composition driven from JS — Recomposer +
+  BroadcastFrameClock + SlotTable, no UI toolkit, no skiko
+  (=wasm-repl-spike/compose/app/src/main.kt=).
+- *Mode*: DEVELOPMENT in both arms — compiler output is unoptimized
+  (no Binaryen on either arm; the plain monolith gets the wasm
+  backend's own reachability DCE, the hot image gets none).
+  The hot image is the reload runtime: hot stdlib base + one wasm per
+  library + the app module (10 module instances).
+- *Toolchain*: our dist (wasm-hot-reload-codegen branch, 2.5.255),
+  both arms; compose compiler plugin built from the same dist.
+- *Deps*: androidx compose runtime 1.9.4 (CMP 1.9.3 redirect),
+  kotlinx-coroutines 1.8.1, androidx.collection 1.5.0, atomicfu 0.27.0.
+- *Protocol*: node 25 (V8), wasm-js target; 2000 warmup + 100k
+  recompositions per sample, 5 samples per run; INTERLEAVED plain/hot
+  runs on the same machine state, medians taken after stabilization.
+  (Sequential runs-after-builds overstate plain by warm-up noise —
+  the first 5.1× reading was that artifact.)
+
+* Results
+
+| workload                     | plain monolith | hot image | ratio |
+|------------------------------+---------------+-----------+-------|
+| recomposition (bumpRemembered) | ~161 ns      | ~1127 ns  |  7.0× |
+| invalidation (__hot_invalidate) | ~168 ns     | ~1150 ns  |  6.8× |
+
+| size                         |      raw | gzipped | ratio     |
+|------------------------------+---------+---------+-----------|
+| plain monolith               | 4.82 MB | 1.06 MB |           |
+| hot image (10 modules)       | 13.23 MB | 2.97 MB | 2.7×/2.8× |
+
+* Why: the attribution microbench (per-op medians, quiet machine)
+
+| tax                       | plain    | JS (ICs) | hot     | hot/plain |
+|---------------------------+----------+----------+---------+-----------|
+| named calls (fib(30))     | 2.13 ms  |        — | 3.32 ms | 1.5×      |
+| field RMW (p.x = p.x + 1) | 0.5 ns   | 1.05 ns  | 1.4 ns  | 2.8×      |
+| box/unbox through Any     | 1.8 ns   | 1.05 ns  | 7.1 ns  | 3.9×      |
+| virtual dispatch          | 0.3 ns   | 0.43 ns  | 1.5 ns  | ~5×       |
+
+The JS column is the reality check: hot-mode field access is within
+35% of a JavaScript property access — the payload ref.test is the
+same shape as an inline cache's map check. IC systems look cheap
+because their baselines already pay 1-3 ns/op; ours is a monolith
+where TurboFan eliminates the op entirely. The one above-family
+component is the Any-box path (allocate + payload check +
+cross-instance getOrBox vs JS's zero-alloc SMI tagging).
+
+Plain's 0.5 ns/iter field loop is loop overhead alone — TurboFan
+eliminates the access. The hot path must re-read the mutable payload
+pointer and re-test its type per access: the tax is *optimizer
+freedom*, not instruction count.
+
+* Easy-fix check (negative result)
+
+Fusing every hot fast path (ref.test + re-load + ref.cast into one
+=br_on_cast_fail=) across all four arms — field read/write, class
+dispatch, itable dispatch — measures at exactly zero effect: 7.0×
+before and after. No instruction-level trick closes this gap;
+the remaining levers change semantics or architecture (scoping the
+hot set to delta modules, typed per-signature fdefn cells).

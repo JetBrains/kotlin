@@ -1,0 +1,919 @@
+#+TITLE: Hot Reload for Kotlin/Wasm
+#+SUBTITLE: (Fast) Live image development
+#+AUTHOR: Charlie Zhang
+#+OPTIONS: H:2 toc:t num:nil ^:nil
+#+LATEX_CLASS_OPTIONS: [10pt,presentation]
+#+LANGUAGE: en
+# Beamer: swap in a theme you like; metropolis needs the package installed.
+#+BEAMER_THEME: metropolis
+#+BEAMER_HEADER: \addtobeamertemplate{title page}{}{\vskip-14pt}
+#+BEAMER_HEADER: \usepackage{tikz}\usetikzlibrary{arrows.meta,positioning}
+#+BEAMER_HEADER: \usepackage{alltt}
+#+BEAMER_HEADER: \usepackage{listings}
+#+BEAMER_HEADER: \lstdefinelanguage{kotlin}{morekeywords={fun,val,var,if,else,for,while,return,when,class,object,interface,companion,override,open,is,in,Int,Long,Short,Byte,Char,Boolean,Unit,Float,Double,String},sensitive=true,morecomment=[l]{//},morecomment=[s]{/*}{*/},morestring=[b]"}
+#+BEAMER_HEADER: \lstset{basicstyle=\ttfamily\small,keywordstyle=\bfseries,commentstyle=\itshape\color{black!55},showstringspaces=false}
+#+BEAMER_COLOR_THEME: default
+#+STARTUP: beamer
+
+* Background
+** What is hot reload?
+- Edit code $\Rightarrow$ immediate reload feedback without restarting the
+  application
+  + Most importantly, the state survives
+  + e.g. scroll position, navigation stack, half-filled form.
+- In the context of a typical Kotlin/Compose workflow, saving a =.kt=
+  file under hot-reload will instantly update your webapp with those
+  changes without throwing away the state.
+- This kind of on-the-fly code redefinition in the running image also
+  underpins classical REPLs a la Lisp, Smalltalk.
+
+** What's out there?
+
+#+ATTR_LATEX: :font \footnotesize\setlength{\tabcolsep}{3pt}
+| System                    | Mechanism                      | Allowed changes        |
+|---------------------------+--------------------------------+------------------------|
+| JVM HotSwap               | bytecode replacement           | method bodies only     |
+| JVM agents / DCEVM        | class redefinition (Live Edit) | bodies + limited shape |
+| Vite / React Fast Refresh | module swap + runtime hooks    | per-component rules    |
+| Flutter hot reload        | tree rebuilt over state        | most state             |
+| Lisp / Smalltalk images   | late binding for everything    | everything             |
+
+- The motivating case for us: *Compose*. UI iteration is dominated by
+  the edit $\to$ save $\to$ compile $\to$ reload $\to$ display loop; JetBrains
+  ships Compose Live Edit on the JVM because having this feedback loop
+  short makes development productive and *fun*.
+  + Waiting for the compiler and reconstructing state breaks flow state.
+  + $\Rightarrow$ The demand is real.
+
+** Requirements
+
+1. *Edit-to-screen under a second* from real file saves
+2. *State survival*: data/objects persist even when the
+   behavior/classes they belong to change. No application restarts.
+3. *Graceful error handling*: a rejected change due to e.g. compiler
+   errors or traps shows an error overlay while the app keeps running
+   the old code
+4. Works with the user's existing dev environment.
+   + Most simple generic form is reload on editor save.
+
+* Previous and preliminary work
+
+** Recently developed prerequisites
+- Igor prototyped a version of hot-reload for Wasm ~2 years ago
+  + Could do things like method redefinitions, but hacked together
+- Since then, 3 important features independent of hot-reload mainlined
+  for Wasm that are a requirement for *short dev loops* (issue 1).
+   1. *Multi-module compilation*
+   2. *Stable signatures*
+   3. *Wasm incremental compilation*
+- Together, these allow us to speed up the dev loop by allowing us to
+  create small modules containing only code that is added or changed,
+  while importing dependencies from existing modules.
+- Independent of state survival: you can imagine a hot reload where
+  the whole application is recompiled into a single module as long as
+  loading preserves state, but this can take a long time.
+
+** Multi-module compilation
+- Allows one compilation to emit several wasm modules, with
+  declarations imported across module boundaries.
+- Without this, we'd only be able to hot-reload one large monolith
+  containing the entire program, including the stdlib and all other
+  libraries, every time.
+
+** Stable signatures
+- Makes every declaration carry a cross-compilation identity that
+  survives klib serialization and orders type emission
+- For Wasm, it means type rec groups are emitted deterministically and
+  ordered by stable signature, so two independently compiled modules
+  declaring the same class emit *byte-identical* type sections.
+- V8 canonicalizes identical rec groups into one runtime type:
+  *type identity across separately compiled modules*.
+- Without this, it would be difficult for the engine to know that
+  objects across different modules are the same and it would be
+  difficult to type-check values crossing module boundaries.
+
+** Incremental compilation (Wasm IC)
+- Allows only compiling parts of the program that have changed since
+  the last compilation via use of per-file lowered fragments, cached,
+  with precise dirty set.
+- Whereas multi-module compilation allows loading individual modules
+  of Wasm code, IC allows detecting differences in source and only
+  compiling sources that have changed.
+- Inline functions are content-hashed — a changed inline dirties all
+  its *callers' files* too (exactly the propagation semantics hot
+  reload needs).
+- Without this, we would not know which files need to be recompiled
+  when the sources change and how to handle inlining correctly either.
+  + Avoids re-lowering non-dirty files, even if their IRs are needed
+    for linkage/other resolution purposes (think types etc).
+
+
+* Coordinating the compiler server
+
+** In-image compilation or compiler server?
+- We don't have in-image K2wasm compiler in the browser.
+  + Possible in theory; we haven't tried it.
+- No in-image loader: V8 exposes nothing that links or patches modules
+  from inside a module: New Wasm code must be loaded from the
+  environment host (JS for wasm/js).
+- Current solution: send Kotlin code to a JVM Kotlin compile server,
+  ship the resulting wasm module to the host to get loaded in the
+  running image.
+
+** Pros and cons
+
+*Pros*
+
+- No compiler in the browser needed
+  + Saves on download, compiler bootstrap; the image self-hosts
+    *runtime* machinery only
+- Reuses existing daemon + IC stuff
+- The compiler can keep heavyweight state (analysis, PSI, caches) that
+  would never fit the page
+
+*Cons*
+
+- An extra trip on every edit: the delta bytes must cross the wire
+- The compiler is not itself hot-reloadable
+  + Misses out on Lisp-style hack on the compiler while using the
+    compiler.
+- The compiler doesn't know about the state of the live image
+  + Compatibility issues are discovered at load time/run time, not
+    diagnosed at compile time.
+
+* Compiler work: Making the runtime and codegen redefinition amenable for state survival
+
+** Wasm-specific challenges for state survival
+- A wasm module is immutable once validated; an instance is frozen
+  w.r.t its imports + globals + code addresses.
+- No JVM-style class redefinition exists in Wasm: there is no engine
+  API that replaces a function body or a struct type inside a live
+  instance.
+- The *only* thing an engine lets you do is instantiate *more* modules
+  and load them into the host runtime (e.g. V8, wasi runtimes, etc)
+- So: we need a lot of code generation support from the compiler
+  backend to do redefinition.
+  + Only thing we can do: compile new code into modules, load it into
+    the existing process/image via the host, coordinate the
+    loader/runtime to overwrite existing behavior (somehow)
+
+** Existing codegen
+- Normally, the wasm backend emits calls with eager linkage - ~call
+  $f~ addresses the function's own module or through its own module's
+  imports.
+- Modules are sealed: a mutable global, an object, or a slot /cannot
+  move/ between instances.
+- So already loaded functions can never call newly loaded code or be
+  redefined themselves.
+- Classes pose even more of a problem for redefinition: their types
+  are translated into wasm structs where everything is strongly typed
+  and the layout fixed ahead of time.
+  + Object getters/setters/type tests fixed against these types in the
+    bytecode.
+  + No JVM-like solution exposed on the engine level for bytecode
+    replacement.
+
+** Make everything indirect
+- Solution: We can add a new compilation mode that changes low-level
+  codegen to make everything redefinable
+  + with =-Xwasm-hot-reload= we can have the dynamic language of our
+    dreams
+- Main affected pieces:
+  + Function/method redefinition (indirect linkage with lazy
+    resolution)
+  + Class redefinition (indirect layouts with lazy obsolete instance
+    migration)
+- Borrow implementation ideas heavily from Lisp/Smalltalk codegen and
+  runtime support where they do precisely this: everything is
+  redefinable inside a running image.
+  + Additionally, figure out how to map those ideas to a
+    strongly-statically-typed bytecode world.
+
+** High level overview of new machinery
+- Wrap all function calls through an indirect function *cell*.
+  + At module-load time, the module initializer looks up the function
+    cell by name and writes the new funcref into the cell.
+- Similarly, separate structs representing classes into layout
+  metadata and field payload data.
+  + Objects are then wrapped with indirections to runtime descriptions
+    of the classes they belong to and field payload data.
+  + Layouts are `metaclass` Wasm structs describing object layouts and
+    keyed by name in the image
+  + At module-load time, the module initializer handles class
+    redefinitions by invalidating old layouts which causes existing
+    objects to migrate to their new layouts lazily
+- Notably, these indirection cells/layouts are first-class GC objects,
+  so they can cross module instance boundaries and be shared
+
+** A running example: fun double
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+#+BEGIN_SRC kotlin
+fun double(n: Int): Int = n * 2  // module A: the callee
+
+fun render(): String =           // module B: a caller
+    "count: ${double(21)}"
+
+val held: (Int) -> Int = ::double  // funcref in a val
+#+END_SRC
+
+- ~render~'s call and ~held~'s funcref are callers of ~double~
+- The next slides show what ~double~ compiles to and what happens when
+  a new module redefines it live.
+- Methods work in the same way as top-level functions.
+
+** Indirect linkage: function cells
+#+BEGIN_EXAMPLE
+;; the function cell type: called fdefn:
+(type $fdefn (sub (struct (field $fn (mut funcref)))))
+;; double's signature type (real output: anonymous):
+(type $sig_double (func (param i32) (result i32)))
+#+END_EXAMPLE
+- The stdlib keeps a ~HashMap<String, fdefn>~ table in the running
+  image
+  + Exposes some functions to register and lookup =fdefn= s.
+- Every call of ~double~ in a module goes through a module-global
+  holding the callee's cell.
+- The module initializer resolves the cell at load and creates it on
+  first definition.
+** Indirect linkage: function cells (cont.)
+#+BEGIN_EXAMPLE
+;; the cell global (will be overwritten at load time)
+(global $__hot_cell$double#4f2a (mut (ref null $fdefn))
+  ref.func $double struct.new $fdefn)
+
+;; an entry stub is registered under double's real key:
+(func $__hot_entry$double#4f2a (param i32) (result i32)
+  local.get 0
+  global.get $__hot_cell$double#4f2a
+  struct.get $fdefn $fn
+  ref.cast (ref $sig_double)  ;; per-call type check
+  call_ref $sig_double)
+
+;; render's call site is just an ordinary call:
+...
+  call $__hot_entry$double#4f2a
+#+END_EXAMPLE
+
+- Vtable slots and funcrefs are just ~ref.func~ of the entry stub.
+
+** The redefinition, step by step
+
+- *At save*: ~fun double(n: Int) = n * 4~ compiled to new module C
+- *At load*: C's init resolves ~"double#4f2a"~ against the image: it
+  finds A's SHARED cell and installs C's impl via one ~struct.set~.
+  The new body is live once loading finishes
+- *Unchanged and unaware*: every caller (e.g. ~render~'s call site,
+  the funcref ~held~, any vtable slots) resolves to the entry, which
+  reads the cell per call. No need to patch anything.
+- *A different signature?* Creates a new overload with its own name
+  and cell; old callers untouched. (Like in Julia).
+
+** Making classes runtime redefinable
+- With wasm, objects of a struct type are frozen to a given layout;
+  wasm GC subtyping can only *extend* field lists, and types are
+  canonicalized by content.
+- What we want: old instances keep working, new code sees new fields,
+  and identity survives.
+- The naive solution of redeclaring with extra fields breaks type
+  identity across modules; old objects are stuck with the old
+  (obselete) type.
+- The rest of this section follows one example class through the hot
+  reload machinery that solves these issues.
+
+** An example: class Model
+
+#+BEGIN_EXAMPLE
+class Model(val label: String, val count: Int) {
+    var hits = 0
+    fun bump() { hits++ }
+}
+#+END_EXAMPLE
+
+- Imagine adding a new field ~val name: String~
+  + Existing instances *must* keep their state and identity.
+- The compiler will have to create a new module with a new class
+  definition that can be reloaded and effect old =Model= objects.
+
+** Runtime layouts
+- We add a runtime descriptor called a layout that describes a class
+  + It itself is an ordinary stdlib Kotlin class containing:
+    - the class's current vtable + itable
+    - an ~allocate~ closure responsible for creating a payload
+      structure with the shape of the layout described by this
+      descriptor. Only the defining module can build the layout
+      because type signatures can't be created at runtime, so the
+      closure is built in the same module.
+    - a vector of slot (field) descriptions of ~HotSlot{nameTag,
+      typeTag, reader, writer}~
+    - Tags are the slot's name hash + type tag
+- For ~Model~, the slot vector is ~label~, ~count~, ~hits~
+  + This runtime information is what lets existing objects migrate
+    lazily to new class definitions.
+- Terminology note: The word field is a bit overloaded in this case
+  because they also describe Wasm type fields
+  + I use slot to mean a Kotlin field.
+
+** The structs (1/2): cell and payload
+
+#+LATEX: \small
+#+BEGIN_EXAMPLE
+// the CELL — every object's stable shape
+struct Model {
+  VTable  vtable;     // root-typed, mutable
+  ITable  itable;
+  Rtti    rtti;
+  Payload payload;    // root-typed, mutable
+}
+
+// the PAYLOAD — Model's fields, swappable in place
+struct Model$payload {
+  int       _hashCode;
+  HotLayout *$layout;   // stamped at birth
+  String    label;
+  int       count;
+  int       hits;
+}
+#+END_EXAMPLE
+#+LATEX: \normalsize
+
+** The structs (2/2): layout and slot
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+
+#+LATEX: \small
+#+BEGIN_EXPORT latex
+\begin{alltt}
+// the LAYOUT — the runtime class descriptor
+struct HotLayout \{
+  VTable  vtable;     // the CURRENT dispatch half
+  ITable  itable;
+  Rtti    rtti;       // interface gains stay hot
+  funcref allocate(); // allocares a payload of this shape
+  HotSlot slots[];    // one per field
+\}
+
+// the SLOT descriptor:
+struct HotSlot \{
+  long    nameTag;    // the slot's name hash
+  long    typeTag;    // its type's class identity
+  funcref reader;     // (anyref) \ensuremath{\to} anyref
+  funcref writer;
+\}
+\end{alltt}
+#+END_EXPORT
+#+LATEX: \normalsize
+
+** Class representation in Wasm
+
+#+BEGIN_EXAMPLE
+(type $Any$payload  ;; the ROOT payload
+  (sub (struct (field $_hashCode (mut i32))
+       (field $$layout (ref null $HotLayout)))))
+(type $Model (sub $AnyCell
+  (struct ...vtable/itable/rtti...
+    (field (mut (ref null $Any$payload))))))
+#+END_EXAMPLE
+- All types like =$Model= are subtypes of the *cell* containing
+  ~{vtable, itable, rtti, payload}~
+  + Invariant under redefinition.
+- The payload field is mutable, typed at the *root* payload type
+  holding a pointer to a layout
+  + The layout is hence reachable from *any* object, without knowing
+    what type to cast to.
+- Reading a field then means casting to a specific payload type and
+  calling =struct.get=.
+  + See Step 3 for the emitted form.
+
+** Class tutorial: the map
+With this encoding in place, the following six steps will demonstrate
+what happens to the class (running example: ~Model~):
+
+1. *compile & load*: creates the cell + payload + per-slot closures
+   for the module; loading registers the layout in the image's layout
+   table
+2. *allocate*: stamp ~$layout~ into the fresh payload
+3. *access*: ~ref.test~ fast path; a miss does a dynamic lookup
+4. *redefine & migrate*: the next load replaces the layout;
+   updateInstance on the first stale access (step 6)
+5. *old code*: reads by name through the image
+6. *dispatch*: if obsolete vtable / itable / RTTI, then
+   migrate. retry.
+
+You can see that migration is lazy (on-first access).
+
+Upshot: *old instances keep working, new code sees new fields,
+identity survives.*
+
+** Step 1 — compile & load
+
+#+BEGIN_EXAMPLE
+;; per class, at load (the module's init):
+layout = image.hotLayoutsRegister(classId,
+    vtable, itable, rtti, allocate)
+image.hotLayoutsAddSlot(classId,   ;; per field:
+    nameTag, typeTag, reader, writer)
+layoutGlobal$Model = layout  ;; module-local
+#+END_EXAMPLE
+- The cell type, payload struct (keyed by class), and per-slot
+  closures with erased signatures (reader, writer, allocator) compiled
+  into the module
+  + The concrete casts live *inside* each closure like with fdefn entries.
+- Load time registers these in the image by setting the current layout
+  in a map from classId $\to$ current layout.
+  + Similar to the fdefinition map.
+- Putting RTTI's in the layout allows us to dynamically add interface
+  supertypes as well.
+
+** Step 2 — allocation stamps the layout
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{alltt}
+;; allocation: struct.new $payload, then
+$layout \ensuremath{\leftarrow} layoutGlobal$Model   ;; one instruction
+;; \ensuremath{\to} every instance names its own payload shape
+\end{alltt}
+#+END_EXPORT
+
+- Every allocation stamps the payload's ~$layout~ from the module's
+  layout global. Since the field is *root*-typed, any code reaches the
+  layout with one ~struct.get~ without a cast needed first.
+- A module that only instantiates a class defined elsewhere (like from
+  the stdlib) need no layout global for it, load-time just asks the
+  image for the class's current layout.
+- For bootstrap, the classes defining this machinery (layout is a
+  Kotlin class for example) get null layouts (redefining the layout
+  class themselves would cause a vicious meta-circle).
+  + Irrelevant for application developer.
+
+** Steo 3 - fast field access, with fallback
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{alltt}
+local.get $cell
+struct.get $Any 3            ;; payload, root-typed
+ref.test (ref $payload$Model)
+if  ;; fast path: payload is the current layout's payload
+  ref.cast; struct.get       ;; inline access
+else ;; slow: dynamic lookup
+  $cell, nameTag, typeTag \ensuremath{\to} slotValue
+end
+\end{alltt}
+#+END_EXPORT
+
+- For simple field addition redefinitions, the fast path is also
+  reached, since we use subtyping in that case.
+- The slow path triggers migration (the payload gets swapped out), so
+  future accesses will be fast.
+  
+** Step 4 — redefinition & migration
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{alltt}
+updateInstance(cell, classId, to):
+  from = payload.$layout        ;; EQ identity
+  if from !== to:               ;; shapes differ
+    fresh = to.allocate()  ;; news the new shape
+    copy _hashCode + same-named,
+      same-TAGGED slots: reader \ensuremath{\to} writer
+    cell.payload = fresh        ;; swap IN PLACE
+\end{alltt}
+#+END_EXPORT
+
+- Migration entered through slow path access.
+ + Code to do so is just normal stdlib kotlin.
+- Accessor funcrefs come from the defining module since that's where
+  the static types are.
+- A retyped slot is *not* copied, since a copy would trap the writer's
+  cast mid-migration; it just takes its type default, everything else
+  migrates cleanly
+  + Could also make the field do its initializer (not done yet)
+- *One shot, in place*: the cell is never reallocated, so identity
+  never changes.
+
+** Redefinition, diagrammed (add ~val name: String~)
+
+#+BEGIN_EXPORT latex
+\begin{tikzpicture}[
+  font=\footnotesize,
+  box/.style={draw=black!60, rounded corners=2pt, inner sep=5pt, align=left, fill=black!4},
+  arr/.style={-{Stealth[length=2.4mm]}, black!75, thick},
+  lbl/.style={font=\scriptsize, text=black!55, align=center, inner sep=1pt},
+]
+\node[box, fill=black!10] (table)
+  {\textbf{image table}: \texttt{Model} $\to$ \textbf{L2}};
+\node[box, below=6mm of table] (l2)
+  {\textbf{L2} — the current layout\\ (what the new load registered)};
+\node[box, left=16mm of l2, draw=black!40, dashed] (l1)
+  {\textbf{L1} — superseded\\ (what old instances were born with)};
+\node[box, below=6mm of l1] (old)
+  {\textbf{old instance}\\ \texttt{\$layout} $\to$ L1};
+\draw[arr] (table) -- (l2);
+\draw[arr] (old) -- (l1);
+\draw[arr, dashed] (l1.north) to[out=55,in=125]
+  node[above, lbl] {reader $\to$ writer} (l2.north);
+\draw[arr, dashed] (old.east) to[out=-10,in=-115]
+  node[below, lbl] {updateInstance} (l2.south);
+\end{tikzpicture}
+#+END_EXPORT
+
+- Old instances keep L1 until first stale access; new allocations
+  stamp L2.
+- =L2 = L1= plus the ~name~ slot: the copy runs reader $\to$ writer
+  per shared slot (here: added ~name~ with a type-default =""=)
+  + Since the slot lists are computed at *runtime*, the compiler
+    doesn't need to know about how things used to be just to emit the
+    right static types to bytecode for migration.
+  # + Older class redefinition prototypes needed the compiler to know
+  #   about old versions for migration because of static type stuff,
+  #   this solution avoids all that.
+
+** Step 5 — old code reads by name
+
+- A dynamic call to ~hotLayoutsSlotValue(cell, nameTag, typeTag)~
+  derives the *concrete* class from the instance's RTTI klassId and
+  migrates if it is stale.
+  + Reads the slot and returns the value by looking up the associated
+    reader closure through the current layout through the current
+    layout and calling it.
+- The lookup is done by tags: ~nameTag~ is the slot's name hash;
+  ~typeTag~ is its type's class identity plus a nullability bit
+  + tag-equal means cast-compatible by construction.
+- A deleted or retyped slot *throws a catchable exception* ("unbound
+  slot")
+  + The field is gone, not shadowed.
+- Function-typed slots
+  + A funcref is not an anyref (wasm's func and
+  any hierarchies are disjoint)
+  + We can just box the value to make the machinery Wasm type-check
+    without duplicating the code.
+  + Migration then copies the box like with any other slot.
+
+** Step 6 — dispatch: migrate, then retry
+
+#+BEGIN_EXAMPLE
+;; virtual call, emitted:
+vtable = cell.vtable
+ref.test $vtable_expected
+if (pass) cast + call slot
+else hotVtableUpdate(cell) ;; then RETRY
+#+END_EXAMPLE
+
+- Migration code reads the RTTI klassId $\to$ current layout $\to$
+  install(vtable, itable, RTTI)
+  +  the new grown vtable is a *subtype of the old one*, so the
+     retry's cast still passes
+  + a method added later can still dispatch on old objects defined
+    before the method existed.
+- Interface supertype additions work as well: interfaces erase from
+  every signature; the RTTI =id= list and =itable= slots are just
+  runtime data.
+  + the itable lookup renders null on a stale RTTI, the migrator
+    installs the *current* RTTI + itable, and the instance answers ~is
+    I~ and dispatches after one migration.
+
+** Worked example summary
+
+- *v1*: ~class Model(val label: String, val count: Int)~ with a
+  million live instances.
+- *At save*: Add ~val name: String~
+  + A new payload shape is compiled and registered at load:
+    =image[Model] = current=
+  + Nothing migrates yet.
+- *First new-code access*: ~updateInstance~ runs when =ref.test=
+  misses
+  + =label=, =count= copied, =name= defaulted; the payload swapped
+    *in place*
+  + identity kept.
+- *Old code*: reads =label=, count by =name= through the layout (slow path)
+
+** What each edit does — compatible changes
+
+#+ATTR_LATEX: :font \scriptsize :align p{0.16\textwidth} p{0.34\textwidth} p{0.36\textwidth}
+| edit                   | mechanism                                                                                                | old instances                                                            |
+|------------------------+----------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------|
+| body-only              | loader just installs new bodies into the shared cells                                                    | run new bodies via vtables                                               |
+| add fields             | allocagte new payload; the module registers the new layout                                               | migrate lazily on first access (update-instance); identity + values kept |
+| add open method        | vtable grows (behind the mutable root-typed field)                                                       | new method callable on old instances; overrides still win                |
+| interface default body | the itable installs with the vtable (same migration)                                                     | swaps hot on live instances                                              |
+
+** What each edit does — incompatible changes
+
+#+ATTR_LATEX: :font \scriptsize :align p{0.22\textwidth} p{0.32\textwidth} p{0.32\textwidth}
+| edit                                  | mechanism                                                                                                     | outcome                                                                                                                                                       |
+|---------------------------------------+---------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| delete field / change its type        | new payload is a *sibling* (wasm subtyping never shrinks)                                                     | migration copies same-named same-typed slots (a retyped slot takes a default); old code touching the changed slot *throws a catchable exception* in the image |
+| gain a class supertype, flip finality | the cell chain is part of every signature mentioning the class — the engine rejects the patch's instantiation | old code keeps running; stranded bindings reported                                                                                                            |
+
+# ** Where the machinery lives
+
+# - *Stdlib Kotlin* (hotReload.kt — readable, debuggable): both tables
+#   (fdefinition cells, classId $\to$ layout), the layout objects, the
+#   WHOLE generic machinery — the resolve, updateInstance's copy loop,
+#   slot-value's scan, the vtable stepper.
+# - *Backend primitives* (~13, ~10 lines each, intrinsic): payload
+#   get/set, the layout read, the RTTI klassId, dispatch install, the
+#   erased slot calls — upstreamable reftypes intrinsics; the non-hot
+#   build lowers them to ~unreachable~ (the plain stdlib stays valid).
+# - *Link-emitted* (~300 lines of IR-builder): the cell-reading entries,
+#   genesis inits, per-class layout globals, the init's registrations,
+#   the per-slot closures — payload-level access is below Kotlin's type
+#   system, and only a module can name its own declarations.
+# - Instances pin their defining modules through the ~$layout~ pointer;
+#   superseded layouts live only while old instances still point at
+#   them.
+
+* Edge cases
+
+** Top-level properties
+- What to do with =val x = object { ... }=?
+- Compose developers probably just expect the object to gain new
+  fields/methods or delete old things
+  + Not that the object gets created anew because the top-level
+    property is redefined.
+- This is acheived by just migrating fields over with the same
+  mechanism as before so singletons keep state.
+  + Just need the compiler to special case this top-level property on
+    object shape.
+
+* How I developed this
+** Demo
+- Everything discussed in these slides is implemented.
+- Demo video in #kotlin-wasm-internal
+** GLM is pretty good
+- It couldn't come up with any of the codegen ideas discussed here
+  (luckily Lisp exists)
+- But very useful for creating JS scaffolding, compiler changes,
+  debugging, dealing with gradle for compiler builds.
+  + It understands how IC works!
+
+    
+* COMMENT How the IC slots in
+
+** The delta is the compilation unit
+
+- In a hot + multimodule link, the artifact's files partition by the
+  IC's ~isModified()~: *modified files are defined*, clean files'
+  declarations are *imported from the live patch chain* under the
+  artifact's own module name.
+- No extra flag, no manifest: the whole-module case is just
+  "all files dirty"; a cold cache emits the full patch *by
+  construction*.
+- Cross-file inline edits propagate for free — the IC's inline hashing
+  dirties every caller's file, and the delta re-emits them with the new
+  body inlined.
+
+** Clean vs dirty, per declaration
+
+- *Function* (incl. accessors): clean $\to$ import the owner's entry
+  (works because every caller resolves through the owner's
+  cell-reading entry — never the impl); dirty $\to$ define: cell, entry,
+  impl, resolve row.
+- *Top-level val/var*: the backing global lives in its defining
+  instance — clean files' state is preserved by construction (CL
+  semantics); a redefinition is a new binding.
+- *Class*: types are always re-declared (wasm has no type imports) —
+  canonical rec groups unify them; dirty files additionally mint the
+  class's current layout (payload + accessor closures), registered at
+  load.
+
+** The IC / registry dance
+
+- *The registry is load-is-apply*: each delta's init registers its
+  classes' layouts, REPLACING previous entries — no dump, no injection,
+  no compile-time history. That is the whole previous-state story.
+- The IC cache serves *speed only*: a compile consumes no previous
+  state — wiping any cache changes nothing but compile speed (gated).
+- The cache outlives the image chain: its "unchanged" is *file* truth,
+  not *image* truth — a fresh page must get a full first patch, so the
+  loop force-wipes the app's IC entries on a new chain.
+- The stdlib base is emitted once per fresh build dir (its klib ships
+  IR, so the cold link re-lowers it under the flag) and then skipped.
+- Per-function granularity within a dirty file (content-hash manifest)
+  is designed but parked — the payoff only materializes at real-module
+  scale.
+
+** Numbers (six-file demo, honest)
+
+- Emitted function set is exactly the dirty files': *11* cell installs
+  for a body-only edit vs *21* whole-module.
+- Delta bytes barely move at demo scale (33-52 KB vs ~40 KB full) —
+  types re-declare by design; the win is the clean files' *bodies*,
+  which must be proven at real-module scale.
+- Warm edit $\to$ live patch: ~0.3-0.6 s (was ~3.1 s before the resident
+  daemon + base skip + deltas).
+
+* COMMENT Wrangling the type system: traps & invalidations
+
+** Canonicalization is the law
+
+- Rec groups are content-addressed: identical content $\to$ one runtime
+  type, across modules. Every rule below is a consequence:
+  - old version re-emitted *byte-identically*, new version in its *own*
+    rec group — same-group emission breaks the chain (measured)
+  - standalone types canonicalize by structure — that is why the fdefn
+    is standalone, and why an anonymous signature type (singleton group)
+    never unifies across modules
+  - a changed *shape* breaks identity — and the engine then rejects the
+    mistyped value at the boundary: the free signature checking we
+    design around
+
+** Version subtyping (validated, not adopted)
+
+- A redefined class's new version *can* be a declared subtype of the
+  old (~(sub $Pt (struct ...appended...))~): new instances pass all
+  old-code checks; ~ref.test~ agrees cross-module.
+- One-directional by nature (old instances never become v2 — correct).
+- Why the cell encoding won instead: final classes emit ~sub final~
+  (unsubtypable) — openness must be paid from day one; and the
+  vtable-in-object encoding blocks *method* evolution (fn subtyping is
+  contravariant in the receiver).
+- The two compose: version subtyping = *new objects into old code*;
+  stable cells = *old objects migrate forward*. Together, both
+  directions.
+
+** The engine is the type police
+
+- Every swap crosses an instantiation or import boundary where V8
+  checks the funcref / value against the canonical type: an
+  incompatible change is *not representable* — it fails loudly.
+- A rejected patch *never inits and never joins the chain* — the
+  previous live version keeps running; the live view marks the failed
+  patch's exports dead so newest-first resolution cannot reach
+  half-applied state.
+- "Ghost" instances (born in a stranded version) remain honest: access
+  to changed slots throws the catchable unbound-slot; ~is~ agrees with
+  the types.
+
+** The known lie, and the traps we keep honest
+
+- *Interface ~is~ lies*: class ~is~ is structural, but interface ~is~
+  is RTTI on a stable *name* hash — after an interface shape change an
+  old instance answers ~is I~ true while ~as~ traps. Fix is upstreamable
+  (fold the member set into the interfaceId); it is the one known
+  inconsistency.
+- *Shared exception tag*: Kotlin/Wasm tags are module-local, so an
+  exception thrown by swapped-in code must be catchable by handlers in
+  any generation — the tag is imported from the host (one
+  ~WebAssembly.Tag~, ~anyref~-typed on wasi; wasm-js gets it via JSTag).
+- *Invalidation is a catchable exception, not corruption*: a deleted or
+  retyped slot throws at ~slot-value~ — the honest unbound-slot; the
+  field is deleted, not shadowed.
+
+** State holders: defvar semantics
+
+- An ~object~ / companion redefined by its own dirty file must *not*
+  re-run its initializer — it ADOPTS the previous live instance (CL
+  ~defvar~ / JVM ~<clinit>~ semantics).
+- The compiler emits the ~boundp~ check as one host import
+  ~__hot_adopt$<object>#<hash>~; null means cold boot.
+- The glue captures the previous instance's *value* eagerly at patch
+  load — the guarded store fires lazily (often after the holder's body
+  was redefined); capturing behavior would read the null global.
+- Incompatible holders are engine-gated *twice*: the patch's
+  instantiation is rejected (old code keeps running), and live paths
+  trap at the adoption boundary — surfaced as a catchable
+  ~ExceptionInInitializerError~ through Kotlin's static-init machinery.
+- Top-level vals/vars are still ~defparameter~ — redefinition re-runs
+  the initializer; an opt-in annotation is the roadmap item.
+
+* COMMENT Compose: what slots in
+
+** What the engine already gives Compose
+
+- *Composables are functions*: the Compose compiler plugin runs before
+  the wasm backend, so its output gets cells like any other function —
+  body swaps are ordinary redefinitions. No Compose runtime changes for
+  body edits.
+- After a swap the glue calls a generated ~__hot_invalidate()~ that
+  touches the global snapshot state — the Recomposer's invalidation
+  entry point — so changed scopes recompose.
+- *ViewModels and custom state holders are plain classes*: cells +
+  payload migration preserve them across field changes — the part
+  Flutter and HMR do worst, done by the engine here.
+- *Objects/companions are defvar*: singleton state survives its own
+  redefinition and migrated fields.
+
+** The hard problem: group keys
+
+- ~remember {}~ values live in the slot table keyed by *group keys*
+  the Compose compiler derives from source structure — a body edit
+  shifts positional keys, and remembered state maps to wrong slots.
+- This is Live Edit's hard problem on the JVM too; it is
+  Compose-compiler-team territory, not something the wasm backend can
+  solve alone:
+  - reload-stable keys (content/structure-derived, not offset-derived), or
+  - a key-remap table shipped with the patch, re-keying the surviving
+    slot table on swap
+- Also: Compose's own lambda merging must not collide with the
+  hot-reload callable-reference merging — merged classes are excluded
+  from the encoding for exactly this reason.
+
+** Failure UX, and the immediate blocker
+
+- Rejected patches surface in a Vite-style full-screen overlay with
+  the engine's verdict; the app keeps running old code because the
+  patch never inited. Deleted-slot exceptions — already catchable —
+  become first-class overlay errors.
+- *The blocker today*: linking the shipped Compose runtime klibs
+  (2.0-2.3 era) crashes the compiler in ~getInlineClassBackingField~ —
+  a value class's backing property does not survive klib
+  deserialization (~MultiValueMap~ is the first casualty). An
+  upstream bug, independent of the hot-reload encoding.
+- Two unblock paths: fix the deserializer (upstreamable), or build the
+  runtime klibs from source with this compiler.
+
+** Where this ends
+:PROPERTIES:
+:BEAMER_opt: fragile
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{alltt}
+KGP dev task: watch sources
+  \ensuremath{\to} IC-compile the changed module (the daemon)
+  \ensuremath{\to} hot multimodule link emits the delta
+     (-Xwasm-hot-reload; no previous state)
+  \ensuremath{\to} loader: instantiate; init resolves cells,
+     registers layouts (load IS apply)
+  \ensuremath{\to} migrate lazily; __hot_invalidate() pings Compose
+  \ensuremath{\to} Compose recomposes; state kept; < 1 s from save
+\end{alltt}
+#+END_EXPORT
+
+- Upstreamable along the way: the flag-gated interop checker
+  relaxation, the exception tag export, version-aware interface ids —
+  and the modes themselves as experimental opt-ins.
+- Everything shown is gated by regression tests: the browser delta-loop
+  gate (v1-v16), registry-across-wipes, slot and fdefn drivers, the
+  REPL demos.
+
+* Appendix
+
+** The CLOS correspondence (for the Lisp-literate)
+
+#+ATTR_LATEX: :font \scriptsize :align p{0.42\textwidth} p{0.48\textwidth}
+| here                                          | Common Lisp (SBCL/AMOP)                       |
+|-----------------------------------------------+-----------------------------------------------|
+| cell: shape never changes, identity kept      | wrapper split: stable instance, swapped layout |
+| the payload: swappable slot vector, ~$layout~ stamped at birth | PCL's instance body: wrapper pointer + slot vector |
+| the LAYOUT: vtable, itable, slot descriptors, accessor closures — registered in the image | SBCL's wrapper with the indirection removed: identity and layout fused in one object |
+| no shape naming: payload keyed by class; identical shapes unify by content | a redefinition is an event, not content; healing is just a full copy |
+| update-instance: allocate, copy same-tagged slots, swap in place — one shot | ~update-instance-for-redefined-class~ — lazy, never eager |
+| slot-value by name; deleted slot throws catchable | obsolete code touching a discarded slot errors; no shadow reads |
+
+- The one divergence: CL layouts add *and drop* slots freely; wasm GC
+  subtyping can only extend — deletions mint *sibling* payloads; the
+  catchable unbound-slot is the old-code story.
+
+* COMMENT Backup
+
+** Making classes runtime redefinable
+- Objects of a struct type are frozen to that layout; wasm GC
+  subtyping can only *extend* field lists, and types are canonicalized
+  by content.
+- We need: old instances keep working, new code sees new fields, and
+  identity survives.
+- Naive answer (redeclare with extra fields) breaks type identity across
+  modules; naive versioning strands every old reference.
+
+** Runtime layouts
+- We add a runtime descriptor called a layout that describes a class
+  + It itself is an ordinary stdlib Kotlin class containing:
+    - the class's current vtable + itable
+    - its ~allocate~ closure
+    - a vector of slot (field) descriptions of ~HotSlot{nameTag,
+      typeTag, reader, writer}~
+    - Tags are the slot's name hash + type tag
+- This information existing at runtime is crucial for lazily migrating
+  existing objects to new class definitions.
+
+** Class representation in Wasm
+
+#+BEGIN_EXAMPLE
+(type $Any$payload  ;; the ROOT payload
+  (sub (struct (field $_hashCode (mut i32))
+       (field $$layout (ref null $HotLayout)))))
+(type $Pt (sub $AnyCell
+  (struct ...vtable/itable/rtti...
+    (field (mut (ref null $Any$payload))))))
+#+END_EXAMPLE
+- All types like $Pt are subtypes of *cell* containing the ~{vtable,
+  itable, rtti, payload}~. This is invariant under class redefinition.
+- The payload field is mutable, typed at the *root* payload type,
+  which contains a pointer to a layout.
+  + Allows us to always get the layout out of any object without
+    having to know what type to cast to.
+- Reading a field from $Pt then involves typecasting it to some more
+  specific payload type and calling =struct.get=.
