@@ -35,18 +35,17 @@ class IrSignatureMapping(
 internal fun buildTypeParameterCopies(
     builder: IrTypeParametersContainerBuilder,
     source: List<IrTypeParameter>,
-    outer: Map<IrTypeParameterSymbol, IrType>,
     adjust: IrTypeParameterBuilder.(from: IrTypeParameter) -> Unit,
 ): Map<IrTypeParameterSymbol, IrType> {
     val copies = source.map { from ->
         IrTypeParameterBuilder().apply {
-            copyFrom(from)
+            updateFrom(from)
             annotations = from.copyAnnotations()
             adjust(from)
         }
     }
     builder.typeParameters += copies
-    val substitution = outer + source.zip(copies).associate { [from, copy] -> from.symbol to copy.symbol.defaultType }
+    val substitution = source.zip(copies).associate { [from, copy] -> from.symbol to copy.symbol.defaultType }
     for ([from, copy] in source.zip(copies)) {
         copy.superTypes = from.superTypes.map { it.substitute(substitution) }
     }
@@ -62,7 +61,7 @@ internal fun buildParameterCopies(
     source.associate { from ->
         from.symbol to builder.parameter {
             kind = from.kind
-            copyFrom(from)
+            updateFrom(from)
             type = from.type.substitute(substitution)
             varargElementType = from.varargElementType?.substitute(substitution)
             annotations = from.copyAnnotations()
@@ -71,7 +70,7 @@ internal fun buildParameterCopies(
     }
 
 internal fun buildSignatureCopy(builder: IrFunctionBuilder, source: IrFunction): IrSignatureMapping {
-    val typeSubstitution = buildTypeParameterCopies(builder, source.typeParameters, emptyMap()) {}
+    val typeSubstitution = buildTypeParameterCopies(builder, source.typeParameters) {}
     val parameters = buildParameterCopies(builder, source.parameters, typeSubstitution) {}
     builder.returnType = source.returnType.substitute(typeSubstitution)
     return IrSignatureMapping(typeSubstitution, parameters)

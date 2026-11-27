@@ -41,8 +41,8 @@ class IrVariableBuilder @PublishedApi internal constructor() : IrDeclarationWith
     internal val isTypeInitialized: Boolean
         get() = ::type.isInitialized
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrVariable) {
             type = from.type
             isVar = from.isVar

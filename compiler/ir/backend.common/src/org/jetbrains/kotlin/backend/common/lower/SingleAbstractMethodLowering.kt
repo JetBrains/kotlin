@@ -242,7 +242,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             for (from in superMethod.nonDispatchParameters) {
                 parameter {
                     kind = from.kind
-                    copyFrom(from)
+                    updateFrom(from)
                 }
             }
         }.apply {

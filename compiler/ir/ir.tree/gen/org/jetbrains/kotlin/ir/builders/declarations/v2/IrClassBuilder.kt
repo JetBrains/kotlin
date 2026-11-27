@@ -61,8 +61,8 @@ class IrClassBuilder @PublishedApi internal constructor() : IrTypeParametersCont
     internal var thisReceiver: IrDispatchReceiverBuilder? = null
     internal val declarations: MutableList<IrDeclaration> = []
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrClass) {
             isExternal = from.isExternal
             visibility = from.visibility

@@ -102,7 +102,7 @@ private fun <B : IrDeclarationBuilder> asPropertyChild(child: B, property: IrPro
 
 private fun IrFunctionBuilder.addDefaultDispatchReceiver(klass: IrClass) {
     if (!hasDispatchReceiver) {
-        dispatchReceiver { copyFrom(klass.thisReceiver!!) }
+        dispatchReceiver { updateFrom(klass.thisReceiver!!) }
     }
 }
 

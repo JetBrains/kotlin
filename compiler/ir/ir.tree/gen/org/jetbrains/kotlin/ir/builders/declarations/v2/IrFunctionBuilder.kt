@@ -42,8 +42,8 @@ abstract class IrFunctionBuilder internal constructor() : IrTypeParametersContai
 
     internal val parameters: MutableList<IrParameterBuilder> = []
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrFunction) {
             isExternal = from.isExternal
             visibility = from.visibility
@@ -110,7 +110,7 @@ abstract class IrFunctionBuilder internal constructor() : IrTypeParametersContai
         buildParameterCopies(this, source, substitution, adjust)
 
     /**
-     * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParametersFrom] and [copyParameters].
+     * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParameters] and [copyParameters].
      */
     fun copySignatureFrom(source: IrFunction): IrSignatureMapping =
         buildSignatureCopy(this, source)

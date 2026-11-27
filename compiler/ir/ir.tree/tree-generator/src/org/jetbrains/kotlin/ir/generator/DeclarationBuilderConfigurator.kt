@@ -32,7 +32,7 @@ object DeclarationBuilderConfigurator {
     private val alwaysExcludedFields = setOf("descriptor", "factory", "attributeOwnerId")
 
     /**
-     * Header properties that `copyFrom` doesn't copy: relations to other declarations, which a copy doesn't inherit,
+     * Header properties that `updateFrom` doesn't copy: relations to other declarations, which a copy doesn't inherit,
      * and annotations, which are usually filtered and have to be deep-copied (`copyAnnotations()`).
      */
     private val notCopiedFields = setOf("annotations", "metadata", "overriddenSymbols", "sealedSubclasses", "companionExtensionClass")
@@ -49,7 +49,6 @@ object DeclarationBuilderConfigurator {
     private val irValueParameterSymbol = importable(Packages.symbols, "IrValueParameterSymbol")
     private val irValueParameter = importable(Packages.declarations, "IrValueParameter")
     private val irTypeParameter = importable(Packages.declarations, "IrTypeParameter")
-    private val irTypeParametersContainer = importable(Packages.declarations, "IrTypeParametersContainer")
     private val irFunction = importable(Packages.declarations, "IrFunction")
     private val irType = importable(Packages.types, "IrType")
     private val variance = importable("org.jetbrains.kotlin.types", "Variance")
@@ -124,19 +123,18 @@ object DeclarationBuilderConfigurator {
                     }
 
                 /**
-                 * Copies the type parameters of [source] with their annotations, then applies [adjust] to each copy. The supertypes are set after
-                 * all the copies are created, substituted with them, so they may reference each other. [outer] substitutes the type parameters
-                 * copied before, e.g. the ones of the class when its member becomes a top-level function.
-                 * Returns [outer] together with the source type parameters substituted by the copies.
+                 * Copies [source] type parameters with their annotations, then applies [adjust] to each copy. The supertypes are set after
+                 * all the copies are created, substituted with them, so they may reference each other. Type parameters that reference
+                 * each other are copied by one call, e.g. the ones of a class together with the ones of its member.
+                 * Returns the source type parameters substituted by the copies.
                  */
-                fun copyTypeParametersFrom(
-                    source: IrTypeParametersContainer,
-                    outer: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+                fun copyTypeParameters(
+                    source: List<IrTypeParameter>,
                     adjust: IrTypeParameterBuilder.(from: IrTypeParameter) -> Unit = {},
                 ): Map<IrTypeParameterSymbol, IrType> =
-                    buildTypeParameterCopies(this, source.typeParameters, outer, adjust)
+                    buildTypeParameterCopies(this, source, adjust)
                 """.trimIndent(),
-                listOf(irType, variance, irTypeParameterSymbol, nameType, irTypeParametersContainer, irTypeParameter),
+                listOf(irType, variance, irTypeParameterSymbol, nameType, irTypeParameter),
             )
         }
 
@@ -202,7 +200,7 @@ object DeclarationBuilderConfigurator {
                     buildParameterCopies(this, source, substitution, adjust)
 
                 /**
-                 * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParametersFrom] and [copyParameters].
+                 * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParameters] and [copyParameters].
                  */
                 fun copySignatureFrom(source: IrFunction): IrSignatureMapping =
                     buildSignatureCopy(this, source)
@@ -404,7 +402,7 @@ object DeclarationBuilderConfigurator {
     }
 
     /**
-     * The properties of [builder] (not of its parents) that `copyFrom` copies: the header properties, except the abstract ones
+     * The properties of [builder] (not of its parents) that `updateFrom` copies: the header properties, except the abstract ones
      * (fixed by the builder type, e.g. the kind of a parameter), child elements (e.g. the initializer of a variable) and the [notCopiedFields].
      */
     fun copiedProperties(builder: DeclarationBuilder): List<HeaderProperty> {

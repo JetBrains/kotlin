@@ -102,7 +102,7 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
             }
             val copied = copiedProperties(builder)
             if (builder.parent == null || copied.isNotEmpty()) {
-                members += { printCopyFrom(builder, copied) }
+                members += { printUpdateFrom(builder, copied) }
             }
             for (child in builder.children) {
                 when (child) {
@@ -125,11 +125,11 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
     }
 
     /**
-     * `copyFrom` is virtual, with the declaration to copy from checked at runtime, like the `updateFrom` of the old builders:
+     * `updateFrom` is virtual, with the declaration to copy from checked at runtime, like in the old builders:
      * the static type of the source is often more general (e.g. `IrFunction` copied into a simple function),
      * and overloads would silently skip the fields of the more specific node.
      */
-    private fun ImportCollectingPrinter.printCopyFrom(builder: DeclarationBuilder, properties: List<HeaderProperty>) {
+    private fun ImportCollectingPrinter.printUpdateFrom(builder: DeclarationBuilder, properties: List<HeaderProperty>) {
         val root = generateSequence(builder) { it.parent }.last()
         val parameterType = root.element.render()
         if (builder.parent == null) {
@@ -139,15 +139,15 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
                 Relations to other declarations, metadata, annotations and children aren't copied.
                 """.trimIndent()
             )
-            println("open fun copyFrom(from: ", parameterType, ") {")
+            println("open fun updateFrom(from: ", parameterType, ") {")
         } else {
-            println("override fun copyFrom(from: ", parameterType, ") {")
+            println("override fun updateFrom(from: ", parameterType, ") {")
         }
         withIndent {
             if (builder.parent == null) {
                 printAssignments(properties)
             } else {
-                println("super.copyFrom(from)")
+                println("super.updateFrom(from)")
                 println("if (from is ", builder.element.render(), ") {")
                 withIndent { printAssignments(properties) }
                 println("}")

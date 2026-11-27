@@ -31,7 +31,7 @@ abstract class IrDeclarationBuilder internal constructor() {
      * Copies the header of [from] as is: the fields that [from] has in common with the declaration built by this builder.
      * Relations to other declarations, metadata, annotations and children aren't copied.
      */
-    open fun copyFrom(from: IrDeclaration) {
+    open fun updateFrom(from: IrDeclaration) {
         startOffset = from.startOffset
         endOffset = from.endOffset
         origin = from.origin

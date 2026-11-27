@@ -81,7 +81,7 @@ class IrDeclarationBuilderCopyingTest {
         val source = sourceFunction()
         val mapping: IrSignatureMapping
         val copy = factory.irFunction {
-            copyFrom(source)
+            updateFrom(source)
             name = Name.identifier("g")
             mapping = copySignatureFrom(source)
         }
@@ -123,13 +123,13 @@ class IrDeclarationBuilderCopyingTest {
             modality = Modality.OPEN
             isSuspend = true
         }
-        val copy = factory.irFunction { copyFrom(source) }
+        val copy = factory.irFunction { updateFrom(source) }
         assertEquals(Modality.OPEN, copy.modality)
         assertEquals(true, copy.isSuspend)
 
         // The fields of a simple function keep their defaults when copying from a constructor.
         val constructor = annotationClass.constructors.single()
-        val fromConstructor = factory.irFunction { copyFrom(constructor) }
+        val fromConstructor = factory.irFunction { updateFrom(constructor) }
         assertEquals(constructor.returnType, fromConstructor.returnType)
         assertEquals(Modality.FINAL, fromConstructor.modality)
     }
@@ -149,8 +149,8 @@ class IrDeclarationBuilderCopyingTest {
         }
 
         val static = factory.irFunction {
-            copyFrom(member)
-            val substitution = copyTypeParametersFrom(member, outer = copyTypeParametersFrom(klass))
+            updateFrom(member)
+            val substitution = copyTypeParameters(klass.typeParameters + member.typeParameters)
             copyParameters(member.parameters, substitution) { from ->
                 kind = IrParameterKind.Regular
                 if (from.kind == IrParameterKind.DispatchReceiver) name = Name.identifier("\$this")

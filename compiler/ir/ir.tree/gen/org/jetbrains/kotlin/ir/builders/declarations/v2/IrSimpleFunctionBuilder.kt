@@ -40,8 +40,8 @@ class IrSimpleFunctionBuilder @PublishedApi internal constructor() : IrFunctionB
 
     internal val symbol: IrSimpleFunctionSymbol = IrSimpleFunctionSymbolImpl()
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrSimpleFunction) {
             modality = from.modality
             isFakeOverride = from.isFakeOverride

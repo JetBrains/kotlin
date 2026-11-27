@@ -67,7 +67,7 @@ class IrPreGenerator(
             // to handle function metadata correctly. This dispatchReceiverParameter will be removed later.
             // Its type is the class type with the type parameters of the function instead of the ones of the class.
             dispatchReceiver {
-                copyFrom(irClass.thisReceiver!!)
+                updateFrom(irClass.thisReceiver!!)
                 type = irClass.typeWith(typeParamsAsArguments)
             }
 

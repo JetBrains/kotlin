@@ -18,7 +18,6 @@ import kotlin.contracts.contract
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,8 +33,8 @@ class IrTypeParameterBuilder internal constructor() : IrDeclarationWithNameBuild
 
     internal val symbol: IrTypeParameterSymbol = IrTypeParameterSymbolImpl()
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrTypeParameter) {
             variance = from.variance
             isReified = from.isReified
@@ -78,15 +77,14 @@ abstract class IrTypeParametersContainerBuilder internal constructor() : IrDecla
         }
 
     /**
-     * Copies the type parameters of [source] with their annotations, then applies [adjust] to each copy. The supertypes are set after
-     * all the copies are created, substituted with them, so they may reference each other. [outer] substitutes the type parameters
-     * copied before, e.g. the ones of the class when its member becomes a top-level function.
-     * Returns [outer] together with the source type parameters substituted by the copies.
+     * Copies [source] type parameters with their annotations, then applies [adjust] to each copy. The supertypes are set after
+     * all the copies are created, substituted with them, so they may reference each other. Type parameters that reference
+     * each other are copied by one call, e.g. the ones of a class together with the ones of its member.
+     * Returns the source type parameters substituted by the copies.
      */
-    fun copyTypeParametersFrom(
-        source: IrTypeParametersContainer,
-        outer: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+    fun copyTypeParameters(
+        source: List<IrTypeParameter>,
         adjust: IrTypeParameterBuilder.(from: IrTypeParameter) -> Unit = {},
     ): Map<IrTypeParameterSymbol, IrType> =
-        buildTypeParameterCopies(this, source.typeParameters, outer, adjust)
+        buildTypeParameterCopies(this, source, adjust)
 }

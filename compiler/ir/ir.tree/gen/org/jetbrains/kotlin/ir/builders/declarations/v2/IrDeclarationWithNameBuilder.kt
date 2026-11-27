@@ -18,8 +18,8 @@ abstract class IrDeclarationWithNameBuilder internal constructor() : IrDeclarati
     internal val isNameInitialized: Boolean
         get() = ::name.isInitialized
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrDeclarationWithName) {
             name = from.name
         }

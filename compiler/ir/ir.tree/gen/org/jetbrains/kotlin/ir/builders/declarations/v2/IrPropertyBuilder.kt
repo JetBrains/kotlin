@@ -54,8 +54,8 @@ class IrPropertyBuilder @PublishedApi internal constructor() : IrDeclarationWith
     internal var getter: IrSimpleFunctionBuilder? = null
     internal var setter: IrSimpleFunctionBuilder? = null
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrProperty) {
             isExternal = from.isExternal
             visibility = from.visibility

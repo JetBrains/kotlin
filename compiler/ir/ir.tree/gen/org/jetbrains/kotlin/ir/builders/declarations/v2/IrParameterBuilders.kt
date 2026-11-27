@@ -40,8 +40,8 @@ abstract class IrParameterBuilder internal constructor() : IrDeclarationWithName
     internal val isTypeInitialized: Boolean
         get() = ::type.isInitialized
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrValueParameter) {
             type = from.type
             isAssignable = from.isAssignable

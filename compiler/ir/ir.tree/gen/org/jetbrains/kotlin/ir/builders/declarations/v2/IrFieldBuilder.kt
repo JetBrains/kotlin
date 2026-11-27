@@ -37,8 +37,8 @@ class IrFieldBuilder @PublishedApi internal constructor() : IrDeclarationWithNam
 
     internal val symbol: IrFieldSymbol = IrFieldSymbolImpl()
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrField) {
             isExternal = from.isExternal
             visibility = from.visibility

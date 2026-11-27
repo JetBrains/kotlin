@@ -29,8 +29,8 @@ class IrConstructorBuilder @PublishedApi internal constructor() : IrFunctionBuil
         name = SpecialNames.INIT
     }
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrConstructor) {
             isPrimary = from.isPrimary
         }

@@ -33,16 +33,13 @@ class DeclarationBuilder(
 
     val annotations: MutableList<Expr> = mutableListOf()
 
-    /** Fields of [element] that aren't builder properties: set by the owner, derived, or not supported yet. */
     val excludedFields: MutableSet<String> = mutableSetOf()
 
-    /** Header properties that `copyFrom` doesn't copy (in addition to the global ones), e.g. because they need remapping as a group. */
+    /** Header properties that `updateFrom` doesn't copy (in addition to the global ones), e.g. because they need remapping as a group. */
     val notCopiedFields: MutableSet<String> = mutableSetOf()
 
-    /** Child fields of [element] that are nevertheless plain properties (e.g. the initializer of a variable). */
     val childFieldsAsProperties: MutableSet<String> = mutableSetOf()
 
-    /** Properties that are nullable in the builder even though the field isn't, because the default is computed when it's built. */
     val nullableInBuilder: MutableSet<String> = mutableSetOf()
 
     /**
@@ -54,7 +51,6 @@ class DeclarationBuilder(
     /** Header properties that are `abstract val`s here, and are defined by the subclasses (see [fieldOverrides]). */
     val abstractFields: MutableSet<String> = mutableSetOf()
 
-    /** Definitions of the [abstractFields] of the parents. */
     val fieldOverrides: MutableList<FieldOverride> = mutableListOf()
 
     /** Properties that aren't fields of the IR element. */
@@ -85,7 +81,6 @@ class DeclarationBuilder(
     val isCreatedByEntryPoint: Boolean
         get() = entryPoints.isNotEmpty()
 
-    /** Whether the entry points or the child functions of the builder declare `callsInPlace` contracts of their lambdas. */
     val printsContracts: Boolean
         get() = entryPoints.isNotEmpty() || children.any { it is Child.Built && it.functions.isNotEmpty() }
 

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 class IrAnonymousInitializerBuilder @PublishedApi internal constructor() : IrDeclarationBuilder() {
     var isStatic: Boolean = false
 
-    override fun copyFrom(from: IrDeclaration) {
-        super.copyFrom(from)
+    override fun updateFrom(from: IrDeclaration) {
+        super.updateFrom(from)
         if (from is IrAnonymousInitializer) {
             isStatic = from.isStatic
         }
