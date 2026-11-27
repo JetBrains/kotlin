@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-data-manager")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -30,6 +31,8 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.TestGeneratorKt")
+
+    testData(project(":compiler").isolated, "testData/diagnostics/nativeTests")
 
     nativeTestTask("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
 }

@@ -23,6 +23,7 @@ kotlin {
 
 dependencies {
     implementation(project(":java-flight-recorder"))
+    implementation(project(":project-tests-convention"))
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
