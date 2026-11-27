@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain.Companion.native
 import org.jetbrains.kotlin.buildtools.api.konan.nativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
@@ -16,7 +17,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
-@OptIn(DelicateBuildToolsApi::class)
+@OptIn(ExperimentalCompilerArgument::class)
 class NativeModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,

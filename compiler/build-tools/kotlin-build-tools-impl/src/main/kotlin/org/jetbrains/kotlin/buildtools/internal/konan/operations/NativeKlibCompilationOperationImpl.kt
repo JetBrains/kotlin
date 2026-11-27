@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
@@ -29,6 +30,8 @@ internal class NativeKlibCompilationOperationImpl :
     override val options: Options
     override val sources: List<Path>
     override val destination: Path
+
+    @OptIn(ExperimentalCompilerArgument::class)
     override val compilerArguments: NativeArgumentsImpl
     private val compilerVersion: String
 
