@@ -58,6 +58,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val konanPropertiesBuildService: Property<KonanPropertiesBuildService>
         val platformLibrariesGeneratorService: Property<PlatformLibrariesGenerator.GeneratedPlatformLibrariesService>
+        val nativeDependenciesUrl: Property<String>
     }
 
     @get:Inject
@@ -80,6 +81,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                 it.parameters.classLoadersCachingService.value(classLoadersCachingService).disallowChanges()
                 it.parameters.konanPropertiesBuildService.value(konanPropertiesBuildService).disallowChanges()
                 it.parameters.platformLibrariesGeneratorService.value(platformLibrariesService).disallowChanges()
+                it.parameters.nativeDependenciesUrl
+                    .value(project.nativeProperties.dependenciesUrl)
+                    .disallowChanges()
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKotlinNativeBundleBuildService::class.java.name) {
                     project.tasks.withType<UsesKotlinNativeBundleBuildService>().configureEach { task ->
@@ -114,7 +118,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         konanTargets: Set<KonanTarget>,
     ): Set<String> {
         val requiredDependencies = mutableSetOf<String>()
-        val distribution = Distribution(bundleDir.absolutePath, konanDataDir = konanDataDir)
+        val propertyOverrides = parameters.nativeDependenciesUrl.orNull?.let { mapOf("dependenciesUrl" to it) }
+        val distribution = Distribution(bundleDir.absolutePath, propertyOverrides = propertyOverrides, konanDataDir = konanDataDir)
         konanTargets.forEach { konanTarget ->
             if (konanTarget.enabledOnCurrentHostForBinariesCompilation) {
                 val konanPropertiesLoader = loadConfigurables(
