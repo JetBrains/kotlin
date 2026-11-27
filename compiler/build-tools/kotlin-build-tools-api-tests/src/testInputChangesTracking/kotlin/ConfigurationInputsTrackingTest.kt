@@ -124,6 +124,62 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
         }
     }
 
+    @OptIn(ExperimentalCompilerArgument::class)
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Changing the value of -Xadd-reads triggers rebuild")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testAddReadsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assertJavaModuleOptionChangeTriggersRebuild(
+            strategyConfig, JvmCompilerArguments.X_ADD_READS, "java.base=ALL-UNNAMED", "java.sql=ALL-UNNAMED",
+        )
+    }
+
+    @OptIn(ExperimentalCompilerArgument::class)
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Changing the value of -Xadd-exports triggers rebuild")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testAddExportsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assertJavaModuleOptionChangeTriggersRebuild(
+            strategyConfig, JvmCompilerArguments.X_ADD_EXPORTS, "java.base/sun.nio.ch=ALL-UNNAMED", "java.base/sun.net.www=ALL-UNNAMED",
+        )
+    }
+
+    @OptIn(ExperimentalCompilerArgument::class)
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Changing the value of -Xpatch-module triggers rebuild")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testPatchModuleChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assertJavaModuleOptionChangeTriggersRebuild(
+            strategyConfig, JvmCompilerArguments.X_PATCH_MODULE, "java.sql=first", "java.sql=second",
+        )
+    }
+
+    private fun assertJavaModuleOptionChangeTriggersRebuild(
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        argument: JvmCompilerArguments.JvmCompilerArgument<List<String>>,
+        value: String,
+        changedValue: String,
+    ) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.compileIncrementally(
+                SourcesChanges.ToBeCalculated,
+                icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
+                compilationConfigAction = { it.compilerArguments[argument] = listOf(value) },
+            )
+            module.compileIncrementally(
+                SourcesChanges.ToBeCalculated,
+                icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
+                compilationConfigAction = { it.compilerArguments[argument] = listOf(changedValue) },
+            ) {
+                assertLogContainsPatterns(
+                    expectedLogLevel(),
+                    ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
+                )
+            }
+        }
+    }
+
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Removing a tracked compiler arg triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")

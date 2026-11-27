@@ -103,6 +103,27 @@ class CliJavaModuleFinder(
         userModules.putIfAbsent(module.name, module)
     }
 
+    // Copies of modules with the roots given with -Xpatch-module, by name, see patchModule.
+    private val patchedModules = hashMapOf<String, JavaModule>()
+
+    /**
+     * Makes [findModule] and [systemModules] return a copy of the module named [moduleName] with [roots] before its own roots, and returns
+     * the copy. With [hasPatchedSources], the copy is the module of the sources being compiled. Patching a module again replaces the
+     * previous copy.
+     */
+    fun patchModule(moduleName: String, roots: List<JavaModule.Root>, hasPatchedSources: Boolean = false): JavaModule? {
+        val module = findUnpatchedModule(moduleName) ?: return null
+        val moduleRoots = roots + module.moduleRoots
+        val patched = when (module) {
+            is JavaModule.Explicit ->
+                JavaModule.Explicit(module.moduleInfo, moduleRoots, module.moduleInfoFile, module.isJdkModuleFromCtSym, hasPatchedSources)
+            is JavaModule.Automatic -> JavaModule.Automatic(module.name, moduleRoots, hasPatchedSources)
+            else -> error("Unknown module: $module (${module.javaClass})")
+        }
+        patchedModules[moduleName] = patched
+        return patched
+    }
+
     val allObservableModules: Sequence<JavaModule>
         get() = systemModules + userModules.values
 
@@ -110,10 +131,18 @@ class CliJavaModuleFinder(
     private val systemModulesCache = mutableMapOf<String, JavaModule.Explicit>()
 
     val systemModules: Sequence<JavaModule.Explicit>
-        get() = if (useLastJdkApi) modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule) else
-            ctSymModules.values.asSequence().mapNotNull { findSystemModule(it, true) }
+        get() {
+            val modules = if (useLastJdkApi) modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule) else
+                ctSymModules.values.asSequence().mapNotNull { findSystemModule(it, true) }
+            return modules.map { module -> patchedModules[module.name] as? JavaModule.Explicit ?: module }
+        }
 
-    override fun findModule(name: String): JavaModule? =
+    override fun findModule(name: String): JavaModule? = patchedModules[name] ?: findUnpatchedModule(name)
+
+    /**
+     * The module named [name] without the roots given with `-Xpatch-module`.
+     */
+    fun findUnpatchedModule(name: String): JavaModule? =
         when {
             useLastJdkApi -> modulesRoot?.findChild(name)?.let(this::findSystemModule)
             else -> ctSymModules[name]?.let { findSystemModule(it, true) }

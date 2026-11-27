@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.modules.isInJavaModulePatchPaths
+import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
@@ -199,6 +202,57 @@ abstract class IncrementalJvmCompilerRunnerBase(
                 register(JavaClassesTracker::class.java, it)
             }
         }
+
+    /**
+     * The sources are members of a module patched with `-Xpatch-module` when one of the sources compiled is in a patch path and no
+     * `module-info.java` is among them (see `ClasspathRootsResolver`). That module and whether a patch path has classes are not tracked
+     * otherwise, so they are compared with the last successful build. A change to a `module-info.java` among the sources causes a
+     * rebuild by itself (see `JvmSourcesToCompileCalculator`).
+     */
+    override fun untrackedInputs(allSourceFiles: List<File>, args: K2JVMCompilerArguments): Map<BuildAttribute, String> {
+        val patches = javaModulePatches(args)
+        if (patches.isEmpty()) return emptyMap()
+        val patchedModules = patchesWithSources(patches, javaModuleSources(allSourceFiles, args)).keys
+        return mapOf(BuildAttribute.JAVA_MODULE_PATCH_CHANGED to "$patchedModules ${hasClasses(patches)}")
+    }
+
+    /**
+     * An incremental round compiles only some of the sources, so the build is compiled incrementally only when that cannot change the
+     * module of the sources: no patch path contains sources, or all Kotlin sources are in the patch paths of the one module that does.
+     * The classes in a patch path are not tracked, so a patch path with classes causes a rebuild too.
+     */
+    override fun rebuildReason(allSourceFiles: List<File>, args: K2JVMCompilerArguments): BuildAttribute? {
+        val patches = javaModulePatches(args)
+        if (patches.isEmpty()) return null
+        if (hasClasses(patches)) return BuildAttribute.JAVA_MODULE_PATCH_WITH_CLASSES
+
+        val patchesWithSources = patchesWithSources(patches, javaModuleSources(allSourceFiles, args)).values
+        val kotlinSources = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
+        val isIncremental = when (patchesWithSources.size) {
+            0 -> true
+            1 -> kotlinSources.all(isInJavaModulePatchPaths(patchesWithSources.single()))
+            else -> false
+        }
+        return BuildAttribute.JAVA_MODULE_PATCH_WITH_SOURCES_OUTSIDE.takeUnless { isIncremental }
+    }
+
+    private fun javaModulePatches(args: K2JVMCompilerArguments): Map<String, List<File>> =
+        args.javaModulePatches.mapNotNull(::parseJavaModulePatch)
+            .associate { [module, paths] -> module to paths.map(::File) }
+
+    // Like the compiler, the Java files in the Java source roots too, whether or not they are listed as sources.
+    private fun javaModuleSources(allSourceFiles: List<File>, args: K2JVMCompilerArguments): List<File> =
+        allSourceFiles + javaSourceRoots(args).flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" } }
+
+    // The Java source roots of the compiler: -Xjava-source-roots, and the Java files and directories among the free arguments.
+    private fun javaSourceRoots(args: K2JVMCompilerArguments): List<File> =
+        (args.javaSourceRoots.toList() + args.freeArgs.filter { it.endsWith(".java") || File(it).isDirectory }).map(::File)
+
+    private fun patchesWithSources(patches: Map<String, List<File>>, sources: List<File>): Map<String, List<File>> =
+        patches.filterValues { paths -> sources.any(isInJavaModulePatchPaths(paths)) }
+
+    private fun hasClasses(patches: Map<String, List<File>>): Boolean =
+        patches.values.flatten().any { path -> path.isFile || path.walk().any { it.extension == "class" } }
 
     override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
         super.performWorkBeforeCompilation(compilationMode, args)

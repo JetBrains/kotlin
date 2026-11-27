@@ -11,6 +11,8 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     copyCommonCompilerArguments(from, to)
 
     to.abiStability = from.abiStability
+    to.additionalJavaModuleExports = from.additionalJavaModuleExports.copyOf()
+    to.additionalJavaModuleReads = from.additionalJavaModuleReads.copyOf()
     to.additionalJavaModules = from.additionalJavaModules.copyOf()
     to.allowNoSourceFiles = from.allowNoSourceFiles
     to.allowUnstableDependencies = from.allowUnstableDependencies
@@ -34,6 +36,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts
     to.javaDirect = from.javaDirect
+    to.javaModulePatches = from.javaModulePatches.copyOf()
     to.javaModulePath = from.javaModulePath
     to.javaPackagePrefix = from.javaPackagePrefix
     to.javaParameters = from.javaParameters

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
-
 /**
  * @param classpathFinder Finds the file declaring a class anywhere on the classpath, to tell which module owns the class.
  */
@@ -40,14 +39,30 @@ class CliJavaModuleResolver(
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
     private val classpathFinder: CliVirtualFileFinder,
+    private val access: JavaModuleAccess = JavaModuleAccess.EMPTY,
 ) : JavaModuleResolver {
+
+    // JDK modules by their roots given with -Xpatch-module, which are the roots outside the runtime image and ct.sym. Like javac, the
+    // classes in such a root are members of the JDK module, even when the root is also a user module.
+    private val systemModulesByPatchRoot: Map<JvmClasspathRootId, JavaModule.Explicit> = buildMap {
+        for (module in systemModules) {
+            for (root in module.moduleRoots) {
+                if (!root.isBinarySignature && root.file.fileSystem.protocol != StandardFileSystems.JRT_PROTOCOL) {
+                    putIfAbsent(root.id, module)
+                }
+            }
+        }
+    }
+
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
         // `findJavaModule(rootId)` takes the first module owning a root, which is only correct if the modules sharing a root have
-        // the same name: one module which is both a system and a user module.
-        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap()
+        // the same name: one module which is both a system and a user module. The patch roots of a system module are left out, since they
+        // are looked up in that module first.
+        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap() -
+                systemModulesByPatchRoot.keys
         for (module in userModules) {
             for (root in module.moduleRoots) {
                 val systemModuleName = systemModuleNames[root.id] ?: continue
@@ -75,7 +90,9 @@ class CliJavaModuleResolver(
 
         return when (file.fileType) {
             KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
-            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
+            JavaClassFileType.INSTANCE ->
+                systemModulesByPatchRoot.values.firstOrNull { module -> file in module }
+                    ?: userModules.firstOrNull { module -> file in module }
             else -> null
         }
     }
@@ -83,9 +100,11 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
-    /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
+    /** The module that the binary classpath root [rootId] belongs to, looked up in the patched system modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
-        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
+        systemModulesByPatchRoot[rootId]
+            ?: userModules.firstOrNull { module -> rootId in module }
+            ?: systemModules.firstOrNull { module -> rootId in module }
 
     private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
         moduleRoots.any { root -> root.isBinary && root.id == rootId }
@@ -93,28 +112,45 @@ class CliJavaModuleResolver(
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
     ): JavaModuleResolver.AccessError? =
-        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedFile), referencedPackage)
+        checkAccessibility(fileFromOurModule, findJavaModule(referencedFile), referencedPackage)
 
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? =
-        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedClassFile.rootId), referencedPackage)
+        checkAccessibility(fileFromOurModule, findJavaModule(referencedClassFile.rootId), referencedPackage)
 
     private fun checkAccessibility(
-        ourModule: JavaModule?, theirModule: JavaModule?, referencedPackage: FqName?,
+        fileFromOurModule: VirtualFile?, theirModule: JavaModule?, referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? {
+        val ourModule = fileFromOurModule?.let(this::findJavaModule)
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
+            // An automatic module reads the unnamed module, which matters for an automatic module patched with sources.
+            if (ourModule is JavaModule.Automatic) return null
+            if (ourModule != null && moduleGraph.readsAdditionally(access, ourModule.name, ALL_UNNAMED)) return null
             return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
 
-        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name)) {
+        // For javac, a module read from the classpath is in the unnamed module, which exports all its packages.
+        if (ourModule != null && theirModule.name in access.modulesFromClasspath &&
+            moduleGraph.readsAdditionally(access, ourModule.name, ALL_UNNAMED)
+        ) {
+            return null
+        }
+
+        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name) &&
+            !moduleGraph.readsAdditionally(access, ourModule.name, theirModule.name)
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
         }
 
         val fqName = referencedPackage ?: return null
-        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
+        // Without a file from our module, it's unknown whether our module is named, so ALL-UNNAMED is not applied.
+        val ourModuleName = ourModule?.name ?: ALL_UNNAMED.takeIf { fileFromOurModule != null }
+        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name)) &&
+            (ourModuleName == null || ourModuleName !in access.additionalExports["${theirModule.name}/${fqName.asString()}"].orEmpty())
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
         }
 

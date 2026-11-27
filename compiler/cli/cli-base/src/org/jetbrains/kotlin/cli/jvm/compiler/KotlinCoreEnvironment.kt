@@ -102,6 +102,7 @@ class KotlinCoreEnvironment private constructor(
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
                 fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+                classpathRootsResolver.javaModuleAccess,
             )
         )
 

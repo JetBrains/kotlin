@@ -1,0 +1,2 @@
+error: '-Xadd-modules' is not allowed with '-Xjdk-release=8'.
+COMPILATION_ERROR
