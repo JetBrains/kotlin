@@ -384,7 +384,10 @@ internal class DefaultSnippetToHtmlConverter(
             return null
         }
 
-        val dri = DRI.from(resolvedTarget)
+        val dri = DRI.from(resolvedTarget, context) ?: run {
+            logger.warn("target '$target' in @link markup tag cannot be resolved")
+            return null
+        }
         val driId = docTagParserContext.store(dri)
 
         fun String.wrapInLink(): String =

@@ -63,8 +63,8 @@ internal fun getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJava
     return when (symbol) {
         is KaNamedFunctionSymbol -> {
             when {
-                isEnumValuesMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet)
-                isEnumValueOfMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet)
+                isEnumValuesMethod(symbol) -> symbol.psi?.let { syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet, it) }
+                isEnumValueOfMethod(symbol) -> symbol.psi?.let { syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet, it) }
                 else -> null
             }
         }

@@ -35,12 +35,12 @@ internal class JavaPsiDocCommentParser(
         return docComment is JavaDocComment
     }
 
-    override fun parse(docComment: DocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode {
+    override fun parse(docComment: DocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet, useSite: PsiElement): DocumentationNode {
         val javaDocComment = docComment as JavaDocComment
-        return parsePsiDocComment(javaDocComment.comment, context, sourceSet)
+        return parsePsiDocComment(javaDocComment.comment, context, sourceSet, useSite)
     }
 
-    internal fun parsePsiDocComment(docComment: PsiDocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode {
+    internal fun parsePsiDocComment(docComment: PsiDocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet, useSite: PsiElement = context): DocumentationNode {
         if(context is PsiParameter && context.parent is PsiParameterList) {
             return DocumentationNode(docComment.tags.mapNotNull { tag ->
                 if(tag.name == ParamJavadocTag.name)
@@ -51,7 +51,7 @@ internal class JavaPsiDocCommentParser(
 
         val description = listOfNotNull(docComment.getDescription(sourceSet))
         val tags = docComment.tags.mapNotNull { tag ->
-            parseDocTag(tag, docComment, context, sourceSet)
+            parseDocTag(tag, docComment, context, sourceSet, useSite)
         }
         return DocumentationNode(description + tags)
     }
@@ -67,10 +67,10 @@ internal class JavaPsiDocCommentParser(
         }
     }
 
-    private fun parseDocTag(tag: PsiDocTag, docComment: PsiDocComment, analysedElement: PsiNamedElement, sourceSet: DokkaSourceSet): TagWrapper? {
+    private fun parseDocTag(tag: PsiDocTag, docComment: PsiDocComment, analysedElement: PsiNamedElement, sourceSet: DokkaSourceSet, useSite: PsiElement): TagWrapper? {
         return when (tag.name) {
             ParamJavadocTag.name -> parseParamTag(tag, docComment, analysedElement, sourceSet)
-            ThrowsJavadocTag.name, ExceptionJavadocTag.name -> parseThrowsTag(tag, docComment, sourceSet)
+            ThrowsJavadocTag.name, ExceptionJavadocTag.name -> parseThrowsTag(tag, docComment, sourceSet, useSite)
             ReturnJavadocTag.name -> parseReturnTag(tag, docComment, sourceSet)
             SinceJavadocTag.name -> parseSinceTag(tag, docComment, sourceSet)
             AuthorJavadocTag.name -> parseAuthorTag(tag, docComment, sourceSet)
@@ -129,10 +129,11 @@ internal class JavaPsiDocCommentParser(
     private fun parseThrowsTag(
         tag: PsiDocTag,
         docComment: PsiDocComment,
-        sourceSet: DokkaSourceSet
+        sourceSet: DokkaSourceSet,
+        useSite: PsiElement
     ): Throws {
         val resolvedElement = tag.resolveToElement()
-        val exceptionAddress = resolvedElement?.let { DRI.from(it) }
+        val exceptionAddress = resolvedElement?.let { DRI.from(it, useSite) }
 
         /* we always would like to have a fully qualified name as name,
          * because it will be used as a display name later and we would like to have those unified
@@ -275,8 +276,9 @@ internal class JavaPsiDocCommentParser(
 
     private fun PsiElement.toDocumentationLink(labelElement: PsiElement? = null, context: CommentResolutionContext, sourceSet: DokkaSourceSet): DocumentationLink? {
         val resolvedElement = this.resolveToGetDri() ?: return null
+        val dri = DRI.from(resolvedElement, this) ?: return null
         val label = labelElement ?: defaultLabel()
         val docTags = psiDocTagParser.parse(listOfNotNull(label), context, sourceSet)
-        return DocumentationLink(dri = DRI.from(resolvedElement), children = docTags)
+        return DocumentationLink(dri = dri, children = docTags)
     }
 }

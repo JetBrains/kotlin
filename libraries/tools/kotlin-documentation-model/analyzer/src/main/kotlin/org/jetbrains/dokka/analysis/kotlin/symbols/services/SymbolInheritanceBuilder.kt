@@ -37,14 +37,17 @@ internal class SymbolInheritanceBuilder(context: DokkaContext) : InheritanceBuil
                 }
                 .groupBy({ it.first }) { it.second }
                 .map { it.key to it.value.filterNotNull().distinct() }
-                .map { (k, v) ->
-                    InheritanceNode(
-                        DRI.from(k),
-                        v.map { InheritanceNode(DRI.from(it)) },
-                        k.supers.filter { it.isInterface }.map { DRI.from(it) },
-                        k.isInterface
-                    )
-
+                .mapNotNull { (k, v) ->
+                    // classes that have no symbol in any session (e.g. sources of another module,
+                    // see `PsiClass.classSymbol()` in PsiUtil.kt) are skipped
+                    DRI.from(k, k)?.let { dri ->
+                        InheritanceNode(
+                            dri,
+                            v.mapNotNull { child -> DRI.from(child, child)?.let { InheritanceNode(it) } },
+                            k.supers.filter { it.isInterface }.mapNotNull { supertype -> DRI.from(supertype, supertype) },
+                            k.isInterface
+                        )
+                    }
                 }
 
         // copy-pasted from stdlib 1.5

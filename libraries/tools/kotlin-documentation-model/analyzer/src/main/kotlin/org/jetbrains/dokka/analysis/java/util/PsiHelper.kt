@@ -12,6 +12,7 @@ import com.intellij.psi.*
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.BreakingAbstractionKotlinLightMethodChecker
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.DokkaLogger
 
@@ -23,15 +24,19 @@ internal class PsiHelper(
     /**
      * Extracts a list of [DRI]s for checked exceptions from a [PsiMethod]'s throws clause.
      */
+    context(_: KaSession)
     fun getCheckedExceptionDRIs(psiMethod: PsiMethod): List<DRI> =
         psiMethod.throwsList.toDriList()
 
+    context(_: KaSession)
     private fun PsiReferenceList.toDriList(): List<DRI> =
         referenceElements.mapNotNull { it?.resolve()?.let { resolved -> DRI.from(resolved) } }
 
+    context(_: KaSession)
     fun convertAnnotations(annotations: Collection<PsiAnnotation>): List<Annotations.Annotation> =
         annotations.filter { !lightMethodChecker.isLightAnnotation(it) }.mapNotNull { convertAnnotation(it) }
 
+    context(_: KaSession)
     private fun JvmAnnotationAttribute.toValue(): AnnotationParameterValue = when (this) {
         is PsiNameValuePair -> value?.toValue() ?: attributeValue?.toValue() ?: StringValue("")
         else -> StringValue(this.attributeName)
@@ -44,9 +49,11 @@ internal class PsiHelper(
      * This is a workaround for static imports from JDK like RetentionPolicy
      * For some reason they are not represented in the same way than using normal import
      */
+    context(_: KaSession)
     private fun JvmAnnotationAttributeValue.toValue(): AnnotationParameterValue? {
         return when (this) {
-            is JvmAnnotationEnumFieldValue -> (field as? PsiElement)?.let { EnumValue(fieldName ?: "", DRI.from(it)) }
+            is JvmAnnotationEnumFieldValue -> (field as? PsiElement)?.let { DRI.from(it) }
+                ?.let { dri -> EnumValue(fieldName ?: "", dri) }
             // static import of a constant is resolved to constant value instead of a field/link
             is JvmAnnotationConstantValue -> this.constantValue?.toAnnotationLiteralValue()
             else -> null
@@ -65,10 +72,11 @@ internal class PsiHelper(
         else -> StringValue(this.toString())
     }
 
+    context(_: KaSession)
     private fun PsiAnnotationMemberValue.toValue(): AnnotationParameterValue? = when (this) {
         is PsiAnnotation -> convertAnnotation(this)?.let { AnnotationValue(it) }
         is PsiArrayInitializerMemberValue -> ArrayValue(initializers.mapNotNull { it.toValue() })
-        is PsiReferenceExpression -> psiReference?.let { EnumValue(text ?: "", DRI.from(it)) }
+        is PsiReferenceExpression -> psiReference?.let { DRI.from(it) }?.let { dri -> EnumValue(text ?: "", dri) }
         is PsiClassObjectAccessExpression -> {
             val parameterType = (type as? PsiClassType)?.parameters?.firstOrNull()
             val classType = when (parameterType) {
@@ -78,7 +86,7 @@ internal class PsiHelper(
                 is PsiArrayType -> (parameterType.componentType as? PsiClassType)?.resolve()
                 else -> null
             }
-            classType?.let { ClassValue(it.name ?: "", DRI.from(it)) }
+            classType?.let { DRI.from(it) }?.let { dri -> ClassValue(classType.name ?: "", dri) }
         }
 
         is PsiLiteralExpression -> toValue()
@@ -95,6 +103,7 @@ internal class PsiHelper(
         else -> StringValue(text ?: "")
     }
 
+    context(_: KaSession)
     fun convertAnnotation(annotation: PsiAnnotation): Annotations.Annotation? {
         // TODO Mitigating workaround for issue https://github.com/Kotlin/dokka/issues/1341
         //  Tracking https://youtrack.jetbrains.com/issue/KT-41234
@@ -110,16 +119,18 @@ internal class PsiHelper(
         }
 
         return annotation.psiReference?.let { psiElement ->
-            Annotations.Annotation(
-                dri = DRI.from(psiElement),
-                params = annotation.attributes
-                    .filter { !lightMethodChecker.isLightAnnotationAttribute(it) }
-                    .mapNotNull { it.attributeName to it.toValue() }
-                    .toMap(),
-                mustBeDocumented = psiElement.getAnnotationsOrNull().orEmpty().any { annotation ->
-                    annotation.hasQualifiedName("java.lang.annotation.Documented")
-                }
-            )
+            DRI.from(psiElement)?.let { dri ->
+                Annotations.Annotation(
+                    dri = dri,
+                    params = annotation.attributes
+                        .filter { !lightMethodChecker.isLightAnnotationAttribute(it) }
+                        .mapNotNull { it.attributeName to it.toValue() }
+                        .toMap(),
+                    mustBeDocumented = psiElement.getAnnotationsOrNull().orEmpty().any { annotation ->
+                        annotation.hasQualifiedName("java.lang.annotation.Documented")
+                    }
+                )
+            }
         }
     }
 
