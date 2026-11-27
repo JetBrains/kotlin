@@ -29,6 +29,8 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
     /** Makes it possible to do customizations for [IrClass] */
     protected open fun customizeNameInventorData(clazz: IrClass, data: NameBuilder): NameBuilder = data
 
+    protected open fun disambiguateLocalClassName(clazz: IrClass, data: NameBuilder, localClassName: String): NameBuilder = data
+
     protected abstract fun putLocalClassName(declaration: IrElement, localClassName: String)
 
     override fun lower(irFile: IrFile) {
@@ -56,13 +58,15 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
         }
 
         fun copy(
+            parent: NameBuilder? = this.parent,
+            currentName: String = this.currentName,
             isLocal: Boolean = this.isLocal,
             processingInlinedFunction: Boolean = this.processingInlinedFunction,
             nameBelongToVariable: Boolean = this.nameBelongToVariable,
         ): NameBuilder {
             return NameBuilder(
-                parent = this.parent,
-                currentName = this.currentName,
+                parent = parent,
+                currentName = currentName,
                 isLocal = isLocal,
                 processingInlinedFunction = processingInlinedFunction,
                 nameBelongToVariable = nameBelongToVariable,
@@ -119,8 +123,10 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
                 return
             }
 
-            val newData = data.appendName(declaration)
-            putLocalClassName(declaration, newData.buildAndSanitize())
+            val originalData = data.appendName(declaration)
+            val originalName = originalData.buildAndSanitize()
+            val newData = disambiguateLocalClassName(declaration, originalData, originalName)
+            putLocalClassName(declaration, if (newData === originalData) originalName else newData.buildAndSanitize())
 
             // Old backend doesn't add the anonymous object name to the stack when traversing its super constructor arguments.
             // E.g. a lambda in the super call of an object literal "foo$1" will get the name "foo$2", not "foo$1$1".
