@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
@@ -138,106 +136,128 @@ class JvmAtomicSymbols(
         valueType: IrType,
         atomicHandlerType: AtomicHandlerType
     ): IrClassSymbol {
-        fun IrFunction.addReferenceTypeParameter(valueType: IrType): IrType =
+        fun IrFunctionBuilder.addReferenceTypeParameter(valueType: IrType): IrType =
             if (valueType.isAny()) {
-                addTypeParameter("T", irBuiltIns.anyNType).defaultType
+                typeParameter("T", irBuiltIns.anyNType).defaultType
             } else {
                 valueType
             }
 
-        fun IrFunction.addIndexForArrayType() {
-            if (atomicHandlerType == AtomicHandlerType.ATOMIC_ARRAY) addValueParameter("i", irBuiltIns.intType)
+        fun IrFunctionBuilder.addIndexForArrayType() {
+            if (atomicHandlerType == AtomicHandlerType.ATOMIC_ARRAY) valueParameter("i", irBuiltIns.intType)
         }
 
-        fun IrFunction.addObjForFieldUpdaterClass() {
-            if (atomicHandlerType == AtomicHandlerType.ATOMIC_FIELD_UPDATER) addValueParameter("obj", irBuiltIns.anyType)
+        fun IrFunctionBuilder.addObjForFieldUpdaterClass() {
+            if (atomicHandlerType == AtomicHandlerType.ATOMIC_FIELD_UPDATER) valueParameter("obj", irBuiltIns.anyType)
         }
         return createClass(javaUtilConcurrentAtomic, shortClassName, ClassKind.CLASS, Modality.FINAL).apply {
+            val classType = defaultType
             // Add constructor
             when (atomicHandlerType) {
                 AtomicHandlerType.ATOMIC_FIELD_UPDATER -> {
-                    owner.addFunction("newUpdater", this.defaultType, isStatic = true).apply {
-                        addValueParameter("tclass", javaLangClass.starProjectedType)
-                        if (valueType.isAny()) addValueParameter("vclass", javaLangClass.starProjectedType)
-                        addValueParameter("fieldName", irBuiltIns.stringType)
+                    owner.irStaticFunction {
+                        name = Name.identifier("newUpdater")
+                        returnType = classType
+                        valueParameter("tclass", javaLangClass.starProjectedType)
+                        if (valueType.isAny()) valueParameter("vclass", javaLangClass.starProjectedType)
+                        valueParameter("fieldName", irBuiltIns.stringType)
                     }
                 }
                 AtomicHandlerType.ATOMIC_ARRAY -> {
-                    owner.addConstructor().apply {
+                    owner.irConstructor {
                         addReferenceTypeParameter(valueType)
-                        addValueParameter("length", irBuiltIns.intType)
+                        valueParameter("length", irBuiltIns.intType)
                     }
                     if (valueType.isAny()) {
-                        owner.addConstructor().apply {
+                        owner.irConstructor {
                             addReferenceTypeParameter(valueType)
-                            addValueParameter("array", irBuiltIns.arrayClass.defaultType)
+                            valueParameter("array", irBuiltIns.arrayClass.defaultType)
                         }
                     }
                 }
                 AtomicHandlerType.BOXED_ATOMIC -> {
-                    owner.addConstructor().apply {
-                        addValueParameter("value", valueType)
+                    owner.irConstructor {
+                        valueParameter("value", valueType)
                     }
                 }
                 else -> {}
             }
             // Declare functions
-            owner.addFunction(name = "get", returnType = valueType).apply {
+            owner.irFunction {
+                name = Name.identifier("get")
                 addObjForFieldUpdaterClass()
                 addIndexForArrayType()
-                val T = addReferenceTypeParameter(valueType)
-                returnType = T
+                returnType = addReferenceTypeParameter(valueType)
             }
-            owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
+            owner.irFunction {
+                name = Name.identifier("set")
+                returnType = irBuiltIns.unitType
                 addObjForFieldUpdaterClass()
                 addIndexForArrayType()
                 val T = addReferenceTypeParameter(valueType)
-                addValueParameter("newValue", T)
+                valueParameter("newValue", T)
             }
-            owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
+            owner.irFunction {
+                name = Name.identifier("compareAndSet")
+                returnType = irBuiltIns.booleanType
                 addObjForFieldUpdaterClass()
                 addIndexForArrayType()
                 val T = addReferenceTypeParameter(valueType)
-                addValueParameter("expect", T)
-                addValueParameter("update", T)
+                valueParameter("expect", T)
+                valueParameter("update", T)
             }
-            owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
+            owner.irFunction {
+                name = Name.identifier("lazySet")
+                returnType = irBuiltIns.unitType
                 addObjForFieldUpdaterClass()
                 addIndexForArrayType()
                 val T = addReferenceTypeParameter(valueType)
-                addValueParameter("newValue", T)
+                valueParameter("newValue", T)
             }
-            owner.addFunction(name = "getAndSet", returnType = valueType).apply {
+            owner.irFunction {
+                name = Name.identifier("getAndSet")
                 addObjForFieldUpdaterClass()
                 addIndexForArrayType()
                 val T = addReferenceTypeParameter(valueType)
-                addValueParameter("newValue", T)
+                valueParameter("newValue", T)
                 returnType = T
             }
             if (valueType.isInt() || valueType.isLong()) {
-                owner.addFunction(name = "addAndGet", returnType = valueType).apply {
+                owner.irFunction {
+                    name = Name.identifier("addAndGet")
+                    returnType = valueType
                     addObjForFieldUpdaterClass()
                     addIndexForArrayType()
-                    addValueParameter("delta", valueType)
+                    valueParameter("delta", valueType)
                 }
-                owner.addFunction(name = "getAndAdd", returnType = valueType).apply {
+                owner.irFunction {
+                    name = Name.identifier("getAndAdd")
+                    returnType = valueType
                     addObjForFieldUpdaterClass()
                     addIndexForArrayType()
-                    addValueParameter("delta", valueType)
+                    valueParameter("delta", valueType)
                 }
-                owner.addFunction(name = "incrementAndGet", returnType = valueType).apply {
-                    addObjForFieldUpdaterClass()
-                    addIndexForArrayType()
-                }
-                owner.addFunction(name = "getAndIncrement", returnType = valueType).apply {
-                    addObjForFieldUpdaterClass()
-                    addIndexForArrayType()
-                }
-                owner.addFunction(name = "decrementAndGet", returnType = valueType).apply {
+                owner.irFunction {
+                    name = Name.identifier("incrementAndGet")
+                    returnType = valueType
                     addObjForFieldUpdaterClass()
                     addIndexForArrayType()
                 }
-                owner.addFunction(name = "getAndDecrement", returnType = valueType).apply {
+                owner.irFunction {
+                    name = Name.identifier("getAndIncrement")
+                    returnType = valueType
+                    addObjForFieldUpdaterClass()
+                    addIndexForArrayType()
+                }
+                owner.irFunction {
+                    name = Name.identifier("decrementAndGet")
+                    returnType = valueType
+                    addObjForFieldUpdaterClass()
+                    addIndexForArrayType()
+                }
+                owner.irFunction {
+                    name = Name.identifier("getAndDecrement")
+                    returnType = valueType
                     addObjForFieldUpdaterClass()
                     addIndexForArrayType()
                 }
@@ -251,22 +271,23 @@ class JvmAtomicSymbols(
         classKind: ClassKind,
         classModality: Modality,
         isValueClass: Boolean = false,
-    ): IrClassSymbol = irFactory.buildClass {
+    ): IrClassSymbol = irFactory.irClass {
         name = Name.identifier(shortName)
         kind = classKind
         modality = classModality
         isValue = isValueClass
-    }.apply {
         parent = irPackage
-        createThisReceiverParameter()
+        thisReceiver()
     }.symbol
 
-    private val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
+    private val kotlinKClassJava: IrPropertySymbol = irFactory.irProperty {
         name = Name.identifier("java")
-    }.apply {
         parent = kotlinJvm
-        addGetter().apply {
-            parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+        getter {
+            extensionReceiver {
+                name = "receiver".synthesizedName
+                type = irBuiltIns.kClassClass.starProjectedType
+            }
             returnType = javaLangClass.defaultType
         }
     }.symbol
