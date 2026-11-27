@@ -31,7 +31,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
+import kotlin.io.path.writeText
 
 @DisplayName("The compiler reference index of a JPS-managed compilation")
 class CompilerReferenceIndexJpsTest : BaseJpsTest() {
@@ -121,6 +123,25 @@ class CompilerReferenceIndexJpsTest : BaseJpsTest() {
                     "derived.kt is missing from the files looking up base(): ${index.filesLookingUp("base")}"
                 }
                 assertEquals(setOf("Derived"), index.subtypesOf("Base"))
+            }
+        }
+    }
+
+    // The daemon flushes the lookups it collected before the error, so the write must stay gated on the compilation result
+    @DisplayName("A daemon compilation with a source error leaves the index empty")
+    @Test
+    @TestMetadata(FIXTURE)
+    fun sourceErrorWritesNoIndex() {
+        val toolchain = toolchain
+        jvmProject(toolchain, toolchain.daemonExecutionPolicyBuilder().build()) {
+            val module = module(FIXTURE)
+            val criDirectory = module.buildDirectory.resolve("cri")
+            module.sourcesDirectory.resolve("broken.kt").writeText("fun broken() = undefinedSymbol")
+            module.compile(compilationConfigAction = { it.withCompilerReferenceIndex(criDirectory) }) {
+                expectFail()
+                assertTrue(criDirectory.notExists() || criDirectory.listDirectoryEntries().isEmpty()) {
+                    "The failed build left index files behind: ${criDirectory.listDirectoryEntries()}"
+                }
             }
         }
     }
