@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedEnumEntryWhichSkipsDeprecations
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -1072,6 +1073,8 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
         val symbol = candidate.symbol
+
+        if ((symbol as? FirEnumEntrySymbol)?.isDeserializedEnumEntryWhichSkipsDeprecations == true) return
 
         if (symbol !is FirCallableSymbol<*>) {
             if (symbol.isDeprecatedHidden(candidate.callInfo) && LanguageFeature.SkipHiddenObjectsInResolution.isEnabled()) {

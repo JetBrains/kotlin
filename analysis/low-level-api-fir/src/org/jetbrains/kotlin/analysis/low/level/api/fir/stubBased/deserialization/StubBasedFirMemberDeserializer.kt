@@ -993,6 +993,8 @@ internal class StubBasedFirMemberDeserializer(
             attributes.applyKDoc(enumEntryStub.kdocText)
         }.apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
         }
         return enumEntry
     }

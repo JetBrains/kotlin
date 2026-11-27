@@ -1,8 +1,5 @@
-// LL_FIR_DIVERGENCE
-//   LL runners read m1 as source
-// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
+// LANGUAGE_FEATURE_TOGGLED: ReportDeprecationsOnDeserializedEnumEntries
 
 // MODULE: m1
 // FILE: f1.kt
@@ -51,22 +48,21 @@ package p2
 import p1.*
 
 fun useSites() {
-    val _ = SimpleE.<!UNRESOLVED_REFERENCE!>Hidden<!>
-    val _ = SimpleE.<!DEPRECATION_ERROR!>Error<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>Hidden<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>Error<!>
     val _ = SimpleE.<!DEPRECATION!>Warning<!>
     val _ = SimpleE.Simple
 
-    val _ = SimpleE.<!UNRESOLVED_REFERENCE!>HiddenWithMethod<!>
-    val _ = SimpleE.<!DEPRECATION_ERROR!>ErrorWithMethod<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>HiddenWithMethod<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>ErrorWithMethod<!>
     val _ = SimpleE.<!DEPRECATION!>WarningWithMethod<!>
     val _ = SimpleE.SimpleWithMethod
 
-    val _ = ConstructorE.<!UNRESOLVED_REFERENCE!>Hidden<!>
-    val _ = ConstructorE.<!DEPRECATION_ERROR!>Error<!>
+    val _ = ConstructorE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>Hidden<!>
+    val _ = ConstructorE.<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING!>Error<!>
     val _ = ConstructorE.<!DEPRECATION!>Warning<!>
     val _ = ConstructorE.Simple
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, primaryConstructor,
 propertyDeclaration, unnamedLocalVariable */
-

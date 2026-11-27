@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 private object IsFromVarargKey : FirDeclarationDataKey()
 private object IsReferredViaField : FirDeclarationDataKey()
@@ -40,6 +41,7 @@ private object IsDelegatedProperty : FirDeclarationDataKey()
 private object LambdaArgumentHoldsInTruths : FirDeclarationDataKey()
 private object FileNameForPluginGeneratedCallable : FirDeclarationDataKey()
 private object EqualityBoundType : FirDeclarationDataKey()
+private object IsDeserializedEnumEntryWhichSkipsDeprecations : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -50,6 +52,11 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
 var FirAnonymousFunction.lambdaArgumentParent: FirQualifiedAccessExpression? by FirDeclarationDataRegistry.data(LambdaArgumentHoldsInTruths)
 var FirCallableDeclaration.fileNameForPluginGeneratedCallable: String? by FirDeclarationDataRegistry.data(FileNameForPluginGeneratedCallable)
+
+@set:OnlyForDefaultLanguageFeatureDisabled(ReportDeprecationsOnDeserializedEnumEntries)
+var FirEnumEntry.isDeserializedEnumEntryWhichSkipsDeprecations: Boolean? by FirDeclarationDataRegistry.data(IsDeserializedEnumEntryWhichSkipsDeprecations)
+
+val FirEnumEntrySymbol.isDeserializedEnumEntryWhichSkipsDeprecations: Boolean? get() = fir.isDeserializedEnumEntryWhichSkipsDeprecations
 
 var FirDeclaration.isScriptTopLevelDeclaration: Boolean? by FirDeclarationDataRegistry.data(ScriptTopLevelDeclaration)
 

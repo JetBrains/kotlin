@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedEnumEntryWhichSkipsDeprecations
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
@@ -68,9 +70,17 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
                 constructorOnlyDeprecation
             )
         } else {
+            val migrationLF: LanguageFeature? = when {
+                referencedSymbol.origin == SamConstructor -> ReportDeprecationsOnSamConstructorCalls
+
+                (referencedSymbol as? FirEnumEntrySymbol)?.isDeserializedEnumEntryWhichSkipsDeprecations == true ->
+                    ReportDeprecationsOnDeserializedEnumEntries
+
+                else -> null
+            }
             reportApiStatusIfNeeded(
                 source, referencedSymbol, callSite = expression,
-                migrationLF = runIf(referencedSymbol.origin == SamConstructor) { ReportDeprecationsOnSamConstructorCalls },
+                migrationLF = migrationLF,
             )
         }
 

@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE_FEATURE_TOGGLED: ReportDeprecationsOnDeserializedEnumEntries
 
 // MODULE: m1
 // FILE: f1.kt
@@ -48,19 +48,19 @@ package p2
 import p1.*
 
 fun useSites() {
-    val _ = SimpleE.Hidden
-    val _ = SimpleE.Error
-    val _ = SimpleE.Warning
+    val _ = SimpleE.<!UNRESOLVED_REFERENCE!>Hidden<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR!>Error<!>
+    val _ = SimpleE.<!DEPRECATION!>Warning<!>
     val _ = SimpleE.Simple
 
-    val _ = SimpleE.HiddenWithMethod
-    val _ = SimpleE.ErrorWithMethod
-    val _ = SimpleE.WarningWithMethod
+    val _ = SimpleE.<!UNRESOLVED_REFERENCE!>HiddenWithMethod<!>
+    val _ = SimpleE.<!DEPRECATION_ERROR!>ErrorWithMethod<!>
+    val _ = SimpleE.<!DEPRECATION!>WarningWithMethod<!>
     val _ = SimpleE.SimpleWithMethod
 
-    val _ = ConstructorE.Hidden
-    val _ = ConstructorE.Error
-    val _ = ConstructorE.Warning
+    val _ = ConstructorE.<!UNRESOLVED_REFERENCE!>Hidden<!>
+    val _ = ConstructorE.<!DEPRECATION_ERROR!>Error<!>
+    val _ = ConstructorE.<!DEPRECATION!>Warning<!>
     val _ = ConstructorE.Simple
 }
 

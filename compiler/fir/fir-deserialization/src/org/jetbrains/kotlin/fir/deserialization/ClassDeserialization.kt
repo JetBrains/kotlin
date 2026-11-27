@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 fun deserializeClassToSymbol(
     classId: ClassId,
@@ -198,6 +199,14 @@ fun deserializeClassToSymbol(
                     replaceAnnotations(
                         context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)
                     )
+                    val deprecationsProvider = getDeprecationsProvider(context.session)
+                    if (deprecationsProvider !is EmptyDeprecationsProvider &&
+                        !context.session.languageVersionSettings.supportsFeature(ReportDeprecationsOnDeserializedEnumEntries)
+                    ) {
+                        @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+                        isDeserializedEnumEntryWhichSkipsDeprecations = true
+                    }
+                    replaceDeprecationsProvider(deprecationsProvider)
                 }
 
                 property
