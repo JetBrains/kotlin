@@ -26,12 +26,14 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
 
 @DisplayName("Smoke tests for Kotlin Native tasks that use Workers API")
 @NativeGradlePluginTests
+@MustRunOnChangesInNative
 class KotlinNativeWorkersIT : KGPBaseTest() {
 
     @DisplayName("Native compile, link and cinterop commonizer tasks run in parallel up to their maxWorkers limit with configuration cache disabled")
