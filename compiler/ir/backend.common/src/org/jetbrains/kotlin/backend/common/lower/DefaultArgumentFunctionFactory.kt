@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.ir.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -55,21 +56,22 @@ abstract class DefaultArgumentFunctionFactory(
      */
     protected open fun filterCopiedAnnotations(annotations: List<IrAnnotation>): List<IrAnnotation> = annotations
 
+    protected open fun replaceOriginalDefaultValue(parameter: IrValueParameter, defaultValue: IrExpressionBody): IrExpressionBody =
+        parameter.factory.createExpressionBody(
+            IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, "Default Stub").apply {
+                attributeOwnerId = defaultValue.expression
+            }
+        )
+
     protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
-        parameters = original.parameters.memoryOptimizedMap {
-            val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
-            val makeNullable = it.defaultValue != null && it.type.hasNullAsUndefinedValue()
-            it.copyTo(
+        parameters = original.parameters.memoryOptimizedMap { parameter ->
+            val newType = parameter.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
+            val makeNullable = parameter.defaultValue != null && parameter.type.hasNullAsUndefinedValue()
+            parameter.copyTo(
                 this,
                 type = if (makeNullable) newType.makeNullable() else newType,
-                defaultValue = if (it.defaultValue != null) {
-                    original.factory.createExpressionBody(
-                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub").apply {
-                            attributeOwnerId = it.defaultValue!!.expression
-                        }
-                    )
-                } else null,
-                isAssignable = it.defaultValue != null
+                defaultValue = parameter.defaultValue?.let { replaceOriginalDefaultValue(parameter, it) },
+                isAssignable = parameter.defaultValue != null
             )
         }
     }
