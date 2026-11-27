@@ -22,11 +22,14 @@ internal object Android {
 
 sealed class ClangArgs(
         private val configurables: Configurables,
-        private val forJni: Boolean
+        private val forJni: Boolean,
+        private val forCStubs: Boolean = false,
 ) {
 
-    private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
-    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    private val absoluteTargetToolchain: String
+        get() = configurables.absoluteTargetToolchain
+    private val absoluteTargetSysRoot: String
+        get() = configurables.absoluteTargetSysRoot
     private val absoluteLlvmHome = configurables.absoluteLlvmHome
     private val target = configurables.target
     private val targetTriple = configurables.targetTriple
@@ -69,7 +72,8 @@ sealed class ClangArgs(
             return (konanOptions + otherOptions).map { "-D$it" }
         }
 
-    private val binDir = "$absoluteTargetToolchain/bin"
+    private val binDir: String
+        get() = "$absoluteTargetToolchain/bin"
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
         // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
@@ -77,7 +81,8 @@ sealed class ClangArgs(
         // That's why we just don't add $absoluteTargetToolchain/bin to binary search path in case of JNI compilation.
         // TODO: Can be removed after MinGW sysroot update.
         if (!argsForWindowsJni) {
-            add(listOf("-B$binDir"))
+            // The C stubs are only compiled to bitcode, which runs no tools from the toolchain.
+            if (!forCStubs) add(listOf("-B$binDir"))
         } else {
             require(configurables is MingwConfigurables)
             add(configurables.msvc.compilerFlags())
@@ -101,7 +106,12 @@ sealed class ClangArgs(
         add(listOf("-target", targetString))
         val hasCustomSysroot = configurables is AndroidConfigurables
                 || argsForWindowsJni
-        if (!hasCustomSysroot) {
+        if (forCStubs) {
+            // The C stubs include no headers. A fixed sysroot keeps the host out of their compilation:
+            // for an Apple target, clang would otherwise take the sysroot from SDKROOT.
+            add(if (configurables is AppleConfigurables) listOf("-isysroot", "/") else listOf("--sysroot=/"))
+            add(listOf("-nostdlibinc"))
+        } else if (!hasCustomSysroot) {
             when (configurables) {
                 // isysroot and sysroot on darwin are _almost_ synonyms.
                 // The first one parses SDKSettings.json while second one is not.
@@ -135,16 +145,18 @@ sealed class ClangArgs(
 
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
-            val clangTarget = targetTriple.withoutVendor()
-            val architectureDir = Android.architectureDirForTarget(target)
-            val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
-            listOf(
-                    "-D__ANDROID_API__=${Android.API}",
-                    "--sysroot=$absoluteTargetSysRoot/$architectureDir",
-                    "-I$toolchainSysroot/usr/include/c++/v1",
-                    "-I$toolchainSysroot/usr/include",
-                    "-I$toolchainSysroot/usr/include/$clangTarget"
-            ) + when (target) {
+            val sysRootArgs = if (forCStubs) emptyList() else {
+                val clangTarget = targetTriple.withoutVendor()
+                val architectureDir = Android.architectureDirForTarget(target)
+                val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
+                listOf(
+                        "--sysroot=$absoluteTargetSysRoot/$architectureDir",
+                        "-I$toolchainSysroot/usr/include/c++/v1",
+                        "-I$toolchainSysroot/usr/include",
+                        "-I$toolchainSysroot/usr/include/$clangTarget"
+                )
+            }
+            listOf("-D__ANDROID_API__=${Android.API}") + sysRootArgs + when (target) {
                 // KT-73559
                 KonanTarget.ANDROID_ARM64 -> listOf("-mno-outline-atomics")
                 else -> emptyList()
@@ -154,7 +166,8 @@ sealed class ClangArgs(
         else -> emptyList()
     }
 
-    val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
+    val clangPaths: List<String>
+        get() = listOf("$absoluteLlvmHome/bin", binDir)
 
     /**
      * Clang args for Objectice-C and plain C compilation.
@@ -256,4 +269,11 @@ sealed class ClangArgs(
      * E.g., Kotlin/Native runtime and interop stubs.
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
+
+    /**
+     * Used for compiling the C and Objective-C stubs that the compiler generates for interop, with [clangC].
+     * They include no headers, so they need neither the target toolchain nor its sysroot,
+     * and their compilation depends only on the target, not on the host.
+     */
+    class CStubs(configurables: Configurables) : ClangArgs(configurables, forJni = false, forCStubs = true)
 }

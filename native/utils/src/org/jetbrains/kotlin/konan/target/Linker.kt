@@ -231,11 +231,15 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 class MacOSBasedLinker(targetProperties: AppleConfigurables)
     : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
-    private val libtool = "$absoluteTargetToolchain/bin/libtool"
+    private val libtool: String
+        get() = "$absoluteTargetToolchain/bin/libtool"
     private val llvmLibtoolDarwin = "$absoluteLlvmHome/bin/llvm-libtool-darwin"
-    private val linker = "$absoluteTargetToolchain/bin/ld"
-    private val strip = "$absoluteTargetToolchain/bin/strip"
-    private val dsymutil = "$absoluteTargetToolchain/bin/dsymutil"
+    private val linker: String
+        get() = "$absoluteTargetToolchain/bin/ld"
+    private val strip: String
+        get() = "$absoluteTargetToolchain/bin/strip"
+    private val dsymutil: String
+        get() = "$absoluteTargetToolchain/bin/dsymutil"
 
     private val compilerRtDir: String? by lazy {
         val dir = Path("$absoluteTargetToolchain/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString()

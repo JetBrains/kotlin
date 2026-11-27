@@ -371,10 +371,7 @@ class NativeSecondStageCompilationConfig(override val configuration: CompilerCon
         get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: true
 
     init {
-        // NB: producing LIBRARY is enabled on any combination of hosts/targets
-        if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
-            error("Target ${target.visibleName} is not available for output kind '${produce}' on the ${HostManager.hostName} host")
-        }
+        platformManager.checkCanProduce(produce, target)
     }
 
     val platform by lazy {
@@ -386,6 +383,12 @@ class NativeSecondStageCompilationConfig(override val configuration: CompilerCon
     }
 
     internal val clang by lazy { platform.clang }
+
+    val compileCStubsWithTargetSysRoot: Boolean
+        get() = configuration.get(BinaryOptions.compileCStubsWithTargetSysRoot) ?: false
+
+    internal val clangForCStubs: ClangArgs
+        get() = if (compileCStubsWithTargetSysRoot) clang else platform.clangForCStubs
 
     internal val produceStaticFramework get() = configuration.staticFramework
 
