@@ -5,6 +5,7 @@
 
 internal const val checkTestDataTaskName = "checkTestData"
 internal const val updateTestDataTaskName = "updateTestData"
+internal const val testDataManagerModuleTaskName = "testDataManagerModule"
 
 /** A never-executed `Test` task configured like `test`, registered by `project-tests-convention`. */
 internal const val testDataManagerWarmupTaskName = "testDataManagerWarmup"
@@ -32,4 +33,5 @@ internal object TestDataManagerOption {
     const val PROJECT_DIR = "$testDataManagerOptionsPrefix.projectDir"
     const val ROOT_DIR = "$testDataManagerOptionsPrefix.rootDir"
     const val REPORT_DIR = "$testDataManagerOptionsPrefix.reportDir"
+    const val TEST_PACKAGES = "$testDataManagerOptionsPrefix.testPackages"
 }

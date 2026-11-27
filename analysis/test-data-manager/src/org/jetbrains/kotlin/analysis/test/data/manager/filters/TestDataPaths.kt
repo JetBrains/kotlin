@@ -10,24 +10,39 @@ import kotlin.io.path.*
 
 /**
  * A test data path in the form `@TestMetadata` uses: relative to the repository root, with `/` separators.
- * As a [TestMetadataFilter] path, a trailing `/` limits it to the directory; without a repository root to resolve the
+ * As a filter path ([includes]), a trailing `/` limits it to the directory; without a repository root to resolve the
  * option against (a direct launch, see [unresolvedTestDataPaths]), it is the option entry as given.
  */
 @JvmInline
-internal value class TestMetadataPath(val path: String) {
+value class TestMetadataPath(val path: String) {
+    /**
+     * Whether this filter path includes a test of [testDataPath], the path of its test data file or directory: whole
+     * name segments only, so a directory includes everything inside it, and a file path, with or without its extension,
+     * includes the tests of that file. A prefix that cuts a name in the middle (`dir/fi`) includes nothing.
+     */
+    fun includes(testDataPath: String): Boolean =
+        testDataPath.startsWith(path) && endsAtNameBoundary(testDataPath, path)
+
     override fun toString(): String = path
+}
+
+/** Whether [prefix] of [path] is followed by `/` (a directory), `.` (an extension) or nothing. */
+private fun endsAtNameBoundary(path: String, prefix: String): Boolean {
+    if (prefix.isEmpty() || prefix.endsWith('/') || path.length == prefix.length) return true
+    val next = path[prefix.length]
+    return next == '/' || next == '.'
 }
 
 /**
  * The `testDataPath` option resolved against the repository root.
  *
- * @property paths the paths for [TestMetadataFilter]
+ * @property paths the paths to filter the tests by, see [TestMetadataPath.includes]
  * @property errors one per path that can't be used; the run must not start if there are any
  */
-internal class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
+class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
 
 /** A `testDataPath` entry that can't be used, with [path] as given in the option. */
-internal sealed interface TestDataPathError {
+sealed interface TestDataPathError {
     val path: String
 
     /** The message for the console and the report, naming [repositoryRoot] the paths are relative to. */
@@ -39,25 +54,28 @@ internal sealed interface TestDataPathError {
     }
 
     /**
-     * @property suggestion the repository-relative form of [path] if it exists relative to the module directory
+     * @property suggestions the repository-relative forms of [path] where it exists relative to another directory,
+     *                       like the module directory
      */
-    data class Missing(override val path: String, val suggestion: TestMetadataPath?) : TestDataPathError {
+    data class Missing(override val path: String, val suggestions: List<TestMetadataPath>) : TestDataPathError {
         override fun render(repositoryRoot: Path): String = buildString {
             append("testDataPath '$path' does not exist; paths are relative to the repository root ")
             append(repositoryRoot.toAbsolutePath().normalize())
-            if (suggestion != null) {
-                append(". Did you mean '$suggestion'?")
+            if (suggestions.isNotEmpty()) {
+                append(". Did you mean ")
+                append(suggestions.joinToString(" or ") { "'$it'" })
+                append("?")
             }
         }
     }
 }
 
 /** Splits the comma-separated `testDataPath` option, dropping blank entries. */
-internal fun splitTestDataPaths(option: String): List<String> =
+fun splitTestDataPaths(option: String): List<String> =
     option.split(",").map(String::trim).filter(String::isNotEmpty)
 
 /** The entries of the `testDataPath` [option] as they are, without resolving them like [resolveTestDataPaths]. */
-internal fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
+fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
     splitTestDataPaths(option).map(::TestMetadataPath)
 
 /**
@@ -66,11 +84,12 @@ internal fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
  *
  * An absolute path inside the repository is made relative to it. A path that doesn't exist, as a directory, a file,
  * or a file named without its extension (`dir/file` for `dir/file.kt`), is an error: such a filter silently matches
- * nothing. When the path exists relative to [projectDir] instead, the error suggests the repository-relative form.
+ * nothing. When the path exists relative to some of [suggestionBases] instead, like the module directory, the error
+ * suggests its repository-relative forms.
  *
  * A trailing `/` is kept: it limits the filter to the directory, without the files named like it (`dir.kt`).
  */
-internal fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?): ResolvedTestDataPaths {
+fun resolveTestDataPaths(option: String, repositoryRoot: Path, suggestionBases: List<Path>): ResolvedTestDataPaths {
     val root = repositoryRoot.toAbsolutePath().normalize()
     val paths = mutableListOf<TestMetadataPath>()
     val errors = mutableListOf<TestDataPathError>()
@@ -84,11 +103,12 @@ internal fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectD
         }
 
         if (!absolutePath.existsAsTestDataPath()) {
-            val projectRelative = projectDir?.toAbsolutePath()?.resolve(path)?.normalize()
-            val suggestion = projectRelative
-                ?.takeIf { it.startsWith(root) && it.existsAsTestDataPath() }
-                ?.let { TestMetadataPath(root.relativize(it).invariantSeparatorsPathString) }
-            errors += TestDataPathError.Missing(rawPath, suggestion)
+            val suggestions = suggestionBases
+                .map { it.toAbsolutePath().resolve(path).normalize() }
+                .filter { it != root && it.startsWith(root) && it.existsAsTestDataPath() }
+                .map { TestMetadataPath(root.relativize(it).invariantSeparatorsPathString) }
+                .distinct()
+            errors += TestDataPathError.Missing(rawPath, suggestions)
             continue
         }
 

@@ -11,23 +11,47 @@ output against expected files and can update them when differences are found.
 
 ### `test-data-manager`
 
-Apply to modules that have managed test data:
+Apply to modules that have managed test data, together with `test-inputs-check`, and declare the test data the tests read:
 
 ```kotlin
 plugins {
     id("test-data-manager")
+    id("test-inputs-check")
+}
+
+projectTests {
+    testData(project.isolated, "testData")
 }
 ```
 
-This registers two tasks in the module:
+The wrapper of the test data manager runs a module only for the paths in or around its declared test data, so the
+declarations must be complete, which `test-inputs-check` ensures: it fails the tests on any other test data they read.
+
+This registers three tasks in the module:
 
 - **`checkTestData`** ([CheckTestDataModuleTask]) — runs tests and **fails** on mismatches without modifying anything. Use for verification
   (e.g., CI, or sanity-checking generated files).
 - **`updateTestData`** ([UpdateTestDataModuleTask]) — runs tests and **updates** files on mismatches.
+- **`testDataManagerModule`** ([TestDataManagerModuleTask]) — prints the project path, the directory and the declared test data of the
+  module for the wrapper; it fails if the module doesn't apply `test-inputs-check`.
 
 Both accept their options only via `-P` Gradle properties (not `--option` CLI flags); see
 [Configuration Cache](#configuration-cache) for why. There is no global orchestrator task — Gradle's task-name matching runs the task in every
 applicable module.
+
+### Test packages
+
+The tasks discover the managed tests in the packages the module declares and their subpackages, `org.jetbrains.kotlin` if it declares
+none. A module declares the narrowest packages that contain all its generated tests, managed or not: a new test next to them is still
+found, and the discovery doesn't scan the rest of the test classpath. For example:
+
+```kotlin
+testDataManager {
+    testPackages.add("org.jetbrains.kotlinx.serialization")
+}
+```
+
+The module's `test` task gets the packages too: a generated managed test outside them fails there, as the tasks wouldn't find it.
 
 ## Usage
 
@@ -149,19 +173,18 @@ as task outputs, which is out of scope here.
 
 ## Execution Order
 
-Module ordering is determined by `mustRunAfter` dependencies inherited from each module's
-`test` task. This ensures that golden modules (which establish baseline `.txt` files) run before dependent modules (which may create
-prefixed variants like `.descriptors.txt`).
+Module ordering is declared in `testDataManager { mustRunAfterProjects }`. This ensures that golden modules (which establish baseline `.txt`
+files) run before dependent modules (which may create variants like `.descriptors.txt`).
 
-To configure ordering, set up `mustRunAfter` on your module's test task in `build.gradle.kts`:
+To configure ordering, list the projects whose tasks must run first in `build.gradle.kts`:
 
 ```kotlin
-tasks.named<Test>("test") {
-    mustRunAfter(":analysis:analysis-api-fir:test")
+testDataManager {
+    mustRunAfterProjects.add(":analysis:analysis-api-fir")
 }
 ```
 
-Both tasks automatically inherit this ordering (with `:test` references rewritten to the corresponding manager task).
+`test`, `checkTestData` and `updateTestData` each run after the same task of these projects.
 
 ## See Also
 

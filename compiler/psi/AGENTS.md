@@ -136,16 +136,16 @@ All concrete `KtElement` classes must be covered by tests in `compiler/psi/psi-i
 ## Working with Test Data
 
 PSI test data (`compiler/psi/psi-impl/testData/`) is managed by the same test data manager as the Analysis API: check and
-update it with the wrapper script, not with standard test commands.
+update it with the wrapper, not with standard test commands.
 
 ```bash
-python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation/
+analysis/test-data-manager/test-data-manager update --path compiler/psi/psi-impl/testData/psi/annotation/
 ```
 
 A single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
 `:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`) and compiled stubs (`.compiled.stubs.txt`,
 `.knm.compiled.stubs.txt`) together with the decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`.
-The script runs every module with tests under the path, so pass the path rather than a module.
+The wrapper runs every module with tests under the path, so pass the path rather than a module.
 
 → READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for how to read the result
 

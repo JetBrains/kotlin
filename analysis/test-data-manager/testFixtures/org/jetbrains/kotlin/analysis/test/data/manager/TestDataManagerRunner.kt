@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.ver
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.*
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.IjLogTestListener
+import org.jetbrains.kotlin.analysis.test.data.manager.report.ModuleReport
+import org.jetbrains.kotlin.analysis.test.data.manager.report.RunStatus
 import org.jetbrains.kotlin.analysis.test.data.manager.report.TestDataManagerReport
 import org.jetbrains.kotlin.analysis.test.data.manager.report.displayPath
 import org.junit.platform.engine.Filter
@@ -84,6 +86,7 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
  * - `runId` - the id of the run, naming its report `<runId>.json` (optional, a UUIDv7 by default)
  * - `rerunId` - the id of the earlier run this one reruns; the rotation of old reports keeps its report (optional)
  * - `output` - `verbose` for the progress of every group and pass (optional, compact by default)
+ * - `testPackages` - comma-separated packages of the managed tests (optional, [DEFAULT_TEST_PACKAGE] by default)
  *
  * The tasks also pass `rootDir` (the repository root), `projectDir`, `projectName` and `reportDir`.
  *
@@ -94,6 +97,14 @@ internal object TestDataManagerRunner {
 
     /** How many lines of each list (problems, errors, changed files) the compact output prints. */
     private const val COMPACT_LIST_LIMIT = 50
+
+    /**
+     * The package of the managed tests of a module which doesn't declare its own ones (`testDataManager { testPackages }`).
+     */
+    internal const val DEFAULT_TEST_PACKAGE = "org.jetbrains.kotlin"
+
+    /** The suffix of the generated test classes, the only ones the test data manager runs, with their nested classes. */
+    internal const val GENERATED_TEST_CLASS_SUFFIX = "Generated"
 
     /**
      * Holds timing measurements collected during test data manager execution.
@@ -122,9 +133,10 @@ internal object TestDataManagerRunner {
         val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
         val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
         val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
+        val testPackages = parseTestPackages(System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_PACKAGES))
         val requestedRunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RUN_ID)?.takeIf(String::isNotBlank)
-        val runIdError = requestedRunId?.let(TestDataManagerReport::runIdError)
-        val runId = requestedRunId?.takeIf { runIdError == null } ?: Uuid.generateV7().toString()
+        val runIdProblem = requestedRunId?.let(::runIdError)
+        val runId = requestedRunId?.takeIf { runIdProblem == null } ?: Uuid.generateV7().toString()
         val mode = TestDataManagerMode.currentModeOrNull
         // Set by the Gradle tasks; without them (a direct launch) the paths are used as given and no report is written
         val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
@@ -146,15 +158,16 @@ internal object TestDataManagerRunner {
                 println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
                 println("  goldenOnly: $goldenOnly")
                 println("  incremental: $incremental")
+                println("  testPackages: ${testPackages.joinToString()}")
             } else {
                 val project = report.project?.let { "$it " }.orEmpty()
                 println("Test data manager: $project${mode ?: "mode not set"}, runId $runId")
             }
 
             when {
-                runIdError != null -> {
-                    System.err.println("ERROR: $runIdError")
-                    report.runErrors += runIdError
+                runIdProblem != null -> {
+                    System.err.println("ERROR: $runIdProblem")
+                    report.runErrors += runIdProblem
                 }
 
                 mode == null -> {
@@ -170,6 +183,7 @@ internal object TestDataManagerRunner {
                             testDataPath,
                             goldenOnly,
                             incremental,
+                            testPackages,
                             rootDir = rootDir,
                             projectDir = projectDir,
                             launcherSession = launcherSession,
@@ -190,7 +204,7 @@ internal object TestDataManagerRunner {
         writeReport(report, rootDir)
 
         // The explicit exit is required to ensure the process terminates after completion
-        exitProcess(if (report.status == TestDataManagerReport.Status.PASSED) 0 else 1)
+        exitProcess(if (report.status == RunStatus.PASSED) 0 else 1)
     }
 
     private fun TestDataManagerReport.record(outcome: RunOutcome) {
@@ -203,6 +217,7 @@ internal object TestDataManagerRunner {
         testErrors += outcome.errors
         fileActions += outcome.fileActions
         recoveredTests += outcome.recoveredTests
+        unmatchedTestDataPaths += outcome.unmatchedTestDataPaths
     }
 
     /**
@@ -214,7 +229,7 @@ internal object TestDataManagerRunner {
         try {
             val rerunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RERUN_ID)?.takeIf(String::isNotBlank)
             val reportFile = report.write(reportDirectory, rootDir, keptRunId = rerunId)
-            println("Test data manager report: ${reportFile.toAbsolutePath()}")
+            println(ModuleReport.PATH_PREFIX + reportFile.toAbsolutePath())
         } catch (e: Exception) {
             System.err.println("WARNING: failed to write the test data manager report into $reportDirectory: $e")
         }
@@ -235,6 +250,8 @@ internal object TestDataManagerRunner {
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
         val recoveredTests: List<RecoveredTest> = emptyList(),
+        /** The `testDataPath` entries, as given, that no discovered test is in or under. */
+        val unmatchedTestDataPaths: List<String> = emptyList(),
     ) {
         val failedTests: Int
             get() = totalTests - passedTests - skippedTests
@@ -243,8 +260,15 @@ internal object TestDataManagerRunner {
         val isSuccessful: Boolean
             get() = problems.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
-        fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests)
+        fun withRunErrors(runErrors: List<String>): RunOutcome = RunOutcome(
+            totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests,
+            unmatchedTestDataPaths,
+        )
+
+        fun withUnmatchedTestDataPaths(unmatchedTestDataPaths: List<String>): RunOutcome = RunOutcome(
+            totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests,
+            unmatchedTestDataPaths,
+        )
 
         companion object {
             val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), emptyList(), 0)
@@ -272,8 +296,9 @@ internal object TestDataManagerRunner {
      *
      * @param testDataPath the comma-separated `testDataPath` option, resolved against [rootDir] if it is set:
      *                     a path that doesn't exist fails the run, see [resolveTestDataPaths]
+     * @param testPackages the packages to discover the tests in, see [buildDiscoveryRequest]
      * @param projectDir the module directory, to suggest the repository-relative form of a module-relative path
-     * @param additionalFilters discovery filters on top of the options, e.g., to restrict the run to some packages in tests
+     * @param additionalFilters discovery filters on top of the options, e.g., to exclude some packages in tests
      */
     context(launcherSession: LauncherSession)
     internal fun discoverAndRunTests(
@@ -281,13 +306,14 @@ internal object TestDataManagerRunner {
         testDataPath: String?,
         goldenOnly: Boolean = false,
         incremental: Boolean = false,
+        testPackages: List<String> = listOf(DEFAULT_TEST_PACKAGE),
         vararg additionalFilters: Filter<*>,
         rootDir: Path? = null,
         projectDir: Path? = null,
     ): RunOutcome {
         val testDataPaths = testDataPath?.let { option ->
             val root = rootDir ?: return@let unresolvedTestDataPaths(option)
-            val resolved = resolveTestDataPaths(option, root, projectDir)
+            val resolved = resolveTestDataPaths(option, root, listOfNotNull(projectDir))
             if (resolved.errors.isNotEmpty()) {
                 val messages = resolved.errors.map { it.render(root) }
                 messages.forEach { System.err.println("ERROR: $it") }
@@ -299,7 +325,7 @@ internal object TestDataManagerRunner {
 
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
-        val request = buildDiscoveryRequest(testClassPattern, testDataPaths, goldenOnly, *additionalFilters)
+        val request = buildDiscoveryRequest(testClassPattern, testDataPaths, goldenOnly, testPackages, *additionalFilters)
 
         // Phase 1: Discover tests with variant chains
         (val discoveredTests = value, val discoveryTime = duration) = measureTimedValue {
@@ -309,10 +335,12 @@ internal object TestDataManagerRunner {
 
         timingStats.discoveryTime = discoveryTime
         detail("Discovered ${discoveredTests.size} tests in $discoveryTime")
+        val entries = testDataPath?.let(::splitTestDataPaths).orEmpty()
+        val unmatched = testDataPaths?.let { unmatchedTestDataPaths(entries, it, discoveredTests) }.orEmpty()
 
         if (discoveredTests.isEmpty()) {
             println("No tests found matching criteria")
-            return RunOutcome.EMPTY
+            return RunOutcome.EMPTY.withUnmatchedTestDataPaths(unmatched)
         }
 
         // Phase 2: Group by variant chain depth
@@ -340,7 +368,20 @@ internal object TestDataManagerRunner {
 
         // Phase 4: Run each group with convergence, aggregate results
         return executeTestGroups(incremental, goldenOnly, groupingResult, launcher, timingStats, discoveredTests)
+            .withUnmatchedTestDataPaths(unmatched)
     }
+
+    /**
+     * The [entries] of the `testDataPath` option, as given, whose resolved [paths] none of [tests] is in or under: a module
+     * runs for any path in its test data, so only its runner can tell that an entry, like an output file, has no test.
+     */
+    internal fun unmatchedTestDataPaths(
+        entries: List<String>,
+        paths: List<TestMetadataPath>,
+        tests: List<DiscoveredTest>,
+    ): List<String> = entries.zip(paths)
+        .filter { [_, path] -> tests.none { test -> test.testDataPath?.let { path.includes(it.path) } == true } }
+        .map { [entry] -> entry }
 
     context(_: LauncherSession)
     private fun executeTestGroups(
@@ -451,19 +492,26 @@ internal object TestDataManagerRunner {
         )
     }
 
+    /**
+     * Parses the comma-separated [value] of the `testPackages` option.
+     */
+    internal fun parseTestPackages(value: String?): List<String> =
+        value?.split(",")?.map(String::trim)?.filter(String::isNotEmpty)?.takeIf { it.isNotEmpty() } ?: listOf(DEFAULT_TEST_PACKAGE)
+
     internal fun buildDiscoveryRequest(
         testClassPattern: String? = null,
         testDataPaths: List<TestMetadataPath>? = null,
         goldenOnly: Boolean = false,
+        testPackages: List<String> = listOf(DEFAULT_TEST_PACKAGE),
         vararg additionalFilters: Filter<*>,
     ): LauncherDiscoveryRequest {
         val builder = LauncherDiscoveryRequestBuilder.request()
-            .selectors(DiscoverySelectors.selectPackage("org.jetbrains.kotlin"))
+            .selectors(testPackages.map(DiscoverySelectors::selectPackage))
             .filters(
                 EngineFilter.includeEngines("junit-jupiter"),
                 // Only generated tests are included to significantly reduce the number of candidates
                 // since anyway this tool is not replacement for the standard `test` command
-                ClassNameFilter.includeClassNamePatterns(".*Generated"),
+                ClassNameFilter.includeClassNamePatterns(".*$GENERATED_TEST_CLASS_SUFFIX"),
                 ManagedTestFilter(goldenOnly),
             )
 

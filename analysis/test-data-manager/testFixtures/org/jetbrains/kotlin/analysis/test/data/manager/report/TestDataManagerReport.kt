@@ -31,17 +31,6 @@ internal class TestDataManagerReport(
         val incremental: Boolean,
     )
 
-    enum class Status {
-        /** All tests passed. */
-        PASSED,
-
-        /** Some tests have [problems] or [testErrors]. */
-        FAILED,
-
-        /** The run couldn't start or finish, see [runErrors]. */
-        ERROR,
-    }
-
     /** Errors that stopped the run itself: invalid options, variant chain conflicts, crashes of the runner. */
     val runErrors: MutableList<String> = mutableListOf()
 
@@ -50,6 +39,9 @@ internal class TestDataManagerReport(
     var failedTests: Int = 0
     var skippedTests: Int = 0
 
+    /** The `testDataPath` entries, as given, that none of the tests of the module is in or under. */
+    val unmatchedTestDataPaths: MutableList<String> = mutableListOf()
+
     val problems: MutableList<TestDataProblem> = mutableListOf()
     val testErrors: MutableList<TestError> = mutableListOf()
     val fileActions: MutableList<FileAction> = mutableListOf()
@@ -57,11 +49,11 @@ internal class TestDataManagerReport(
     /** Tests that passed only on a re-run; they don't fail the run. */
     val recoveredTests: MutableList<RecoveredTest> = mutableListOf()
 
-    val status: Status
+    val status: RunStatus
         get() = when {
-            runErrors.isNotEmpty() -> Status.ERROR
-            problems.isNotEmpty() || testErrors.isNotEmpty() -> Status.FAILED
-            else -> Status.PASSED
+            runErrors.isNotEmpty() -> RunStatus.ERROR
+            problems.isNotEmpty() || testErrors.isNotEmpty() -> RunStatus.FAILED
+            else -> RunStatus.PASSED
         }
 
     /**
@@ -109,78 +101,63 @@ internal class TestDataManagerReport(
      *                    a `null` one because it has no actual output, gets a `null` `actualFile`
      */
     internal fun toJson(rootDir: Path?, actualFiles: Map<TestDataProblem, Path?> = emptyMap()): String {
-        val json = linkedMapOf(
-            "schemaVersion" to SCHEMA_VERSION,
-            "runId" to runId,
-            "project" to project,
-            "mode" to mode?.name,
-            "status" to status.name,
-            "options" to linkedMapOf(
-                "testDataPath" to options.testDataPaths,
-                "testClassPattern" to options.testClassPattern,
-                "goldenOnly" to options.goldenOnly,
-                "incremental" to options.incremental,
+        val report = ModuleReport(
+            schemaVersion = ModuleReport.SCHEMA_VERSION,
+            runId = runId,
+            project = project,
+            mode = mode,
+            status = status,
+            options = ModuleReport.Options(
+                testDataPaths = options.testDataPaths,
+                testClassPattern = options.testClassPattern,
+                goldenOnly = options.goldenOnly,
+                incremental = options.incremental,
             ),
-            "runErrors" to runErrors,
-            "tests" to linkedMapOf(
-                "discovered" to discoveredTests,
-                "passed" to passedTests,
-                "failed" to failedTests,
-                "skipped" to skippedTests,
-            ),
-            "problems" to problems.sortedWith(compareBy({ it.file }, { it.testName })).map { problem ->
-                linkedMapOf(
-                    "kind" to problem.kind.name,
-                    "file" to problem.file.displayPath(rootDir),
-                    "comparedFile" to problem.comparedFile?.displayPath(rootDir),
-                    "actualFile" to actualFiles[problem]?.toAbsolutePath()?.invariantSeparatorsPathString,
-                    "test" to problem.testName,
-                    "testDataPath" to problem.testDataPath?.path,
-                    "variantChain" to problem.variantChain,
+            runErrors = runErrors,
+            tests = TestCounts(discoveredTests, passedTests, failedTests, skippedTests),
+            unmatchedTestDataPaths = unmatchedTestDataPaths,
+            problems = problems.sortedWith(compareBy({ it.file }, { it.testName })).map { problem ->
+                ModuleReport.Problem(
+                    kind = problem.kind,
+                    file = problem.file.displayPath(rootDir),
+                    comparedFile = problem.comparedFile?.displayPath(rootDir),
+                    actualFile = actualFiles[problem]?.toAbsolutePath()?.invariantSeparatorsPathString,
+                    test = problem.testName,
+                    testDataPath = problem.testDataPath?.path,
+                    variantChain = problem.variantChain,
                 )
             },
-            "testErrors" to testErrors.sortedBy { it.testName }.map { error ->
-                linkedMapOf(
-                    "test" to error.testName,
-                    "testDataPath" to error.testDataPath?.path,
-                    "variantChain" to error.variantChain,
-                    "exception" to error.exceptionClass,
-                    "message" to error.message?.let { if (it.length > MAX_MESSAGE_LENGTH) it.take(MAX_MESSAGE_LENGTH) + "..." else it },
-                    "stackTrace" to error.stackTrace,
+            testErrors = testErrors.sortedBy { it.testName }.map { error ->
+                ModuleReport.TestError(
+                    test = error.testName,
+                    testDataPath = error.testDataPath?.path,
+                    variantChain = error.variantChain,
+                    exception = error.exceptionClass,
+                    message = error.message?.let { if (it.length > MAX_MESSAGE_LENGTH) it.take(MAX_MESSAGE_LENGTH) + "..." else it },
+                    stackTrace = error.stackTrace,
                 )
             },
-            "fileActions" to fileActions.sortedBy { it.file }.map { action ->
-                linkedMapOf(
-                    "kind" to action.kind.name,
-                    "file" to action.file.displayPath(rootDir),
-                    "testDataPath" to action.testDataPath.displayPath(rootDir),
+            fileActions = fileActions.sortedBy { it.file }.map { action ->
+                ModuleReport.FileAction(
+                    kind = action.kind,
+                    file = action.file.displayPath(rootDir),
+                    testDataPath = action.testDataPath.displayPath(rootDir),
                 )
             },
-            "recoveredTests" to recoveredTests.sortedBy { it.testName }.map { test ->
-                linkedMapOf(
-                    "test" to test.testName,
-                    "passedInPass" to test.passedInPass,
-                    "failures" to test.errors.map { "${it.exceptionClass}: ${it.message.orEmpty()}".trimEnd(' ', ':') } +
+            recoveredTests = recoveredTests.sortedBy { it.testName }.map { test ->
+                ModuleReport.RecoveredTest(
+                    test = test.testName,
+                    passedInPass = test.passedInPass,
+                    failures = test.errors.map { "${it.exceptionClass}: ${it.message.orEmpty()}".trimEnd(' ', ':') } +
                             test.problems.map { "${it.kind} ${it.file.displayPath(rootDir)}" },
                 )
             },
         )
 
-        return buildString { appendJson(json, indent = "") }.plus("\n")
+        return TEST_DATA_MANAGER_JSON.encodeToString(ModuleReport.serializer(), report) + "\n"
     }
 
     companion object {
-        /**
-         * Why [runId] can't name a report, or `null` if it can: it names a file and a directory next to it,
-         * so it must not contain path separators or be `.` or `..`.
-         */
-        fun runIdError(runId: String): String? =
-            if (runId.matches(RUN_ID_PATTERN) && runId != "." && runId != "..") null
-            else "runId '$runId' must consist of letters, digits, '.', '_' and '-', and not be '.' or '..'"
-
-        private val RUN_ID_PATTERN = Regex("[A-Za-z0-9._-]+")
-
-        const val SCHEMA_VERSION = 1
         const val DEFAULT_KEPT_RUNS = 5
         private const val MAX_MESSAGE_LENGTH = 4000
 
@@ -224,61 +201,3 @@ internal fun Path.displayPath(rootDir: Path?): String {
     return path.invariantSeparatorsPathString
 }
 
-private fun StringBuilder.appendJson(value: Any?, indent: String) {
-    when (value) {
-        null -> append("null")
-        is String -> appendJsonString(value)
-        is Number, is Boolean -> append(value.toString())
-        is Map<*, *> -> appendJsonContainer(value.entries, '{', '}', indent) { [key, entryValue], nestedIndent ->
-            appendJsonString(key.toString())
-            append(": ")
-            appendJson(entryValue, nestedIndent)
-        }
-
-        is Collection<*> -> appendJsonContainer(value, '[', ']', indent) { element, nestedIndent ->
-            appendJson(element, nestedIndent)
-        }
-
-        else -> error("Unsupported JSON value: ${value::class}")
-    }
-}
-
-private inline fun <T> StringBuilder.appendJsonContainer(
-    elements: Collection<T>,
-    open: Char,
-    close: Char,
-    indent: String,
-    appendElement: StringBuilder.(T, String) -> Unit,
-) {
-    if (elements.isEmpty()) {
-        append(open).append(close)
-        return
-    }
-
-    val nestedIndent = "$indent  "
-    append(open).append('\n')
-    for ([index, element] in elements.withIndex()) {
-        append(nestedIndent)
-        appendElement(element, nestedIndent)
-        if (index < elements.size - 1) append(',')
-        append('\n')
-    }
-
-    append(indent).append(close)
-}
-
-private fun StringBuilder.appendJsonString(value: String) {
-    append('"')
-    for (char in value) {
-        when (char) {
-            '"' -> append("\\\"")
-            '\\' -> append("\\\\")
-            '\n' -> append("\\n")
-            '\r' -> append("\\r")
-            '\t' -> append("\\t")
-            else -> if (char < ' ') append("\\u%04x".format(char.code)) else append(char)
-        }
-    }
-
-    append('"')
-}

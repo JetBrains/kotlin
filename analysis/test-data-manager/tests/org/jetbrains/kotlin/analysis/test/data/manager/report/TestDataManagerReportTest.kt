@@ -32,7 +32,7 @@ class TestDataManagerReportTest {
         ),
     )
 
-    private fun problem(kind: TestDataAssertionError.Kind, file: String, comparedFile: String?, actual: String?) = TestDataProblem(
+    private fun problem(kind: TestDataProblemKind, file: String, comparedFile: String?, actual: String?) = TestDataProblem(
         testName = "FooTestGenerated.testFoo",
         testDataPath = TestMetadataPath("module/testData/foo.kt"),
         variantChain = listOf("knm", "js"),
@@ -72,6 +72,7 @@ class TestDataManagerReportTest {
                     "failed": 0,
                     "skipped": 0
                   },
+                  "unmatchedTestDataPaths": [],
                   "problems": [],
                   "testErrors": [],
                   "fileActions": [],
@@ -89,7 +90,7 @@ class TestDataManagerReportTest {
             discoveredTests = 3
             passedTests = 1
             failedTests = 2
-            problems += problem(TestDataAssertionError.Kind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "actual")
+            problems += problem(TestDataProblemKind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "actual")
             testErrors += TestError(
                 testName = "FooTestGenerated.testBar",
                 testDataPath = TestMetadataPath("module/testData/bar.kt"),
@@ -102,7 +103,7 @@ class TestDataManagerReportTest {
             fileActions += FileAction(
                 testDataPath = rootDir.resolve("module/testData/foo.kt"),
                 file = rootDir.resolve("module/testData/foo.txt"),
-                kind = FileAction.Kind.DELETED,
+                kind = FileActionKind.DELETED,
             )
 
             recoveredTests += RecoveredTest(
@@ -201,9 +202,9 @@ class TestDataManagerReportTest {
     fun `write stores the report and the actual output under the run id`() {
         val reportDirectory = tempDir.resolve("build/test-data-manager")
         val report = report(runId = "0193").apply {
-            problems += problem(TestDataAssertionError.Kind.MISSING_FILE, "module/testData/foo.txt", comparedFile = null, actual = "new\n")
+            problems += problem(TestDataProblemKind.MISSING_FILE, "module/testData/foo.txt", comparedFile = null, actual = "new\n")
             problems += problem(
-                kind = TestDataAssertionError.Kind.REDUNDANT_FILE,
+                kind = TestDataProblemKind.REDUNDANT_FILE,
                 file = "module/testData/foo.js.txt",
                 comparedFile = "module/testData/foo.txt",
                 actual = null,
@@ -228,9 +229,9 @@ class TestDataManagerReportTest {
     fun `write keeps the actual output of each problem on the same file`() {
         val reportDirectory = tempDir.resolve("build/test-data-manager")
         val report = report(runId = "shared").apply {
-            problems += problem(TestDataAssertionError.Kind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "js")
+            problems += problem(TestDataProblemKind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "js")
                 .copy(testName = "FooJsTestGenerated.testFoo")
-            problems += problem(TestDataAssertionError.Kind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "knm js")
+            problems += problem(TestDataProblemKind.MISMATCH, "module/testData/foo.js.txt", "module/testData/foo.txt", "knm js")
                 .copy(testName = "FooKnmJsTestGenerated.testFoo")
         }
 
@@ -295,7 +296,7 @@ class TestDataManagerReportTest {
                 testName = "FooTestGenerated.testFoo",
                 testDataPath = null,
                 variantChain = emptyList(),
-                kind = TestDataAssertionError.Kind.MISMATCH,
+                kind = TestDataProblemKind.MISMATCH,
                 file = outsideFile,
                 comparedFile = outsideFile,
                 actual = "actual\n",
@@ -318,7 +319,7 @@ class TestDataManagerReportTest {
                 .: runId '.' must consist of letters, digits, '.', '_' and '-', and not be '.' or '..'
                 a/b: runId 'a/b' must consist of letters, digits, '.', '_' and '-', and not be '.' or '..'
             """.trimIndent(),
-            listOf("0193-ab_c.1", "..", ".", "a/b").joinToString("\n") { "$it: ${TestDataManagerReport.runIdError(it) ?: "ok"}" },
+            listOf("0193-ab_c.1", "..", ".", "a/b").joinToString("\n") { "$it: ${runIdError(it) ?: "ok"}" },
         )
     }
 

@@ -1,0 +1,80 @@
+#!/usr/bin/env sh
+#
+# Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+# Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+#
+
+# Runs the test data manager wrapper, `test-data-manager-cli`; see README.md next to this script, or `--help`.
+#
+# The wrapper is built by Gradle the first time and whenever the sources of the test data manager or the versions of
+# the dependencies change. Each build is kept in `build/test-data-manager/cli/<key>`, named by the git trees of
+# `analysis/test-data-manager` and `gradle/libs.versions.toml`, so that switching branches back and forth doesn't rebuild
+# it; the 5 most recently used builds are kept. With uncommitted changes there, each run asks Gradle and runs the
+# wrapper from its build directory.
+#
+# Java is found as `gradlew` finds it: in JAVA_HOME, or on the PATH.
+
+set -eu
+
+# The script itself, also when it is started through a link
+script=$0
+while [ -L "$script" ]; do
+    target=$(readlink "$script")
+    case "$target" in
+        /*) script=$target ;;
+        *) script=$(dirname "$script")/$target ;;
+    esac
+done
+
+# Physical, so that `..` after a linked directory leaves its target
+root=$(cd -P "$(dirname "$script")/../.." && pwd -P)
+sources=analysis/test-data-manager
+catalog=gradle/libs.versions.toml
+builds="$root/build/test-data-manager/cli"
+
+installed="$root/$sources/test-data-manager-cli/build/cli"
+
+install() {
+    echo "Building the test data manager wrapper" >&2
+    if ! (cd "$root" && ./gradlew -q :analysis:test-data-manager:test-data-manager-cli:installCli >&2); then
+        echo "ERROR the test data manager wrapper failed to build" >&2
+        exit 2
+    fi
+}
+
+if [ -n "$(git -C "$root" status --porcelain -- "$sources" "$catalog")" ]; then
+    install
+    build="$installed"
+else
+    build="$builds/$(git -C "$root" rev-parse "HEAD:$sources" "HEAD:$catalog" | git hash-object --stdin)"
+fi
+
+if [ ! -f "$build/complete" ] && [ "$build" != "$installed" ]; then
+    install
+    mkdir -p "$builds"
+    temporary="$build.$$.tmp"
+    rm -rf "$temporary"
+    cp -R "$installed" "$temporary"
+    touch "$temporary/complete"
+    # Another run may have installed the same build meanwhile
+    if [ -d "$build" ] && [ ! -f "$build/complete" ]; then rm -rf "$build"; fi
+    if [ -d "$build" ]; then rm -rf "$temporary"; else mv "$temporary" "$build"; fi
+fi
+
+if [ "$build" != "$installed" ]; then
+    touch "$build"
+    # shellcheck disable=SC2012 # the names are git hashes
+    ls -t "$builds" | grep -v -e '\.tmp$' | tail -n +6 | while read -r old; do rm -rf "${builds:?}/$old"; done
+fi
+
+if [ -n "${JAVA_HOME:-}" ]; then
+    java="$JAVA_HOME/bin/java"
+else
+    java=java
+fi
+
+# UTF-8, as the wrapper reads the Gradle output it gets in the default charset
+set -- "$java" -XX:+UseSerialGC -Xshare:auto --enable-native-access=ALL-UNNAMED -Dfile.encoding=UTF-8 \
+    "-Dorg.jetbrains.kotlin.testDataManager.cli.repositoryRoot=$root" \
+    -cp "$build/*" org.jetbrains.kotlin.analysis.test.data.manager.cli.TestDataManagerCliKt "$@"
+exec "$@"
