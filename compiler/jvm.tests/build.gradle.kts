@@ -68,7 +68,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/writeFlags")
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
-    testData(project(":compiler").isolated, "tests-spec/testData")
 
     val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0, JdkMajorVersion.JDK_25_0)
     testTask(

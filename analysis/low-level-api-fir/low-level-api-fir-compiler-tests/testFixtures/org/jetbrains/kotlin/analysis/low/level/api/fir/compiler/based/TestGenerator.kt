@@ -243,26 +243,15 @@ fun main(args: Array<String>) {
             testClass<AbstractLLReversedMetadataDiagnosticsTest> {
                 model("diagnostics/metadataDiagnosticTests", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
             }
-        }
-
-        testGroup(
-            testsRoot = generatedTestRoot,
-            testDataRoot = "compiler/tests-spec/testData"
-        ) {
-            fun TestGroup.TestClass.modelInit() {
-                model(
-                    "diagnostics",
-                    excludeDirs = listOf("helpers"),
-                )
-            }
 
             testClass<AbstractLLSpecTest> {
-                modelInit()
+                model("diagnostics/specTests", excludeDirs = listOf("helpers"))
             }
 
             testClass<AbstractLLReversedSpecTest> {
-                modelInit()
+                model("diagnostics/specTests", excludeDirs = listOf("helpers"))
             }
+
         }
 
         testGroup(
