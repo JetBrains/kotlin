@@ -54,6 +54,10 @@ and the revision in `origin/master` it is branched from.
 If you need to define a different base branch, pass `--base $branch`.
 `--base HEAD~5` also works, to review the last five commits.
 
+To review with a non-default model or effort level, set the `kotlin.autoCodeReview.model` and/or
+`kotlin.autoCodeReview.effort` Gradle properties, in `local.properties` in the repository root
+or in `~/.gradle/gradle.properties`, or pass them to a single run with `-P`.
+
 Upon completion, the tool generates a Markdown-formatted report and prints a link to it.
 The report includes rule violations (if any) and some meta-information.
 

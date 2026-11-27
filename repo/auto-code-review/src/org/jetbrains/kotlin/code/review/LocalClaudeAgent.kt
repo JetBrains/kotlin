@@ -37,7 +37,7 @@ class LocalClaudeAgent private constructor(
         }
 
         /**
-         * The value for `--model` when calling `claude`.
+         * The default value for `--model` when calling `claude`.
          *
          * The current mid-tier model. Per Anthropic's model documentation, Sonnet is
          * "the best combination of speed and intelligence" — the stronger tiers are
@@ -45,10 +45,10 @@ class LocalClaudeAgent private constructor(
          * high-volume, latency-sensitive tasks. See
          * https://platform.claude.com/docs/en/models/overview
          */
-        private const val MODEL = "claude-sonnet-5-5"
+        private const val DEFAULT_MODEL = "claude-sonnet-5-5"
 
         /**
-         * The value for `--effort` in when calling `claude`.
+         * The default value for `--effort` when calling `claude`.
          *
          * `medium` is the effort level recommended for this model for well-specified
          * agentic coding and multistep tool use, and a per-rule review invocation is
@@ -59,7 +59,13 @@ class LocalClaudeAgent private constructor(
          * Coincidentally, `medium` is the default effort level in Claude Code for this model at the moment of writing.
          * But it may change with CLI updates or account/organization configuration. Pin the level to keep it deterministic.
          */
-        private const val EFFORT = "medium"
+        private const val DEFAULT_EFFORT = "medium"
+
+        private val AgentConfiguration.effectiveModel: String
+            get() = model ?: DEFAULT_MODEL
+
+        private val AgentConfiguration.effectiveEffort: String
+            get() = effort ?: DEFAULT_EFFORT
 
         private suspend fun createCommand(configuration: AgentConfiguration): List<String> = buildList {
             val prompt = """
@@ -114,9 +120,9 @@ class LocalClaudeAgent private constructor(
             add(jsonSchemaString)
 
             add("--model")
-            add(MODEL)
+            add(configuration.effectiveModel)
             add("--effort")
-            add(EFFORT)
+            add(configuration.effectiveEffort)
 
             // `dontAsk` means "allow only pre-approved tools, **don't ask** for more".
             add("--permission-mode")
@@ -161,7 +167,11 @@ class LocalClaudeAgent private constructor(
         private const val ANTHROPIC_AUTH_TOKEN = "ANTHROPIC_AUTH_TOKEN"
     }
 
-    override val info = AgentInfo("Claude Code", MODEL, EFFORT)
+    override val info = AgentInfo(
+        "Claude Code",
+        configuration.effectiveModel,
+        configuration.effectiveEffort,
+    )
 
     @Serializable
     private class AuthSettings(

@@ -32,6 +32,8 @@ interface Agent {
 
 class AgentConfiguration(
     val authMethod: Agent.AuthMethod = Agent.AuthMethod.LocalConfiguration,
+    val model: String? = null,
+    val effort: String? = null,
 ) {
     companion object {
 
@@ -40,6 +42,8 @@ class AgentConfiguration(
                 null -> Agent.AuthMethod.LocalConfiguration
                 else -> Agent.AuthMethod.JetBrainsCentralRun(jetbrainsCentralBinary)
             },
+            model = System.getProperty("kotlin.autoCodeReview.model"),
+            effort = System.getProperty("kotlin.autoCodeReview.effort"),
         )
     }
 }
