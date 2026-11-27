@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -30,6 +31,7 @@ import kotlin.test.assertTrue
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Build cache relocation for Swift Export")
 @SwiftExportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftExportRelocatabilityIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(buildCacheEnabled = true)
