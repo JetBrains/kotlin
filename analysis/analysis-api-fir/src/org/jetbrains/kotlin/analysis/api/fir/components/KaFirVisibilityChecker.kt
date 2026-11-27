@@ -10,6 +10,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -62,7 +62,6 @@ internal class KaFirVisibilityChecker(
             dispatchReceiver,
             useSiteFile,
             analysisSession,
-            token,
         )
     }
 
@@ -118,10 +117,9 @@ private class KaFirUseSiteVisibilityChecker(
     private val containingDeclarations: List<FirDeclaration>,
     private val dispatchReceiver: FirExpression?,
     private val useSiteFile: KaFirFileSymbol,
-    private val analysisSession: KaFirSession,
-    override val token: KaLifetimeToken,
-) : org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker {
-    override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
+    override val analysisSession: KaFirSession,
+) : org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker, KaFirSessionBoundOwner {
+    override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = entryPointImplementation {
         require(candidateSymbol is KaFirSymbol<*>)
 
         if (candidateSymbol is KaFirPsiJavaClassSymbol) {
@@ -188,6 +186,7 @@ private class KaFirUseSiteVisibilityChecker(
     }
 
     // Handle a special case: public members of "exposed" non-public super interfaces from implicit receivers (see KT-78597)
+    context(analysisSession: KaFirSession)
     private fun isVisibleFromSuperInterfaceOfImplicitReceiver(
         candidateSymbol: KaDeclarationSymbol,
         explicitDispatchReceiver: FirExpression?,
@@ -200,22 +199,20 @@ private class KaFirUseSiteVisibilityChecker(
             return false
         }
 
-        context(analysisSession) {
-            val containingSymbol = candidateSymbol.containingSymbol as? KaClassSymbol ?: return false
-            if (containingSymbol.classKind != KaClassKind.INTERFACE) return false
+        val containingSymbol = candidateSymbol.containingSymbol as? KaClassSymbol ?: return false
+        if (containingSymbol.classKind != KaClassKind.INTERFACE) return false
 
-            // `position` may be a leaf PsiElement
-            val ktPosition = position.parentOfType<KtElement>(withSelf = true) ?: return false
+        // `position` may be a leaf PsiElement
+        val ktPosition = position.parentOfType<KtElement>(withSelf = true) ?: return false
 
-            val scopeContext = ktPosition.containingKtFile.scopeContext(ktPosition)
-            for (implicitReceiver in scopeContext.implicitReceivers) {
-                val classSymbol = implicitReceiver.type.symbol as? KaClassSymbol ?: continue
-                if (classSymbol.isSubClassOf(containingSymbol)) {
-                    return true
-                }
+        val scopeContext = ktPosition.containingKtFile.scopeContext(ktPosition)
+        for (implicitReceiver in scopeContext.implicitReceivers) {
+            val classSymbol = implicitReceiver.type.symbol as? KaClassSymbol ?: continue
+            if (classSymbol.isSubClassOf(containingSymbol)) {
+                return true
             }
-
-            return false
         }
+
+        return false
     }
 }

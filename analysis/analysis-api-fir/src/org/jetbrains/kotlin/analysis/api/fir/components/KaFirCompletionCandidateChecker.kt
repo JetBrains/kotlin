@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandida
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.createSubstitutorFromTypeArguments
@@ -59,11 +60,11 @@ internal class KaFirCompletionCandidateChecker(
 }
 
 private class KaFirCompletionExtensionCandidateChecker(
-    private val analysisSession: KaFirSession,
+    override val analysisSession: KaFirSession,
     private val nameExpression: KtSimpleNameExpression,
     explicitReceiver: KtExpression?,
     originalFile: KtFile,
-) : KaCompletionExtensionCandidateChecker {
+) : KaCompletionExtensionCandidateChecker, KaFirSessionBoundOwner {
     private val resolutionFacade = analysisSession.resolutionFacade
 
     private val implicitReceivers: List<ImplicitReceiverValue<*>>
@@ -85,12 +86,10 @@ private class KaFirCompletionExtensionCandidateChecker(
         candidateResolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
     }
 
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
 
-    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult = withValidityAssertion {
+    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult = entryPointImplementation {
         if (candidate is KaReceiverParameterSymbol) {
-            return NonApplicable(token)
+            return NonApplicable(this.token)
         }
 
         require(candidate is KaFirSymbol<*>)
@@ -121,15 +120,15 @@ private class KaFirCompletionExtensionCandidateChecker(
             val receiverCastRequired = firResolvedCall.calleeReference is FirErrorReferenceWithCandidate
 
             if (firSymbol is FirVariableSymbol<*> && firSymbol.resolvedReturnType.receiverType(firCallSiteSession) != null) {
-                return ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
+                return ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, this.token)
             }
 
-            return ApplicableAsExtensionCallable(substitutor, receiverCastRequired, token)
+            return ApplicableAsExtensionCallable(substitutor, receiverCastRequired, this.token)
         }
 
         return implicitReceivers.firstNotNullOfOrNull(::processReceiver)
             ?: processReceiver(null)
-            ?: NonApplicable(token)
+            ?: NonApplicable(this.token)
     }
 
     private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {

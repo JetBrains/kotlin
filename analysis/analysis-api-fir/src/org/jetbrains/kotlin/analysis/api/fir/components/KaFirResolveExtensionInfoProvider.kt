@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolveExtensionInfoProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
@@ -48,35 +47,35 @@ internal class KaFirResolveExtensionInfoProvider(
 }
 
 private class KaFirResolveExtensionScope(
-    private val analysisSession: KaFirSession,
+    override val analysisSession: KaFirSession,
     private val tools: List<LLFirResolveExtensionTool>,
-) : KaFirScope() {
+) : KaFirScope(), KaFirSessionBoundOwner {
     init {
         require(tools.isNotEmpty())
     }
 
-    override val token: KaLifetimeToken get() = analysisSession.token
 
-    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = entryPointImplementation {
         getTopLevelDeclarations(nameFilter) { it.getTopLevelCallables() }
     }
 
-    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
 
-    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
         getTopLevelDeclarations(nameFilter) { it.getTopLevelClassifiers() }
     }
 
-    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
 
+    context(analysisSession: KaFirSession)
     private inline fun <D : KtNamedDeclaration, reified S : KaDeclarationSymbol> getTopLevelDeclarations(
         crossinline nameFilter: (Name) -> Boolean,
         crossinline getDeclarationsByProvider: (LLFirResolveExtensionToolDeclarationProvider) -> Sequence<D>,
@@ -85,17 +84,15 @@ private class KaFirResolveExtensionScope(
             for (declaration in getDeclarationsByProvider(tool.declarationProvider)) {
                 val declarationName = declaration.nameAsName ?: continue
                 if (!nameFilter(declarationName)) continue
-                context(analysisSession) {
-                    yield(declaration.symbol as S)
-                }
+                yield(declaration.symbol as S)
             }
         }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = entryPointImplementation { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         sequence {
             // Only emit package symbols for top-level packages (subpackages of root). This matches the behavior
             // of the root-level KtFirPackageScope.
@@ -110,11 +107,11 @@ private class KaFirResolveExtensionScope(
         }
     }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelCallableNames() }
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelClassifierNames() }
     }
 }

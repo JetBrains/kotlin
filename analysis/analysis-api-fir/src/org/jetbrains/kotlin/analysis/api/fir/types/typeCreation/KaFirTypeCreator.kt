@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -44,61 +44,57 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 internal class KaFirTypeCreator(
-    val analysisSession: KaFirSession,
-) : KaTypeCreator {
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
+    override val analysisSession: KaFirSession,
+) : KaTypeCreator, KaFirSessionBoundOwner {
 
     override fun typeProjection(
         variance: Variance,
         type: KaType,
-    ): KaTypeArgumentWithVariance = withValidityAssertion {
-        KaFirTypeArgumentWithVariance(type, variance, token)
+    ): KaTypeArgumentWithVariance = entryPointImplementation {
+        KaFirTypeArgumentWithVariance(type, variance, this.token)
     }
 
     override fun typeProjection(
         variance: Variance,
         type: KaTypeCreator.() -> KaType,
-    ): KaTypeArgumentWithVariance = withValidityAssertion {
-        KaFirTypeArgumentWithVariance(type(), variance, token)
+    ): KaTypeArgumentWithVariance = entryPointImplementation {
+        KaFirTypeArgumentWithVariance(type(), variance, this.token)
     }
 
-    override fun starTypeProjection(): KaStarTypeProjection = withValidityAssertion {
-        KaFirStarTypeProjection(token)
+    override fun starTypeProjection(): KaStarTypeProjection = entryPointImplementation {
+        KaFirStarTypeProjection(this.token)
     }
 
-    override fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        context(analysisSession) {
-            val builder = KaFirArrayTypeBuilder(this@KaFirTypeCreator).apply(init)
+    override fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = entryPointImplementation {
+        val builder = KaFirArrayTypeBuilder(this@KaFirTypeCreator).apply(init)
 
-            if (elementType is KaClassType && builder.shouldPreferPrimitiveTypes && !elementType.isMarkedNullable) {
-                val classId = elementType.classId
-                val primitiveArrayId =
-                    StandardClassIds.primitiveArrayTypeByElementType[classId]
-                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
-                if (primitiveArrayId != null) {
-                    return classType(primitiveArrayId) {
-                        isMarkedNullable = builder.isMarkedNullable
-                        annotations(builder.annotations)
-                    }
+        if (elementType is KaClassType && builder.shouldPreferPrimitiveTypes && !elementType.isMarkedNullable) {
+            val classId = elementType.classId
+            val primitiveArrayId =
+                StandardClassIds.primitiveArrayTypeByElementType[classId]
+                    ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+            if (primitiveArrayId != null) {
+                return classType(primitiveArrayId) {
+                    isMarkedNullable = builder.isMarkedNullable
+                    annotations(builder.annotations)
                 }
             }
+        }
 
-            return classType(StandardClassIds.Array) {
-                isMarkedNullable = builder.isMarkedNullable
-                typeArgument(builder.variance, elementType)
-                annotations(builder.annotations)
-            }
+        return classType(StandardClassIds.Array) {
+            isMarkedNullable = builder.isMarkedNullable
+            typeArgument(builder.variance, elementType)
+            annotations(builder.annotations)
         }
     }
 
-    override fun varargArrayType(elementType: KaType): KaType = withValidityAssertion {
+    override fun varargArrayType(elementType: KaType): KaType = entryPointImplementation {
         arrayType(elementType) {
             variance = Variance.OUT_VARIANCE
         }
     }
 
-    override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+    override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = entryPointImplementation {
         val builder = KaFirClassTypeBuilder(this).apply(init)
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeErrorType(
@@ -109,19 +105,20 @@ internal class KaFirTypeCreator(
         return buildClassType(lookupTag, builder)
     }
 
-    override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+    override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = entryPointImplementation {
         val symbol = symbol
         val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
         return buildClassType(lookupTag, KaFirClassTypeBuilder(this).apply(init))
     }
 
+    context(analysisSession: KaFirSession)
     private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaFirClassTypeBuilder): KaType {
         val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
         val builderTypeArguments = builder.typeArguments
         val arguments = List(expectedNumberOfParameters) { index ->
             when (val builderArgument = builderTypeArguments.getOrNull(index)) {
                 null -> ConeStarProjection
-                else -> context(analysisSession) { builderArgument.coneTypeProjection }
+                else -> builderArgument.coneTypeProjection
             }
         }
 
@@ -135,63 +132,59 @@ internal class KaFirTypeCreator(
         return coneType.withAnnotationAttributes(builder.annotations).asKaType()
     }
 
-    override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =
-        withValidityAssertion {
-            val builder = KaFirTypeParameterTypeBuilder(this).apply(init)
-            val coneType = symbol.firSymbol.toConeType()
-                .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-            return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaTypeParameterType
-        }
+    override fun typeParameterType(
+        symbol: KaTypeParameterSymbol,
+        init: KaTypeParameterTypeBuilder.() -> Unit,
+    ): KaTypeParameterType = entryPointImplementation {
+        val builder = KaFirTypeParameterTypeBuilder(this).apply(init)
+        val coneType = symbol.firSymbol.toConeType()
+            .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
+        coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaTypeParameterType
+    }
 
     override fun capturedType(
         type: KaCapturedType,
         init: KaCapturedTypeBuilder.() -> Unit,
-    ): KaCapturedType {
-        withValidityAssertion {
-            val builder = KaFirCapturedTypeBuilder(this).apply(init)
-            return type.coneType.withAnnotationAttributes(builder.annotations)
-                .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-                .asKaType() as KaCapturedType
-        }
+    ): KaCapturedType = entryPointImplementation {
+        val builder = KaFirCapturedTypeBuilder(this).apply(init)
+        type.coneType.withAnnotationAttributes(builder.annotations)
+            .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
+            .asKaType() as KaCapturedType
     }
 
     override fun capturedType(
         projection: KaTypeProjection,
         init: KaCapturedTypeBuilder.() -> Unit,
-    ): KaCapturedType? {
-        withValidityAssertion {
-            context(analysisSession) {
-                if ((projection as? KaTypeArgumentWithVariance)?.variance == Variance.INVARIANT) {
-                    return null
-                }
-
-                val builder = KaFirCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
-                val capturedType = analysisSession.firSession.typeContext.createCapturedType(
-                    projection.coneTypeProjection,
-                    projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
-                    lowerType = null,
-                    CaptureStatus.FROM_EXPRESSION
-                )
-
-                return capturedType
-                    .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-                    .withAnnotationAttributes(builder.annotations)
-                    .asKaType() as KaCapturedType
-            }
+    ): KaCapturedType? = entryPointImplementation {
+        if ((projection as? KaTypeArgumentWithVariance)?.variance == Variance.INVARIANT) {
+            return null
         }
+
+        val builder = KaFirCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
+        val capturedType = analysisSession.firSession.typeContext.createCapturedType(
+            projection.coneTypeProjection,
+            projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
+            lowerType = null,
+            CaptureStatus.FROM_EXPRESSION
+        )
+
+        capturedType
+            .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
+            .withAnnotationAttributes(builder.annotations)
+            .asKaType() as KaCapturedType
     }
 
     override fun definitelyNotNullType(
         type: KaTypeParameterType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
-    ): KaType = withValidityAssertion {
+    ): KaType = entryPointImplementation {
         buildDefinitelyNotNullType(type, KaFirDefinitelyNotNullTypeBuilder(this).apply(init))
     }
 
     override fun definitelyNotNullType(
         type: KaCapturedType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
-    ): KaType = withValidityAssertion {
+    ): KaType = entryPointImplementation {
         buildDefinitelyNotNullType(type, KaFirDefinitelyNotNullTypeBuilder(this).apply(init))
     }
 
@@ -206,100 +199,86 @@ internal class KaFirTypeCreator(
     override fun flexibleType(
         type: KaFlexibleType,
         init: KaFlexibleTypeBuilder.() -> Unit,
-    ): KaType? {
-        withValidityAssertion {
-            val builder = KaFirFlexibleTypeBuilder(
-                type.lowerBound,
-                type.upperBound,
-                this
-            ).apply(init)
-            return buildFlexibleType(builder)
-        }
+    ): KaType? = entryPointImplementation {
+        val builder = KaFirFlexibleTypeBuilder(
+            type.lowerBound,
+            type.upperBound,
+            this
+        ).apply(init)
+
+        buildFlexibleType(builder)
     }
 
     override fun flexibleType(
         init: KaFlexibleTypeBuilder.() -> Unit,
-    ): KaType? {
-        withValidityAssertion {
-            context(analysisSession) {
-                val builder = KaFirFlexibleTypeBuilder(
-                    lowerBound = builtinTypes.nothing,
-                    upperBound = builtinTypes.nullableAny,
-                    this@KaFirTypeCreator
-                ).apply(init)
-                return buildFlexibleType(builder)
-            }
-        }
+    ): KaType? = entryPointImplementation {
+        val builder = KaFirFlexibleTypeBuilder(
+            lowerBound = builtinTypes.nothing,
+            upperBound = builtinTypes.nullableAny,
+            this@KaFirTypeCreator
+        ).apply(init)
+
+        buildFlexibleType(builder)
     }
 
     override fun flexibleType(
         lowerBound: KaType,
         upperBound: KaType,
-    ): KaType? {
-        withValidityAssertion {
-            val builder = KaFirFlexibleTypeBuilder(
-                lowerBound,
-                upperBound,
-                this
-            )
-            return buildFlexibleType(builder)
-        }
+    ): KaType? = entryPointImplementation {
+        val builder = KaFirFlexibleTypeBuilder(
+            lowerBound,
+            upperBound,
+            this
+        )
+
+        buildFlexibleType(builder)
     }
 
-    private fun buildFlexibleType(builder: KaFlexibleTypeBuilder): KaType? {
-        withValidityAssertion {
-            context(analysisSession) {
-                val lowerBound = builder.lowerBound.coneType.lowerBoundIfFlexible()
-                val upperBound = builder.upperBound.coneType.upperBoundIfFlexible()
+    private fun buildFlexibleType(builder: KaFlexibleTypeBuilder): KaType? = entryPointImplementation {
+        val lowerBound = builder.lowerBound.coneType.lowerBoundIfFlexible()
+        val upperBound = builder.upperBound.coneType.upperBoundIfFlexible()
 
-                if (lowerBound == upperBound) {
-                    return lowerBound.withAnnotationAttributes(builder.annotations).asKaType()
-                }
-
-                if (!lowerBound.isSubtypeOf(upperBound, analysisSession.firSession)) {
-                    return null
-                }
-
-                val coneType = typeContext.createFlexibleType(lowerBound, upperBound)
-                return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaFlexibleType
-            }
+        if (lowerBound == upperBound) {
+            return lowerBound.withAnnotationAttributes(builder.annotations).asKaType()
         }
+
+        if (!lowerBound.isSubtypeOf(upperBound, analysisSession.firSession)) {
+            return null
+        }
+
+        val coneType = typeContext.createFlexibleType(lowerBound, upperBound)
+        coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaFlexibleType
     }
 
     override fun intersectionType(
         init: KaIntersectionTypeBuilder.() -> Unit,
-    ): KaType {
-        withValidityAssertion {
-            context(analysisSession) {
-                val builder = KaFirIntersectionTypeBuilder(this@KaFirTypeCreator).apply(init)
-                val conjuncts = builder.conjuncts
+    ): KaType = entryPointImplementation {
+        val builder = KaFirIntersectionTypeBuilder(this@KaFirTypeCreator).apply(init)
+        val conjuncts = builder.conjuncts
 
-                if (conjuncts.isEmpty()) {
-                    return builtinTypes.nullableAny.coneType.asKaType()
-                }
-
-                val coneType = ConeTypeIntersector.intersectTypes(
-                    analysisSession.firSession.typeContext,
-                    conjuncts.map { it.coneType }
-                )
-                return coneType.asKaType()
-            }
+        if (conjuncts.isEmpty()) {
+            return builtinTypes.nullableAny.coneType.asKaType()
         }
+
+        val coneType = ConeTypeIntersector.intersectTypes(
+            analysisSession.firSession.typeContext,
+            conjuncts.map { it.coneType }
+        )
+
+        coneType.asKaType()
     }
 
-    override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
-        withValidityAssertion {
-            val builder = KaFirDynamicTypeBuilder(this).apply(init)
-            val attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false)
-            val coneType = ConeDynamicType.create(rootModuleSession, attributes = attributes)
-            return coneType.asKaType() as KaDynamicType
-        }
+    override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType = entryPointImplementation {
+        val builder = KaFirDynamicTypeBuilder(this).apply(init)
+        val attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false)
+        val coneType = ConeDynamicType.create(rootModuleSession, attributes = attributes)
+        coneType.asKaType() as KaDynamicType
     }
 
     override fun functionType(
         init: KaFunctionTypeBuilder.() -> Unit,
-    ): KaType = withValidityAssertion {
-        return buildFunctionType(KaFirFunctionTypeBuilder(this, analysisSession).apply(init))
+    ): KaType = entryPointImplementation {
+        buildFunctionType(KaFirFunctionTypeBuilder(this, defaultReturnType = builtinTypes.unit).apply(init))
     }
 
 

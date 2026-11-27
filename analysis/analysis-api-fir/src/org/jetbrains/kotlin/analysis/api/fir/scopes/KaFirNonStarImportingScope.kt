@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -40,18 +40,18 @@ internal class KaFirNonStarImportingScope(
         }
     }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         emptySequence()
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = entryPointImplementation { emptySequence() }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation {
         imports.flatMapTo(hashSetOf()) { listOfNotNull(it.callableName, it.aliasName) }
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation {
         imports.flatMapTo((hashSetOf())) { listOfNotNull(it.relativeClassName?.shortName(), it.aliasName) }
     }
 }

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
-    private val analysisSession: KaFirSession,
+    analysisSession: KaFirSession,
 ) : KaFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
 
     private val imports: List<StarImport> by cached {
@@ -29,10 +29,10 @@ internal class KaFirStarImportingScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = entryPointImplementation { emptySequence() }
 
     // todo cache?
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
                 DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(import.packageFqName, analysisSession = analysisSession)
@@ -43,11 +43,11 @@ internal class KaFirStarImportingScope(
         }
     }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         emptySequence()
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
                 DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(import.packageFqName, analysisSession = analysisSession)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -76,7 +75,8 @@ internal class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCla
     override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
 }
 
-internal class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -170,7 +170,10 @@ internal class KaFirIntersectionTypeBuilder(
 internal class KaFirDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
     KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
 
-internal class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+internal class KaFirFunctionTypeBuilder(
+    typeCreatorDelegate: KaTypeCreator,
+    defaultReturnType: KaType,
+) : KaFunctionTypeBuilder,
     KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
@@ -226,7 +229,7 @@ internal class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, sess
             withValidityAssertion { field = value }
         }
 
-    override var returnType: KaType = context(session) { builtinTypes.unit }
+    override var returnType: KaType = defaultReturnType
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion { field = value }

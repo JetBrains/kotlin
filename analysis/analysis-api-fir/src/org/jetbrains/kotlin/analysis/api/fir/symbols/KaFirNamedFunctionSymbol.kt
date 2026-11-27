@@ -258,6 +258,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun createMemberFunctionPointer(): KaSymbolPointer<KaNamedFunctionSymbol> {
         if (origin == KaSymbolOrigin.JS_DYNAMIC) {
             return KaFirDynamicFunctionSymbolPointer(name, this)
@@ -288,6 +289,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
      *
      * @return A pointer for synthetic property accessor functions, or null if not applicable.
      */
+    context(analysisSession: KaFirSession)
     private fun createJavaSyntheticPropertyAccessorPointerIfApplicable(): KaSymbolPointer<KaNamedFunctionSymbol>? {
         val accessorKind = KaSyntheticJavaPropertyAccessorKind.fromAccessorName(name) ?: return null
 

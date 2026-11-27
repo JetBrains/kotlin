@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -18,31 +20,32 @@ import org.jetbrains.kotlin.name.Name
 internal abstract class KaFirBasedScope<S : FirScope>(
     internal val firScope: S,
     protected val builder: KaSymbolByFirBuilder,
-) : KaFirScope() {
+) : KaFirScope(), KaFirSessionBoundOwner {
+    final override val analysisSession: KaFirSession get() = builder.analysisSession
     final override val token: KaLifetimeToken get() = builder.token
 
-    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = entryPointImplementation {
         firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
-    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = entryPointImplementation {
         firScope.getCallableSymbols(names, builder)
     }
 
-    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = entryPointImplementation {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
     }
 
-    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
+    override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = entryPointImplementation {
         firScope.getClassifierSymbols(names, builder)
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             firScope.getConstructors(builder)
         }
 
-    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = entryPointImplementation {
         emptySequence()
     }
 }

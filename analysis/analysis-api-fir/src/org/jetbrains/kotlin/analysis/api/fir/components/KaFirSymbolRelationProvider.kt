@@ -124,6 +124,7 @@ internal class KaFirSymbolRelationProvider(
         return computeIsDirectSubClassOf(symbol, superClass)
     }
 
+    context(analysisSession: KaFirSession)
     private inline fun KaCallableSymbol.handleOverriddenSymbols(
         forAccessorSymbol: (KaPropertyAccessorSymbol) -> Sequence<KaCallableSymbol>,
         fallback: (KaCallableSymbol) -> Sequence<KaCallableSymbol>,
@@ -155,21 +156,20 @@ internal class KaFirSymbolRelationProvider(
      * @param functionSymbol A function symbol representing a Java getter or setter method
      * @return The getter or setter of the synthetic property that wraps the given Java method, or `null` if not applicable
      */
+    context(analysisSession: KaFirSession)
     private fun getSyntheticJavaPropertyAccessor(functionSymbol: KaNamedFunctionSymbol): KaPropertyAccessorSymbol? {
         val origin = functionSymbol.origin
         if (!origin.isFromJava) return null
 
-        return context(analysisSession) {
-            val containingClass = functionSymbol.containingDeclaration as? KaClassSymbol ?: return null
-            containingClass.combinedDeclaredMemberScope
-                .findSyntheticJavaPropertyAccessor(functionSymbol.name) { propertySymbol, accessorKind, _ ->
-                    if (accessorKind.getJavaAccessorSymbol(propertySymbol) == functionSymbol) {
-                        accessorKind.getPropertyAccessorSymbol(propertySymbol)
-                    } else {
-                        null
-                    }
+        val containingClass = functionSymbol.containingDeclaration as? KaClassSymbol ?: return null
+        return containingClass.combinedDeclaredMemberScope
+            .findSyntheticJavaPropertyAccessor(functionSymbol.name) { propertySymbol, accessorKind, _ ->
+                if (accessorKind.getJavaAccessorSymbol(propertySymbol) == functionSymbol) {
+                    accessorKind.getPropertyAccessorSymbol(propertySymbol)
+                } else {
+                    null
                 }
-        }
+            }
     }
 
     override fun implementationState(
