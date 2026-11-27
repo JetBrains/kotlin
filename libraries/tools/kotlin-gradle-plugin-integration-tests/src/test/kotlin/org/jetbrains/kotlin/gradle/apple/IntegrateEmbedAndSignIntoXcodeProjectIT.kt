@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializePbxpr
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -33,6 +34,7 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("integrateEmbedAndSign task tests")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
 
     @TestMetadata("emptyxcproj")
