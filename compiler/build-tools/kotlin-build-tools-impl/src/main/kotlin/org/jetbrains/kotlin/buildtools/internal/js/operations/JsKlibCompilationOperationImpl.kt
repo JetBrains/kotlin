@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
 
 internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>,
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
@@ -131,6 +132,9 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
     ): IncrementalCompilationOptions? {
         return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
             is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
+                if (aggregatedIcConfiguration[BaseIncrementalCompilationConfigurationImpl.FORCE_RECOMPILATION]) {
+                    aggregatedIcConfiguration.historyFile.deleteIfExists()
+                }
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
                 val classpathChanges = ClasspathChanges.NotAvailableForJSCompiler
 
@@ -247,6 +251,9 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
             ), buildMetricsReporter = metricsReporter
         )
 
+        if (icConfiguration[BaseIncrementalCompilationConfigurationImpl.FORCE_RECOMPILATION]) {
+            icConfiguration.historyFile.deleteIfExists()
+        }
         val icFeatures = icConfiguration.extractIncrementalCompilationFeatures()
         val incrementalCompiler = IncrementalJsCompilerRunner(
             icConfiguration.workingDirectory.toFile(),
