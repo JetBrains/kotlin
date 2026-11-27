@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrSimpleFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -59,26 +64,34 @@ class MemoizedInlineClassReplacements(
     private fun commonBuildReplacementInner(
         function: IrFunction,
         noFakeOverride: Boolean,
-        body: IrFunction.() -> Unit,
-        builderBody: IrFunctionBuilder.() -> Unit,
-    ): IrSimpleFunction = irFactory.buildFun {
-        updateFrom(function)
-        builderBody()
-        if (noFakeOverride) {
-            isFakeOverride = false
-        }
-        returnType = function.returnType
-    }.apply {
-        parent = function.parent
-        // Non-exposed methods and functions should not have @JvmExposeBoxed annotation, since we expect users to be able to
-        // distinguish exposed functions via reflection.
-        annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
-        copyTypeParameters(function.allTypeParameters)
-        if (function.metadata != null) {
+        buildParameters: IrSimpleFunctionBuilder.(typeSubstitution: Map<IrTypeParameterSymbol, IrType>) -> ParameterMapping,
+        body: IrSimpleFunction.(parameters: ParameterMapping) -> Unit,
+        builderBody: IrSimpleFunctionBuilder.() -> Unit,
+    ): IrSimpleFunction {
+        val parameterMapping: ParameterMapping
+        return irFactory.irFunction {
+            updateFrom(function)
+            builderBody()
+            if (noFakeOverride) {
+                isFakeOverride = false
+            }
+            // Not substituted with the copied type parameters.
+            returnType = function.returnType
+            parent = function.parent
+            // Non-exposed methods and functions should not have @JvmExposeBoxed annotation, since we expect users to be able to
+            // distinguish exposed functions via reflection.
+            annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
             metadata = function.metadata
-            function.metadata = null
+            parameterMapping = buildParameters(copyTypeParameters(function.allTypeParameters))
+        }.apply {
+            // Lazy declarations don't support setting metadata at all.
+            if (function.metadata != null) function.metadata = null
+            buildReplacementLinks(function)
+            body(parameterMapping)
         }
+    }
 
+    private fun IrSimpleFunction.buildReplacementLinks(function: IrFunction) {
         if (function is IrSimpleFunction) {
             copyAttributes(function)
             val propertySymbol = function.correspondingPropertySymbol
@@ -111,8 +124,14 @@ class MemoizedInlineClassReplacements(
 
             overriddenSymbols = replaceOverriddenSymbols(function)
         }
+    }
 
-        body()
+    // Assuming that constructors and non-override functions are always replaced with the unboxed
+    // equivalent, deep-copying the default values here is unnecessary. See `JvmInlineClassLowering`.
+    private fun IrFunction.moveDefaultValues(parameters: ParameterMapping) {
+        for ([from, to] in parameters) {
+            to.owner.defaultValue = from.owner.defaultValue?.patchDeclarationParents(this)
+        }
     }
 
     private val replaceOverriddenSymbolsImpl: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
@@ -257,78 +276,65 @@ class MemoizedInlineClassReplacements(
     }
 
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
-        buildReplacement(function, function.origin) {
-            parameters += function.parameters.map { parameter ->
-                parameter.copyTo(
-                    this,
-                    defaultValue = null,
-                    name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+        buildReplacement(
+            function, function.origin,
+            buildParameters = { typeSubstitution ->
+                copyParameters(function.parameters, typeSubstitution) { from ->
+                    if (from.kind == IrParameterKind.ExtensionReceiver) {
                         // The function's name will be mangled, so preserve the old receiver name.
-                        Name.identifier(function.extensionReceiverName(context.config))
-                    } else parameter.name
-                ).also {
-                    // Assuming that constructors and non-override functions are always replaced with the unboxed
-                    // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
-                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
+                        name = Name.identifier(function.extensionReceiverName(context.config))
+                    }
                 }
-            }
+            },
+        ) { parameters ->
+            moveDefaultValues(parameters)
         }
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
-        buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            this.originalFunctionOfStaticInlineClassReplacement = function
-
-            parameters += function.parameters.map { parameter ->
-                when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> {
-                        // FAKE_OVERRIDEs have broken dispatch receivers
-                        function.parentAsClass.thisReceiver!!.copyTo(
-                            this,
-                            name = Name.identifier("arg0"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
-                            kind = IrParameterKind.Regular,
-                        )
-                    }
-                    IrParameterKind.Context -> {
-                        parameter.copyTo(
-                            this,
-                            name = parameter.name,
-                            origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER,
-                            kind = IrParameterKind.Regular,
-                        )
-                    }
-                    IrParameterKind.ExtensionReceiver -> {
-                        parameter.copyTo(
-                            this,
-                            name = Name.identifier(function.extensionReceiverName(context.config)),
-                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
-                            kind = IrParameterKind.Regular,
-                        )
-                    }
-                    IrParameterKind.Regular -> {
-                        parameter.copyTo(this, defaultValue = null).also {
-                            // See comment next to a similar line above.
-                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
+        buildReplacement(
+            function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true,
+            buildParameters = { typeSubstitution ->
+                copyParameters(function.parameters, typeSubstitution) { from ->
+                    when (from.kind) {
+                        IrParameterKind.DispatchReceiver -> {
+                            // FAKE_OVERRIDEs have broken dispatch receivers
+                            val thisReceiver = function.parentAsClass.thisReceiver!!
+                            updateFrom(thisReceiver)
+                            annotations = thisReceiver.copyAnnotations()
+                            name = Name.identifier("arg0")
+                            type = function.parentAsClass.defaultType
+                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                         }
+                        IrParameterKind.Context -> origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
+                        IrParameterKind.ExtensionReceiver -> {
+                            name = Name.identifier(function.extensionReceiverName(context.config))
+                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                        }
+                        IrParameterKind.Regular -> {}
                     }
+                    kind = IrParameterKind.Regular
                 }
-            }
+            },
+        ) { parameters ->
+            originalFunctionOfStaticInlineClassReplacement = function
+            moveDefaultValues(parameters)
         }
 
     private fun buildReplacement(
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
-        body: IrFunction.() -> Unit
+        buildParameters: IrSimpleFunctionBuilder.(typeSubstitution: Map<IrTypeParameterSymbol, IrType>) -> ParameterMapping,
+        body: IrSimpleFunction.(parameters: ParameterMapping) -> Unit,
     ): IrSimpleFunction {
         val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures || function.fromStdlib()
-        val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
+        val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, buildParameters, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
         if (!useOldManglingScheme && replacement.name.asString().contains('-') && function.parentClassId != null) {
             val resolved = (function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()
             if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
-                return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
+                return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, buildParameters, body)
             }
         }
         return replacement
@@ -339,10 +345,11 @@ class MemoizedInlineClassReplacements(
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean,
         useOldManglingScheme: Boolean,
-        body: IrFunction.() -> Unit,
-    ): IrSimpleFunction = commonBuildReplacementInner(function, noFakeOverride, body) {
+        buildParameters: IrSimpleFunctionBuilder.(typeSubstitution: Map<IrTypeParameterSymbol, IrType>) -> ParameterMapping,
+        body: IrSimpleFunction.(parameters: ParameterMapping) -> Unit,
+    ): IrSimpleFunction = commonBuildReplacementInner(function, noFakeOverride, buildParameters, body) {
         if (function is IrConstructor) {
-            // The [updateFrom] call will set the modality to FINAL for constructors, while the JVM backend would use OPEN here.
+            // [updateFrom] leaves the modality FINAL for constructors, while the JVM backend would use OPEN here.
             modality = Modality.OPEN
         }
         origin = when {
@@ -410,6 +417,8 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
             ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }
 }
+
+private typealias ParameterMapping = Map<IrValueParameterSymbol, IrValueParameterSymbol>
 
 private object InlinedEqualsNames {
     val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
