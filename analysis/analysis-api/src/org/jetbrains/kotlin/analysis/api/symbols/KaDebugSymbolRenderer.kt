@@ -516,12 +516,6 @@ public class KaDebugRenderer(
             "analysisSession",
             "coneType",
             "analysisContext",
-
-            // These properties are made obsolete by their counterparts without `*IfNonLocal` (e.g. `classId`), which contain the same
-            // values.
-            "classIdIfNonLocal",
-            "containingClassIdIfNonLocal",
-            "callableIdIfNonLocal",
         )
     }
 }
