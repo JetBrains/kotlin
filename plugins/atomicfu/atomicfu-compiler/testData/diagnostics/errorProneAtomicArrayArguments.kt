@@ -14,7 +14,7 @@ value class Foo(val value: UInt)
 import kotlinx.atomicfu.*
 
 fun testKotlinArray(<!ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN!>foo<!>: AtomicArray<Any>, bar: Foo) {
-    foo[0].compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
+    foo[0].compareAndSet(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bar<!>, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classReference, flexibleType, functionDeclaration,

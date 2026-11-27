@@ -582,7 +582,6 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL.warningFactory to PsiElement::class.java,
     FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL.errorFactory to PsiElement::class.java,
     FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY to PsiElement::class.java,
-    FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY to PsiElement::class.java,
     FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED to KtExpression::class.java,
     FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS to KtExpression::class.java,
     FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR to KtExpression::class.java,

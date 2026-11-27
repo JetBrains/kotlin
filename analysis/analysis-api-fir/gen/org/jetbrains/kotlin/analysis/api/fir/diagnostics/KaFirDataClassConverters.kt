@@ -9777,13 +9777,6 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
             token,
         )
     }
-    add(FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY) { firDiagnostic ->
-        AtomicRefCallArgumentWithoutConsistentIdentityImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION) { firDiagnostic ->
         ActualTypealiasToSpecialAnnotationImpl(
             firDiagnostic.a,

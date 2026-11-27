@@ -13,7 +13,7 @@ fun main() {
     val rest = Box("Rest")
     val box = AtomicReference(test)
 
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>box.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>test<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>rest<!>)<!>
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>box.compareAndSet(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>test<!>, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>rest<!>)<!>
     println(box.get())
 }
 

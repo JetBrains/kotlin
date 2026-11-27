@@ -1332,9 +1332,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("argumentType")
             parameter<ClassId?>("suggestedType")
         }
-        val ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY by warning<PsiElement> {
-            parameter<ConeKotlinType>("argumentType")
-        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

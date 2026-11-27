@@ -52,7 +52,7 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
                 if (!argument.resolvedType.hasStableIdentityForAtomicOperations) {
                     reporter.reportOn(
                         source = argument.source,
-                        factory = FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY,
+                        factory = FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
                         argument.resolvedType,
                     )
                 } else {

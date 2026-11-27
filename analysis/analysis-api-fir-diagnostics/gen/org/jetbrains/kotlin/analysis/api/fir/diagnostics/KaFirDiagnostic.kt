@@ -4640,15 +4640,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface AtomicRefCallArgumentWithoutConsistentIdentity : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass: KClass<AtomicRefCallArgumentWithoutConsistentIdentity>
-            get() = AtomicRefCallArgumentWithoutConsistentIdentity::class
-
-        public val argumentType: KaType
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExtensionInClassReferenceNotAllowed : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<ExtensionInClassReferenceNotAllowed>
             get() = ExtensionInClassReferenceNotAllowed::class

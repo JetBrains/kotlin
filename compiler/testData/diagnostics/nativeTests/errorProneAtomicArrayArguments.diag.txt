@@ -6,6 +6,6 @@
 
 For more information, see the corresponding https://kotl.in/inline-value-classes and
 https://kotl.in/full-value-classes language proposals. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
-/K.kt:20:26: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
+/K.kt:20:26: warning: Identity-sensitive operation on an instance of identityless type 'Foo' may cause unexpected behavior or errors.
 
-/K.kt:20:31: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
+/K.kt:20:31: warning: Identity-sensitive operation on an instance of identityless type 'Foo' may cause unexpected behavior or errors.

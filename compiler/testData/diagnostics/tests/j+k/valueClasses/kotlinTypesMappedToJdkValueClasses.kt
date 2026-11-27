@@ -15,7 +15,7 @@ fun number(number: Number, any: Any, ref: AtomicReference<Number>) {
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>number === any<!>
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>number<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>number<!>)
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>number<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>number<!>)<!>
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>number<!>, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>number<!>)<!>
 }
 
 fun <T : Number> boundedByNumber(bounded: T, any: Any) {
@@ -28,7 +28,7 @@ fun nullableInt(x: Int?, any: Any?, ref: AtomicReference<Int?>) {
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === any<!>
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>)
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>x<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>x<!>)<!>
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>)<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, javaFunction, lambdaLiteral, nullableType,
