@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.wasm
 
-import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
@@ -23,6 +25,7 @@ import kotlin.test.assertEquals
  */
 @MppGradlePluginTests
 @DisplayName("Kotlin/Wasm tests are executed exactly once")
+@MustRunOnChangesInGradle
 class WasmTestsRunOnceIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
@@ -39,6 +42,7 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
     @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("wasmJs D8 tests are executed exactly once")
     @GradleTest
+    @MustRunOnChangesInWasm
     fun testWasmJsD8(gradleVersion: GradleVersion) {
         testTestsRunOnce(gradleVersion, ":wasmJsD8Test")
     }
@@ -46,6 +50,7 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
     @TestMetadata("base-kotlin-multiplatform-library")
     @DisplayName("wasmWasi Wasmtime tests are executed exactly once")
     @GradleTest
+    @MustRunOnChangesInCoreLibs
     fun testWasmWasiWasmtime(gradleVersion: GradleVersion) {
         testTestsRunOnce(gradleVersion, ":wasmWasiWasmtimeTest")
     }
