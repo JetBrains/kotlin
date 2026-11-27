@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -24,6 +24,7 @@ import kotlin.test.assertNotEquals
 )
 @DisplayName("Tests for K/N incremental compilation")
 @NativeGradlePluginTests
+@MustRunOnChangesInNative
 class NativeIncrementalCompilationIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
