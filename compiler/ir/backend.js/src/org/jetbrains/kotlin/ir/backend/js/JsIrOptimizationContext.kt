@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 class JsIrOptimizationContext(
@@ -13,4 +14,7 @@ class JsIrOptimizationContext(
     dceRoots: Iterable<IrDeclaration>,
 ) : LoweringContext by backendContext {
     val dceRoots = dceRoots.toMutableSet()
+
+    override val symbols: BackendJsSymbols
+        get() = backendContext.symbols
 }
