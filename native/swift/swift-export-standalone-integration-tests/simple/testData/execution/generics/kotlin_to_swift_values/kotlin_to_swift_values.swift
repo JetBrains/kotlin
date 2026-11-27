@@ -128,6 +128,11 @@ func kotlinBooleanIsBool() throws {
 }
 
 @Test
+func kotlinCharIsUTF16CodeUnit() throws {
+    #expect(anyChar() as? UTF16.CodeUnit == 97)
+}
+
+@Test
 func kotlinListSubclassBecomesSwiftArray() throws {
     let x = customList()
     #expect(x as? [Int32] == [0, 10])

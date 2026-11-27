@@ -237,6 +237,7 @@ extension KotlinBase {
         case 13: let v: [Any] = KotlinBridgeable_Array_unbox(ref) as! [Any];             KotlinBridgeable_disposeRef(ref); return v
         case 14: let v = KotlinBridgeable_Set_unbox(ref) as! Set<AnyHashable>;           KotlinBridgeable_disposeRef(ref); return v
         case 15: let v = KotlinBridgeable_Dictionary_unbox(ref) as! [AnyHashable: Any];  KotlinBridgeable_disposeRef(ref); return v
+        case 16: let v = KotlinBridgeable_Char_unbox(ref);                               KotlinBridgeable_disposeRef(ref); return v
         default: return __createProtocolWrapper(externalRCRef: ref, conformsTo: conformsTo)
         }
     }
