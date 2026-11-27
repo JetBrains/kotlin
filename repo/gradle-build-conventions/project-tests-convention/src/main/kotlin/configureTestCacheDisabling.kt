@@ -15,10 +15,10 @@ internal fun Project.configureTestCacheDisabling() {
         // `kotlin.build.cache.tests.disabled` property is used for master builds to always run the tests
         val testCacheDisabled = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false").get().toBoolean()
 
-        val isNightlyBuild: Boolean = providers.gradleProperty("nightly").map { it.toBooleanStrict() }
-            .orElse(providers.environmentVariable("NIGHTLY").map { it.toBooleanStrict() })
-            .orElse(false)
-            .get()
+        val isNightlyBuild: Boolean = providers.gradleProperty("nightly")
+            .orElse(providers.environmentVariable("NIGHTLY"))
+            .map { it.toBooleanStrict() }
+            .getOrElse(false)
 
         val doNotUseCaches = testCacheDisabled || isNightlyBuild
 
