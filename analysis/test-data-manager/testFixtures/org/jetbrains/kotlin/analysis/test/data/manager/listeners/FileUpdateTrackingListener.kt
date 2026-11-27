@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.test.data.manager.listeners
 
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataAssertionError
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataProblem
+import org.jetbrains.kotlin.analysis.test.data.manager.TestDataProblemKind
 import org.jetbrains.kotlin.analysis.test.data.manager.TestError
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataPath
@@ -183,7 +184,7 @@ internal class FileUpdateTrackingListener(
             throwable is TestDataAssertionError -> Triple(throwable.kind, throwable.file, throwable.comparedFile)
             throwable is AssertionFailedError && throwable.expected?.value is FileInfo -> {
                 val file = Path((throwable.expected.value as FileInfo).path)
-                Triple(TestDataAssertionError.Kind.MISMATCH, file, file)
+                Triple(TestDataProblemKind.MISMATCH, file, file)
             }
 
             else -> return null

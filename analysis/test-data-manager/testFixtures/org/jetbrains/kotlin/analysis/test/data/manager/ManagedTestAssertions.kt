@@ -80,7 +80,7 @@ object ManagedTestAssertions {
     internal fun drainFileActions(): List<FileAction> {
         val recorded = generateSequence { recordedFileActions.poll() }.toList()
         return recorded.groupBy { it.file }.mapNotNull { [file, actions] ->
-            val kind = FileAction.Kind.of(actions.first().existedBefore, actions.last().existsAfter) ?: return@mapNotNull null
+            val kind = FileActionKind.of(actions.first().existedBefore, actions.last().existsAfter) ?: return@mapNotNull null
             FileAction(actions.first().testDataPath, file, kind)
         }
     }
@@ -240,7 +240,7 @@ object ManagedTestAssertions {
             append(writeTargetFile)
         }
 
-        return TestDataAssertionError(message, TestDataAssertionError.Kind.UNEXPECTED_FILE, writeTargetFile, comparedFile = null)
+        return TestDataAssertionError(message, TestDataProblemKind.UNEXPECTED_FILE, writeTargetFile, comparedFile = null)
     }
 
     context(context: TestDataContext)
@@ -268,7 +268,7 @@ object ManagedTestAssertions {
 
         return TestDataAssertionError(
             message,
-            TestDataAssertionError.Kind.MISSING_FILE,
+            TestDataProblemKind.MISSING_FILE,
             writeTargetFile,
             comparedFile = null,
             FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
@@ -290,7 +290,7 @@ object ManagedTestAssertions {
 
         return TestDataAssertionError(
             prefix + postfix,
-            TestDataAssertionError.Kind.REDUNDANT_FILE,
+            TestDataProblemKind.REDUNDANT_FILE,
             writeTargetFile,
             comparedFile = nextExistingFile,
         )
@@ -305,7 +305,7 @@ object ManagedTestAssertions {
         val writeTargetFile = context.writeTargetFile
         return TestDataAssertionError(
             "Actual data differs from file content: ${writeTargetFile.name}",
-            TestDataAssertionError.Kind.MISMATCH,
+            TestDataProblemKind.MISMATCH,
             writeTargetFile,
             comparedFile = expectedFile,
             FileInfo(

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.ver
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.*
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.IjLogTestListener
+import org.jetbrains.kotlin.analysis.test.data.manager.report.ModuleReport
+import org.jetbrains.kotlin.analysis.test.data.manager.report.RunStatus
 import org.jetbrains.kotlin.analysis.test.data.manager.report.TestDataManagerReport
 import org.jetbrains.kotlin.analysis.test.data.manager.report.displayPath
 import org.junit.platform.engine.Filter
@@ -130,8 +132,8 @@ internal object TestDataManagerRunner {
         val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
         val testPackages = parseTestPackages(System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_PACKAGES))
         val requestedRunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RUN_ID)?.takeIf(String::isNotBlank)
-        val runIdError = requestedRunId?.let(TestDataManagerReport::runIdError)
-        val runId = requestedRunId?.takeIf { runIdError == null } ?: Uuid.generateV7().toString()
+        val runIdProblem = requestedRunId?.let(::runIdError)
+        val runId = requestedRunId?.takeIf { runIdProblem == null } ?: Uuid.generateV7().toString()
         val mode = TestDataManagerMode.currentModeOrNull
         // Set by the Gradle tasks; without them (a direct launch) the paths are used as given and no report is written
         val rootDir = System.getProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR)?.let(::Path)
@@ -160,9 +162,9 @@ internal object TestDataManagerRunner {
             }
 
             when {
-                runIdError != null -> {
-                    System.err.println("ERROR: $runIdError")
-                    report.runErrors += runIdError
+                runIdProblem != null -> {
+                    System.err.println("ERROR: $runIdProblem")
+                    report.runErrors += runIdProblem
                 }
 
                 mode == null -> {
@@ -199,7 +201,7 @@ internal object TestDataManagerRunner {
         writeReport(report, rootDir)
 
         // The explicit exit is required to ensure the process terminates after completion
-        exitProcess(if (report.status == TestDataManagerReport.Status.PASSED) 0 else 1)
+        exitProcess(if (report.status == RunStatus.PASSED) 0 else 1)
     }
 
     private fun TestDataManagerReport.record(outcome: RunOutcome) {
@@ -223,7 +225,7 @@ internal object TestDataManagerRunner {
         try {
             val rerunId = System.getProperty(TEST_DATA_MANAGER_OPTIONS_RERUN_ID)?.takeIf(String::isNotBlank)
             val reportFile = report.write(reportDirectory, rootDir, keptRunId = rerunId)
-            println("Test data manager report: ${reportFile.toAbsolutePath()}")
+            println(ModuleReport.PATH_PREFIX + reportFile.toAbsolutePath())
         } catch (e: Exception) {
             System.err.println("WARNING: failed to write the test data manager report into $reportDirectory: $e")
         }

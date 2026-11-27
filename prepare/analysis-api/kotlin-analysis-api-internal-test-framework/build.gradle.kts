@@ -16,6 +16,9 @@ dependencies {
     api(kotlinTest())
     api(libs.junit.jupiter.api)
 
+    // The test data manager writes its reports with kotlinx.serialization
+    api(libs.kotlinx.serialization.json)
+
     // Used by the test data manager
     implementation(libs.junit.platform.launcher)
 }
@@ -34,5 +37,8 @@ analysisApiArtifact {
                 ":compiler:psi:psi-api",
             )
         )
+
+        // The test fixtures of the test data manager are built on top of its production code
+        project(":analysis:test-data-manager")
     }
 }
