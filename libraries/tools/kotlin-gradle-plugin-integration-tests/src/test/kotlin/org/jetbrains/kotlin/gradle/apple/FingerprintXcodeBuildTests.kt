@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.deleteExisting
@@ -36,6 +37,7 @@ import kotlin.test.assertNotEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class FingerprintXcodeBuildTests : KGPBaseTest() {
 
     private val fingerprintXcodebuildIphoneSimulatorTask =
