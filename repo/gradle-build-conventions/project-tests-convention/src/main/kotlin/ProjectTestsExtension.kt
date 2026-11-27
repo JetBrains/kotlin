@@ -10,6 +10,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.project.IsolatedProject
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitivity
@@ -140,6 +141,11 @@ abstract class ProjectTestsExtension(val project: Project) {
     // -------------------- testData configuration --------------------
 
     internal abstract val testDataFiles: ListProperty<Directory>
+
+    /** The test data directories declared with [testData]: the tests of the module read no other test data. */
+    val declaredTestData: Provider<List<Directory>>
+        get() = testDataFiles
+
     internal val testDataMap: MutableMap<String, String> = mutableMapOf()
 
     fun testData(isolatedProject: IsolatedProject, relativePath: String) {

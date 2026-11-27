@@ -5,6 +5,7 @@
 
 internal const val checkTestDataTaskName = "checkTestData"
 internal const val updateTestDataTaskName = "updateTestData"
+internal const val testDataManagerModuleTaskName = "testDataManagerModule"
 
 /** A never-executed `Test` task configured like `test`, registered by `project-tests-convention`. */
 internal const val testDataManagerWarmupTaskName = "testDataManagerWarmup"

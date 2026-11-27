@@ -63,6 +63,19 @@ tasks.named { it == "test" }.configureEach {
     mustRunAfter(testDataManager.mustRunAfterProjects.map { projectPaths -> projectPaths.map { "$it:test" } })
 }
 
+tasks.register<TestDataManagerModuleTask>(testDataManagerModuleTaskName) {
+    projectPath.set(project.path)
+    projectDirectory.set(project.projectDir.absolutePath)
+    // Read when the task graph is stored in the configuration cache, after the module has declared its test data
+    testData.set(
+        project.provider { project.extensions.findByType<ProjectTestsExtension>() }
+            .flatMap { it.declaredTestData }
+            .map { directories -> directories.map { it.asFile.absolutePath } }
+            .orElse(emptyList())
+    )
+    testInputsChecked.set(project.provider { project.pluginManager.hasPlugin("test-inputs-check") })
+}
+
 tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
     wireOptions(testDataManager)
 }
