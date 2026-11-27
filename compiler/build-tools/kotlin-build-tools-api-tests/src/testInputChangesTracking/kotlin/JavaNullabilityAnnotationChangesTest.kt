@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -18,8 +19,8 @@ class JavaNullabilityAnnotationChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89329: Adding @Nullable to a Java base-class method should recompile the Kotlin usage that goes through a subclass")
     @TestMetadata("ic-scenarios/java-nullable-base-method")
-    fun testAddingNullableToJavaBaseClassMethod(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAddingNullableToJavaBaseClassMethod(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/java-nullable-base-method")
 
             mod.replaceFileWithVersion("Base.java", "add-nullable")

@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.buildtools.tests.restricted
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
@@ -31,24 +32,24 @@ import kotlin.io.path.absolutePathString
 class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xbuild-file emits a warning")
-    fun testXbuildFileWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testBuildFile(strategyConfig, "-Xbuild-file")
+    fun testXbuildFileWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        testBuildFile(kotlinToolchains, executionPolicy, "-Xbuild-file")
     }
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-module (deprecated name for -Xbuild-file) emits a warning")
-    fun testModuleDeprecatedNameWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testBuildFile(strategyConfig, "-module")
+    fun testModuleDeprecatedNameWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        testBuildFile(kotlinToolchains, executionPolicy, "-module")
     }
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Restricted argument among valid arguments still emits a warning")
-    fun testRestrictedAmongValidArgumentsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testBuildFile(strategyConfig, "-Xbuild-file", additionalArg = "-no-stdlib")
+    fun testRestrictedAmongValidArgumentsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        testBuildFile(kotlinToolchains, executionPolicy, "-Xbuild-file", additionalArg = "-no-stdlib")
     }
 
-    private fun testBuildFile(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String, additionalArg: String? = null) {
-        jvmProject(strategyConfig) {
+    private fun testBuildFile(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy, argument: String, additionalArg: String? = null) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val moduleFile = workingDirectory.resolve("some/path.xml")
             module.checkRestrictedArguments(
@@ -66,8 +67,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-d emits a warning")
-    fun testDestinationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testDestinationWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-d", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -86,8 +87,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-d reports during execution on metadata")
-    fun testDestinationReportsDuringExecutionOnMetadata(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        metadataProject(strategyConfig) {
+    fun testDestinationReportsDuringExecutionOnMetadata(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        metadataProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-d", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -106,8 +107,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xlegacy-metadata-jar-k2 reports restricted usage")
-    fun testLegacyMetadataJar(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        metadataProject(strategyConfig) {
+    fun testLegacyMetadataJar(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        metadataProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-Xlegacy-metadata-jar-k2", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -118,8 +119,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-include-runtime emits a warning")
-    fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testIncludeRuntimeWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-include-runtime", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -130,18 +131,18 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-expression emits a warning")
-    fun testExpressionWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testExpression(strategyConfig, listOf("-expression=hello"))
+    fun testExpressionWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        testExpression(kotlinToolchains, executionPolicy, listOf("-expression=hello"))
     }
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-e (short for -expression) emits a warning")
-    fun testShortExpressionWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testExpression(strategyConfig, listOf("-e", "hello"))
+    fun testShortExpressionWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        testExpression(kotlinToolchains, executionPolicy, listOf("-e", "hello"))
     }
 
-    private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
-        jvmProject(strategyConfig) {
+    private fun testExpression(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy, actualArgs: List<String>) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-expression", "-e", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -155,8 +156,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xenable-incremental-compilation emits a warning")
-    fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testEnableIncrementalCompilationWarningDuringExecution(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-Xenable-incremental-compilation", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -174,8 +175,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Multiple restricted arguments emit warnings for each")
-    fun testMultipleRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testMultipleRestrictedArgumentsWarnings(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 restrictedArg("-include-runtime", errorSince = KotlinReleaseVersion.v2_5_0),
@@ -187,8 +188,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Non-restricted arguments do not produce warnings about unsupported arguments")
-    fun testNonRestrictedArgumentsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonRestrictedArgumentsNoWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-no-stdlib"))
@@ -201,8 +202,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Dropped argument does not produce a warning about unsupported arguments")
-    fun testDroppedArgumentNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testDroppedArgumentNoWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-Xallow-kotlin-package"))
@@ -215,8 +216,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Wrong case for enum argument value emits a warning")
-    fun testWrongCaseForEnumValue(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testWrongCaseForEnumValue(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
 
             module.compile(compilationConfigAction = {
@@ -234,8 +235,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("JS klib compilation: -ir-output-dir emits a warning")
-    fun testJsIrOutputDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun testJsIrOutputDirWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-ir-output-dir", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -246,8 +247,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("JS linking: -Xir-produce-js and -Xinclude emit warnings")
-    fun testJsLinkingRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun testJsLinkingRestrictedArgumentsWarnings(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedLinkingArguments(
                 restrictedArg("-Xir-produce-js", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -259,8 +260,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Wasm klib compilation: -ir-output-dir emits a warning")
-    fun testWasmIrOutputDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun testWasmIrOutputDirWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-ir-output-dir", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -271,8 +272,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Wasm linking: -Xir-produce-js and -Xinclude emit warnings")
-    fun testWasmLinkingRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun testWasmLinkingRestrictedArgumentsWarnings(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedLinkingArguments(
                 restrictedArg("-Xir-produce-js", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -284,8 +285,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("JS klib compilation: -Xir-produce-klib-dir emits a warning")
-    fun testJsIrProduceKlibDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun testJsIrProduceKlibDirWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-Xir-produce-klib-dir", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -296,8 +297,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("JS klib compilation: -Xir-produce-klib-file emits a warning")
-    fun testJsIrProduceKlibFileWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun testJsIrProduceKlibFileWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-Xir-produce-klib-file", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -308,8 +309,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Wasm klib compilation: -Xir-produce-klib-dir emits a warning")
-    fun testWasmIrProduceKlibDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun testWasmIrProduceKlibDirWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-Xir-produce-klib-dir", errorSince = KotlinReleaseVersion.v2_6_0),
@@ -320,8 +321,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Wasm klib compilation: -Xir-produce-klib-file emits a warning")
-    fun testWasmIrProduceKlibFileWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun testWasmIrProduceKlibFileWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.checkRestrictedArguments(
                 restrictedArg("-Xir-produce-klib-file", errorSince = KotlinReleaseVersion.v2_6_0),

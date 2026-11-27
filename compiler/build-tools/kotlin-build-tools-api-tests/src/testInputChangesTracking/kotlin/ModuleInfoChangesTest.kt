@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
@@ -26,83 +27,83 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing a 'requires' from module-info.java makes compilation fail (internally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoRequiresRemovalFailsCompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoRequiresRemovalFailsCompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeRequiresAndAssertCompilationFails(strategyConfig)
+            ).removeRequiresAndAssertCompilationFails(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing a 'requires' from module-info.java makes compilation fail (externally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoRequiresRemovalFailsCompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoRequiresRemovalFailsCompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeRequiresAndAssertCompilationFails(strategyConfig)
+            ).removeRequiresAndAssertCompilationFails(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing module-info.java causes full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoRemovalCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoRemovalCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeModuleInfoAndAssertFullRecompilation(strategyConfig)
+            ).removeModuleInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing module-info.java causes full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoRemovalCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoRemovalCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeModuleInfoAndAssertFullRecompilation(strategyConfig)
+            ).removeModuleInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding module-info.java causes full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoAdditionCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoAdditionCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).addModuleInfoAndAssertFullRecompilation(strategyConfig)
+            ).addModuleInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding module-info.java causes full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/module-info-modification")
-    fun testModuleInfoAdditionCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testModuleInfoAdditionCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(
                 moduleName = "ic-scenarios/module-info-modification",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).addModuleInfoAndAssertFullRecompilation(strategyConfig)
+            ).addModuleInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
-    private fun ScenarioModule.removeRequiresAndAssertCompilationFails(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    private fun ScenarioModule.removeRequiresAndAssertCompilationFails(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         // `a.kt` uses `java.sql.SQLException`, which is only accessible because `module-info.java`
         // has `requires java.sql;`. Removing that requires must recompile `a.kt` and fail with a JPMS error.
         replaceFileWithVersion("module-info.java", "remove-requires")
         compile {
             expectFail()
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertLogContainsPatterns(LogLevel.ERROR, ".*/a.kt:5:39 Unresolved reference 'SQLException'.".toRegex())
@@ -111,12 +112,12 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     }
 
     private fun ScenarioModule.removeModuleInfoAndAssertFullRecompilation(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         deleteFile("module-info.java")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -124,14 +125,14 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     }
 
     private fun ScenarioModule.addModuleInfoAndAssertFullRecompilation(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         deleteFile("module-info.java")
         compile()
         createPredefinedFile("module-info.java", "add-module-info")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -142,13 +143,13 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Removing a 'requires' from a module-info.java located in the 'java' source directory makes compilation fail (internally tracked)")
     @TestMetadata("ic-scenarios/module-info-in-java-source-directory")
     fun testModuleInfoInJavaSourceDirectoryRequiresRemovalFailsCompilationInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(
                 moduleName = "ic-scenarios/module-info-in-java-source-directory",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeRequiresInJavaSourceDirectoryAndAssertCompilationFails(strategyConfig)
+            ).removeRequiresInJavaSourceDirectoryAndAssertCompilationFails(kotlinToolchains, executionPolicy)
         }
     }
 
@@ -156,24 +157,24 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Removing a 'requires' from a module-info.java located in the 'java' source directory makes compilation fail (externally tracked)")
     @TestMetadata("ic-scenarios/module-info-in-java-source-directory")
     fun testModuleInfoInJavaSourceDirectoryRequiresRemovalFailsCompilationExternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(
                 moduleName = "ic-scenarios/module-info-in-java-source-directory",
                 compilationConfigAction = jpmsSupportConfigAction,
-            ).removeRequiresInJavaSourceDirectoryAndAssertCompilationFails(strategyConfig)
+            ).removeRequiresInJavaSourceDirectoryAndAssertCompilationFails(kotlinToolchains, executionPolicy)
         }
     }
 
     private fun ScenarioModule.removeRequiresInJavaSourceDirectoryAndAssertCompilationFails(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         replaceFileWithVersion("java/module-info.java", "remove-requires")
         compile {
             expectFail()
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
             assertLogContainsPatterns(LogLevel.ERROR, ".*/a\\.kt:\\d+:\\d+ Unresolved reference 'SQLException'.*".toRegex())
@@ -184,8 +185,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Fixing one module-info.java error keeps reporting the remaining ones (internally tracked)")
     @TestMetadata("ic-scenarios/module-info-partial-error-fix")
-    fun testPartialModuleInfoFixKeepsRemainingErrorsInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testPartialModuleInfoFixKeepsRemainingErrorsInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(
                 moduleName = "ic-scenarios/module-info-partial-error-fix",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -196,8 +197,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Fixing one module-info.java error keeps reporting the remaining ones (externally tracked)")
     @TestMetadata("ic-scenarios/module-info-partial-error-fix")
-    fun testPartialModuleInfoFixKeepsRemainingErrorsExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testPartialModuleInfoFixKeepsRemainingErrorsExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(
                 moduleName = "ic-scenarios/module-info-partial-error-fix",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -227,8 +228,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of the package")
     @TestMetadata("ic-scenarios/dependency-module-info-modification")
-    fun testDependencyModuleInfoExportsRemovalFailsConsumer(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyModuleInfoExportsRemovalFailsConsumer(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-modification/module-a",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -251,8 +252,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("A dependency's module-info.java change recompiles only the consumer's users of the dependency")
     @TestMetadata("ic-scenarios/dependency-module-info-unrelated-change")
-    fun testDependencyModuleInfoChangeRecompilesOnlyUsersInNonModularConsumer(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyModuleInfoChangeRecompilesOnlyUsersInNonModularConsumer(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-a",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -273,8 +274,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("A dependency becoming a JPMS module recompiles only the consumer's users of the dependency")
     @TestMetadata("ic-scenarios/dependency-module-info-addition")
-    fun testDependencyModuleInfoAdditionRecompilesOnlyUsers(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyModuleInfoAdditionRecompilesOnlyUsers(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-addition/module-a",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -295,8 +296,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Dropping 'transitive' from a 'requires' in an intermediate module recompiles the consumer's users of both modules")
     @TestMetadata("ic-scenarios/dependency-module-info-requires-transitive")
-    fun testDependencyRequiresTransitiveRemovalRecompilesUsers(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyRequiresTransitiveRemovalRecompilesUsers(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val base = module(
                 moduleName = "ic-scenarios/dependency-module-info-requires-transitive/module-base",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -322,8 +323,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of a top-level function")
     @TestMetadata("ic-scenarios/dependency-module-info-top-level-function")
-    fun testDependencyModuleInfoExportsRemovalFailsTopLevelFunctionUser(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyModuleInfoExportsRemovalFailsTopLevelFunctionUser(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-a",
                 compilationConfigAction = jpmsSupportConfigAction,
@@ -346,8 +347,8 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("A full rebuild against a dependency without the 'exports' rejects the user of a top-level function")
     @TestMetadata("ic-scenarios/dependency-module-info-top-level-function")
-    fun testFullRebuildAfterDependencyExportsRemovalFailsTopLevelFunctionUser(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testFullRebuildAfterDependencyExportsRemovalFailsTopLevelFunctionUser(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-top-level-function/module-a",
                 compilationConfigAction = jpmsSupportConfigAction,

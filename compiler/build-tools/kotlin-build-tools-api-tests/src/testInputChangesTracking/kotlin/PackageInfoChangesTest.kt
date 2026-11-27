@@ -5,11 +5,12 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
@@ -25,62 +26,62 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes to package-info lead to full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoChangeCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            trackedModule(moduleName = "ic-scenarios/package-info-modification").modifyPackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoChangeCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            trackedModule(moduleName = "ic-scenarios/package-info-modification").modifyPackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes to package-info lead to full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoChangeCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            module(moduleName = "ic-scenarios/package-info-modification").modifyPackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoChangeCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            module(moduleName = "ic-scenarios/package-info-modification").modifyPackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing package-info.java causes full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoRemovalCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            trackedModule(moduleName = "ic-scenarios/package-info-modification").removePackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoRemovalCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            trackedModule(moduleName = "ic-scenarios/package-info-modification").removePackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing package-info.java causes full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoRemovalCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            module(moduleName = "ic-scenarios/package-info-modification").removePackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoRemovalCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            module(moduleName = "ic-scenarios/package-info-modification").removePackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding package-info.java causes full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoAdditionCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            trackedModule(moduleName = "ic-scenarios/package-info-modification").addPackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoAdditionCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            trackedModule(moduleName = "ic-scenarios/package-info-modification").addPackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding package-info.java causes full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoAdditionCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            module(moduleName = "ic-scenarios/package-info-modification").addPackageInfoAndAssertFullRecompilation(strategyConfig)
+    fun testPackageInfoAdditionCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
+            module(moduleName = "ic-scenarios/package-info-modification").addPackageInfoAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
-    private fun ScenarioModule.modifyPackageInfoAndAssertFullRecompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    private fun ScenarioModule.modifyPackageInfoAndAssertFullRecompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         replaceFileWithVersion("package-info.java", "add-annotation")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             // If we ever decide to handle package-info.java changes in a more granular way, we can change the assertion to:
@@ -91,12 +92,12 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     }
 
     private fun ScenarioModule.removePackageInfoAndAssertFullRecompilation(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         deleteFile("package-info.java")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -104,14 +105,14 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     }
 
     private fun ScenarioModule.addPackageInfoAndAssertFullRecompilation(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         deleteFile("package-info.java")
         compile()
         createPredefinedFile("package-info.java", "add-annotation")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -121,30 +122,30 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("A documentation-only change of package-info.java causes full recompilation (internally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoCommentOnlyChangeCausesRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testPackageInfoCommentOnlyChangeCausesRecompilationInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule(moduleName = "ic-scenarios/package-info-modification")
-                .changeOnlyPackageInfoCommentAndAssertFullRecompilation(strategyConfig)
+                .changeOnlyPackageInfoCommentAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("A documentation-only change of package-info.java causes full recompilation (externally tracked)")
     @TestMetadata("ic-scenarios/package-info-modification")
-    fun testPackageInfoCommentOnlyChangeCausesRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testPackageInfoCommentOnlyChangeCausesRecompilationExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module(moduleName = "ic-scenarios/package-info-modification")
-                .changeOnlyPackageInfoCommentAndAssertFullRecompilation(strategyConfig)
+                .changeOnlyPackageInfoCommentAndAssertFullRecompilation(kotlinToolchains, executionPolicy)
         }
     }
 
     private fun ScenarioModule.changeOnlyPackageInfoCommentAndAssertFullRecompilation(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
         replaceFileWithVersion("package-info.java", "comment-only")
         compile {
             assertLogContainsLines(
-                expectedLogLevelForRebuildReason(strategyConfig),
+                expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                 "Non-incremental compilation will be performed: ${BuildAttribute.PACKAGE_INFO_CHANGED.readableString}"
             )
             assertCompiledSources("a.kt", "b.kt")
@@ -154,8 +155,8 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding an annotation to a dependency's package-info.java recompiles only the affected consumer source")
     @TestMetadata("ic-scenarios/dependency-package-info-modification")
-    fun testDependencyPackageInfoChangeCausesConsumerRecompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDependencyPackageInfoChangeCausesConsumerRecompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-modification/module-a",
                 compileJavaSources = true,
@@ -176,9 +177,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Changing one dependency package-info recompiles only consumers of that package")
     @TestMetadata("ic-scenarios/dependency-package-info-multi-package")
     fun testDependencyPackageInfoChangeIsIsolatedToAffectedPackage(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-multi-package/module-a",
                 compileJavaSources = true,
@@ -199,9 +200,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Changing dependency package-info nullability recompiles the consumer and reports an error")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
     fun testDependencyPackageInfoNullabilityChangeRecompilesConsumer(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
                 compileJavaSources = true,
@@ -224,9 +225,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
     fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumer(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
                 compileJavaSources = true,
@@ -249,9 +250,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Changing dependency package-info nullability recompiles a consumer that reaches the annotated type through its own factory")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
     fun testDependencyPackageInfoNullabilityChangeRecompilesLocalFactoryConsumer(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
                 compileJavaSources = true,
@@ -275,9 +276,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     @DisplayName("Only the package-info of the first classpath entry declaring the package is tracked")
     @TestMetadata("ic-scenarios/dependency-package-info-first-wins")
     fun testOnlyFirstDependencyPackageInfoIsTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val first = module(
                 moduleName = "ic-scenarios/dependency-package-info-first-wins/module-first",
                 compileJavaSources = true,

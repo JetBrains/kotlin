@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -74,7 +75,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @AllJvmCompilerArgumentsWithBtaVersionsTest
     @DisplayName("BTA argument has the default value when not set")
-    fun <T> JvmArgumentConfiguration<T>.testBtaArgumentGetWhenNull() {
+    fun <T> JvmArgumentConfiguration<T>.testBtaArgumentGetWhenNull(kotlinToolchains: KotlinToolchains) {
         assumeArgumentAvailable()
         val jvmOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).build()
 
@@ -155,14 +156,13 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val [argumentConfig, strategyConfig] = config
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: JvmArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentAvailable()
         // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(argumentConfig.kotlinToolchain.getCompilerVersion())
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
-        jvmProject(strategyConfig) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             for (invalidValue in argumentConfig.invalidRawValues) {
                 module.compile(compilationConfigAction = {

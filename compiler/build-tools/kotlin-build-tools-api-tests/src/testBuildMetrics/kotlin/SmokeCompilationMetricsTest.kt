@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.tests.SmokeCompilationMetricsTest.Companion.Jvm.daemonMetricNames
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -55,8 +56,8 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic non-incremental compilation metrics test (JVM only)")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonIncrementalCompilationMetricsOnJvm(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonIncrementalCompilationMetricsOnJvm(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
@@ -158,8 +159,8 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Second-round incremental compilation metrics (JVM only)")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testSecondRoundIncrementalCompilationMetricsOnJvm(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testSecondRoundIncrementalCompilationMetricsOnJvm(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
 
             module1.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
@@ -196,8 +197,8 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Cross-module incremental compilation reports history-based metrics (JS)")
     @TestMetadata("js-ic-basic")
-    fun testCrossModuleIncrementalHistoryMetricsOnJs(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun testCrossModuleIncrementalHistoryMetricsOnJs(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             assertCrossModuleIncrementalHistoryMetricsAreReported()
         }
     }
@@ -205,8 +206,8 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Cross-module incremental compilation reports history-based metrics (Wasm)")
     @TestMetadata("js-ic-basic")
-    fun testCrossModuleIncrementalHistoryMetricsOnWasm(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun testCrossModuleIncrementalHistoryMetricsOnWasm(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             assertCrossModuleIncrementalHistoryMetricsAreReported()
         }
     }

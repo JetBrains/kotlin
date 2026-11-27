@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.metadata
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.MODULE_NAME
@@ -15,9 +17,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_TARGET_PLATFORM
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.MetadataTargetPlatform
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.combineNames
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.executionPolicies
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.kotlinToolchains
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -31,59 +33,62 @@ import java.util.stream.Stream
 
 internal class AllMetadataCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration().stream()
     }
 }
 
 internal class InvalidArgumentValueMetadataCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.stream()
     }
 }
 
 internal class NullableMetadataCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsNullableTest }.stream()
     }
 }
 
 internal class InvalidRawValueMetadataCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.stream()
     }
 }
 
 internal class InvalidRawValueMetadataCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
-    }
-}
-
-private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<MetadataArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
-    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
     val compilerArguments = metadataCompilerArguments.filter { it.runsInvalidRawValueTest }
-
-    return btaV2Strategies.flatMap { namedStrategy ->
-        compilerArguments.map { descriptor ->
-            named(
-                namedStrategy.name + "[${descriptor.argumentName}]",
-                MetadataArgumentConfiguration(namedStrategy.payload.first, descriptor) to namedStrategy.payload
-            )
-        }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                compilerArguments.map { descriptor ->
+                    val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                    val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                    val argumentConfigArg = named(
+                        combineNames(descriptor.argumentName, kotlinToolchainsProvider.name, executionPolicyProvider.name),
+                        MetadataArgumentConfiguration(kotlinToolchainsArg, descriptor)
+                    )
+                    Arguments.of(argumentConfigArg, kotlinToolchainsArg, executionPolicyArg)
+                }
+            }
+        }.stream()
     }
 }
 
 private fun namedArgumentConfiguration(
     argumentPredicate: (MetadataArgumentTestDescriptor<*>) -> Boolean = { true },
-): List<Named<MetadataArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
-    val compilerArguments = metadataCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
+): List<Arguments> {
+    val btaVersions = kotlinToolchains()
+    val compilerArguments = metadataCompilerArguments.filter { argumentPredicate(it) }.map { named(it.argumentName, it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.map { namedArgumentDescriptor ->
-            named(
-                namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                MetadataArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
+            val toolchain = namedKotlinToolchains.payload()
+            Arguments.of(
+                named(
+                    combineNames(namedArgumentDescriptor.name, namedKotlinToolchains.name),
+                    MetadataArgumentConfiguration(toolchain, namedArgumentDescriptor.payload)
+                ),
+                toolchain
             )
         }
     }

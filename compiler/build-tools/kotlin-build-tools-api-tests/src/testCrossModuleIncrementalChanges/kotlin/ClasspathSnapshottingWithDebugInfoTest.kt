@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyProviders
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.executionPolicies
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.kotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -34,29 +37,16 @@ private annotation class StrategyAgnosticSnapshotterTest
 
 private class StrategyAgnosticSnapshotterTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyProviders().flatMap { namedStrategyArg ->
-            sequenceOf(
-                Arguments.of(
-                    named(namedStrategyArg.name, namedStrategyArg.payload()),
-                    ClassSnapshotGranularity.CLASS_LEVEL,
-                    named("ignore inlined classes", false)
-                ),
-                Arguments.of(
-                    named(namedStrategyArg.name, namedStrategyArg.payload()),
-                    ClassSnapshotGranularity.CLASS_LEVEL,
-                    named("use inlined classes", true)
-                ),
-                Arguments.of(
-                    named(namedStrategyArg.name, namedStrategyArg.payload()),
-                    ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
-                    named("ignore inlined classes", false)
-                ),
-                Arguments.of(
-                    named(namedStrategyArg.name, namedStrategyArg.payload()),
-                    ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
-                    named("use inlined classes", true)
-                ),
-            )
+        return kotlinToolchains().flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                listOf(ClassSnapshotGranularity.CLASS_LEVEL, ClassSnapshotGranularity.CLASS_MEMBER_LEVEL).flatMap { granularity ->
+                    listOf(named("ignore inlined classes", false), named("use inlined classes", true)).map { ignoreInlined ->
+                        val argument1 = named(kotlinToolchainsProvider.name, kotlinToolchainsProvider.payload())
+                        val argument2 = named(executionPolicyProvider.name, executionPolicyProvider.payload(argument1.payload))
+                        Arguments.of(argument1, argument2, granularity, ignoreInlined)
+                    }
+                }
+            }
         }.stream()
     }
 }
@@ -140,11 +130,11 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     @DisplayName("Class abiHash sensitivity in presence of inner classes")
     @TestMetadata("empty")
     fun testMainCase(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -177,11 +167,11 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     @DisplayName("Class abiHash sensitivity in presence of an inline function call site")
     @TestMetadata("empty")
     fun testScenarioWithInlineFunUsageInLib(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -214,11 +204,11 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     @DisplayName("Class abiHash sensitivity in presence of an inline function declaration")
     @TestMetadata("empty")
     fun testScenarioWithInlineFunDeclarationInLib(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -278,11 +268,11 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     @DisplayName("Class abiHash sensitivity when an unreachable local class is added")
     @TestMetadata("empty")
     fun testScenarioWhereLocalClassIsAdded(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("empty")
             val app = module(
                 "empty2",

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarationsContain
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
@@ -23,8 +24,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplication(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        smokeTest(strategyConfig) {
+    fun smokeTestCompilerPluginsApplication(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        smokeTest(kotlinToolchains, executionPolicy) {
             it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_PLUGIN, ASSIGNMENT_PLUGIN)
         }
     }
@@ -32,8 +33,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (default way)")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplicationDefaultArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        smokeTest(strategyConfig) {
+    fun smokeTestCompilerPluginsApplicationDefaultArgumentsString(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        smokeTest(kotlinToolchains, executionPolicy) {
             val compilerPluginArgs = buildList {
                 add("-Xplugin=${(NOARG_PLUGIN.classpath + ASSIGNMENT_PLUGIN.classpath).joinToString(",")}")
                 add("-P")
@@ -53,8 +54,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (modern way)")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplicationModernArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        smokeTest(strategyConfig) {
+    fun smokeTestCompilerPluginsApplicationModernArgumentsString(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        smokeTest(kotlinToolchains, executionPolicy) {
             val compilerPluginArgs = buildList {
                 add(
                     "-Xcompiler-plugin=${(NOARG_PLUGIN.classpath).joinToString(",")}=${
@@ -82,8 +83,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (combo BTA + default way)")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplicationComboDefaultArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        smokeTest(strategyConfig) {
+    fun smokeTestCompilerPluginsApplicationComboDefaultArgumentsString(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        smokeTest(kotlinToolchains, executionPolicy) {
             val compilerPluginArgs = buildList {
                 add("-Xplugin=${(NOARG_PLUGIN.classpath).joinToString(",")}")
                 add("-P")
@@ -101,8 +102,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (combo BTA + modern way)")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplicationComboModernArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun smokeTestCompilerPluginsApplicationComboModernArgumentsString(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = {
                 val compilerPluginArgs = buildList {
@@ -132,8 +133,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (legacy + modern mixed)")
     @TestMetadata("compiler-plugins")
-    fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = {
                 val legacyArgs = buildList {
@@ -170,8 +171,8 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of no-arg plugin with JPA preset")
     @TestMetadata("compiler-plugins-jpa")
-    fun smokeTestNoArgPluginWithJpaPreset(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun smokeTestNoArgPluginWithJpaPreset(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("compiler-plugins-jpa")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
@@ -219,10 +220,10 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     }
 
     private fun smokeTest(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy,
         pluginsConfiguration: (JvmCompilationOperation.Builder) -> Unit,
     ) {
-        jvmProject(strategyConfig) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = pluginsConfiguration) {
                 assertOutputs(

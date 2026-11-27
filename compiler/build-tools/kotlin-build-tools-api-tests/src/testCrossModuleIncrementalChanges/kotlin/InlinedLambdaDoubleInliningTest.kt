@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.execute
@@ -17,8 +18,8 @@ class InlinedLambdaDoubleInliningTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Double inlining test with app->lib1->lib2 structure")
     @TestMetadata("ic-scenarios/inline-double-inlining/app")
-    fun testDoubleInlining(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDoubleInlining(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib2 = module("ic-scenarios/inline-double-inlining/lib2")
             val lib1 = module(
                 "ic-scenarios/inline-double-inlining/lib1",

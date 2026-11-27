@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.WasmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeWasmIsSupported
@@ -27,11 +26,4 @@ fun BaseCompilationTest.wasmScenario(
 ) {
     kotlinToolchains.assumeWasmIsSupported()
     action(WasmScenarioDsl(WasmProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig, kotlinToolchains))
-}
-
-fun BaseCompilationTest.wasmScenario(
-    executionStrategy: CompilerExecutionStrategyConfiguration,
-    action: Scenario<WasmKlibCompilationOperation.Builder, WasmHistoryBasedIncrementalCompilationConfiguration.Builder>.() -> Unit,
-) {
-    wasmScenario(executionStrategy.first, executionStrategy.second, action)
 }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinMetadataStdlibKlibLocation
 import java.nio.file.Path
@@ -60,8 +59,4 @@ fun BaseCompilationTest.metadataProject(
     MetadataProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
-}
-
-fun BaseCompilationTest.metadataProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: MetadataProject.() -> Unit) {
-    metadataProject(executionStrategy.first, executionStrategy.second, action)
 }

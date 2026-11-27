@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -28,8 +27,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with a single module")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario1(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             // at this moment, the module is already initially built and ready for further incremental compilations
 
@@ -64,8 +63,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DisplayName("Another sample scenario DSL IC test with a single module and custom IC options")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario2(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             // compilation options may be modified
             val module1 = module(
                 "basic-multimodule-project/module-1",
@@ -101,8 +100,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DisplayName("Sample scenario DSL IC test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario3(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
@@ -132,8 +131,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with versioned source file modification")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario4(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario4(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
 
             // replaces bar.kt with bar.kt.1
@@ -149,8 +148,8 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with versioned source file creation")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario5(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario5(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
 
             // creates secret.kt from secret.kt.1

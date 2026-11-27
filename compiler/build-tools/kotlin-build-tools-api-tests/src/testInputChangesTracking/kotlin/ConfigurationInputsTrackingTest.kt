@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
@@ -80,8 +80,8 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a tracked compiler arg triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerArgsAdditionTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerArgsAdditionTriggersNonIncrementalRebuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -103,8 +103,8 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing a tracked compiler arg value triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerArgsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerArgsChangeTriggersNonIncrementalRebuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -396,8 +396,8 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing both IC config and compiler args reports the 1st found rebuild reason")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testBothIcConfigAndCompilerArgChangeReportsOneReason(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testBothIcConfigAndCompilerArgChangeReportsOneReason(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,

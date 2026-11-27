@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments.Companion.X_WASM_TARGET
@@ -23,8 +25,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Compiling Kotlin sources produces an unpacked klib with IR and metadata fragments")
     @BtaV2StrategyAgnosticCompilationTest
-    fun compilesToUnpackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun compilesToUnpackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             module("js-ic-basic-lib").compile {
                 assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(expectedCount = 3)
@@ -35,8 +37,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Disabled NOPACK produces a packed klib file")
     @BtaV2StrategyAgnosticCompilationTest
-    fun packedKlibIsProducedWhenNopackIsDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun packedKlibIsProducedWhenNopackIsDisabled(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[NOPACK] = false
@@ -48,8 +50,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Compilation of an empty source list is reported as a compiler error")
     @BtaV2StrategyAgnosticCompilationTest
-    fun emptySourceListIsReportedAsError(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun emptySourceListIsReportedAsError(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             module("empty").compile {
                 expectFail()
                 assertLogContainsPatterns(LogLevel.ERROR, Regex(".*No source files.*"))
@@ -59,8 +61,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Kotlin sources in named packages produce fragments in the matching package directories")
     @BtaV2StrategyAgnosticCompilationTest
-    fun namedPackageSourcesProduceFragmentsInPackageDirectory(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun namedPackageSourcesProduceFragmentsInPackageDirectory(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             module("basic-multimodule-project/module-3").compile {
                 assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(packageFqName = "p", expectedCount = 1)
@@ -73,8 +75,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("X_WASM_TARGET set to wasm-wasi compiles the sources to an unpacked klib targeting wasm-wasi")
     @BtaV2StrategyAgnosticCompilationTest
-    fun wasmWasiTargetCompilesToKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun wasmWasiTargetCompilesToKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             // the wasm-wasi target requires the wasm-wasi stdlib klib rather than the default wasm-js one
             module("js-ic-basic-lib", stdlibClasspath = listOf(currentKotlinWasmWasiStdlibKlibLocation)).compile(
                 compilationConfigAction = {
@@ -89,8 +91,8 @@ class WasmKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("A lib+app graph compiles the app klib against the library klib across the module graph")
     @BtaV2StrategyAgnosticCompilationTest
-    fun multiModuleGraphCompilesTheAppAgainstTheLibraryKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun multiModuleGraphCompilesTheAppAgainstTheLibraryKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val library = module("js-ic-basic-lib")
             val app = module("js-ic-basic-app", dependencies = listOf(library))
 

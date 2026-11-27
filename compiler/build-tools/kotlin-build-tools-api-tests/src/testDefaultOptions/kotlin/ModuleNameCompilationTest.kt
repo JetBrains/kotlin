@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.buildtools.tests.defaults
 
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
@@ -29,8 +30,8 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun nonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun nonIncremental(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1", moduleCompilationConfigAction = {
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
@@ -45,8 +46,8 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @DisplayName("Incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun incremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun incremental(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1", compilationConfigAction = {
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
@@ -65,8 +66,8 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @DisplayName("FIR Incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun incrementalWithFirRunner(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun incrementalWithFirRunner(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1", icOptionsConfigAction = {
                 @Suppress("DEPRECATION_ERROR")
                 it[USE_FIR_RUNNER] = true

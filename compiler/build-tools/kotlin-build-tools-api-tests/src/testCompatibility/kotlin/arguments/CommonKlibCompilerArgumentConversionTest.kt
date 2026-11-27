@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonklib.CommonKlibArgumentOperationKind.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
@@ -114,12 +115,11 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
 
     @InvalidRawValueCommonKlibCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<CommonKlibArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val [argumentConfig, strategyConfig] = config
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: CommonKlibArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentSupported()
 
         when (argumentConfig.operationKind) {
-            JS_KLIB -> jsProject(strategyConfig) {
+            JS_KLIB -> jsProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.compile(compilationConfigAction = {
@@ -130,7 +130,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                     }
                 }
             }
-            JS_LINKING -> jsProject(strategyConfig) {
+            JS_LINKING -> jsProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 module.compile()
                 for (invalidValue in argumentConfig.invalidRawValues) {
@@ -142,7 +142,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                     }
                 }
             }
-            WASM_KLIB -> wasmProject(strategyConfig) {
+            WASM_KLIB -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.compile(compilationConfigAction = {
@@ -153,7 +153,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                     }
                 }
             }
-            WASM_LINKING -> wasmProject(strategyConfig) {
+            WASM_LINKING -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 module.compile()
                 for (invalidValue in argumentConfig.invalidRawValues) {

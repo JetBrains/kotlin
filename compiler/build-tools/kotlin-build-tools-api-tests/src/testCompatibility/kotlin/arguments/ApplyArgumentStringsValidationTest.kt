@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
@@ -30,8 +30,8 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
 
     @BtaV2StrategyAgnosticCompilationTest
-    fun `applyCompilerArguments with all valid values produces no validation errors`(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun `applyCompilerArguments with all valid values produces no validation errors`(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
@@ -43,9 +43,8 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
 
 
     @BtaV2StrategyAgnosticCompilationTest
-    fun `applyCompilerArguments with single invalid enum collects one error`(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val [kotlinToolchains, _] = strategyConfig
-        jvmProject(strategyConfig) {
+    fun `applyCompilerArguments with single invalid enum collects one error`(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {

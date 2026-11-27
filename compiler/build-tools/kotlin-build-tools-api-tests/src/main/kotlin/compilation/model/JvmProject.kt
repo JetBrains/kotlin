@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
 import java.nio.file.Path
@@ -57,8 +56,4 @@ fun BaseCompilationTest.jvmProject(kotlinToolchain: KotlinToolchains, strategyCo
     JvmProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
-}
-
-fun BaseCompilationTest.jvmProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: JvmProject.() -> Unit) {
-    jvmProject(executionStrategy.first, executionStrategy.second, action)
 }

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
@@ -31,8 +32,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Intra-module IC tracks source changes in consecutive builds")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testConsequentBuilds(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testConsequentBuilds(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = trackedModule("basic-multimodule-project/module-1")
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.compile {
@@ -54,8 +55,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("IC removes the stale output when an externally-tracked source file is deleted")
     @TestMetadata("source-file-modification")
-    fun testSourceFileDeletedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testSourceFileDeletedExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             // the internally-tracked deletion path is already covered by `testConsequentBuilds`.
             val module = module("source-file-modification")
 
@@ -71,8 +72,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("IC removes the stale output and produces a new one when an internally-tracked class is renamed")
     @TestMetadata("source-file-modification")
-    fun testClassRenamedInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testClassRenamedInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule("source-file-modification").renameClassAndAssertOutputs()
         }
     }
@@ -80,8 +81,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("IC removes the stale output and produces a new one when an externally-tracked class is renamed")
     @TestMetadata("source-file-modification")
-    fun testClassRenamedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testClassRenamedExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module("source-file-modification").renameClassAndAssertOutputs()
         }
     }
@@ -100,8 +101,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (externally tracked)")
     @TestMetadata("class-visibility-change")
-    fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
         }
     }
@@ -109,8 +110,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (internally tracked)")
     @TestMetadata("class-visibility-change")
-    fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
         }
     }
@@ -128,8 +129,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (externally tracked)")
     @TestMetadata("kotlin-java-constant")
-    fun testKotlinTracksJavaConstantChangeExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testKotlinTracksJavaConstantChangeExternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             module("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
         }
     }
@@ -137,8 +138,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (internally tracked)")
     @TestMetadata("kotlin-java-constant")
-    fun testKotlinTracksJavaConstantChangeInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testKotlinTracksJavaConstantChangeInternallyTracked(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             trackedModule("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
         }
     }
@@ -156,8 +157,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DisplayName("Explicit backing fields don't alter the compilability of a module")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("explicit-backing-fields-incremental-1")
-    fun testExplicitBackingFieldsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testExplicitBackingFieldsIncremental(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = trackedModule(
                 moduleName = "explicit-backing-fields-incremental-1",
                 compilationConfigAction = {

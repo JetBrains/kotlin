@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectedLogLevelForRebuildReason
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -24,8 +24,8 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Adding a compiler plugin triggers non-incremental rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerPluginsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerPluginsChangeTriggersNonIncrementalRebuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -39,7 +39,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevelForRebuildReason(strategyConfig),
+                    expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -49,8 +49,8 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Changing compiler plugin options triggers non-incremental rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerPluginOptionsChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerPluginOptionsChangeTriggersNonIncrementalRebuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -67,7 +67,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevelForRebuildReason(strategyConfig),
+                    expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -77,8 +77,8 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Removing a compiler plugin triggers non-incremental rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerPluginRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerPluginRemovalTriggersNonIncrementalRebuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -92,7 +92,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevelForRebuildReason(strategyConfig),
+                    expectedLogLevelForRebuildReason(kotlinToolchains, executionPolicy),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }

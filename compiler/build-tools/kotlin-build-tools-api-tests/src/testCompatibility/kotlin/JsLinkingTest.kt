@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
@@ -29,8 +31,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("An unpacked klib is accepted as the linking input")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linksAnUnpackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun linksAnUnpackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile()
             module.link {
@@ -43,8 +45,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A packed klib (NOPACK=false) is accepted as the linking input")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linksAPackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun linksAPackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = { it.compilerArguments[NOPACK] = false })
             module.link {
@@ -57,8 +59,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("The linked JS file name comes from the linking IR_OUTPUT_NAME, independent of the compiled klib name")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linkedJsFileNameComesFromTheLinkingIrOutputName(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun linkedJsFileNameComesFromTheLinkingIrOutputName(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[NOPACK] = false
@@ -76,8 +78,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("MODULE_KIND=ES writes the generated JS with the .mjs extension")
     @BtaV2StrategyAgnosticCompilationTest
-    fun moduleKindEsShapesTheGeneratedJs(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun moduleKindEsShapesTheGeneratedJs(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile()
             module.link(compilationConfigAction = { it.compilerArguments[MODULE_KIND] = JsModuleKind.ES }) {
@@ -88,8 +90,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A lib+app graph links each module to its own JS and the app resolves the library across modules")
     @BtaV2StrategyAgnosticCompilationTest
-    fun multiModuleGraphLinksEachModuleToItsOwnJs(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun multiModuleGraphLinksEachModuleToItsOwnJs(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val library = module("js-ic-basic-lib")
             val app = module("js-ic-basic-app", dependencies = listOf(library))
 
@@ -112,8 +114,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A missing dependency fails linking when partial linkage is escalated to ERROR")
     @BtaV2StrategyAgnosticCompilationTest
-    fun missingDependencyFailsLinkingWhenPartialLinkageIsError(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun missingDependencyFailsLinkingWhenPartialLinkageIsError(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val library = module("missing-dep/lib")
             val app = module("missing-dep/app", dependencies = listOf(library))
 
@@ -136,8 +138,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("Per-module granularity produces one JS file per module")
     @BtaV2StrategyAgnosticCompilationTest
-    fun perModuleGranularityProducesMultipleJsFiles(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun perModuleGranularityProducesMultipleJsFiles(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile()
             // per-module granularity emits a separate JS file per module (library and stdlib)
@@ -151,8 +153,8 @@ class JsLinkingTest : BaseCompilationTest() {
 
     @DisplayName("Per-file granularity emits a separate JS file per source file")
     @BtaV2StrategyAgnosticCompilationTest
-    fun perFileGranularityProducesOneJsFilePerSourceFile(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun perFileGranularityProducesOneJsFilePerSourceFile(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile()
             // per-file granularity is only supported together with the ES module kind

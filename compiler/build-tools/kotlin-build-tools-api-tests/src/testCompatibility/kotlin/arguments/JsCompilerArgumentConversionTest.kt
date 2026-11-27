@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.AllJsCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.InvalidRawValueJsCompilerArgumentsBtaV2StrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.JsArgumentConfiguration
@@ -105,11 +106,10 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @InvalidRawValueJsCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<JsArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val [argumentConfig, strategyConfig] = config
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: JsArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             when (argumentConfig.operationKind) {
                 KLIB -> argumentConfig.testInvalidRawArgumentKlibCompilationFails(module)

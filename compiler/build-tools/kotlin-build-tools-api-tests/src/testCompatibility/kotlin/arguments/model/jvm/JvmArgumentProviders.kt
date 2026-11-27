@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -35,9 +37,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.combineNames
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.executionPolicies
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.kotlinToolchains
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -51,61 +53,64 @@ import java.util.stream.Stream
 
 internal class AllJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration().stream()
     }
 }
 
 internal class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.stream()
     }
 }
 
 internal class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.stream()
     }
 }
 
 internal class NullableJvmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsNullableTest }.stream()
     }
 }
 
 internal class InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
-    }
-}
-
-private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
-    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
     val compilerArguments = jvmCompilerArguments
         .filter { it.runsInvalidRawValueTest }
-        .map { named("[${it.argumentName}]", it) }
+        .map { named(it.argumentName, it) }
 
-    return btaV2Strategies.flatMap { namedStrategy ->
-        compilerArguments.map { namedArgDescriptor ->
-            named(
-                namedStrategy.name + namedArgDescriptor.name,
-                JvmArgumentConfiguration(namedStrategy.payload.first, namedArgDescriptor.payload) to namedStrategy.payload
-            )
-        }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                compilerArguments.map { descriptor: Named<JvmArgumentTestDescriptor<*>> ->
+                    val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                    val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                    val argumentConfigArg = named(
+                        combineNames(descriptor.name, kotlinToolchainsProvider.name, executionPolicyProvider.name),
+                        JvmArgumentConfiguration(kotlinToolchainsArg, descriptor.payload)
+                    )
+                    Arguments.of(argumentConfigArg, kotlinToolchainsArg, executionPolicyArg)
+                }
+            }
+        }.stream()
     }
 }
 
-private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<JvmArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
-    val compilerArguments = jvmCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
+private fun namedArgumentConfiguration(argumentPredicate: (JvmArgumentTestDescriptor<*>) -> Boolean = { true }): List<Arguments> {
+    val btaVersions = kotlinToolchains()
+    val compilerArguments = jvmCompilerArguments.filter { argumentPredicate(it) }.map { named(it.argumentName, it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.mapNotNull { namedArgumentDescriptor ->
-            if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("[v1]")) return@mapNotNull null
-
-            named(
-                namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                JvmArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
+            if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("v1")) return@mapNotNull null
+            val toolchain = namedKotlinToolchains.payload()
+            Arguments.of(
+                named(
+                    combineNames(namedArgumentDescriptor.name, namedKotlinToolchains.name),
+                    JvmArgumentConfiguration(toolchain, namedArgumentDescriptor.payload)
+                ),
+                toolchain
             )
         }
     }

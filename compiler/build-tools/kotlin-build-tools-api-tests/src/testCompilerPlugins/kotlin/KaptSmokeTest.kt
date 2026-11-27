@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -32,8 +33,8 @@ class KaptSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of Kapt configuration application")
     @TestMetadata("kapt-project")
-    fun testKaptConfiguration(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testKaptConfiguration(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("kapt-project")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[CommonToolArguments.VERBOSE] = true
@@ -78,9 +79,8 @@ class KaptSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Test that Kapt with IC automatically adds incrementalData to compiler plugin arguments")
     @TestMetadata("kapt-project")
-    fun testKaptConfiguerationWithIc(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val kotlinToolchain = strategyConfig.first
-        jvmScenario(strategyConfig) {
+    fun testKaptConfiguerationWithIc(kotlinToolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchain, executionPolicy) {
             val moduleBuildDir = project.projectDirectory.resolve("kapt-project/build/output")
             val module = module(
                 "kapt-project",

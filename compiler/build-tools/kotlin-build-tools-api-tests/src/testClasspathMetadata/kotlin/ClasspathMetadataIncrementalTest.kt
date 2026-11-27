@@ -10,11 +10,12 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
@@ -52,9 +53,9 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Regression control: legacy incremental compilation resolves a recompiled common source against platform declarations")
     @TestMetadata("common-overload-resolution")
-    fun testLegacyIncrementalCompilationResolvesAgainstPlatformDeclarations(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testLegacyIncrementalCompilationResolvesAgainstPlatformDeclarations(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         // the legacy mode only exists on JVM
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = kmpModule("common-overload-resolution", kmpFragmentsConfiguration(useMetadataOnIncrementalClasspath = false))
 
             module.replaceFileWithVersion("commonMain/foo.kt", "changeInt")

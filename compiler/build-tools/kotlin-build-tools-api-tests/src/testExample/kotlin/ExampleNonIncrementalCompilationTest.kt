@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
@@ -20,8 +19,8 @@ import kotlin.io.path.writeText
 class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
-    fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun myTest(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
@@ -39,8 +38,8 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Verify that test infra supports packages")
     @DefaultStrategyAgnosticCompilationTest
-    fun simpleMultiPackageTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun simpleMultiPackageTest(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("empty")
 
             val deepDir = module1.sourcesDirectory.resolve("org/example/packages")
@@ -68,8 +67,8 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Sample non-incremental compilation test with a single module and a compilation error")
     @DefaultStrategyAgnosticCompilationTest
-    fun failedCompilationTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun failedCompilationTest(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")

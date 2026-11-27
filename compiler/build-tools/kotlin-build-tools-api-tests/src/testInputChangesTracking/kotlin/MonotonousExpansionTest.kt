@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompilationSteps
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -20,8 +21,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-29860 KT-55940 Circular dependency does not lead to infinite IC recursion")
     @TestMetadata("jvm-circular-dependency")
-    fun circularDependency(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun circularDependency(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("jvm-circular-dependency")
             // MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION is enabled by default
 
@@ -37,8 +38,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Inline change with monotonous expansion compiles successfully and includes previously compiled files")
     @TestMetadata("jvm-circular-dependency")
-    fun inlineChangeWithExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun inlineChangeWithExpansion(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("jvm-circular-dependency")
 
             module.replaceFileWithVersion("b.kt", "justChange")
@@ -56,8 +57,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Inline change without monotonous expansion recompiles only affected files")
     @TestMetadata("jvm-circular-dependency")
-    fun inlineChangeWithoutExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun inlineChangeWithoutExpansion(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("jvm-circular-dependency", icOptionsConfigAction = {
                 it[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = false
             })
@@ -76,8 +77,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Non-inline ABI change with monotonous expansion includes previously compiled files")
     @TestMetadata("jvm-non-inline-expansion")
-    fun nonInlineAbiChangeWithExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun nonInlineAbiChangeWithExpansion(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("jvm-non-inline-expansion")
 
             module.replaceFileWithVersion("b.kt", "addOverload")
@@ -95,8 +96,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Non-inline ABI change without monotonous expansion recompiles only affected files")
     @TestMetadata("jvm-non-inline-expansion")
-    fun nonInlineAbiChangeWithoutExpansion(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun nonInlineAbiChangeWithoutExpansion(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("jvm-non-inline-expansion", icOptionsConfigAction = {
                 it[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = false
             })
