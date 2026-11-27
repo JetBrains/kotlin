@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 /**
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayName
 @JsGradlePluginTests
 @DisplayName("Packages imported into the npm module cache (KT-89245)")
 @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // unaffected by Gradle-version, only test the latest version
+@MustRunOnChangesInGradle
 class NpmImportedPackagesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
