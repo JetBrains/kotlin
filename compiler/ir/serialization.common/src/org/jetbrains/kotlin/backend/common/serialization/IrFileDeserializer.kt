@@ -49,7 +49,7 @@ class IrFileDeserializer(
             for (symbolId in symbolIds) {
                 val symbolData = BinarySymbolData.decode(symbolId)
                 val signature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-                this[SignatureAndKind(signature, symbolData.kind)] = symbolData.signatureId
+                this[signature and symbolData.kind] = symbolData.signatureId
             }
         } else {
             // A fallback for old KLIBs: Iterate through signatures, load symbol kinds from Proto messages.
@@ -77,7 +77,7 @@ class IrFileDeserializer(
                     )
                 }
 
-                this[SignatureAndKind(signature, kind)] = signatureId
+                this[signature and kind] = signatureId
             }
         }
     }

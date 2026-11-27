@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.canBeReferencedFromOtherFiles
-import org.jetbrains.kotlin.ir.util.isClassSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
@@ -72,6 +70,19 @@ abstract class KotlinIrLinker(
 
     @IrLinkerInternalApi
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
+
+    /** The current linker state. */
+    private val state = IrLinkerState(INITIALIZING)
+
+    /**
+     * Completes the initialization of the linker: no more module deserializers can be registered,
+     * and symbols can be requested from now on.
+     *
+     * Must be called after the last [createAndRegisterModuleDeserializer] call.
+     */
+    fun finalizeInitialization() {
+        state.switchTo(LINKING)
+    }
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
         override fun referenceSimpleFunction(file: IrFile, signature: IdSignature.FileLocalSignature): IrSimpleFunctionSymbol =
@@ -132,16 +143,14 @@ abstract class KotlinIrLinker(
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
-    // Represents the fact that the linkage process was finished.
-    // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
-    private var finished = false
-
     @IrLinkerInternalApi
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,
         moduleDeserializer: IrModuleDeserializer,
     ): IrSymbol {
+        state.checkInitializationCompleted()
+
         check(idSignature.canBeReferencedFromOtherFiles) {
             "An attempt to run a lookup in IR linker for a signature that is supposed to be limited to the single file: ${idSignature::class.java.simpleName}, ${idSignature.render()}"
         }
@@ -267,6 +276,8 @@ abstract class KotlinIrLinker(
      * Must be called before [finalizeIrLinkage], which handles the symbols that remain unbound.
      */
     fun drainDeserializationQueue() {
+        state.checkInitializationCompleted()
+
         // Deserializing a reference may lead to new unbound references, so we loop until none are left.
         var unbound: Set<IrSymbol> = emptySet()
         do {
@@ -299,8 +310,10 @@ abstract class KotlinIrLinker(
 
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
-        deserializeOrResolveDeclaration(symbol)
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        state.checkInitializationCompleted()
+        return deserializeOrResolveDeclaration(symbol)
+    }
 
     private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
         if (!symbol.isBound) {
@@ -332,10 +345,12 @@ abstract class KotlinIrLinker(
      * @return The symbol for the given signature and kind if successfully found; otherwise, null.
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
+        state.checkInitializationCompleted()
+
         // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
         return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
-            if (finished) deserializeAllReachableTopLevels()
+            if (state.isFinalized) deserializeAllReachableTopLevels()
         }
     }
 
@@ -357,7 +372,7 @@ abstract class KotlinIrLinker(
      * Must be called after [drainDeserializationQueue]. Declarations requested later are linked right at deserialization.
      */
     fun finalizeIrLinkage(irBuiltIns: IrBuiltIns) {
-        finished = true
+        state.switchTo(FINALIZED)
 
         // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
         // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
@@ -380,6 +395,8 @@ abstract class KotlinIrLinker(
         kotlinLibrary: KotlinLibrary?,
         strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
+        state.checkInitializationInProgress()
+
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
         moduleFragment.friendLibraries = friendModules[kotlinLibrary]?.toSet().orEmpty()
@@ -446,74 +463,6 @@ abstract class KotlinIrLinker(
             moduleDeserializersByPackageName[callableId.packageName]?.collectMatchingSignatures()
             moduleDeserializersWithUnknownPackageNames.collectMatchingSignatures()
         }
-    }
-}
-
-/**
- * A key for looking up a declaration (or its symbol) in the linker: the [signature] tells which declaration
- * it is, and the [kind] tells what kind of declaration (and so what kind of [IrSymbol]) is expected.
- *
- * Unlike [TopLevelCallableIdAndKind], which may correspond to several overloaded callables,
- * a [SignatureAndKind] denotes exactly one declaration.
- */
-data class SignatureAndKind(val signature: IdSignature, val kind: BinarySymbolData.SymbolKind) {
-    override fun toString() = "${signature.render()}, kind=$kind"
-}
-
-/**
- * A key for looking up top-level callables (functions or properties) in a module by their [CallableId].
- *
- * A [CallableId] alone does not identify a single declaration: there can be several overloaded functions
- * with the same [CallableId], and a function and a property can share the same [CallableId] too.
- * So [kind] is used to tell functions from properties, and a single [TopLevelCallableIdAndKind]
- * may still correspond to multiple [IdSignature]s (one per overload).
- *
- * @property callableId The package FQ name and the name of the top-level callable.
- * @property kind The kind of the callable. Only [BinarySymbolData.SymbolKind.FUNCTION_SYMBOL] and
- *   [BinarySymbolData.SymbolKind.PROPERTY_SYMBOL] are allowed.
- */
-data class TopLevelCallableIdAndKind(val callableId: CallableId, val kind: BinarySymbolData.SymbolKind) {
-    val packageFqName: FqName get() = callableId.packageName
-
-    constructor(signature: IdSignature.CommonSignature, kind: BinarySymbolData.SymbolKind) : this(
-        callableId = signature.checkSignature().toCallableId(),
-        kind = kind,
-    )
-
-    constructor(symbol: IrSymbol) : this(
-        callableId = symbol.getCallableSignatureOrFail().toCallableId(),
-        kind = symbol.kind(),
-    )
-
-    init {
-        require(callableId.className == null && callableId.classId == null) {
-            "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for a class member: $kind, $callableId"
-        }
-
-        require(kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) {
-            "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for unsupported symbol kind: $kind, $callableId"
-        }
-    }
-
-    override fun toString() = "$callableId, kind=$kind"
-
-    companion object {
-        private fun IrSymbol.getCallableSignatureOrFail(): IdSignature.CommonSignature {
-            when (val signature = signature) {
-                is IdSignature.CommonSignature -> return signature.checkSignature()
-                null -> error("Can not create ${TopLevelCallableIdAndKind::class.java.simpleName}, no signature in symbol $this")
-                else -> error("Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for symbol $this, unexpected signature type: ${signature::class.java.simpleName}, $signature")
-            }
-        }
-
-        private fun IdSignature.CommonSignature.checkSignature(): IdSignature.CommonSignature {
-            check(!isClassSignature()) { "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for class signature $this" }
-            check(nameSegments.size == 1) { "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for a non-top-level declaration signature $this" }
-            return this
-        }
-
-        private fun IdSignature.CommonSignature.toCallableId(): CallableId =
-            CallableId(packageFqName(), Name.identifier(declarationFqName))
     }
 }
 
@@ -660,3 +609,41 @@ private object IrLinkerModuleVisibilityProvider : ModuleVisibilityProvider {
         return fromModuleKlib == toModuleKlib || thisModule.friendLibraries?.contains(toModuleKlib) == true
     }
 }
+
+/**
+ * Tracks which phase of IR linkage the [KotlinIrLinker] is in.
+ */
+private class IrLinkerState(private var currentState: State) {
+    enum class State {
+        /** Module deserializers are being registered; symbols can't be requested yet. */
+        INITIALIZING,
+
+        /** [KotlinIrLinker.finalizeInitialization] has been called: Requested declarations are queued and deserialized in batches. */
+        LINKING,
+
+        /** [KotlinIrLinker.finalizeIrLinkage] has been called: Declarations requested from now on are deserialized immediately. */
+        FINALIZED;
+    }
+
+    val isFinalized: Boolean get() = currentState == State.FINALIZED
+
+    fun checkInitializationInProgress() {
+        check(currentState == State.INITIALIZING) {
+            "Expected IR linker state ${State.INITIALIZING}, but was $currentState"
+        }
+    }
+
+    fun checkInitializationCompleted() {
+        check(currentState > State.INITIALIZING) {
+            "IR linker is not initialized yet"
+        }
+    }
+
+    fun switchTo(newState: State) {
+        check(newState == currentState || newState.ordinal == currentState.ordinal + 1) {
+            "Unsupported transition between IR linker states: $currentState -> $newState"
+        }
+        currentState = newState
+    }
+}
+

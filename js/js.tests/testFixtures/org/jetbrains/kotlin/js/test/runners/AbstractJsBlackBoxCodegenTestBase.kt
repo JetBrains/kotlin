@@ -170,7 +170,10 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         is JsBackendFacades.WithSeparatedDeserialization -> {
             configureLoweredIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
             facadeStep(backendFacades.deserializerFacade)
-            deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
+            deserializedIrHandlersStep {
+                useHandlers(backendFacades.postDeserializationHandler)
+                useHandlers(::SignatureAndKindHandler)
+            }
         }
     }
 
