@@ -39,6 +39,20 @@ class IrVariableBuilder @PublishedApi internal constructor() : IrDeclarationWith
 
     internal val isTypeInitialized: Boolean
         get() = ::type.isInitialized
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrVariable) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        type = from.type
+        isVar = from.isVar
+        isConst = from.isConst
+        isLateinit = from.isLateinit
+    }
 }
 
 @PublishedApi

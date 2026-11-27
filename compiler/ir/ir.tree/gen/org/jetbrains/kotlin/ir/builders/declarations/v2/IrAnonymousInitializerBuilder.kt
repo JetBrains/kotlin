@@ -22,6 +22,16 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 
 class IrAnonymousInitializerBuilder @PublishedApi internal constructor() : IrDeclarationBuilder() {
     var isStatic: Boolean = false
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrAnonymousInitializer) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        isStatic = from.isStatic
+    }
 }
 
 @PublishedApi

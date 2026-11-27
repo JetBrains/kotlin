@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.builders.declarations.v2
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -25,6 +26,15 @@ abstract class IrDeclarationBuilder internal constructor() {
     var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 
     var parent: IrDeclarationParent? = null
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrDeclaration) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+    }
 
     fun setSourceRange(from: IrElement) {
         startOffset = from.startOffset

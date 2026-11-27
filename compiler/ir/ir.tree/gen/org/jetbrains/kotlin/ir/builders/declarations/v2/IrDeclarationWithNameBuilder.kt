@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations.v2
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrDeclarationWithNameBuilder internal constructor() : IrDeclarationBuilder() {
@@ -15,4 +16,14 @@ abstract class IrDeclarationWithNameBuilder internal constructor() : IrDeclarati
 
     internal val isNameInitialized: Boolean
         get() = ::name.isInitialized
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrDeclarationWithName) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+    }
 }

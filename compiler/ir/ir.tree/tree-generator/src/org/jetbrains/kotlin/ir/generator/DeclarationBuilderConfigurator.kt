@@ -31,6 +31,12 @@ import org.jetbrains.kotlin.ir.generator.model.ListField
 object DeclarationBuilderConfigurator {
     private val alwaysExcludedFields = setOf("descriptor", "factory", "attributeOwnerId")
 
+    /**
+     * Header properties that `copyFrom` doesn't copy: relations to other declarations, which a copy doesn't inherit,
+     * and annotations, which are usually filtered and have to be deep-copied (`copyAnnotations()`).
+     */
+    private val notCopiedFields = setOf("annotations", "metadata", "overriddenSymbols", "sealedSubclasses", "companionExtensionClass")
+
     private val irPackage = Packages.tree
 
     private fun importable(packageName: String, name: String) = ArbitraryImportable(packageName, name)
@@ -39,7 +45,6 @@ object DeclarationBuilderConfigurator {
     private val parameterKind = importable(Packages.declarations, "IrParameterKind")
     private val nameType = importable("org.jetbrains.kotlin.name", "Name")
     private val irElement = importable(irPackage, "IrElement")
-    private val irValueParameter = importable(Packages.declarations, "IrValueParameter")
     private val irTypeParameterSymbol = importable(Packages.symbols, "IrTypeParameterSymbol")
     private val irValueParameterSymbol = importable(Packages.symbols, "IrValueParameterSymbol")
     private val irType = importable(Packages.types, "IrType")
@@ -89,6 +94,8 @@ object DeclarationBuilderConfigurator {
         val typeParameterBuilder = builder("IrTypeParameterBuilder", typeParameter, declarationWithNameBuilder) {
             fileName = "IrTypeParameterBuilders"
             excludedFields += "index"
+            // Supertypes may reference other type parameters of the same container, so they are remapped as a group.
+            notCopiedFields += "superTypes"
             preallocatesSymbol = true
             build = BuildConfig(Creation.FactoryMethod("createTypeParameter")).apply {
                 extraParameters += "index" to StandardTypes.int
@@ -122,22 +129,6 @@ object DeclarationBuilderConfigurator {
             // The type of the class `thisReceiver` is derived from the class.
             initializationChecks += "type"
             preallocatesSymbol = true
-            additionalMembers += Expr(
-                """
-                fun copyFrom(from: IrValueParameter) {
-                    setSourceRange(from)
-                    origin = from.origin
-                    name = from.name
-                    type = from.type
-                    varargElementType = from.varargElementType
-                    isCrossinline = from.isCrossinline
-                    isNoinline = from.isNoinline
-                    isHidden = from.isHidden
-                    isAssignable = from.isAssignable
-                }
-                """.trimIndent(),
-                listOf(irValueParameter),
-            )
             build = BuildConfig(Creation.FactoryMethod("createValueParameter"))
         }
 
@@ -376,6 +367,19 @@ object DeclarationBuilderConfigurator {
         return (builder.ancestors.asReversed() + builder)
             .flatMap { headerProperties(it) }
             .filter { it.field.name in elementFields }
+    }
+
+    /**
+     * The properties `copyFrom` of [builder] copies: all header properties of its node, except the abstract ones (fixed by the builder type,
+     * e.g. the kind of a parameter), child elements (e.g. the initializer of a variable) and the [notCopiedFields].
+     * Empty if [builder] adds nothing to the `copyFrom` of its parent.
+     */
+    fun copiedProperties(builder: DeclarationBuilder): List<HeaderProperty> {
+        val notCopied = (builder.ancestors + builder).flatMapTo(notCopiedFields.toMutableSet()) { it.notCopiedFields }
+        fun isCopied(property: HeaderProperty) =
+            !property.isAbstract && !property.field.holdsChildElement() && property.field.name !in notCopied
+        if (headerProperties(builder).none(::isCopied)) return emptyList()
+        return headerPropertiesOfNode(builder).filter(::isCopied)
     }
 
     /** The default of a builder property derived from the field, `null` if it has none (the property is `lateinit`). */

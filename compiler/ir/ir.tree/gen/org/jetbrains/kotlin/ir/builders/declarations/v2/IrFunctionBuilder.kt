@@ -15,6 +15,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -37,6 +38,22 @@ abstract class IrFunctionBuilder internal constructor() : IrTypeParametersContai
     var returnType: IrType? = null
 
     internal val parameters: MutableList<IrParameterBuilder> = []
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrFunction) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        isExternal = from.isExternal
+        visibility = from.visibility
+        containerSource = from.containerSource
+        isInline = from.isInline
+        isExpect = from.isExpect
+        returnType = from.returnType
+    }
 
     fun dispatchReceiver(builder: IrDispatchReceiverBuilder.() -> Unit): IrValueParameterSymbol {
         contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }

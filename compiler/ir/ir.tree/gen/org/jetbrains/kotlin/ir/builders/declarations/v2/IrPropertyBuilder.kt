@@ -58,6 +58,26 @@ class IrPropertyBuilder @PublishedApi internal constructor() : IrDeclarationWith
     internal var setter: IrSimpleFunctionBuilder? = null
 
     /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrProperty) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        isExternal = from.isExternal
+        visibility = from.visibility
+        modality = from.modality
+        isFakeOverride = from.isFakeOverride
+        containerSource = from.containerSource
+        isVar = from.isVar
+        isConst = from.isConst
+        isLateinit = from.isLateinit
+        isDelegated = from.isDelegated
+        isExpect = from.isExpect
+    }
+
+    /**
      * Unless set explicitly, the name is the name of the property.
      */
     fun backingField(builder: IrFieldBuilder.() -> Unit): IrFieldSymbol {

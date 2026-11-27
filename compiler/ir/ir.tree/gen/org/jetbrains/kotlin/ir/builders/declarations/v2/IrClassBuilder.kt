@@ -62,6 +62,30 @@ class IrClassBuilder @PublishedApi internal constructor() : IrTypeParametersCont
     internal val declarations: MutableList<IrDeclaration> = []
 
     /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrClass) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        isExternal = from.isExternal
+        visibility = from.visibility
+        kind = from.kind
+        modality = from.modality
+        isCompanion = from.isCompanion
+        isInner = from.isInner
+        isData = from.isData
+        isValue = from.isValue
+        isExpect = from.isExpect
+        isFun = from.isFun
+        hasEnumEntries = from.hasEnumEntries
+        source = from.source
+        superTypes = from.superTypes
+        valueClassRepresentation = from.valueClassRepresentation
+    }
+
+    /**
      * Unless set explicitly, offsets, origin ([org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.INSTANCE_RECEIVER])
      * and type (the class type with its type parameters) are taken from the class when it's built.
      */

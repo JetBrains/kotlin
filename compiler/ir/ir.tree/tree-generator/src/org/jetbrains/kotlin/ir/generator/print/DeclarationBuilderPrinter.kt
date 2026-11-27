@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.ir.generator.DeclarationBuilderConfigurator.copiedProperties
 import org.jetbrains.kotlin.ir.generator.DeclarationBuilderConfigurator.headerProperties
 import org.jetbrains.kotlin.ir.generator.DeclarationBuilderConfigurator.headerPropertiesOfNode
 import org.jetbrains.kotlin.ir.generator.Packages
@@ -99,6 +100,10 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
                     println("}")
                 }
             }
+            val copied = copiedProperties(builder)
+            if (copied.isNotEmpty()) {
+                members += { printCopyFrom(builder, copied) }
+            }
             for (child in builder.children) {
                 when (child) {
                     is Child.Built -> child.functions.forEach { function -> members += { printChildFunction(child, function) } }
@@ -114,6 +119,17 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
             members.forEachIndexed { index, member ->
                 if (index > 0) println()
                 member()
+            }
+        }
+        println("}")
+    }
+
+    private fun ImportCollectingPrinter.printCopyFrom(builder: DeclarationBuilder, properties: List<HeaderProperty>) {
+        printKDoc("Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.")
+        println("fun copyFrom(from: ", builder.element.render(), ") {")
+        withIndent {
+            for (property in properties) {
+                println(property.field.name, " = from.", property.field.name)
             }
         }
         println("}")

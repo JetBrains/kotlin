@@ -31,6 +31,18 @@ class IrTypeParameterBuilder internal constructor() : IrDeclarationWithNameBuild
     var superTypes: List<IrType> = []
 
     internal val symbol: IrTypeParameterSymbol = IrTypeParameterSymbolImpl()
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrTypeParameter) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        variance = from.variance
+        isReified = from.isReified
+    }
 }
 
 internal fun IrFactory.build(builder: IrTypeParameterBuilder, index: Int): IrTypeParameter {

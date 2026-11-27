@@ -42,6 +42,28 @@ class IrSimpleFunctionBuilder @PublishedApi internal constructor() : IrFunctionB
     var companionExtensionClass: IrClassSymbol? = null
 
     internal val symbol: IrSimpleFunctionSymbol = IrSimpleFunctionSymbolImpl()
+
+    /**
+     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
+     */
+    fun copyFrom(from: IrSimpleFunction) {
+        startOffset = from.startOffset
+        endOffset = from.endOffset
+        origin = from.origin
+        name = from.name
+        isExternal = from.isExternal
+        visibility = from.visibility
+        containerSource = from.containerSource
+        isInline = from.isInline
+        isExpect = from.isExpect
+        returnType = from.returnType
+        modality = from.modality
+        isFakeOverride = from.isFakeOverride
+        isTailrec = from.isTailrec
+        isSuspend = from.isSuspend
+        isOperator = from.isOperator
+        isInfix = from.isInfix
+    }
 }
 
 @PublishedApi
