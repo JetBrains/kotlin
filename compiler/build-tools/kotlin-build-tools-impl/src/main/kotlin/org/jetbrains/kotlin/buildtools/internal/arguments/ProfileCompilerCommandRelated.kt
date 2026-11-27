@@ -3,17 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseSerializers(PathAsStringSerializer::class)
-
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -39,8 +36,10 @@ internal fun applyProfileCompilerCommand(
 
 @Serializable
 internal class ProfileCompilerCommandImpl(
+    @Serializable(AbsolutePathAsStringSerializer::class)
     val profilerPath: Path,
     val command: String,
+    @Serializable(AbsolutePathAsStringSerializer::class)
     val outputDir: Path,
 ) {
     override fun equals(other: Any?): Boolean {

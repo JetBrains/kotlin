@@ -3,18 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseSerializers(PathAsStringSerializer::class)
-
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import java.nio.file.Path
 
 internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPluginImpl>) {
@@ -105,7 +102,7 @@ internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl
 @Serializable
 internal data class CompilerPluginImpl(
     val pluginId: String,
-    val classpath: List<Path>,
+    val classpath: List<@Serializable(AbsolutePathAsStringSerializer::class) Path>,
     val rawArguments: List<CompilerPluginOptionImpl>,
     val orderingRequirements: Set<CompilerPluginPartialOrderImpl>,
 ) {

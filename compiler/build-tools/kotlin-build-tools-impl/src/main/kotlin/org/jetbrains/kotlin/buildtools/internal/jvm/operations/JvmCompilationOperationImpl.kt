@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseSerializers(PathAsStringSerializer::class)
+@file:UseSerializers(AbsolutePathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.daemon.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
 import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -115,15 +116,25 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        addAll(super.beforeSerialization(logger))
         incrementalCompilation.asSerializationHooksProvider()?.let { incrementalCompilation ->
-            addAll(incrementalCompilation.beforeSerialization(logger))
+            val visitorsFromIc = incrementalCompilation.beforeSerialization(logger)
+            // LookupVisitor coming from IC takes precedence, and we don't want to have two registered. Remove the one coming from BuildOperation.
+            if (visitorsFromIc.filterIsInstance<LookupMessageVisitor>().isNotEmpty()) {
+                singleOrNull { it is LookupMessageVisitor }?.let { remove(it) }
+                hasLookupTracker = false
+            }
+            addAll(visitorsFromIc)
         }
     }
 
-    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
-        incrementalCompilation.asSerializationHooksProvider()?.afterDeserialization(messageReporter, compilerFacade)
+    override fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase?,
+        onCompilationFinished: (action: () -> Unit) -> Unit
+    ) {
+        super.afterDeserialization(messageReporter, compilerFacade, onCompilationFinished)
+        incrementalCompilation.asSerializationHooksProvider()?.afterDeserialization(messageReporter, compilerFacade, onCompilationFinished)
     }
 
     override fun deepCopy(): JvmCompilationOperationImpl {

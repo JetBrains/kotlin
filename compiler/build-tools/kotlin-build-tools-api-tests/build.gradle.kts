@@ -238,17 +238,29 @@ val businessLogicTestSuits = setOf(
     "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
 )
 
-val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
-fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "", extraCompilerClasspath: FileCollection? = null) {
-    val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(version) {
+data class VersionAndJpsKey(val version: String, val withJps: Boolean)
+
+val buildToolsImplConfigurationsCache = mutableMapOf<VersionAndJpsKey, Configuration>()
+fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "", withJps: Boolean = false, extraCompilerClasspath: FileCollection? = null) {
+    val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(VersionAndJpsKey(version, withJps)) {
         configurations.detachedConfiguration(
             project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
             if (version.isEmpty()) {
-                dependencies.project(":compiler:build-tools:kotlin-build-tools-impl")
+                project.dependencies.project(":compiler:build-tools:kotlin-build-tools-impl")
             } else {
                 project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:${version}")
             }
-        )
+        ).apply {
+            if (withJps) {
+                dependencies.add(
+                    if (version.isEmpty()) {
+                        project.dependencies.project(":compiler:build-tools:kotlin-build-tools-api-jps")
+                    } else {
+                        project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-api-jps:${version}")
+                    }
+                )
+            }
+        }
     }
 
     targets.all {
@@ -367,17 +379,10 @@ testing {
         }
 
         named<JvmTestSuite>("testJps") {
-            targets.all {
-                testTask.configure {
-                    systemProperty(
-                        "kotlin.buildtools.daemon.legacy.mode",
-                        "true"
-                    )
-                }
-            }
             dependencies {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
+            addSpecificBuildToolsImpl(withJps = true)
         }
 
         named<JvmTestSuite>("testRestrictedArguments") {

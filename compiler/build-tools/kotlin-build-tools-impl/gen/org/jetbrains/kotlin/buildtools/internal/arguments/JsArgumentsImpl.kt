@@ -1,7 +1,7 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
-@file:UseSerializers(PathAsStringSerializer::class)
+@file:UseSerializers(AbsolutePathAsStringSerializer::class)
 @file:OptIn(ExperimentalCompilerArgument::class)
 @file:Suppress("EnumValuesSoftDeprecate")
 
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
-import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.appendFatalErrors
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 

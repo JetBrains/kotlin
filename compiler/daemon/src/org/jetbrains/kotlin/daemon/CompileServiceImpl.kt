@@ -1085,7 +1085,7 @@ class CompileServiceImpl(
             } else null
             val sessionData = session?.data as? CompileSessionData
             sessionData?.runningCompilations?.add(compilationId, disposable)
-
+            val eventManager = EventManagerImpl()
             try {
                 val messageSender = { message: Message ->
                     callbackChannel.report(
@@ -1093,7 +1093,10 @@ class CompileServiceImpl(
                     )
                 }
                 val logger = MessageReportingLogger(loggerDebugEnabled, messageSender)
-                buildOperation.afterDeserialization(messageSender, servicesFacade)
+                buildOperation.afterDeserialization(
+                    messageSender,
+                    servicesFacade,
+                    { onCompilationFinishedAction -> eventManager.onCompilationFinished(onCompilationFinishedAction) })
 
                 val result = if (sessionData != null) {
                     buildOperation.executeAndSerializeResult(sessionData.buildSessionHolder.buildSession, logger)
@@ -1104,6 +1107,7 @@ class CompileServiceImpl(
                 }
                 CompileService.CallResult.Good(result)
             } finally {
+                eventManager.fireCompilationFinished()
                 sessionData?.runningCompilations?.remove(compilationId)
             }
         }

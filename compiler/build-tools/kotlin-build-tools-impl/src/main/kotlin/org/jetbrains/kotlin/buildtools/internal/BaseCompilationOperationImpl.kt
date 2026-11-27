@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
+import org.jetbrains.kotlin.buildtools.internal.daemon.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerRefIndexConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
 import org.jetbrains.kotlin.buildtools.internal.daemon.CompilerMessageVisitor
@@ -38,6 +39,9 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.serialization.DeduplicatingMessageReportingLookupTracker
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -50,7 +54,8 @@ import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments> :
-    CancellableBuildOperationImpl<CompilationResult>, BaseCompilationOperation, BaseCompilationOperation.Builder {
+    CancellableBuildOperationImpl<CompilationResult>, BaseCompilationOperation, BaseCompilationOperation.Builder,
+    HasSerializationHooks, SupportsNewDaemonMode<CompilationResult> {
 
     protected constructor() : super()
     protected constructor(other: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) : super(other) {
@@ -64,10 +69,19 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract override val compilerArguments: BtaCompilerArgs
 
-    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super.afterDeserialization(messageReporter, compilerFacade)
+    override fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase?,
+        onCompilationFinished: (action: () -> Unit) -> Unit,
+    ) {
+        super.afterDeserialization(messageReporter, compilerFacade, onCompilationFinished)
         if (hasLookupTracker) {
-            lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
+            lookupTracker =
+                DeduplicatingMessageReportingLookupTracker(MessageReportingCompilerLookupTracker(messageReporter)).also { deduplicatingTracker ->
+                    onCompilationFinished {
+                        deduplicatingTracker.flush()
+                    }
+                }
         }
         if (hasIcEventCollector) {
             icEventCollector = MessageReportingIcEventCollector(messageReporter)
@@ -90,6 +104,14 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         )
     }
 
+    override fun deserializeResult(serializedData: SerializedDataContainer): CompilationResult {
+        return KotlinToolchainsImpl.serializer.deserialize(CompilationResultSerializer, serializedData)
+    }
+
+    override fun serializeResult(result: CompilationResult): SerializedDataContainer {
+        return KotlinToolchainsImpl.serializer.serialize(CompilationResultSerializer, result)
+    }
+
     @Transient
     var lookupTracker: CompilerLookupTracker? = null
         set(value) {
@@ -97,7 +119,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             field = value
         }
 
-    private var hasLookupTracker: Boolean = false
+    protected var hasLookupTracker: Boolean = false
 
     internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = DEBUG
 
@@ -173,7 +195,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: DaemonExecutionPolicyImpl,
         logger: KotlinLogger,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val messageCollector = createMessageCollector(logger)
         if (reportArgumentWarningsAndErrors(logger, messageCollector)) return COMPILATION_ERROR
@@ -412,7 +434,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val compilerReferenceIndexCollector = services[CompilerReferenceIndexCollector::class.java]
         if (compilationResult == CompilationResult.COMPILATION_SUCCESS && compilerReferenceIndexCollector != null) {
-            val metadataVersion = LanguageVersion.fromVersionString(arguments.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
+            val metadataVersion =
+                LanguageVersion.fromVersionString(arguments.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
             compilerReferenceIndexCollector.write(metadataVersion)
         }
 

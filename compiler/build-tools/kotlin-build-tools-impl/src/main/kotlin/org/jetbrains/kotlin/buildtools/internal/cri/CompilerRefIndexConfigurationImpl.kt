@@ -2,7 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:UseSerializers(PathAsStringSerializer::class)
+@file:UseSerializers(AbsolutePathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.cri
 
@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
+import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
 import java.nio.file.Path
 
 @Serializable
