@@ -9,18 +9,21 @@ package kotlin
 
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
+ * @sample samples.numbers.Numbers.intCountOneBits
  */
 @SinceKotlin("1.4")
 public expect fun Int.countOneBits(): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
+ * @sample samples.numbers.Numbers.intCountLeadingZeroBits
  */
 @SinceKotlin("1.4")
 public expect fun Int.countLeadingZeroBits(): Int
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
+ * @sample samples.numbers.Numbers.intCountTrailingZeroBits
  */
 @SinceKotlin("1.4")
 public expect fun Int.countTrailingZeroBits(): Int
@@ -28,6 +31,7 @@ public expect fun Int.countTrailingZeroBits(): Int
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
  * or zero, if this number is zero.
+ * @sample samples.numbers.Numbers.intTakeHighestOneBit
  */
 @SinceKotlin("1.4")
 public expect fun Int.takeHighestOneBit(): Int
@@ -35,6 +39,7 @@ public expect fun Int.takeHighestOneBit(): Int
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
  * or zero, if this number is zero.
+ * @sample samples.numbers.Numbers.intTakeLowestOneBit
  */
 @SinceKotlin("1.4")
 public expect fun Int.takeLowestOneBit(): Int
@@ -48,6 +53,7 @@ public expect fun Int.takeLowestOneBit(): Int
  *
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
+ * @sample samples.numbers.Numbers.intRotateLeft
  */
 @SinceKotlin("1.6")
 public expect fun Int.rotateLeft(bitCount: Int): Int
@@ -62,6 +68,7 @@ public expect fun Int.rotateLeft(bitCount: Int): Int
  *
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
+ * @sample samples.numbers.Numbers.intRotateRight
  */
 @SinceKotlin("1.6")
 public expect fun Int.rotateRight(bitCount: Int): Int
@@ -69,18 +76,21 @@ public expect fun Int.rotateRight(bitCount: Int): Int
 
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
+ * @sample samples.numbers.Numbers.longCountOneBits
  */
 @SinceKotlin("1.4")
 public expect fun Long.countOneBits(): Int
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
+ * @sample samples.numbers.Numbers.longCountLeadingZeroBits
  */
 @SinceKotlin("1.4")
 public expect fun Long.countLeadingZeroBits(): Int
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
+ * @sample samples.numbers.Numbers.longCountTrailingZeroBits
  */
 @SinceKotlin("1.4")
 public expect fun Long.countTrailingZeroBits(): Int
@@ -88,6 +98,7 @@ public expect fun Long.countTrailingZeroBits(): Int
 /**
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
  * or zero, if this number is zero.
+ * @sample samples.numbers.Numbers.longTakeHighestOneBit
  */
 @SinceKotlin("1.4")
 public expect fun Long.takeHighestOneBit(): Long
@@ -95,6 +106,7 @@ public expect fun Long.takeHighestOneBit(): Long
 /**
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
  * or zero, if this number is zero.
+ * @sample samples.numbers.Numbers.longTakeLowestOneBit
  */
 @SinceKotlin("1.4")
 public expect fun Long.takeLowestOneBit(): Long
@@ -108,6 +120,7 @@ public expect fun Long.takeLowestOneBit(): Long
  *
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
+ * @sample samples.numbers.Numbers.longRotateLeft
  */
 @SinceKotlin("1.6")
 public expect fun Long.rotateLeft(bitCount: Int): Long
@@ -121,6 +134,7 @@ public expect fun Long.rotateLeft(bitCount: Int): Long
  *
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
+ * @sample samples.numbers.Numbers.longRotateRight
  */
 @SinceKotlin("1.6")
 public expect fun Long.rotateRight(bitCount: Int): Long
