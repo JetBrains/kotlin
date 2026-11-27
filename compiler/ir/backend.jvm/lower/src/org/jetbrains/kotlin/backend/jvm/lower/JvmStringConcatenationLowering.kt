@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
@@ -36,7 +37,7 @@ private fun JvmIrBuilder.callToString(expression: IrExpression): IrExpression {
     val argument = normalizeArgument(expression)
     val argumentType = if (argument.type.isPrimitiveType()) argument.type else context.irBuiltIns.anyNType
 
-    return irCall(backendContext.symbols.typeToStringValueOfFunction(argumentType)).apply {
+    return irCall(backendContext.symbols.typeToStringValueOfFunction(argumentType)) {
         arguments[0] = argument
     }
 }
@@ -190,8 +191,9 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
 
     private fun JvmIrBuilder.lowerConcatenationPlain(arguments: MutableList<IrExpression>): IrExpression =
         if (arguments.size < MAX_STRING_CONCAT_DEPTH) {
-            irCall(toStringFunction).apply {
-                dispatchReceiver = appendWindow(arguments, irCall(constructor))
+            irCall(toStringFunction.symbol) {
+                // `this.`, because `arguments` is also the parameter of this function.
+                this.arguments[0] = appendWindow(arguments, irCall(constructor))
             }
         } else {
             // arguments.size >= MAX_STRING_CONCAT_DEPTH. Prevent SOE in ExpressionCodegen.
@@ -213,7 +215,7 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
                 for (argsWindow in argsWindowed) {
                     +appendWindow(argsWindow, irGet(tmpStringBuilder))
                 }
-                +irCall(toStringFunction).apply { dispatchReceiver = irGet(tmpStringBuilder) }
+                +irCall(toStringFunction.symbol) { this.arguments[0] = irGet(tmpStringBuilder) }
             }
         }
 
@@ -232,7 +234,7 @@ internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : 
         return arguments.fold(stringBuilder0) { stringBuilder, arg ->
             val argument = normalizeArgument(arg)
             val appendFunction = typeToAppendFunction(argument.type)
-            irCall(appendFunction).apply {
+            irCall(appendFunction.symbol) {
                 this.arguments[0] = stringBuilder
                 // Unwrapping IMPLICIT_NOTNULL is necessary for ALL arguments. There could be a call to `String.plus(Any?)`
                 // anywhere in the flattened IrStringConcatenation expression, e.g., `"foo" + (Java.platformString() + 123)`.

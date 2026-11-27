@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irClass
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -129,14 +128,14 @@ private fun buildPrivateFieldsClass(
     interfaceClass: IrClass,
     privateClassName: String,
 ): IrClass =
-    context.irFactory.buildClass {
+    context.irFactory.irClass {
         startOffset = interfaceClass.startOffset
         endOffset = interfaceClass.endOffset
         origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
         this.name = Name.identifier(privateClassName)
         visibility = DescriptorVisibilities.PRIVATE
-    }.apply {
         parent = interfaceClass
-        createThisReceiverParameter()
+        thisReceiver()
+    }.apply {
         declarations.add(context.cachedDeclarations.getSyntheticClassInitTrigger(this@apply))
     }

@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
@@ -53,23 +51,29 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
         }?.isCollectionSubClass == true
 
         irClass.findOrCreate(indirectCollectionSubClass, { it.isGenericToArray(context) }) { bridge ->
-            irClass.addFunction {
+            val receiver: IrValueParameterSymbol
+            val prototype: IrValueParameterSymbol
+            irClass.irFunction {
                 name = Name.identifier("toArray")
                 origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                 modality = if (bridge != null) Modality.FINAL else Modality.OPEN
-            }.apply {
-                val elementType = addTypeParameter {
+                val elementType = typeParameter {
                     name = Name.identifier("T")
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-                    superTypes.add(context.irBuiltIns.anyNType)
+                    superTypes = listOf(context.irBuiltIns.anyNType)
                 }
-                returnType = context.irBuiltIns.arrayClass.typeWith(elementType.defaultType)
-                val receiver = buildReceiverParameter {
+                val arrayType = context.irBuiltIns.arrayClass.typeWith(elementType.defaultType)
+                returnType = arrayType
+                receiver = dispatchReceiver {
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                     type = irClass.defaultType
                 }
-                parameters += receiver
-                val prototype = addValueParameter("array", returnType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+                prototype = valueParameter {
+                    name = Name.identifier("array")
+                    type = arrayType
+                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                }
+            }.apply {
                 body = context.createIrBuilder(symbol).irBlockBody {
                     val call = if (bridge == null) {
                         irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType)
@@ -77,25 +81,25 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                         irCall(bridge.target.symbol, bridge.target.returnType)
                     }
                     +irReturn(call.apply {
-                        arguments[0] = irGet(receiver)
-                        arguments[1] = irGet(prototype)
+                        arguments[0] = irGet(receiver.owner)
+                        arguments[1] = irGet(prototype.owner)
                     })
                 }
             }
         }
 
         irClass.findOrCreate(indirectCollectionSubClass, IrSimpleFunction::isNonGenericToArray) { bridge ->
-            irClass.addFunction {
+            val receiver: IrValueParameterSymbol
+            irClass.irFunction {
                 name = Name.identifier("toArray")
                 origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                 modality = if (bridge != null) Modality.FINAL else Modality.OPEN
                 returnType = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)
-            }.apply {
-                val receiver = buildReceiverParameter {
+                receiver = dispatchReceiver {
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                     type = irClass.defaultType
                 }
-                parameters += receiver
+            }.apply {
                 body = context.createIrBuilder(symbol).irBlockBody {
                     val call = if (bridge == null) {
                         irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType)
@@ -103,7 +107,7 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                         irCall(bridge.target.symbol, bridge.target.returnType)
                     }
                     +irReturn(call.apply {
-                        arguments[0] = irGet(receiver)
+                        arguments[0] = irGet(receiver.owner)
                     })
                 }
             }

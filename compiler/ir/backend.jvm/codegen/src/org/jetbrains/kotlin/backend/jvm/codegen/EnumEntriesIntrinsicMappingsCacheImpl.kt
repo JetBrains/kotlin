@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.jvm.EnumEntriesIntrinsicMappingsCache
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irStaticFunction
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -43,12 +43,12 @@ class EnumEntriesIntrinsicMappingsCacheImpl(
     private val storage = mutableMapOf<IrClass, MappingsClass>()
 
     private inner class MappingsClass(val containingClass: IrClass) {
-        val irClass = context.irFactory.buildClass {
+        // Not added to the declarations of the containing class: it's generated separately.
+        val irClass = context.irFactory.irClass {
             name = Name.identifier("EntriesIntrinsicMappings")
             origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
-        }.apply {
-            createThisReceiverParameter()
             parent = containingClass
+            thisReceiver()
         }
 
         val enums = hashMapOf<IrClass, IrField>()
@@ -58,7 +58,7 @@ class EnumEntriesIntrinsicMappingsCacheImpl(
     override fun getEnumEntriesIntrinsicMappings(containingClass: IrClass, enumClass: IrClass): IrField {
         val mappingsClass = storage.getOrPut(containingClass) { MappingsClass(containingClass) }
         val field = mappingsClass.enums.getOrPut(enumClass) {
-            mappingsClass.irClass.addField {
+            mappingsClass.irClass.irField {
                 name = Name.identifier("entries\$${mappingsClass.enums.size}")
                 type = context.symbols.enumEntries.typeWith(enumClass.defaultType)
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
@@ -73,10 +73,12 @@ class EnumEntriesIntrinsicMappingsCacheImpl(
         val backendContext = context
         for (klass in storage.values) {
             // Use the same origin and visibility for `<clinit>` as in StaticInitializersLowering.
-            val clinit = klass.irClass.addFunction(
-                "<clinit>", context.irBuiltIns.unitType, visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
-                isStatic = true, origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
-            )
+            val clinit = klass.irClass.irStaticFunction {
+                name = Name.identifier("<clinit>")
+                returnType = context.irBuiltIns.unitType
+                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+            }
             clinit.body = context.createIrBuilder(clinit.symbol).irBlockBody(clinit) {
                 // Sort fields by name. Note that if there are a lot of calls to entries of different enums in the same container, it would
                 // result in the ordering "entries$0, entries$1, entries$10, entries$11, entries$12, ...", but it's not a big deal.

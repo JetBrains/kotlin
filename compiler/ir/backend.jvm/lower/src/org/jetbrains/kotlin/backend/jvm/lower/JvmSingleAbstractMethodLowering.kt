@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrConstructorBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
@@ -54,7 +54,7 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
 
     // The constructor of a SAM wrapper is non-synthetic and should not have line numbers.
     // Otherwise the debugger will try to step into it.
-    override fun IrFunctionBuilder.setConstructorSourceRange(createFor: IrElement) {
+    override fun IrConstructorBuilder.setConstructorSourceRange(createFor: IrElement) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     }
