@@ -504,10 +504,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun IrDeclarationParent.toFirClassOrNull(): FirRegularClass? {
         if (this !is IrClass) return null
-        return classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
-            // For plugin-generated classes the FirRegularClass is not published in the
-            // session's symbol provider; fall back to the metadata stashed on the IrClass.
-            ?: (this.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
+        // Metadata first: the session doesn't see classes registered via `registerClassAsMetadataVisible`
+        // and may return a different class with the same ClassId from the classpath (e.g. stale build output).
+        return (this.metadata as? FirMetadataSource.Class)?.fir as? FirRegularClass
+            ?: classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
     }
 
     private fun IrDeclarationParent.toFirContainingDeclaration(): FirDeclaration {
