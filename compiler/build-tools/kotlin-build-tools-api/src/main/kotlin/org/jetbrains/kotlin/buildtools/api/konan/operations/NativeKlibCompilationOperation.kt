@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.NativeCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 import java.nio.file.Path
@@ -47,7 +49,8 @@ public interface NativeKlibCompilationOperation : BaseCompilationOperation, Canc
     /**
      * Kotlin compiler configurable options.
      */
-    public val compilerArguments: CommonCompilerArguments
+    @ExperimentalCompilerArgument
+    public val compilerArguments: NativeCompilerKlibArguments
 
     /**
      * A builder for configuring and instantiating the [NativeKlibCompilationOperation].
@@ -66,7 +69,8 @@ public interface NativeKlibCompilationOperation : BaseCompilationOperation, Canc
         /**
          * Kotlin compiler configurable options.
          */
-        public override val compilerArguments: CommonCompilerArguments.Builder
+        @ExperimentalCompilerArgument
+        public override val compilerArguments: NativeCompilerKlibArguments.Builder
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.

@@ -330,6 +330,50 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         }
     }
 
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Native klib compilation: -output is rejected")
+    fun testNativeOutputIsRejected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        testNativeOutput(strategyConfig, "-output")
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Native klib compilation: -o (short for -output) is rejected")
+    fun testNativeShortOutputIsRejected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        testNativeOutput(strategyConfig, "-o")
+    }
+
+    private fun testNativeOutput(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String) {
+        nativeProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArguments(
+                restrictedArg("-output", "-o", errorSince = KotlinReleaseVersion.v2_5_20),
+                configuredArgs = listOf(argument, workingDirectory.resolve("other.klib").absolutePathString()),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Native klib compilation: -produce is rejected")
+    fun testNativeProduceIsRejected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        testNativeProduce(strategyConfig, "-produce")
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Native klib compilation: -p (short for -produce) is rejected")
+    fun testNativeShortProduceIsRejected(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        testNativeProduce(strategyConfig, "-p")
+    }
+
+    private fun testNativeProduce(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String) {
+        nativeProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.checkRestrictedArguments(
+                restrictedArg("-produce", "-p", errorSince = KotlinReleaseVersion.v2_5_20),
+                configuredArgs = listOf(argument, "program"),
+            )
+        }
+    }
+
     private fun restrictedArg(
         vararg argumentAliases: String,
         errorSince: KotlinReleaseVersion,

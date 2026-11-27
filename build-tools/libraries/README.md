@@ -42,7 +42,9 @@ the API dump.
 
 ## Modules
 
-None yet.
+| Module | What it does |
+|--------|--------------|
+| [`native-host`](native-host) | Describes the build host (OS, architecture) and what a Kotlin/Native version supports on it: the host target and which targets it can link |
 
 How to add one, what it may depend on and how to test it: see [AGENTS.md](AGENTS.md).
 The rules the AI review checks for every library are in [library-rules.md](library-rules.md).

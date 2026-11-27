@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
@@ -62,6 +63,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on using LV 1.9")
     @TestMetadata("basic-multimodule-project/module-1")
+    @OptIn(RemovedCompilerArgument::class)
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(

@@ -23,8 +23,16 @@ import java.nio.file.Path
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.javaField
 
-internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
+/**
+ * Reports the usages of the restricted arguments.
+ *
+ * @param phase the compiler phase performed by the operation the arguments are used by, if it is known.
+ * The violations of the arguments restricted only in a different phase are not reported.
+ */
+internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger, phase: CompilerPhase? = null) {
     for (violation in restrictedArgViolations) {
+        val violationPhase = violation.phase
+        if (violationPhase != null && phase != null && violationPhase != phase) continue
         when (violation) {
             is RestrictedArgViolation.Error -> throw CompilerArgumentsParseException(violation.message)
             is RestrictedArgViolation.Warning -> logger.warn(violation.message)

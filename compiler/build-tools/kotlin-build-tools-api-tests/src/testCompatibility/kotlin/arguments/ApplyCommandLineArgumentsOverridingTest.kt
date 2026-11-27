@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
@@ -61,6 +62,7 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
 
     @Test
     @DisplayName("test applyCommandLineArguments does not override existing values in new versions")
+    @OptIn(RemovedCompilerArgument::class)
     fun testDoesNotOverrideValues() {
         runTestForAllOperations {
             // BTA versions before 2.3.20 did not have defaults in compiler arguments

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -110,6 +111,8 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
     }
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.KLIB_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): KotlinWasmCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -72,6 +73,8 @@ internal class WasmLinkingOperationImpl : BaseCompilationOperationImpl<WasmArgum
     override fun getRootProjectDir(): Path? {
         return null
     }
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.BACKEND_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): KotlinWasmCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->
