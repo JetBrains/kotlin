@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
 
 @Suppress("UnstableApiUsage")
@@ -93,8 +94,8 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         }
 
     override val LightNode.indexExpressions: List<LightNode>?
-        get() = getLastChildExpression()?.let { lastChild ->
-            tree.getChildren(lastChild).filter { it.toTokenId().isExpression() }
+        get() = getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.INDICES)?.let { indices ->
+            tree.getChildren(indices).filter { it.toTokenId().isExpression() }
         }
 
     override fun LightNode.getParent(): LightNode? {

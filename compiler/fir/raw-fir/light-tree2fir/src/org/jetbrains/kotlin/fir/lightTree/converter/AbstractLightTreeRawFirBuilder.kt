@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.util.getChildren
@@ -81,7 +82,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
 
     override val LighterASTNode.indexExpressions: List<LighterASTNode>?
-        get() = getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
+        get() = getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.INDICES)?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
     override fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)

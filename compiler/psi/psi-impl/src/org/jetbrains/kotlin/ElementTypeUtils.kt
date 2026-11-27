@@ -99,8 +99,29 @@ object ElementTypeUtils {
         IMPORT_ALIAS,
             -> false
 
-        // All stub-based element types that are not `KtExpression` are listed above
+        // Other element types that are not `KtExpression`: containers and parts of other constructions
+        PROPERTY_DELEGATE,
+        CONSTRUCTOR_DELEGATION_CALL,
+        CONDITION,
+        THEN,
+        ELSE,
+        CATCH,
+        FINALLY,
+        LOOP_RANGE,
+        BODY,
+        LABEL_QUALIFIER,
+        INDICES,
+        WHEN_ENTRY,
+        WHEN_ENTRY_GUARD,
+        WHEN_CONDITION_IN_RANGE,
+        WHEN_CONDITION_IS_PATTERN,
+        WHEN_CONDITION_EXPRESSION,
+            -> false
+
+        // All element types that are not `KtExpression` are listed above.
+        // Declarations are absent from the lists because `KtDeclaration` extends `KtExpression`.
         is KtNodeType,
+        BLOCK,
         LAMBDA_EXPRESSION,
             -> true
 

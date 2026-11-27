@@ -55,11 +55,26 @@ fun SyntaxId.isExpression(): Boolean = when (this) {
     KotlinSyntaxNodeTypeIds.IMPORT_ALIAS,
         -> false
 
-    // `BLOCK` is `KtExpression` in PSI, but `ElementTypeUtils.isExpression` doesn't treat it as an expression,
-    // and the result must be the same for both implementations (see `IsExpressionConsistencyTest`)
-    KotlinSyntaxNodeTypeIds.BLOCK -> false
+    // Other element types that are not `KtExpression`: containers and parts of other constructions
+    KotlinSyntaxNodeTypeIds.PROPERTY_DELEGATE,
+    KotlinSyntaxNodeTypeIds.CONSTRUCTOR_DELEGATION_CALL,
+    KotlinSyntaxNodeTypeIds.CONDITION,
+    KotlinSyntaxNodeTypeIds.THEN,
+    KotlinSyntaxNodeTypeIds.ELSE,
+    KotlinSyntaxNodeTypeIds.CATCH,
+    KotlinSyntaxNodeTypeIds.FINALLY,
+    KotlinSyntaxNodeTypeIds.LOOP_RANGE,
+    KotlinSyntaxNodeTypeIds.BODY,
+    KotlinSyntaxNodeTypeIds.LABEL_QUALIFIER,
+    KotlinSyntaxNodeTypeIds.INDICES,
+    KotlinSyntaxNodeTypeIds.WHEN_ENTRY,
+    KotlinSyntaxNodeTypeIds.WHEN_ENTRY_GUARD,
+    KotlinSyntaxNodeTypeIds.WHEN_CONDITION_IN_RANGE,
+    KotlinSyntaxNodeTypeIds.WHEN_CONDITION_IS_PATTERN,
+    KotlinSyntaxNodeTypeIds.WHEN_CONDITION_EXPRESSION,
+        -> false
 
     // All the other node types except the roots, which are `KtFile` (`FILE` and the code fragments that follow `SCRIPT`).
-    // Declarations are `KtExpression` too. Other node types that are not `KtExpression` are listed above.
+    // Declarations are absent from the lists above because `KtDeclaration` extends `KtExpression`.
     else -> this in KotlinSyntaxNodeTypeIds.CLASS..KotlinSyntaxNodeTypeIds.SCRIPT
 }
