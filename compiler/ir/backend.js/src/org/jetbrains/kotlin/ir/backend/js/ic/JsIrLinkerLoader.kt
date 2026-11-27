@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
+import org.jetbrains.kotlin.backend.common.serialization.and
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.parseTreeKind
@@ -218,7 +219,8 @@ internal class JsIrLinkerLoader(
                             // And vice versa, a loading of function type interface loads properties and methods as well.
                             // Therefore, load the top level signature only - it must be the signature of function type interface.
                             val topLevelSignature = loadingSignature.topLevelSignature()
-                            moduleDeserializer.tryDeserializeIrSymbol(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
+                            @OptIn(IrLinkerInternalApi::class)
+                            moduleDeserializer.findAndEnqueueSymbolOrNull(topLevelSignature and CLASS_SYMBOL)
                         } else if (loadingSignature in moduleDeserializer) {
                             moduleDeserializer.addModuleReachableTopLevel(loadingSignature.topLevelSignature())
                         }
