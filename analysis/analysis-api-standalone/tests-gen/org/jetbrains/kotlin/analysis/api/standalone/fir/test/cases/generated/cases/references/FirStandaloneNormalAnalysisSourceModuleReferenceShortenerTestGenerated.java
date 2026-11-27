@@ -1172,6 +1172,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     public void testDanglingContextInFunctionTypeWithType() {
       run("danglingContextInFunctionTypeWithType.kt");
     }
+
+    @Test
+    @TestMetadata("unclosedContextInDeclaration.kt")
+    public void testUnclosedContextInDeclaration() {
+      run("unclosedContextInDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("unclosedContextInFunctionType.kt")
+    public void testUnclosedContextInFunctionType() {
+      run("unclosedContextInFunctionType.kt");
+    }
   }
 
   @Nested
