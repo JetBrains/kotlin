@@ -117,6 +117,10 @@ kotlin {
     }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.low.level.api.fir")
+}
+
 if (!kotlinBuildProperties.isTeamcityBuild.get()) {
     testDataManager {
         // Ensure golden tests run first since some LL tests are complementary for the surface tests

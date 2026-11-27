@@ -44,6 +44,17 @@
  *     mustRunAfterProjects.add(":analysis:analysis-api-fir")
  * }
  * ```
+ *
+ * ## Test packages
+ *
+ * [TestDataManagerExtension.testPackages] declares the packages of the module's managed tests (`org.jetbrains.kotlin` by default),
+ * the narrowest ones that contain all generated tests of the module:
+ *
+ * ```kotlin
+ * testDataManager {
+ *     testPackages.add("org.jetbrains.kotlinx.serialization")
+ * }
+ * ```
  */
 
 val testDataManager = extensions.create<TestDataManagerExtension>("testDataManager")
@@ -78,6 +89,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     runId.convention(project.providers.gradleProperty(TestDataManagerOption.RUN_ID))
     rerunId.convention(project.providers.gradleProperty(TestDataManagerOption.RERUN_ID))
     output.convention(project.providers.gradleProperty(TestDataManagerOption.OUTPUT))
+    testPackages.convention(extension.testPackages)
 
     /**
      * The `Test` task configured exactly like the module's `test`, but never executed (see `createGeneralTestTask`).
@@ -140,6 +152,7 @@ private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExt
     if (project.providers.systemProperty("idea.active").isPresent) {
         extra["idea.internal.test"] = true
         systemProperty("idea.active", "true")
+        ideIntegration.set(true)
     }
 
     // Pass project name for unique test IDs when running multiple modules in parallel

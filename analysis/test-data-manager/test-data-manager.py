@@ -46,7 +46,7 @@ import time
 import uuid
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
+from typing import Dict, Iterator, List, NamedTuple, Optional, Sequence, Set, Tuple
 
 OPTION_PREFIX = "org.jetbrains.kotlin.testDataManager.options"
 REPORT_LINE = re.compile(r"^Test data manager report: (.+\.json)$", re.MULTILINE)
@@ -71,6 +71,12 @@ JAVA_TOKEN = re.compile(
     re.DOTALL,
 )
 BUILD_GENERATED_TESTS = re.compile(r"generateTestsInBuildDirectory\s*=\s*true")
+# A project with another directory than the default one in `settings.gradle.kts`, possibly over two lines
+CUSTOM_PROJECT_DIRECTORY = re.compile(
+    r'project\(\s*"(?P<project>:[^"]+)"\s*\)\.projectDir\s*=\s*(?:File|file)\(\s*"\$rootDir/(?P<directory>[^"]+)"\s*\)'
+)
+# Any assignment of a project directory: each one must be a [CUSTOM_PROJECT_DIRECTORY]
+PROJECT_DIRECTORY_ASSIGNMENT = re.compile(r"\bprojectDir\s*=(?!=)")
 
 EXIT_PASSED, EXIT_FAILED, EXIT_ERROR, EXIT_INTERRUPTED = 0, 1, 2, 130
 
@@ -81,6 +87,8 @@ KEPT_RUNS = 5
 UNFINISHED_RUN_AGE = 24 * 60 * 60
 LISTS = ["problems", "testErrors", "recoveredTests", "fileActions"]
 EMPTY_PATH_ERROR = "--path is empty: give a test data file or directory"
+# How many build files the error for filters matching no test names, see [no_match_error]
+MAX_NAMED_BUILD_FILES = 3
 
 
 def project_path(module: str) -> str:
@@ -97,6 +105,12 @@ def valid_run_id(value: str) -> str:
         raise argparse.ArgumentTypeError(
             f"'{value}' must consist of letters, digits, '.', '_' and '-', and not be '.' or '..'"
         )
+    return value
+
+
+def module_argument(value: str) -> str:
+    """[value] as given to `--module`, if it can name a module; it is resolved by [requested_project] once the root is known."""
+    project_path(value)
     return value
 
 
@@ -126,16 +140,67 @@ def windows_command_line(command: List[str]) -> str:
 
 
 def managed_modules(root: Path) -> List[str]:
-    """The project paths of the modules applying the `test-data-manager` plugin; their directories are default ones."""
+    """The project paths of the modules applying the `test-data-manager` plugin."""
     scripts = subprocess.run(
         ["git", "grep", "-l", "-F", 'id("test-data-manager")', "--", "*build.gradle.kts"],
         cwd=root, check=True, capture_output=True, text=True,
     ).stdout.split()
-    return sorted(":" + script.rsplit("/", 1)[0].replace("/", ":") for script in scripts if "/" in script)
+    return sorted(directory_project(root, script.rsplit("/", 1)[0]) for script in scripts if "/" in script)
+
+
+@functools.lru_cache(maxsize=None)
+def custom_project_directories(root: Path) -> Dict[str, str]:
+    """
+    The projects `settings.gradle.kts` gives another directory than the default one, e.g., `:kotlin-allopen-compiler-plugin` in
+    `plugins/allopen`: {project path: repository-relative directory}.
+
+    Fails on an assignment of a project directory in another form, which would leave the module its default project path.
+    """
+    settings = root / "settings.gradle.kts"
+    if not settings.is_file():
+        return {}
+    text = settings.read_text(encoding="utf-8")
+    matches = list(CUSTOM_PROJECT_DIRECTORY.finditer(text))
+    unread_lines = [
+        str(text.count("\n", 0, assignment.start()) + 1)
+        for assignment in PROJECT_DIRECTORY_ASSIGNMENT.finditer(text)
+        if not any(match.start() <= assignment.start() < match.end() for match in matches)
+    ]
+    if unread_lines:
+        raise ValueError(f"CUSTOM_PROJECT_DIRECTORY in {Path(__file__).name} doesn't read the project directory on line "
+                         f"{', '.join(unread_lines)} of {settings}; update the pattern")
+    return {match.group("project"): match.group("directory").rstrip("/") for match in matches}
+
+
+def directory_project(root: Path, directory: str) -> str:
+    """The project path of the module in [directory], relative to [root]: the default one unless the settings give another."""
+    default = project_path(directory)
+    custom = {custom_directory: project for project, custom_directory in custom_project_directories(root).items()}
+    return custom.get(default[1:].replace(":", "/"), default)
+
+
+def requested_project(root: Path, module: str) -> str:
+    """
+    The project path of [module] given as `--module`: a project path (`:analysis:stubs`) as is, a directory
+    (`analysis/stubs/`, `plugins/allopen/../lombok`, an absolute one, also through a symbolic link) as the project in it, which may
+    have a custom path.
+    """
+    if not module.startswith(":"):
+        directory = Path(os.path.normpath(root / module.replace("\\", "/")))
+        if not is_inside(directory, root) and Path(module).is_absolute() and is_inside(Path(os.path.realpath(module)), root):
+            directory = Path(os.path.realpath(module))
+        if is_inside(directory, root) and directory != root:
+            return directory_project(root, directory.relative_to(root).as_posix())
+    return project_path(module)
 
 
 def module_directory(root: Path, module: str) -> Path:
-    return root / module[1:].replace(":", "/")
+    return root / custom_project_directories(root).get(module, module[1:].replace(":", "/"))
+
+
+def build_file(root: Path, module: str) -> str:
+    """The repository-relative build file of [module]."""
+    return (module_directory(root, module) / "build.gradle.kts").relative_to(root).as_posix()
 
 
 class GeneratedTests(NamedTuple):
@@ -485,10 +550,27 @@ def merge(modules: List[str], reports: Dict[str, dict]) -> Dict[str, list]:
     }
 
 
+def no_match_error(build_files: Sequence[str]) -> str:
+    """
+    The error for filters that match no managed test in any module. A module finds its managed tests only in the packages it
+    declares, so the error names the [build_files] of the modules that ran, up to [MAX_NAMED_BUILD_FILES] of them; otherwise
+    it points to the summary, which has the build file of each module.
+    """
+    error = "No managed test in any module matches the filters"
+    if not build_files:
+        return error
+    where = ", ".join(build_files) if len(build_files) <= MAX_NAMED_BUILD_FILES else \
+        "the build file of each module that ran (`buildFile` of the modules in the summary)"
+    return (f"{error}. A module finds its managed tests only in the packages of `testDataManager {{ testPackages }}` "
+            f"(`org.jetbrains.kotlin` by default): if the tests exist, check their packages there, in {where}")
+
+
 def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dict], merged: Dict[str, list],
               has_filters: bool, gradle_exit_code: int, gradle_log: Optional[Path], summary_file: Path,
-              skipped: List[str], selection_errors: List[str], gradle_output: str = "", interrupted: bool = False) -> dict:
+              skipped: List[str], selection_errors: List[str], gradle_output: str = "", interrupted: bool = False,
+              build_files: Optional[Dict[str, str]] = None) -> dict:
     """The index of the run: its status, the totals and counts, and the module reports holding the details."""
+    build_files = build_files or {}
     run_errors = list(selection_errors)
     if interrupted:
         run_errors.append("Interrupted before Gradle finished; the modules without a report didn't finish")
@@ -512,7 +594,7 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
                        for module in missing]
 
     if has_filters and totals["discovered"] == 0 and not run_errors:
-        run_errors.append("No managed test in any module matches the filters")
+        run_errors.append(no_match_error([build_files[module] for module in modules if module in build_files]))
     if gradle_exit_code != 0 and not run_errors and not merged["problems"] and not merged["testErrors"]:
         run_errors.append(f"Gradle failed (exit code {gradle_exit_code}) without a failing report, see the Gradle log")
 
@@ -538,9 +620,11 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
         "modules": [
             {"project": module, "status": reports[module]["status"] if module in reports else "MISSING",
              "tests": reports[module]["tests"] if module in reports else None,
-             "report": reports[module]["reportFile"] if module in reports else None}
+             "report": reports[module]["reportFile"] if module in reports else None,
+             "buildFile": build_files.get(module)}
             for module in modules
-        ] + [{"project": module, "status": "SKIPPED", "tests": None, "report": None} for module in skipped],
+        ] + [{"project": module, "status": "SKIPPED", "tests": None, "report": None, "buildFile": build_files.get(module)}
+             for module in skipped],
         "gradleLog": str(gradle_log) if gradle_log is not None else None,
         "summary": str(summary_file),
     }
@@ -681,9 +765,9 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     parser.add_argument("--golden-only", action="store_true", help="goldenOnly")
     parser.add_argument("--incremental", action="store_true", help="incremental")
     parser.add_argument("--module", action="append", default=[], dest="modules",
-                        type=project_path,
-                        help="project path of a module to run (repeatable); default: the modules with managed test data, "
-                             "with --path only those whose generated tests may have test data under the paths")
+                        type=module_argument,
+                        help="project path or directory of a module to run (repeatable); default: the modules with managed "
+                             "test data, with --path only those whose generated tests may have test data under the paths")
     parser.add_argument("--run-id", type=valid_run_id,
                         help="id of the run, naming the module reports and the Gradle log (default: a new UUID)")
     parser.add_argument("--rerun", type=valid_run_id, metavar="RUN_ID",
@@ -701,7 +785,7 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     # UUIDv7 (Python 3.14+) only sorts better; any unique id names the reports of one run
     run_id = args.run_id or str(getattr(uuid, "uuid7", uuid.uuid4)())
     # The same module given twice would run once but be reported twice
-    modules = list(dict.fromkeys(args.modules)) or managed_modules(root)
+    modules = list(dict.fromkeys(requested_project(root, module) for module in args.modules)) or managed_modules(root)
     output_directory = root / "build" / "test-data-manager"
     summary_file = output_directory / f"{run_id}.summary.json"
     output_directory.mkdir(parents=True, exist_ok=True)
@@ -749,7 +833,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     merged = merge(modules, reports)
     has_filters = bool(args.paths or args.class_pattern)
     summary = summarize(args.mode.upper(), run_id, modules, reports, merged, has_filters, gradle_exit_code, gradle_log,
-                        summary_file, skipped, selection_errors, gradle_output, interrupted)
+                        summary_file, skipped, selection_errors, gradle_output, interrupted,
+                        build_files={module: build_file(root, module) for module in modules + skipped})
     write_atomically(summary_file, json.dumps(summary, indent=2) + "\n")
     delete_old_runs(output_directory, kept_run=args.rerun)
 

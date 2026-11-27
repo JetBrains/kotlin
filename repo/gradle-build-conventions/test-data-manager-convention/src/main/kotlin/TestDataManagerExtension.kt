@@ -17,4 +17,10 @@ abstract class TestDataManagerExtension {
      * projects, so the manager tasks couldn't inherit it.
      */
     abstract val mustRunAfterProjects: ListProperty<String>
+
+    /**
+     * Packages of the managed tests of this project, `org.jetbrains.kotlin` if empty. The test data manager discovers tests only in
+     * these packages and their subpackages, so it needs them for tests in other packages, and narrower ones make the discovery faster.
+     */
+    abstract val testPackages: ListProperty<String>
 }

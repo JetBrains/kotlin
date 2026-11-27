@@ -2,7 +2,9 @@
 
 Automated system for managing test data files across multiple test configurations.
 
-It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix).
+It supports only tests which implement `ManagedTest` interface and are generated (`*Generated` suffix). It discovers them in
+`org.jetbrains.kotlin`, or in the packages the module declares in `testDataManager { testPackages }` (see the
+[convention plugin](../../repo/gradle-build-conventions/test-data-manager-convention/README.md#test-packages)).
 
 ## Core Concepts
 
@@ -146,7 +148,9 @@ python3 analysis/test-data-manager/test-data-manager.py check --path analysis/an
 ```
 
 On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
-crashed) and when no test in any module matches the filters. The Gradle output goes to
+crashed) and when no test in any module matches the filters. As a module finds its managed tests only in its
+`testDataManager { testPackages }`, the latter error names the build files of the modules that ran, up to three of them;
+for more, it points to the `buildFile` of each module in the summary. The Gradle output goes to
 `build/test-data-manager/<runId>.gradle.log` and the summary to `build/test-data-manager/<runId>.summary.json`. Both
 paths are printed to stderr, each on its own line, before Gradle starts, so a long run can be followed. The summary path
 is also the last line of the output (`--json` prints the file instead of the text). The summary is written at once
