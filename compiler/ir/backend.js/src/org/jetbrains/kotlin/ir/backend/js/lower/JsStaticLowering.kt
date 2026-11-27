@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsStaticDeclaration
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrSignatureMapping
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrSimpleFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irProperty
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -47,43 +49,53 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
 
     private fun IrProperty.generateStaticPropertyProxy(proxyParent: IrClass): IrProperty {
         val originalProperty = this
-        return context.irFactory.buildProperty {
+        return context.irFactory.irProperty {
             updateFrom(originalProperty)
-            name = originalProperty.name
-        }.apply {
-            copyAnnotationsFrom(originalProperty)
+            annotations = originalProperty.copyAnnotations()
             parent = proxyParent
-            getter = originalProperty.getter?.generateStaticMethodProxy(proxyParent)?.also { it.correspondingPropertySymbol = symbol }
-            setter = originalProperty.setter?.generateStaticMethodProxy(proxyParent)?.also { it.correspondingPropertySymbol = symbol }
+            originalProperty.getter?.let { original -> getter { copyStaticProxySignature(original) } }
+            originalProperty.setter?.let { original -> setter { copyStaticProxySignature(original) } }
+        }.apply {
+            getter?.generateStaticProxyBody(originalProperty.getter!!)
+            setter?.generateStaticProxyBody(originalProperty.setter!!)
         }
     }
 
     private fun IrSimpleFunction.generateStaticMethodProxy(proxyParent: IrClass): IrSimpleFunction {
         val originalFun = this
-        return context.irFactory.buildFun {
-            updateFrom(originalFun)
-            name = originalFun.name
-        }.apply proxy@{
-            copyAnnotationsFrom(originalFun)
-
+        val mapping: IrSignatureMapping
+        return context.irFactory.irFunction {
             parent = proxyParent
+            mapping = copyStaticProxySignature(originalFun)
+        }.apply {
+            copyDefaultValuesFrom(mapping.parameters, mapping.typeSubstitution)
+            generateStaticProxyBody(originalFun)
+        }
+    }
 
-            copyFunctionSignatureFrom(originalFun, returnType = originalFun.returnType)
-            parameters = nonDispatchParameters // Drop the dispatch parameter
+    /** The header and the signature of [originalFun] without the dispatch receiver: the proxy is static. */
+    private fun IrSimpleFunctionBuilder.copyStaticProxySignature(originalFun: IrSimpleFunction): IrSignatureMapping {
+        updateFrom(originalFun)
+        annotations = originalFun.copyAnnotations()
+        val substitution = copyTypeParameters(originalFun.typeParameters)
+        returnType = originalFun.returnType.substitute(substitution)
+        return IrSignatureMapping(substitution, copyParameters(originalFun.nonDispatchParameters, substitution))
+    }
 
-            body = runIf(!isExternal) {
-                context.createIrBuilder(symbol).irBlockBody {
-                    val delegatingCall = irCall(originalFun).apply {
-                        passTypeArgumentsFrom(this@proxy)
-                        arguments.clear()
-                        if (originalFun.dispatchReceiverParameter != null) {
-                            arguments.add(irGetObject(originalFun.parentAsClass.symbol))
-                        }
-                        this@proxy.parameters.mapTo(arguments) { irGet(it) }
+    private fun IrSimpleFunction.generateStaticProxyBody(originalFun: IrSimpleFunction) {
+        val proxy = this
+        body = runIf(!isExternal) {
+            context.createIrBuilder(symbol).irBlockBody {
+                val delegatingCall = irCall(originalFun).apply {
+                    passTypeArgumentsFrom(proxy)
+                    arguments.clear()
+                    if (originalFun.dispatchReceiverParameter != null) {
+                        arguments.add(irGetObject(originalFun.parentAsClass.symbol))
                     }
-
-                    +irReturn(delegatingCall)
+                    proxy.parameters.mapTo(arguments) { irGet(it) }
                 }
+
+                +irReturn(delegatingCall)
             }
         }
     }
