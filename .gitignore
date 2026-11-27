@@ -77,3 +77,4 @@ gradle-user-home/
 __pycache__/
 *.pyc
 .worktreeinclude
+.idecli
