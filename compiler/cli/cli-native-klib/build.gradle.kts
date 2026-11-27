@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.inline"))
+    implementation(project(":compiler:incremental-compilation-klib:api"))
     runtimeOnly(project(":native:frontend.native"))
 }
 

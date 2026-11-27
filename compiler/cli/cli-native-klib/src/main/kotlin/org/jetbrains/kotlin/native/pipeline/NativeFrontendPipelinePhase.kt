@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.incrementalDataProvider
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -80,6 +81,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             dependencyList,
             extensionRegistrars,
             metadataCompilationMode = config.metadataKlib,
+            incrementalDataProvider = configuration.incrementalDataProvider,
         )
 
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->

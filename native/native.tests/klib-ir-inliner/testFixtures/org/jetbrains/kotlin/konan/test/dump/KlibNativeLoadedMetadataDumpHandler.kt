@@ -49,6 +49,7 @@ class KlibNativeLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
             libraryList,
             extensionRegistrars = emptyList(),
             metadataCompilationMode = false,
+            incrementalDataProvider = null
         )
     }
 }

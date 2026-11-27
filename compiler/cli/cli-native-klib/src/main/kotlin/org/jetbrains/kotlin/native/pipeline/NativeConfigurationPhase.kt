@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -57,10 +61,11 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
     override fun fillConfiguration(
         input: ArgumentsPipelineArtifact<K2NativeCompilerArguments>,
         configuration: CompilerConfiguration,
-    ) = fillConfiguration(input.arguments, input.rootDisposable, configuration)
+    ) = fillConfiguration(input.arguments, input.services, input.rootDisposable, configuration)
 
     fun fillConfiguration(
         arguments: K2NativeCompilerArguments,
+        services: Services,
         rootDisposable: Disposable,
         configuration: CompilerConfiguration,
     ) {
@@ -76,6 +81,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.setupLibraries(arguments, outputKind)
         configuration.setupMisc(arguments)
         configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
+        configuration.setupKlibIncrementalCompilation(services)
 
         if (arguments.isNativeSecondStage()) {
             configuration.phaseConfig = createPhaseConfig(arguments)
@@ -277,5 +283,12 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             )
             null
         } else input
+    }
+
+    fun CompilerConfiguration.setupKlibIncrementalCompilation(services: Services) {
+        incrementalDataProvider = services[IncrementalDataProvider::class.java]
+        incrementalResultsConsumer = services[IncrementalResultsConsumer::class.java]
+        incrementalNextRoundChecker = services[IncrementalNextRoundChecker::class.java]
+        lookupTracker = services[LookupTracker::class.java]
     }
 }

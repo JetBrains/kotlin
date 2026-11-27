@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
+import org.jetbrains.kotlin.fir.processIncrementalCompilationRoundIfNeeded
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
@@ -58,31 +59,5 @@ object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, W
         }
 
         return input.copy(result = transformedResult)
-    }
-
-    private fun processIncrementalCompilationRoundIfNeeded(
-        configuration: CompilerConfiguration,
-        frontendOutput: AllModulesFrontendOutput,
-        fir2IrResult: Fir2IrActualizedResult,
-    ) {
-        if (!configuration.incrementalCompilation) return
-        // TODO: During checking the next round, fir serializer may throw an exception, e.g.
-        //      during annotation serialization when it cannot find the removed constant
-        //      (see ConstantValueUtils.kt:convertToConstantValues())
-        //  This happens because we check the next round before compilation errors.
-        //  Test reproducer:  testFileWithConstantRemoved
-        //  Issue: https://youtrack.jetbrains.com/issue/KT-58824/
-        val shouldGoToNextIcRound = shouldGoToNextIcRound(configuration) {
-            Fir2KlibMetadataSerializer(
-                configuration,
-                frontendOutput.outputs,
-                fir2IrResult,
-                produceHeaderKlib = false,
-            )
-        }
-        if (shouldGoToNextIcRound) {
-            // TODO (KT-73991): investigate the need in this hack
-            throw IncrementalNextRoundException()
-        }
     }
 }

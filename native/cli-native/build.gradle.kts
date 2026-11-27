@@ -16,6 +16,8 @@ dependencies {
     implementation(project(":kotlin-native:backend.native"))
     implementation(project(":native:frontend.native"))
     implementation(project(":native:native.config"))
+    implementation(project(":compiler:incremental-compilation-impl"))
+    implementation(project(":compiler:incremental-compilation-klib:api"))
 }
 
 sourceSets {

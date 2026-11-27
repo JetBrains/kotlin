@@ -111,11 +111,12 @@ fun prepareNativeSessions(
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
     metadataCompilationMode: Boolean,
+    incrementalDataProvider: IncrementalDataProvider?,
 ): List<SessionWithSources> {
     return prepareKlibSessions(
         if (metadataCompilationMode) FirNativeSessionFactory.ForMetadata else FirNativeSessionFactory,
         NativePlatforms.unspecifiedNativePlatform, sources, configuration, rootModuleName, resolvedLibraries,
-        libraryList, extensionRegistrars, metadataCompilationMode, incrementalDataProvider = null
+        libraryList, extensionRegistrars, metadataCompilationMode, incrementalDataProvider
     )
 }
 
