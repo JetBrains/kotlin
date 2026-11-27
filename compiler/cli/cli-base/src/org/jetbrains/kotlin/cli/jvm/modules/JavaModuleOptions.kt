@@ -47,11 +47,15 @@ fun parseJavaModulePatch(value: String): Pair<String, List<String>>? {
 }
 
 /**
- * Whether [source] is in one of the [patchPaths] given with `-Xpatch-module` for a module, comparing normalized absolute paths.
+ * A predicate for whether a source is in one of the [patchPaths] given with `-Xpatch-module` for a module, comparing normalized absolute
+ * paths.
  */
-fun isInJavaModulePatchPaths(source: File, patchPaths: List<File>): Boolean {
-    val file = source.absoluteFile.normalize()
-    return patchPaths.any { FileUtil.isAncestor(it.absoluteFile.normalize(), file, true) }
+fun isInJavaModulePatchPaths(patchPaths: List<File>): (File) -> Boolean {
+    val normalizedPatchPaths = patchPaths.map { it.absoluteFile.normalize() }
+    return { source ->
+        val file = source.absoluteFile.normalize()
+        normalizedPatchPaths.any { FileUtil.isAncestor(it, file, true) }
+    }
 }
 
 /**

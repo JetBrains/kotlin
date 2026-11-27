@@ -72,7 +72,7 @@ internal class JavaModuleOptionsResolver(
         val sourceFiles = sourceRootFiles.flatMap { (val file, val extension) ->
             file.walk().filter { it.isFile && (it == file || it.extension == extension) }.toList()
         }
-        val moduleNames = patches.filterValues { paths -> sourceFiles.any { isInJavaModulePatchPaths(it, paths) } }.keys
+        val moduleNames = patches.filterValues { paths -> sourceFiles.any(isInJavaModulePatchPaths(paths)) }.keys
         if (moduleNames.size > 1) {
             reportError("Too many patched modules: ${moduleNames.joinToString { "'$it'" }}.")
             return null
