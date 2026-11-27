@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.parseJsonToMap
 import org.jetbrains.kotlin.gradle.util.swiftClassNames
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.gradle.util.swiftTypealiases
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -36,6 +37,7 @@ import kotlin.test.assertFalse
 @DisplayName("Tests for the export DSL")
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
+@MustRunOnChangesInGradle
 class ExportDslIT : KGPBaseTest() {
 
     @DisplayName("embedSwiftExportForXcode fails with an actionable error outside of Xcode in an activated project")
