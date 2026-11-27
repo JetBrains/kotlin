@@ -63,7 +63,7 @@ internal class NightlyTestAssertPostDiscoveryFilter(
                 The nightly test "${descriptor.uniqueId}" execution without explicit include "$nightlyTagKey" tag.
                 * Create a separate task in the selected module
                 * Exclude non-nightly tags: `useJUnitPlatform { excludeTags("!$nightlyTagKey") }`
-                * Exclude it from other test tasks which are triggered on TeamCity with `useJUnitPlatform { excludeTags("$nightlyTagKey") }`
+                * Exclude the `nightly` tag from other test tasks: `useJUnitPlatform { excludeTags("$nightlyTagKey") }`
                 Created task should be then registered to `testLifecycleTask`.
                 """.trimIndent()
             )
