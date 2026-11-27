@@ -581,6 +581,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MEMBER_PROJECTED_OUT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MERGED_ERRORS_IN_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS
@@ -4320,6 +4321,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_FINAL_RICH_ERROR_CLASS, "Error class must be final.")
         map.put(ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR, "'actual typealias' cannot be used for 'expect error class/object'.")
         map.put(TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER, "Type alias expanding to a union type cannot be used as a qualifier.")
+        map.put(
+            MERGED_ERRORS_IN_SAFE_CALL,
+            "Error component ''{2}'' from safe call receiver of type ''{0}'' is merged into return type of the call ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
 
         map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is only applicable to a top-level property with an initializer.")
     }

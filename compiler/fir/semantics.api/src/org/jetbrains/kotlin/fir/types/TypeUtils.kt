@@ -1165,3 +1165,24 @@ inline fun outerType(
 fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
     return coneType.toRegularClassSymbol(session)
 }
+
+fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
+    val expandedType = fullyExpandedType(session)
+    if (expandedType is ConeUnionType) return expandedType
+
+    session.typeContext.newTypeCheckerState(
+        errorTypesEqualToAnything = false,
+        stubTypesEqualToAnything = true,
+        dnnTypesEqualToFlexible = false
+    ).anySupertype(
+        expandedType.lowerBoundIfFlexible(),
+        predicate = {
+            if (it is ConeUnionType) return it
+            false
+        },
+        // Optimization: if we encounter a class-like type, we can stop looking.
+        supertypesPolicy = { if (it is ConeClassLikeType) None else LowerIfFlexible }
+    )
+
+    return null
+}

@@ -670,27 +670,6 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session.lookupTracker?.recordTypeResolveAsLookup(resultingType, source, file.source)
 }
 
-internal fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
-    val expandedType = fullyExpandedType(session)
-    if (expandedType is ConeUnionType) return expandedType
-
-    session.typeContext.newTypeCheckerState(
-        errorTypesEqualToAnything = false,
-        stubTypesEqualToAnything = true,
-        dnnTypesEqualToFlexible = false
-    ).anySupertype(
-        expandedType.lowerBoundIfFlexible(),
-        predicate = {
-            if (it is ConeUnionType) return it
-            false
-        },
-        // Optimization: if we encounter a class-like type, we can stop looking.
-        supertypesPolicy = { if (it is ConeClassLikeType) None else LowerIfFlexible }
-    )
-
-    return null
-}
-
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
     return annotationTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session)
 }
