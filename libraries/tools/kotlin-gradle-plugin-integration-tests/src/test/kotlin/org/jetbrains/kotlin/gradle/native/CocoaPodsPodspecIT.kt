@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.readText
@@ -17,6 +18,7 @@ import kotlin.test.assertEquals
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("CocoaPods plugin podspec generation tests")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class CocoaPodsPodspecIT : KGPBaseTest() {
 
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
