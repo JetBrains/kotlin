@@ -151,10 +151,10 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                     GET_VAR[-1, -1] 'val tmp_1: kotlin.Any? declared in <root>.Outer.Inner.testInner' type=kotlin.Any? origin=null
                   RETURN[405, 405] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                     TYPE_OP[138, 405] type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                      BLOCK[138, 405] type=<root>.Outer.Inner.testInner.<no name provided><kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer> origin=OBJECT_LITERAL
+                      BLOCK[138, 405] type=<root>.Outer.Inner.testInner.<no name provided><I of <root>.Outer.Inner, O of <root>.Outer> origin=OBJECT_LITERAL
                         CLASS[138, 405] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
-                          thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.Inner.testInner.<no name provided><kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
-                          CONSTRUCTOR[138, 405] visibility:public returnType:<root>.Outer.Inner.testInner.<no name provided><kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer> [primary]
+                          thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.Inner.testInner.<no name provided><I of <root>.Outer.Inner, O of <root>.Outer>
+                          CONSTRUCTOR[138, 405] visibility:public returnType:<root>.Outer.Inner.testInner.<no name provided><I of <root>.Outer.Inner, O of <root>.Outer> [primary]
                             BLOCK_BODY[138, 405]
                               DELEGATING_CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in kotlin.Any'
                               INSTANCE_INITIALIZER_CALL[138, 405] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -172,11 +172,11 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                             overridden:
                               public open fun toString (): kotlin.String declared in kotlin.Any
                           FUN[159, 395] name:run visibility:public modality:FINAL returnType:kotlin.Any?
-                            VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided><kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
+                            VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided><I of <root>.Outer.Inner, O of <root>.Outer>
                             BLOCK_BODY[172, 395]
                               CLASS[190, 339] CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]
-                                thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
-                                CONSTRUCTOR[206, 208] visibility:public returnType:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer> [primary]
+                                thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer>
+                                CONSTRUCTOR[206, 208] visibility:public returnType:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer> [primary]
                                   BLOCK_BODY[206, 208]
                                     DELEGATING_CONSTRUCTOR_CALL[190, 339] 'public constructor <init> () declared in kotlin.Any'
                                     INSTANCE_INITIALIZER_CALL[190, 339] classDescriptor='CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -194,13 +194,13 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                                   overridden:
                                     public open fun toString (): kotlin.String declared in kotlin.Any
                                 FUN[268, 284] name:bar visibility:public modality:FINAL returnType:I of <root>.Outer.Inner
-                                  VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
+                                  VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer>
                                   BLOCK_BODY[283, 284]
                                     RETURN[284, 284] type=kotlin.Nothing from='public final fun bar (): I of <root>.Outer.Inner declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass'
                                       CALL[283, 284] 'public final fun <get-y> (): I of <root>.Outer.Inner declared in <root>.Outer.Inner' type=I of <root>.Outer.Inner origin=GET_PROPERTY
                                         ARG <this>: GET_VAR[283, 284] 'val this: <root>.Outer.Inner<I of <root>.Outer.Inner, O of <root>.Outer> declared in <root>.Outer.Inner.testInner' type=<root>.Outer.Inner<I of <root>.Outer.Inner, O of <root>.Outer> origin=IMPLICIT_ARGUMENT
                                 FUN[305, 321] name:baz visibility:public modality:FINAL returnType:O of <root>.Outer
-                                  VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
+                                  VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer>
                                   BLOCK_BODY[320, 321]
                                     RETURN[321, 321] type=kotlin.Nothing from='public final fun baz (): O of <root>.Outer declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass'
                                       CALL[320, 321] 'public final fun <get-x> (): O of <root>.Outer declared in <root>.Outer' type=O of <root>.Outer origin=GET_PROPERTY
@@ -209,14 +209,14 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                                           TYPE_ARG O: O of <root>.Outer
                                           ARG $this: GET_VAR[320, 321] 'val this: <root>.Outer.Inner<I of <root>.Outer.Inner, O of <root>.Outer> declared in <root>.Outer.Inner.testInner' type=<root>.Outer.Inner<I of <root>.Outer.Inner, O of <root>.Outer> origin=null
                                 FUN[231, 247] name:foo visibility:public modality:FINAL returnType:kotlin.Any?
-                                  VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer>
+                                  VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer>
                                   BLOCK_BODY[246, 247]
                                     RETURN[247, 247] type=kotlin.Nothing from='public final fun foo (): kotlin.Any? declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass'
                                       GET_VAR[246, 247] 'val r: kotlin.Any? declared in <root>.Outer.Inner.testInner' type=kotlin.Any? origin=null
                               RETURN[356, 381] type=kotlin.Nothing from='public final fun run (): kotlin.Any? declared in <root>.Outer.Inner.testInner.<no name provided>'
                                 CALL[376, 381] 'public final fun foo (): kotlin.Any? declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass' type=kotlin.Any? origin=null
-                                  ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass' type=<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer> origin=null
-                        CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.Outer.Inner.testInner.<no name provided>' type=<root>.Outer.Inner.testInner.<no name provided><kotlin.Any?, I of <root>.Outer.Inner, O of <root>.Outer> origin=OBJECT_LITERAL
+                                  ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.Outer.Inner.testInner.<no name provided>.run.LocalClass' type=<root>.Outer.Inner.testInner.<no name provided>.run.LocalClass<I of <root>.Outer.Inner, O of <root>.Outer> origin=null
+                        CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.Outer.Inner.testInner.<no name provided>' type=<root>.Outer.Inner.testInner.<no name provided><I of <root>.Outer.Inner, O of <root>.Outer> origin=OBJECT_LITERAL
     CONSTRUCTOR[52, 62] visibility:public returnType:<root>.Outer<O of <root>.Outer> [primary]
       VALUE_PARAMETER[53, 61] kind:Regular name:x index:0 type:O of <root>.Outer
       BLOCK_BODY[52, 62]
@@ -259,10 +259,10 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                   GET_VAR[-1, -1] 'val tmp_3: kotlin.Any? declared in <root>.Outer.testOuter' type=kotlin.Any? origin=null
                 RETURN[405, 405] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                   TYPE_OP[138, 405] type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                    BLOCK[138, 405] type=<root>.Outer.testOuter.<no name provided><kotlin.Any?, kotlin.Any?, O of <root>.Outer> origin=OBJECT_LITERAL
+                    BLOCK[138, 405] type=<root>.Outer.testOuter.<no name provided><O of <root>.Outer> origin=OBJECT_LITERAL
                       CLASS[138, 405] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
-                        thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.testOuter.<no name provided><kotlin.Any?, kotlin.Any?, O of <root>.Outer>
-                        CONSTRUCTOR[138, 405] visibility:public returnType:<root>.Outer.testOuter.<no name provided><kotlin.Any?, kotlin.Any?, O of <root>.Outer> [primary]
+                        thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.testOuter.<no name provided><O of <root>.Outer>
+                        CONSTRUCTOR[138, 405] visibility:public returnType:<root>.Outer.testOuter.<no name provided><O of <root>.Outer> [primary]
                           BLOCK_BODY[138, 405]
                             DELEGATING_CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in kotlin.Any'
                             INSTANCE_INITIALIZER_CALL[138, 405] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -280,11 +280,11 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                           overridden:
                             public open fun toString (): kotlin.String declared in kotlin.Any
                         FUN[159, 395] name:run visibility:public modality:FINAL returnType:kotlin.Any?
-                          VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided><kotlin.Any?, kotlin.Any?, O of <root>.Outer>
+                          VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided><O of <root>.Outer>
                           BLOCK_BODY[172, 395]
                             CLASS[190, 339] CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]
-                              thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer>
-                              CONSTRUCTOR[206, 208] visibility:public returnType:<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer> [primary]
+                              thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer>
+                              CONSTRUCTOR[206, 208] visibility:public returnType:<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer> [primary]
                                 BLOCK_BODY[206, 208]
                                   DELEGATING_CONSTRUCTOR_CALL[190, 339] 'public constructor <init> () declared in kotlin.Any'
                                   INSTANCE_INITIALIZER_CALL[190, 339] classDescriptor='CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -302,13 +302,13 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                                 overridden:
                                   public open fun toString (): kotlin.String declared in kotlin.Any
                               FUN[268, 284] name:bar visibility:public modality:FINAL returnType:kotlin.Any?
-                                VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer>
+                                VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer>
                                 BLOCK_BODY[283, 284]
                                   RETURN[284, 284] type=kotlin.Nothing from='public final fun bar (): kotlin.Any? declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass'
                                     CALL[283, 284] 'public final fun <get-y> (): I of <root>.Outer.Inner declared in <root>.Outer.Inner' type=kotlin.Any? origin=GET_PROPERTY
                                       ARG <this>: GET_VAR[283, 284] 'val this: <root>.Outer.Inner<kotlin.Any?, O of <root>.Outer> declared in <root>.Outer.testOuter' type=<root>.Outer.Inner<kotlin.Any?, O of <root>.Outer> origin=IMPLICIT_ARGUMENT
                               FUN[305, 321] name:baz visibility:public modality:FINAL returnType:O of <root>.Outer
-                                VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer>
+                                VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer>
                                 BLOCK_BODY[320, 321]
                                   RETURN[321, 321] type=kotlin.Nothing from='public final fun baz (): O of <root>.Outer declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass'
                                     CALL[320, 321] 'public final fun <get-x> (): O of <root>.Outer declared in <root>.Outer' type=O of <root>.Outer origin=GET_PROPERTY
@@ -317,14 +317,14 @@ FILE fqName:<root> fileName:/1.kt lineStartOffsets: [0, 24, 38, 65, 102, 147, 17
                                         TYPE_ARG O: O of <root>.Outer
                                         ARG $this: GET_VAR[320, 321] 'val this: <root>.Outer.Inner<kotlin.Any?, O of <root>.Outer> declared in <root>.Outer.testOuter' type=<root>.Outer.Inner<kotlin.Any?, O of <root>.Outer> origin=null
                               FUN[231, 247] name:foo visibility:public modality:FINAL returnType:kotlin.Any?
-                                VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer>
+                                VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer>
                                 BLOCK_BODY[246, 247]
                                   RETURN[247, 247] type=kotlin.Nothing from='public final fun foo (): kotlin.Any? declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass'
                                     GET_VAR[246, 247] 'val r: kotlin.Any? declared in <root>.Outer.testOuter' type=kotlin.Any? origin=null
                             RETURN[356, 381] type=kotlin.Nothing from='public final fun run (): kotlin.Any? declared in <root>.Outer.testOuter.<no name provided>'
                               CALL[376, 381] 'public final fun foo (): kotlin.Any? declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass' type=kotlin.Any? origin=null
-                                ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass' type=<root>.Outer.testOuter.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, O of <root>.Outer> origin=null
-                      CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.Outer.testOuter.<no name provided>' type=<root>.Outer.testOuter.<no name provided><kotlin.Any?, kotlin.Any?, O of <root>.Outer> origin=OBJECT_LITERAL
+                                ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.Outer.testOuter.<no name provided>.run.LocalClass' type=<root>.Outer.testOuter.<no name provided>.run.LocalClass<O of <root>.Outer> origin=null
+                      CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.Outer.testOuter.<no name provided>' type=<root>.Outer.testOuter.<no name provided><O of <root>.Outer> origin=OBJECT_LITERAL
 FILE fqName:<root> fileName:/2.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 39, 40, 60, 96, 112, 114]
   FUN[40, 113] name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY[58, 113]
@@ -351,10 +351,10 @@ FILE fqName:<root> fileName:/2.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 
                 GET_VAR[-1, -1] 'val tmp_1: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
               RETURN[405, 405] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                 TYPE_OP[138, 405] type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                  BLOCK[138, 405] type=<root>.box.<no name provided><kotlin.Any?, kotlin.Any?, kotlin.Any?> origin=OBJECT_LITERAL
+                  BLOCK[138, 405] type=<root>.box.<no name provided> origin=OBJECT_LITERAL
                     CLASS[138, 405] CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
-                      thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided><kotlin.Any?, kotlin.Any?, kotlin.Any?>
-                      CONSTRUCTOR[138, 405] visibility:public returnType:<root>.box.<no name provided><kotlin.Any?, kotlin.Any?, kotlin.Any?> [primary]
+                      thisReceiver: VALUE_PARAMETER[138, 405] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided>
+                      CONSTRUCTOR[138, 405] visibility:public returnType:<root>.box.<no name provided> [primary]
                         BLOCK_BODY[138, 405]
                           DELEGATING_CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in kotlin.Any'
                           INSTANCE_INITIALIZER_CALL[138, 405] classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -372,11 +372,11 @@ FILE fqName:<root> fileName:/2.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 
                         overridden:
                           public open fun toString (): kotlin.String declared in kotlin.Any
                       FUN[159, 395] name:run visibility:public modality:FINAL returnType:kotlin.Any?
-                        VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided><kotlin.Any?, kotlin.Any?, kotlin.Any?>
+                        VALUE_PARAMETER[159, 395] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>
                         BLOCK_BODY[172, 395]
                           CLASS[190, 339] CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]
-                            thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?>
-                            CONSTRUCTOR[206, 208] visibility:public returnType:<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?> [primary]
+                            thisReceiver: VALUE_PARAMETER[190, 339] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided>.run.LocalClass
+                            CONSTRUCTOR[206, 208] visibility:public returnType:<root>.box.<no name provided>.run.LocalClass [primary]
                               BLOCK_BODY[206, 208]
                                 DELEGATING_CONSTRUCTOR_CALL[190, 339] 'public constructor <init> () declared in kotlin.Any'
                                 INSTANCE_INITIALIZER_CALL[190, 339] classDescriptor='CLASS CLASS name:LocalClass modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -394,13 +394,13 @@ FILE fqName:<root> fileName:/2.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 
                               overridden:
                                 public open fun toString (): kotlin.String declared in kotlin.Any
                             FUN[268, 284] name:bar visibility:public modality:FINAL returnType:kotlin.Any?
-                              VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?>
+                              VALUE_PARAMETER[268, 284] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass
                               BLOCK_BODY[283, 284]
                                 RETURN[284, 284] type=kotlin.Nothing from='public final fun bar (): kotlin.Any? declared in <root>.box.<no name provided>.run.LocalClass'
                                   CALL[283, 284] 'public final fun <get-y> (): I of <root>.Outer.Inner declared in <root>.Outer.Inner' type=kotlin.Any? origin=GET_PROPERTY
                                     ARG <this>: GET_VAR[283, 284] 'val this: <root>.Outer.Inner<kotlin.Any?, kotlin.Any?> declared in <root>.box' type=<root>.Outer.Inner<kotlin.Any?, kotlin.Any?> origin=IMPLICIT_ARGUMENT
                             FUN[305, 321] name:baz visibility:public modality:FINAL returnType:kotlin.Any?
-                              VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?>
+                              VALUE_PARAMETER[305, 321] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass
                               BLOCK_BODY[320, 321]
                                 RETURN[321, 321] type=kotlin.Nothing from='public final fun baz (): kotlin.Any? declared in <root>.box.<no name provided>.run.LocalClass'
                                   CALL[320, 321] 'public final fun <get-x> (): O of <root>.Outer declared in <root>.Outer' type=kotlin.Any? origin=GET_PROPERTY
@@ -409,13 +409,13 @@ FILE fqName:<root> fileName:/2.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 
                                       TYPE_ARG O: kotlin.Any?
                                       ARG $this: GET_VAR[320, 321] 'val this: <root>.Outer.Inner<kotlin.Any?, kotlin.Any?> declared in <root>.box' type=<root>.Outer.Inner<kotlin.Any?, kotlin.Any?> origin=null
                             FUN[231, 247] name:foo visibility:public modality:FINAL returnType:kotlin.Any?
-                              VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?>
+                              VALUE_PARAMETER[231, 247] kind:DispatchReceiver name:<this> index:0 type:<root>.box.<no name provided>.run.LocalClass
                               BLOCK_BODY[246, 247]
                                 RETURN[247, 247] type=kotlin.Nothing from='public final fun foo (): kotlin.Any? declared in <root>.box.<no name provided>.run.LocalClass'
                                   GET_VAR[246, 247] 'val r: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
                           RETURN[356, 381] type=kotlin.Nothing from='public final fun run (): kotlin.Any? declared in <root>.box.<no name provided>'
                             CALL[376, 381] 'public final fun foo (): kotlin.Any? declared in <root>.box.<no name provided>.run.LocalClass' type=kotlin.Any? origin=null
-                              ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.box.<no name provided>.run.LocalClass' type=<root>.box.<no name provided>.run.LocalClass<kotlin.Any?, kotlin.Any?, kotlin.Any?> origin=null
-                    CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.box.<no name provided>' type=<root>.box.<no name provided><kotlin.Any?, kotlin.Any?, kotlin.Any?> origin=OBJECT_LITERAL
+                              ARG <this>: CONSTRUCTOR_CALL[363, 375] 'public constructor <init> () declared in <root>.box.<no name provided>.run.LocalClass' type=<root>.box.<no name provided>.run.LocalClass origin=null
+                    CONSTRUCTOR_CALL[138, 405] 'public constructor <init> () declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
       RETURN[100, 111] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST[107, 111] String type=kotlin.String value="OK"
