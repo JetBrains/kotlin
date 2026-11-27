@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.junit.jupiter.api.extension.ExtendWith
 import java.nio.file.Path
 
 /**
@@ -68,6 +69,7 @@ fun TestVariantChain.withAdditionalVariant(variant: String): TestVariantChain = 
  * @see assertEqualsToTestDataFile
  * @see ManagedTestAssertions.assertEqualsToTestDataFile
  */
+@ExtendWith(ManagedTestPackageCheck::class)
 interface ManagedTest {
     /**
      * Chain of test variant identifiers that determines output file naming and execution priority.

@@ -63,6 +63,11 @@ tasks.named { it == "test" }.configureEach {
     mustRunAfter(testDataManager.mustRunAfterProjects.map { projectPaths -> projectPaths.map { "$it:test" } })
 }
 
+// The managed tests outside the packages fail in `test`, see `ManagedTestPackageCheck`
+tasks.withType<Test>().named { it == "test" }.configureEach {
+    jvmArgumentProviders.add(objects.newInstance<TestPackagesArgumentProvider>().apply { testPackages.set(testDataManager.testPackages) })
+}
+
 tasks.register<TestDataManagerModuleTask>(testDataManagerModuleTaskName) {
     projectPath.set(project.path)
     projectDirectory.set(project.projectDir.absolutePath)
