@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.util.assertSwiftExportMetadataVariantExistsIn
 import org.jetbrains.kotlin.gradle.util.assertSwiftExportMetadataVariantMissingInRootComponent
 import org.jetbrains.kotlin.gradle.util.parseJsonToMap
 import org.jetbrains.kotlin.gradle.util.swiftExportKotlinArchiveProducer
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -31,6 +32,7 @@ import kotlin.test.assertNull
 @DisplayName("Tests for Swift Export metadata publication with the export DSL")
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
+@MustRunOnChangesInGradle
 class SwiftExportMetadataPublishingIT : KGPBaseTest() {
 
     @DisplayName("swiftExport metadata is published into the root component when module name and root package are defined")
