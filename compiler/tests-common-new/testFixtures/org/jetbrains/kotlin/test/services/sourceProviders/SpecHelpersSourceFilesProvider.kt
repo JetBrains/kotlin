@@ -18,7 +18,14 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: String) : AdditionalSourceProvider(testServices) {
-    private val helpersDirPath = ForTestCompileRuntime.transformTestDataPath("compiler/tests-spec/testData/$testType/helpers").absolutePath
+    private val helpersDirPath: String = run {
+        val path = when (testType) {
+            "diagnostics" -> "diagnostics/specTests"
+            "box" -> "codegen/boxSpec"
+            else -> error("Unexpected test type: $testType. Allowed values: diagnostics, box.")
+        }
+        ForTestCompileRuntime.transformTestDataPath("compiler/testData/$path/helpers").absolutePath
+    }
 
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)

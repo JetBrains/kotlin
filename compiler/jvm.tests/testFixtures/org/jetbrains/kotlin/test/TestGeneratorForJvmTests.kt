@@ -128,20 +128,15 @@ fun main(args: Array<String>) {
             testClass<AbstractPhasedPipelineCheckerWithLanguageFeatureDisabledTest> {
                 model("phasedPipelineChecker")
             }
+
+            testClass<AbstractFirLightTreeDiagnosticTestSpec> {
+                model("specTests", excludeDirs = listOf("helpers"))
+            }
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
             testClass<AbstractPhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTest> {
                 model("ideHint")
-            }
-        }
-
-        testGroup(testRoot, testDataRoot = "compiler/tests-spec/testData") {
-            testClass<AbstractFirLightTreeDiagnosticTestSpec> {
-                model(
-                    "diagnostics",
-                    excludeDirs = listOf("helpers"),
-                )
             }
         }
 
@@ -239,12 +234,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testRoot, "compiler/tests-spec/testData") {
-            testClass<AbstractFirBlackBoxCodegenTestSpec> {
-                model(
-                    relativeRootPath = "codegen/box",
-                    excludeDirs = listOf("helpers", "templates"),
-                )
-            }
+
         }
 
         testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
@@ -257,6 +247,10 @@ fun main(args: Array<String>) {
                 val excludedScriptDirs = listOf("script")
                 model("box", excludeDirs = excludedScriptDirs)
                 model("boxJvm", excludeDirs = excludedScriptDirs)
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestSpec> {
+                model("boxSpec", excludeDirs = listOf("helpers", "templates"))
             }
         }
 

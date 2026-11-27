@@ -29,7 +29,7 @@ abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : Abstr
                 +FULL_JDK
             }
             useSourcePreprocessor(::PackageNamePreprocessor)
-            useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
+            useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("box"))
             useFailureSuppressors(
                 ::FirFailingTestSuppressor,
                 ::BlackBoxCodegenSuppressor,
