@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
@@ -17,6 +18,7 @@ import kotlin.test.assertEquals
     // Temp test until KT-80311. Only check the latest Gradle for faster CI and simpler tests.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
+@MustRunOnChangesInGradle
 class JsToolingProjectIT : KGPBaseTest() {
 
     @DisplayName("KT-89532: using jsToolingProject() in a subproject is IP-safe")
