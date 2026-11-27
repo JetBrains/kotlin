@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerRefIndexConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollectorHolder
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
@@ -289,12 +290,13 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val metricsReporter = getMetricsReporter()
         val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 
+        val compilerServicesFacade = createCompilerServicesFacade(logger, messageCollector)
         val exitCode = try {
             daemon.compile(
                 sessionId,
                 arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
                 daemonCompileOptions,
-                createCompilerServicesFacade(logger, messageCollector),
+                compilerServicesFacade,
                 DaemonCompilationResults(
                     logger, rootProjectDir?.toFile(), metricsReporter, icEventCollector
                 ),
@@ -311,13 +313,21 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             }
         }
 
-        return (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {
+        val compilationResult = (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {
             ExitCode.OK
         } else {
             ExitCode.COMPILATION_ERROR
-        }).asCompilationResult.also {
-            populateMetricsCollector(metricsReporter)
-        }
+        }).asCompilationResult
+        populateMetricsCollector(metricsReporter)
+
+        // The daemon streams lookups and output-file mappings back through the facade, so the index is collected on the client and written here
+        writeCompilerRefIndexIfSuccessful(
+            (compilerServicesFacade as? CompilerReferenceIndexCollectorHolder)?.compilerReferenceIndexCollector,
+            compilationResult,
+            arguments,
+        )
+
+        return compilationResult
     }
 
     override fun createCompilerServicesFacade(
@@ -392,14 +402,27 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         populateMetricsCollector(metricsReporter)
 
-        val compilerReferenceIndexCollector = services[CompilerReferenceIndexCollector::class.java]
-        if (compilationResult == CompilationResult.COMPILATION_SUCCESS && compilerReferenceIndexCollector != null) {
-            val metadataVersion = LanguageVersion.fromVersionString(arguments.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
-            compilerReferenceIndexCollector.write(metadataVersion)
-        }
+        writeCompilerRefIndexIfSuccessful(
+            services[CompilerReferenceIndexCollector::class.java],
+            compilationResult,
+            arguments,
+        )
 
         return compilationResult
     }
+
+    private fun writeCompilerRefIndexIfSuccessful(
+        compilerReferenceIndexCollector: CompilerReferenceIndexCollector?,
+        compilationResult: CompilationResult,
+        arguments: CompilerArgs,
+    ) {
+        if (compilationResult == CompilationResult.COMPILATION_SUCCESS && compilerReferenceIndexCollector != null) {
+            compilerReferenceIndexCollector.write(arguments.compilerMetadataVersion())
+        }
+    }
+
+    private fun CompilerArgs.compilerMetadataVersion(): MetadataVersion =
+        LanguageVersion.fromVersionString(languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
 
     protected open fun Services.Builder.registerPlatformServices(logger: KotlinLogger) {}
 

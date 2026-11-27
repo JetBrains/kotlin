@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,6 +29,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.readBytes
 
 @DisplayName("The compiler reference index of a JPS-managed compilation")
@@ -68,11 +72,11 @@ class CompilerReferenceIndexJpsTest : BaseJpsTest() {
     }
 
     @DisplayName("The JPS trackers still receive everything when the index is collected")
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata(FIXTURE)
-    fun jpsTrackersStillReceiveEverything() {
+    fun jpsTrackersStillReceiveEverything(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val toolchain = toolchain
-        jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
+        jvmProject(strategyConfig) {
             val module = module(FIXTURE)
             val criDirectory = module.buildDirectory.resolve("cri")
             val lookupTracker = RecordingLookupTracker()
@@ -88,6 +92,29 @@ class CompilerReferenceIndexJpsTest : BaseJpsTest() {
                 }
                 assertTrue(fileMappingTracker.sourcesToOutput.any { it.second.endsWith("Derived.class") }) {
                     "The JPS file mapping tracker didn't receive Derived.class: ${fileMappingTracker.sourcesToOutput}"
+                }
+                val index = toolchain.readIndex(criDirectory)
+                assertTrue(module.sourcesDirectory.resolve("derived.kt").toRealPath() in index.filesLookingUp("base")) {
+                    "derived.kt is missing from the files looking up base(): ${index.filesLookingUp("base")}"
+                }
+                assertEquals(setOf("Derived"), index.subtypesOf("Base"))
+            }
+        }
+    }
+
+    @DisplayName("KT-92000: A compilation with the daemon writes the index too")
+    @Test
+    @TestMetadata(FIXTURE)
+    fun indexIsWrittenWithDaemon() {
+        val toolchain = toolchain
+        jvmProject(toolchain, toolchain.daemonExecutionPolicyBuilder().build()) {
+            val module = module(FIXTURE)
+            val criDirectory = module.buildDirectory.resolve("cri")
+            module.compile(compilationConfigAction = { it.withCompilerReferenceIndex(criDirectory) }) {
+                val written = criDirectory.toFile().takeIf { it.isDirectory }
+                    ?.let { criDirectory.listDirectoryEntries().map { it.name }.toSet() }.orEmpty()
+                assertEquals(setOf(FILE_IDS_TO_PATHS_FILENAME, LOOKUPS_FILENAME, SUBTYPES_FILENAME), written) {
+                    "The daemon compilation succeeded but did not write the compiler reference index to $criDirectory"
                 }
                 val index = toolchain.readIndex(criDirectory)
                 assertTrue(module.sourcesDirectory.resolve("derived.kt").toRealPath() in index.filesLookingUp("base")) {
