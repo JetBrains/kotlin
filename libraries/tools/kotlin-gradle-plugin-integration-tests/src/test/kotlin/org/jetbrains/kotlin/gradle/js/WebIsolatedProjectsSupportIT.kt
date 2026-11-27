@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
@@ -26,6 +27,7 @@ import kotlin.test.assertEquals
     // Temp smoke test until KT-80311. Only check the latest Gradle for faster CI and simpler tests.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
+@MustRunOnChangesInGradle
 class WebIsolatedProjectsSupportIT : KGPBaseTest() {
 
     /**
