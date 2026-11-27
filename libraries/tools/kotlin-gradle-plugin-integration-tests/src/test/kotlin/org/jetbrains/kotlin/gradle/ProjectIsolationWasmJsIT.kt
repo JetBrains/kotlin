@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgume
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DisplayName
     // Temp smoke test until KT-80311. Only check the latest Gradle for faster CI and simpler tests.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
+@MustRunOnChangesInGradle
 class ProjectIsolationWasmJsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
