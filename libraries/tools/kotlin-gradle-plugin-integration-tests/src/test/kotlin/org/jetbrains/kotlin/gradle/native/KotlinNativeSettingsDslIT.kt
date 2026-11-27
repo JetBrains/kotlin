@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.jetbrains.kotlin.internal.compilerRunner.native.parallelismLimitServiceName
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @DisplayName("Kotlin/Native max workers configured in the settings plugin")
 @NativeGradlePluginTests
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
+@MustRunOnChangesInGradle
 class KotlinNativeSettingsDslIT : KGPBaseTest() {
 
     @DisplayName("Max workers come from the settings DSL, then the Gradle property, and stay unset when neither is set")
