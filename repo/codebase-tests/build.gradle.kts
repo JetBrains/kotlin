@@ -26,6 +26,7 @@ dependencies {
     testImplementation(libs.woodstox.core)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.jgit)
+    testImplementation(libs.javaDiffUtils)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 

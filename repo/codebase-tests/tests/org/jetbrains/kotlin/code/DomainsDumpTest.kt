@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.code
 
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import org.jetbrains.kotlin.repoTestFixtures.isTestFederationIgnored
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.allDomainInfos
@@ -27,7 +29,7 @@ class DomainsDumpTest {
             if (expectText != actualText) {
                 throw AssertionFailedError(
                     "${domainsDumpFile.name} mismatch: ${domainsDumpFile.name}. You can update this file by invoking the Tools -> " +
-                            "Update domains.dump.txt run configuration in the IDE.",
+                            "Update domains.dump.txt run configuration in the IDE.\n\n${buildDiff(expectText, actualText)}",
                     FileInfo(domainsDumpFile.absolutePath, expectText.encodeToByteArray()),
                     actualText,
                 )
@@ -87,6 +89,18 @@ class DomainsDumpTest {
         })
     }
 
+}
+
+private fun buildDiff(expectedText: String, actualText: String): String {
+    val expectedLines = expectedText.lines()
+    val patch = DiffUtils.diff(expectedLines, actualText.lines())
+    return UnifiedDiffUtils.generateUnifiedDiff(
+        /* originalFileName = */ "a/${domainsDumpFile.name}",
+        /* revisedFileName = */ "b/${domainsDumpFile.name}",
+        /* originalLines = */ expectedLines,
+        /* patch = */ patch,
+        /* contextSize = */ 3,
+    ).joinToString("\n")
 }
 
 internal fun File.checkDump(actualText: String, isTeamCity: Boolean = isTeamCityBuild, check: (String, String) -> Unit) {
