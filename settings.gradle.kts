@@ -153,6 +153,7 @@ include(
     ":benchmarks:jvm:kapt:samples:synthetic-noop",
     ":benchmarks:jvm:kapt:samples:dagger-sample",
     ":benchmarks:jvm:kapt:samples:mapstruct-sample",
+    ":benchmarks:jvm:collections",
     ":benchmarks:jvm:reflection",
     ":compiler",
     ":compiler:util",

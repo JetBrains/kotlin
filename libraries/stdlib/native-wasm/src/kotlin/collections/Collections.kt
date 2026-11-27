@@ -141,4 +141,4 @@ public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)
  */
 @kotlin.internal.InlineOnly
 internal actual inline fun <T> Array<out T>.asArrayList(): ArrayList<T> =
-    ArrayList(asCollection(isVarargs = true))
+    ArrayList.fromCollectionFast(asCollection(isVarargs = true))

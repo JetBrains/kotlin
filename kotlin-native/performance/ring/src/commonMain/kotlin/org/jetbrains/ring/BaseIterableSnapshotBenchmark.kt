@@ -1,0 +1,1 @@
+../../../../../../../../../benchmarks/jvm/collections/tests/org/jetbrains/kotlin/benchmarks/collections/BaseIterableSnapshotBenchmark.kt

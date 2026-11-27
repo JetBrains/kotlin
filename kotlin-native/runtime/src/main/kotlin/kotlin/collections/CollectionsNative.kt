@@ -19,3 +19,8 @@ public actual fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
         it.set(transformation(element))
     }
 }
+
+internal fun <T> Collection<T>.toMutableList(first: T, rest: Iterator<T>): MutableList<T> {
+    @Suppress("UNCHECKED_CAST")
+    return ArrayList.fromArray(iteratorToArray(first, rest, size) as Array<T>)
+}

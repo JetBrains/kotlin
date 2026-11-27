@@ -50,6 +50,35 @@ object Snapshots : TemplateGroupBase() {
         return dst
         """
 
+    private fun iterableToListJvmNativeBody(isNative: Boolean) =
+        """
+        if (this is Collection) {
+            if (isEmpty()) return emptyList()
+            // Avoid iterator allocation for ArrayList
+            if (this is ArrayList) {
+                return if (this.size == 1) listOf(this[0]) else this.toMutableList()
+            }
+            val iterator = iterator()
+            if (!iterator.hasNext()) return emptyList()
+            val first = iterator.next()
+            if (!iterator.hasNext()) return listOf(first)
+            return ${if (isNative) "this.toMutableList(first, iterator)" else "this.toMutableList()"}
+        }
+        return this.toMutableList().optimizeReadOnlyList()
+        """
+
+    private fun iterableToListJsWasmBody() =
+        """
+        if (this is Collection) {
+            return when (size) {
+                0 -> emptyList()
+                1 -> listOf(if (this is List) get(0) else iterator().next())
+                else -> this.toMutableList()
+            }
+        }
+        return this.toMutableList().optimizeReadOnlyList()
+        """
+
     val f_toSet = fn("toSet()") {
         includeDefault()
         include(CharSequences)
@@ -161,19 +190,6 @@ object Snapshots : TemplateGroupBase() {
     } builder {
         doc { "Returns a [List] containing all ${f.element.pluralize()}." }
         returns("List<T>")
-        body { "return this.toMutableList().optimizeReadOnlyList()" }
-        body(Iterables) {
-            """
-            if (this is Collection) {
-                return when (size) {
-                    0 -> emptyList()
-                    1 -> listOf(if (this is List) get(0) else iterator().next())
-                    else -> this.toMutableList()
-                }
-            }
-            return this.toMutableList().optimizeReadOnlyList()
-            """
-        }
         body(CharSequences, ArraysOfPrimitives) {
             """
             return when (${f.code.size}) {
@@ -214,6 +230,23 @@ object Snapshots : TemplateGroupBase() {
                 } while (iterator.hasNext())
                 return result
                 """
+            }
+        }
+
+        specialFor(Iterables) {
+            on(Platform.JVM) {
+                body { iterableToListJvmNativeBody(isNative = false) }
+            }
+            on(Platform.Native) {
+                on(Backend.IR) {
+                    body { iterableToListJvmNativeBody(isNative = true) }
+                }
+                on(Backend.Wasm) {
+                    body { iterableToListJsWasmBody() }
+                }
+            }
+            on(Platform.JS) {
+                body { iterableToListJsWasmBody() }
             }
         }
     }

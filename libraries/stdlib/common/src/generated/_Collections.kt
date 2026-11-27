@@ -1506,16 +1506,7 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 /**
  * Returns a [List] containing all elements.
  */
-public fun <T> Iterable<T>.toList(): List<T> {
-    if (this is Collection) {
-        return when (size) {
-            0 -> emptyList()
-            1 -> listOf(if (this is List) get(0) else iterator().next())
-            else -> this.toMutableList()
-        }
-    }
-    return this.toMutableList().optimizeReadOnlyList()
-}
+public expect fun <T> Iterable<T>.toList(): List<T>
 
 /**
  * Returns a new [MutableList] filled with all elements of this collection.

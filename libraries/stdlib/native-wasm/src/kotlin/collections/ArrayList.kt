@@ -68,6 +68,19 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
     }
 
+    companion {
+        internal fun <E> fromCollectionFast(elements: Collection<E>): ArrayList<E> =
+            ArrayList<E>(elements.size).apply {
+                addAll(elements)
+            }
+
+        internal fun <E> fromArray(elements: Array<E>): ArrayList<E> =
+            ArrayList<E>(initialCapacity = 0).apply {
+                backing = elements
+                length = elements.size
+            }
+    }
+
     /**
      * Creates a new empty [ArrayList].
      */
@@ -78,8 +91,15 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
      *
      * The iteration order of elements in the created list is the same as in the specified collection.
      */
-    public actual constructor(elements: Collection<E>) : this(elements.size) {
-        addAll(elements)
+    public actual constructor(elements: Collection<E>) : this(0) {
+        @Suppress("UNCHECKED_CAST")
+        backing = if (elements is AbstractCollection) {
+            @Suppress("INVISIBLE_REFERENCE")
+            elements.toArray()
+        } else {
+            collectionToArray(elements)
+        } as Array<E>
+        length = backing.size
     }
 
     @PublishedApi
