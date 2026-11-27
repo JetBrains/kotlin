@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -21,6 +22,7 @@ import kotlin.test.assertFailsWith
  * Gradle caches compiled build scripts by their text, so test-specific absolute paths in scripts force a recompilation in every test.
  */
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Build scripts are independent of test temp directories")
 @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
 class BuildScriptPathIndependenceIT : KGPBaseTest() {
