@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 @RequiresOptIn("Internal API of the IR linker. Not supposed to be used outside the linker.")
@@ -108,23 +107,8 @@ abstract class KotlinIrLinker(
         }
     }
 
-    /**
-     * This is the queue of modules containing top-level declarations to be deserialized. This is
-     * the third-layer queue on top of [BasicIrModuleDeserializer.ModuleDeserializationState.filesWithPendingTopLevels] and
-     * [FileDeserializationState.reachableTopLevels].
-     *
-     * A module can be enqueued using [BasicIrModuleDeserializer.ModuleDeserializationState.enqueueFile].
-     * TODO: provide a more clear API for enqueueing IR modules, KT-73819
-     *
-     * The deserialization happens on invocation of [deserializeAllReachableTopLevels]. This in its turn
-     * invokes [IrModuleDeserializer.deserializeReachableDeclarations] for each scheduled module.
-     *
-     * Note: A module is removed from the queue after all top-level declarations scheduled for
-     * deserialization in that module have been actually deserialized. Later the module can be enqueued
-     * once again to deserialize other top-level declaration(s). This process can be repeated multiple times.
-     */
     @IrLinkerInternalApi
-    val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
+    val deserializationQueue = IrLinkerDeserializationQueue()
 
     protected val klibDeserializers = linkedMapOf<KotlinLibrary, IrModuleDeserializer>()
     private val nonKlibDeserializers = mutableListOf<IrModuleDeserializer>()
@@ -178,9 +162,6 @@ abstract class KotlinIrLinker(
         return symbol ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
     }
 
-    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
-        firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
-
     /**
      * Returns the first module deserializer that may define declarations in the package [packageFqName]
      * and matches the given [filter], or `null` if no such module deserializer is found.
@@ -230,16 +211,6 @@ abstract class KotlinIrLinker(
             ?: error("The module with the built-ins has not been deserialized yet")
 
     /**
-     * Run deserialization of top-level declarations previously scheduled for deserialization in the current [KotlinIrLinker].
-     */
-    fun deserializeAllReachableTopLevels() {
-        while (true) {
-            val moduleDeserializer = modulesWithReachableTopLevels.pollFirst() ?: break
-            moduleDeserializer.deserializeReachableDeclarations()
-        }
-    }
-
-    /**
      * Deserializes declarations for all unbound symbols in [symbolTable] and everything reachable from them,
      * repeating until the set of unbound symbols stops changing.
      *
@@ -259,7 +230,7 @@ abstract class KotlinIrLinker(
                     findAndEnqueueSymbolOrNull(symbol.signatureAndKindOrNull ?: continue)
                 }
             }
-            deserializeAllReachableTopLevels()
+            deserializationQueue.drain()
             // We wait for the unbound to stabilize on fake overrides.
         } while (unbound != prevUnbound)
     }
@@ -271,7 +242,7 @@ abstract class KotlinIrLinker(
 
         if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
             findAndEnqueueSymbolOrNull(symbol.signatureAndKindOrNull ?: return null)
-            deserializeAllReachableTopLevels()
+            deserializationQueue.drain()
         }
 
         return if (symbol.isBound) symbol.owner as IrDeclaration else null
@@ -284,8 +255,7 @@ abstract class KotlinIrLinker(
      * The symbol is taken from the first module that contains [signature].
      * Whether the declaration is already deserialized when this function returns depends on the linkage phase:
      * - Before [finalizeIrLinkage]: the declaration is only put into the deserialization queue, so the returned symbol
-     *   may be unbound. It becomes bound when the queue is processed, see [deserializeAllReachableTopLevels]
-     *   and [drainDeserializationQueue].
+     *   may be unbound. It becomes bound when the queue is processed [drainDeserializationQueue].
      * - After [finalizeIrLinkage]: the queue is processed immediately, so the returned symbol is bound.
      *
      * @return The symbol, or `null` if none of the modules contains a declaration with the given [signature].
@@ -294,7 +264,7 @@ abstract class KotlinIrLinker(
         state.checkInitializationCompleted()
 
         val symbol = findAndEnqueueSymbolOrNull(signature and kind)
-        if (symbol != null && state.isFinalized) deserializeAllReachableTopLevels()
+        if (symbol != null && state.isFinalized) deserializationQueue.drain()
 
         return symbol
     }

@@ -155,7 +155,7 @@ internal class InlineFunctionDeserializer(
             }
         }
         if (packageFragment is IrFile)
-            linker.deserializeAllReachableTopLevels()
+            linker.drainDeserializationQueue()
 
         linker.partialLinkageSupport.exploreClassifiers(linker.fakeOverrideBuilder)
         linker.partialLinkageSupport.exploreClassifiersInInlineLazyIrFunction(function)

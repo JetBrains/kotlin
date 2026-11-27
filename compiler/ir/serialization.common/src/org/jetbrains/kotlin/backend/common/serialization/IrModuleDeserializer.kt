@@ -91,7 +91,7 @@ abstract class IrModuleDeserializer(
      * the corresponding declaration for deserialization.
      *
      * The declaration is not necessarily deserialized by this call, so the returned symbol may be unbound.
-     * It becomes bound when the deserialization queue of this module is processed, see [deserializeReachableDeclarations].
+     * It becomes bound when the deserialization queue of this module is processed, see `deserializeReachableDeclarations`.
      *
      * @return The symbol, or `null` if this module does not contain a declaration with the given [signatureAndKind].
      */
@@ -103,18 +103,6 @@ abstract class IrModuleDeserializer(
     abstract val klib: KotlinLibrary
 
     open fun postProcess() {}
-
-    /**
-     * Schedule deserialization of the top-level declaration with the given signature in the given file.
-     */
-    open fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
-        error("Unsupported Operation (sig: $topLevelDeclarationSignature")
-    }
-
-    /**
-     * Run deserialization of top-level declarations previously scheduled for deserialization in the current module.
-     */
-    open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
     open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED_DECLARATION_HEADERS
 
@@ -211,10 +199,6 @@ class IrModuleDeserializerWithBuiltIns(
         return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
 
-    override fun deserializeReachableDeclarations() {
-        delegate.deserializeReachableDeclarations()
-    }
-
     private fun computeFunctionClass(idSig: IdSignature): IrClass {
         val publicSig = idSig.asPublic() ?: error("$idSig has to be public")
         val fqnParts = publicSig.nameSegments
@@ -237,10 +221,6 @@ class IrModuleDeserializerWithBuiltIns(
         get() = delegate.klib
 
     override val strategyResolver get() = delegate.strategyResolver
-
-    override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
-        delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)
-    }
 
     override val fileDeserializers: Map<IrFile, IrFileDeserializer>
         get() = delegate.fileDeserializers

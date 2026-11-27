@@ -220,13 +220,15 @@ internal class JsIrLinkerLoader(
                             @OptIn(IrLinkerInternalApi::class)
                             moduleDeserializer.findAndEnqueueSymbolOrNull(loadingSignature)
                         } else if (loadingSignature.signature in moduleDeserializer) {
-                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature.signature.topLevelSignature())
+                            @OptIn(IrLinkerInternalApi::class)
+                            moduleDeserializer.findAndEnqueueSymbolOrNull(loadingSignature)
                         }
                     }
                 }
 
                 for (stubbedSignature in stubbedSignatures) {
-                    moduleDeserializer.addModuleReachableTopLevel(stubbedSignature.signature.topLevelSignature())
+                    @OptIn(IrLinkerInternalApi::class)
+                    moduleDeserializer.findAndEnqueueSymbolOrNull(stubbedSignature)
                 }
             }
         }

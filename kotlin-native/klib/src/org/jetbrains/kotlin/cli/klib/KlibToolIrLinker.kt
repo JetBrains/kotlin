@@ -163,8 +163,6 @@ internal class KlibToolIrLinker(
             return EMULATED_PACKAGE_NAMES.any { packageFqName.startsWith(it) }
         }
 
-        override fun deserializeReachableDeclarations() = Unit
-
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         private fun generateStubClass(symbol: IrClassSymbol, outerClass: IrClass?): IrClass {
             val signature = symbol.signature as IdSignature.CommonSignature

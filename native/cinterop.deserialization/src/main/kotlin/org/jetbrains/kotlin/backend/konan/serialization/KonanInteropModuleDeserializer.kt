@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleWithoutFilesDeserializationQueue
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
@@ -69,6 +70,23 @@ class KonanInteropModuleDeserializer(
     private val linker: KotlinIrLinker,
     override val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ON_DEMAND,
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
+
+    @OptIn(IrLinkerInternalApi::class)
+    private val deserializationQueue = object : IrModuleWithoutFilesDeserializationQueue(parent = linker.deserializationQueue) {
+        override fun drain() {
+            // Take a snapshot, as deserialization may reload the metadata of the Klib.
+            for (id in metadataReader.getDeclaredDeclarationIds().toList()) {
+                // Nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
+                // their parent class.
+                if (id.kind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
+
+                // Declarations that have already been converted to IR (e.g., by `contains()` or when referenced from another declaration)
+                // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
+                deserializeTopLevelDeclarations(id)
+            }
+        }
+    }
+
     // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
     private val isFullDeserializationRequested: Boolean =
         strategyResolver(NativeStandardInteropNames.cTypeDefinitionsFileName).theWholeWorld
@@ -76,11 +94,11 @@ class KonanInteropModuleDeserializer(
     init {
         require(klib.isCInteropLibrary())
 
-        if (isFullDeserializationRequested) {
+        // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
+        if (strategyResolver(NativeStandardInteropNames.cTypeDefinitionsFileName).theWholeWorld) {
             // Schedule the full deserialization, but don't run it right away: at this point the current module deserializer
             // is not yet registered in the linker, so references between declarations of this module would not be resolved.
-            @OptIn(IrLinkerInternalApi::class)
-            linker.modulesWithReachableTopLevels.add(this)
+            deserializationQueue.enqueueFullDeserializationOfModule()
         }
     }
 
@@ -251,22 +269,6 @@ class KonanInteropModuleDeserializer(
                     findAndEnqueueSymbolOrNull(idSig and PROPERTY_SYMBOL) != null
         }
         return false
-    }
-
-    override fun deserializeReachableDeclarations() {
-        // Unless full deserialization is requested, declarations are deserialized on demand, in `tryDeserializeIrSymbol()`.
-        if (!isFullDeserializationRequested) return
-
-        // Take a snapshot, as deserialization may reload the metadata of the Klib.
-        for (id in metadataReader.getDeclaredDeclarationIds().toList()) {
-            // Nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
-            // their parent class.
-            if (id.kind == BinarySymbolData.SymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
-
-            // Declarations that have already been converted to IR (e.g., by `contains()` or when referenced from another declaration)
-            // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
-            deserializeTopLevelDeclarations(id)
-        }
     }
 
     @IrLinkerInternalApi
