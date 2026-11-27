@@ -8,6 +8,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.testbase.GRADLE_VERSION_FILTER_PROPERTY
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.BuildInfrastructure
+import org.jetbrains.kotlin.testFederation.Domain.BuildToolsApi
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.Domain.CompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.Domain.CompilerPlugins
+import org.jetbrains.kotlin.testFederation.Domain.CoreLibs
+import org.jetbrains.kotlin.testFederation.Domain.Frontend
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.Domain.Native
+import org.jetbrains.kotlin.testFederation.Domain.SwiftExport
+import org.jetbrains.kotlin.testFederation.Domain.Wasm
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.nio.file.Paths
 
 plugins {
@@ -312,6 +327,42 @@ enum class JunitTag(
     }
 }
 
+val JunitTag.contractTestDomains: List<Domain>
+    get() = when (this) {
+        JunitTag.JvmKGP -> listOf(BuildToolsApi, CompilerInfrastructure, Frontend)
+        JunitTag.DaemonsKGP -> listOf(BuildToolsApi, CompilerInfrastructure, Native)
+        JunitTag.JsKGP -> listOf(BuildToolsApi, CommonBackend, Js)
+        JunitTag.JsBrowserKGP -> listOf(Js)
+        JunitTag.WasmKGP, JunitTag.WasmJsKGP -> listOf(BuildToolsApi, Wasm)
+        JunitTag.WasmWasiKGP -> listOf(Wasm)
+        JunitTag.NativeKGP -> listOf(Frontend, Native)
+        JunitTag.MppKGP -> listOf(
+            BuildInfrastructure, BuildToolsApi, CommonBackend, CompilerInfrastructure,
+            CompilerPlugins, Frontend, Js, Jvm, Native, Wasm,
+        )
+        JunitTag.AndroidKGP -> listOf(BuildToolsApi, CompilerPlugins, Frontend, Jvm)
+        JunitTag.OtherKGP -> listOf(AnalysisApi, BuildToolsApi, CompilerInfrastructure, CompilerPlugins, Frontend)
+        JunitTag.SwiftExportKGP -> listOf(SwiftExport)
+        JunitTag.SwiftPMImportKGP -> listOf(Native)
+    }
+
+val kgpMasterTestsContractDomains = listOf(
+    AnalysisApi, BuildInfrastructure, BuildToolsApi, CommonBackend, CompilerInfrastructure,
+    CompilerPlugins, CoreLibs, Frontend, Js, Jvm, Native, Wasm,
+)
+
+val kgpAllTestsContractDomains = kgpMasterTestsContractDomains + SwiftExport
+
+fun Test.declareContractTests(contractDomains: Collection<Domain>) {
+    testFederation {
+        contractTestsFor(*contractDomains.toTypedArray())
+    }
+}
+
+fun Test.declareContractTestsOf(junitTags: Collection<JunitTag>) {
+    declareContractTests(junitTags.flatMap(JunitTag::contractTestDomains).distinct())
+}
+
 if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
     val junitTags = JunitTag.entries.filter { it.includeInBatchedGradleVersionTests }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
@@ -340,6 +391,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
             useJUnitPlatform {
                 includeTags(*masterJunitTags.map { it.name }.toTypedArray())
             }
+            declareContractTests(kgpMasterTestsContractDomains)
         }
 
         val testForGradleVersionNightly = tasks.register<Test>("testsForGradle_${gradleVersion.replace(".", "_")}_nightly") {
@@ -347,6 +399,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
             useJUnitPlatform {
                 includeTags(*(masterJunitTags + nightlyJunitTags).map { it.name }.toTypedArray())
             }
+            declareContractTests(kgpAllTestsContractDomains)
         }
 
         listOf(testForGradleVersionMaster, testForGradleVersionNightly).forEach { task ->
@@ -389,6 +442,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                     includeTags(junitTag.name)
                     excludeTags(junitTag.excludedTags)
                 }
+                declareContractTestsOf(listOf(junitTag))
 
                 applyIntegrationTestConfiguration()
             }
@@ -412,6 +466,7 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
         useJUnitPlatform {
             excludeTags(JunitTag.DaemonsKGP.name)
         }
+        declareContractTests(kgpAllTestsContractDomains)
 
         applyIntegrationTestConfiguration()
     }
@@ -447,6 +502,8 @@ fun registerTestTask(junitTask: TaskConfiguration) = tasks.register<Test>(junitT
     }
 
     applyIntegrationTestConfiguration()
+
+    declareContractTestsOf(listOf(junitTask.junitTag))
 }
 
 if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
@@ -760,6 +817,7 @@ testing {
             targets.configureEach {
                 testTask.configure {
                     applyIntegrationTestConfiguration()
+                    declareContractTests(kgpAllTestsContractDomains)
 
                     if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
                         // Disabling test task as it does nothing

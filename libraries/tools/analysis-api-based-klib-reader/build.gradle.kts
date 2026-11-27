@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -26,6 +28,10 @@ projectTests {
     testData(isolated, "testData")
 
     testTask {
+        testFederation {
+            contractTestsFor(AnalysisApi)
+        }
+
         val testProjectKlib = configurations.create("testProjectKlib") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))

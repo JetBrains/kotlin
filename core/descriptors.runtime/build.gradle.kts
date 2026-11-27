@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -44,7 +47,10 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(maxHeapSize = testMaxHeapSizeLarge)
+    testTask(maxHeapSize = testMaxHeapSizeLarge) {
+        testFederation {
+            contractTestsFor(Jvm)
+        }
+    }
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
-

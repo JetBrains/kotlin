@@ -1,4 +1,6 @@
 import GeneratorInputKind.RuntimeClasspath
+import org.jetbrains.kotlin.testFederation.Domain.CoreLibs
+import org.jetbrains.kotlin.testFederation.testFederation
 import org.gradle.kotlin.dsl.embedded
 import org.gradle.kotlin.dsl.testRuntimeOnly
 
@@ -107,6 +109,10 @@ dependencies {
 projectTests {
     testTask {
         workingDir = rootDir
+
+        testFederation {
+            contractTestsFor(CoreLibs)
+        }
     }
 }
 

@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 description = "Lombok compiler plugin"
 
 plugins {
@@ -122,6 +126,9 @@ sourceSets {
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
 
         val prefix = "org.jetbrains.kotlin.test"
         addClasspathProperty(guavaClasspathForTests, "$prefix.guava")

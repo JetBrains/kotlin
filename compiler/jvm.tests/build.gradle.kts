@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -74,7 +76,11 @@ projectTests {
     testTask(
         defineJDKEnvVariables = environment,
         maxHeapSize = testMaxHeapSizeLarge,
-    )
+    ) {
+        testFederation {
+            smokeTests()
+        }
+    }
 
     testTask(
         "aggregateTests",
@@ -84,6 +90,10 @@ projectTests {
     ) {
         useJUnitPlatform {
             excludeTags("FirPsiCodegenTest")
+        }
+
+        testFederation {
+            smokeTests()
         }
     }
 

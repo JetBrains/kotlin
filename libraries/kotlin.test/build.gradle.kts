@@ -597,9 +597,7 @@ publishing {
 tasks.withType<Test>().configureEach {
     if (testFramework !is JUnitPlatformTestFramework) {
         testFederation {
-            // Not JUnit Platform, so Test Federation cannot select a subset of it
-            smokeTests { skip() }
-            contractTests { skip() }
+            notCompatibleWithTestFederation("Not JUnit Platform, so Test Federation cannot select a subset of it")
         }
     }
 }

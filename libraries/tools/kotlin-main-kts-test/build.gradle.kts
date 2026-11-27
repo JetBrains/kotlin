@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.testFederation.testFederation
 
 description = "Kotlin \"main\" script definition tests"
 
@@ -39,6 +40,11 @@ projectTests {
     testTask {
         dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
         workingDir = rootDir
+
+        testFederation {
+            smokeTests()
+        }
+
         val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
         doFirst {
             systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)

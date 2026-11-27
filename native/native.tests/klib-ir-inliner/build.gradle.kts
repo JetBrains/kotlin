@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
+import org.jetbrains.kotlin.testFederation.testFederation
 
 // KLIB-based Kotlin/Native tests which don't require platform libraries, so running them doesn't depend on building platform libraries.
 // Tests which require them belong to `:native:native.tests:klib-ir-inliner:withPlatformLibs`.
@@ -91,6 +93,10 @@ projectTests {
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
+
+        testFederation {
+            contractTestsFor(CommonBackend)
+        }
     }
 
     commonBackendTestTask("test")

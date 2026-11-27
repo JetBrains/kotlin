@@ -3,6 +3,8 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -136,6 +138,11 @@ tasks.withType<Test>().configureEach {
 val kotlinStdlibSourcesDir: File = file("$rootDir/libraries/stdlib")
 tasks.withType<Test>().configureEach {
     addDirectoryProperty(kotlinStdlibSourcesDir, "kotlinStdlibSourcesDir")
+
+    testFederation {
+        smokeTests()
+        contractTestsFor(AnalysisApi)
+    }
 }
 //endregion
 

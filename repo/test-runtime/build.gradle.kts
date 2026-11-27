@@ -1,8 +1,13 @@
+@file:OptIn(DelicateTestFederationApi::class)
+
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.Domain.Gradle
+import org.jetbrains.kotlin.testFederation.Domain.Js
+import org.jetbrains.kotlin.testFederation.Domain.Wasm
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.testFederation
@@ -51,26 +56,37 @@ tasks.test.configure {
         "JUnit5", null -> useJUnitPlatform {
             /* Fixtures are executed by the tests themselves and may fail deliberately */
             excludeTags("tests.fixture")
+            if (envBoolean("_EXCLUDE_SMOKE_TAG_")) {
+                excludeTags("smoke")
+            }
         }
         "JUnit4" -> useJUnit()
     }
 
-    /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
-    testFederation {
-        providers.environmentVariable("_SMOKE_TESTS_INCLUDE_ALL_").orNull?.let {
-            smokeTests { includeAll() }
-        }
-        providers.environmentVariable("_SKIP_SMOKES_").orNull?.let {
-            smokeTests { skip() }
-        }
-        providers.environmentVariable("_SKIP_CONTRACTS_").orNull?.let {
-            contractTests { skip() }
-        }
+    envString("_DOMAINS_OVERRIDE_")?.let { value ->
+        testFederationDomains = Domain.fromArgumentStringOrThrow(value)
     }
 
-    @OptIn(DelicateTestFederationApi::class)
-    providers.environmentVariable("_DOMAINS_OVERRIDE_").orNull?.let { value ->
-        testFederationDomains = Domain.fromArgumentStringOrThrow(value)
+    /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
+    testFederation {
+        if (envBoolean("_SMOKE_TESTS_INCLUDE_ALL_")) {
+            smokeTests { includeAll() }
+        }
+        if (envBoolean("_DECLARE_SMOKES_")) {
+            smokeTests()
+        }
+        if (envBoolean("_DECLARE_CONTRACTS_")) {
+            val contractedDomains = buildList {
+                addAll(listOf(Js, Wasm, Gradle))
+                if (!envBoolean("_DECLARE_OWN_DOMAIN_CONTRACTS_")) {
+                    removeAll(testFederationDomains.get())
+                }
+            }
+            contractTestsFor(*contractedDomains.toTypedArray())
+        }
+        if (envBoolean("_NOT_COMPATIBLE_WITH_TEST_FEDERATION_")) {
+            notCompatibleWithTestFederation("Just because")
+        }
     }
 
     testLogging {
@@ -81,6 +97,12 @@ tasks.test.configure {
         showStandardStreams = true
     }
 }
+
+fun envString(name: String): String? =
+    providers.environmentVariable(name).orNull
+
+fun envBoolean(name: String): Boolean =
+    envString(name).toBoolean()
 
 dependencies {
     compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))

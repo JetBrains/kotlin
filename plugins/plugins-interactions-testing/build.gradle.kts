@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
+import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.testFederation
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -64,6 +68,10 @@ projectTests {
         )
     ) {
         useJUnitPlatform()
+
+        testFederation {
+            contractTestsFor(Jvm, AnalysisApi)
+        }
 
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
         addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")

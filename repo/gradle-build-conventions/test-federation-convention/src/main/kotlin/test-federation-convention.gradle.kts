@@ -11,6 +11,9 @@ tasks.withType<Test>().configureEach {
     val formattedDomains = domains.map { it.toArgumentString() }
     val subsets = testFederationSubsets
     val formattedSubsets = subsets.map { it.toArgumentString() }
+    val declaredSubsets = extension.declaredSubsets
+    val notCompatibleReason = extension.notCompatibleReason
+    val allDeclaredSubsets = extension.allDeclaredSubsets
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
     inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
@@ -22,37 +25,43 @@ tasks.withType<Test>().configureEach {
     doFirst {
         val testFramework = testFramework
 
-        logger.quiet(buildFrame(
-            "Domain: ${domains.get()}",
-            "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
-        ))
+        logger.quiet(
+            buildFrame(
+                "Domain: ${domains.get()}",
+                "Test subsets: [${formattedSubsets.get().replace(",", ", ")}]",
+            )
+        )
         scan.value("$projectPath:${this.name} domain", domains.get().toString())
         scan.value("$projectPath:${this.name} test subsets", formattedSubsets.get())
 
         if (testFramework !is JUnitPlatformTestFramework) {
-            // Non-JUnit 5 tasks can't be split into subsets, so they must opt out of every partial subset
-            check(extension.smokeTests.skip.get() && extension.contractTests.skip.get()) {
-                buildString {
-                    appendLine("Unsupported 'testFramework' found for task '$path'")
-                    appendLine("  testFramework: ${testFramework.javaClass.simpleName}; expected: '${JUnitPlatformTestFramework::class.simpleName}'")
-                    appendLine("  solutions:")
-                    appendLine("     - Use the 'project-tests-convention' testTask")
-                    appendLine("     - Use JUnit 5 by calling 'useJUnitPlatform()'")
-                    appendLine("     - Opt out from every partial subset: 'testFederation { smokeTests { skip() }; contractTests { skip() } }'")
-                }
+            check(notCompatibleReason.isPresent) {
+                """
+                Unsupported test framework for task '$path'
+                
+                HOW TO FIX:
+                  - Migrate the task to JUnit 5+, or
+                  - Mark the task as 'notCompatibleWithTestFederation()'
+                """.trimIndent()
             }
         }
 
-        val shouldSkipTask = when {
-            setOf(SmokeTests).containsAll(subsets.get()) -> extension.smokeTests.skip.get()
-            contractSubsets.containsAll(subsets.get()) -> extension.contractTests.skip.get()
-            (contractSubsets + SmokeTests).containsAll(subsets.get()) -> {
-                extension.smokeTests.skip.get() && extension.contractTests.skip.get()
+        domains.get().map(::contractTestsSubsetOf).intersect(declaredSubsets.get())
+            .takeIf { it.isNotEmpty() }
+            ?.let { selfContracts ->
+                error(
+                    """
+                    Task '$path' declares the contract test subsets of its own domains: ${selfContracts.toArgumentString()}.
+                    
+                    HOW TO FIX:
+                      - Remove the respective susbet declarations from 'testFederation { }'
+                    """.trimIndent()
+                )
             }
-            else -> false
-        }
-        if (shouldSkipTask) {
-            val message = "The test task is disabled because all requested subsets are configured to skip()"
+
+        if (AllTests !in subsets.get() && notCompatibleReason.isPresent) {
+            val message = "Skipping tests because partial subset was requested and this task is not compatible with Test Federation, " +
+                    "reason: '${notCompatibleReason.get()}'"
             logger.quiet(message)
             throw StopExecutionException(message)
         }
@@ -71,6 +80,19 @@ tasks.withType<Test>().configureEach {
 
         systemProperty(TEST_FEDERATION_SUBSETS_KEY, formattedSubsets.get())
         environment(TEST_FEDERATION_SUBSETS_ENV_KEY, formattedSubsets.get())
+
+        systemProperty(TEST_FEDERATION_DECLARED_SUBSETS_KEY, allDeclaredSubsets.get().toArgumentString())
+        environment(TEST_FEDERATION_DECLARED_SUBSETS_ENV_KEY, allDeclaredSubsets.get().toArgumentString())
+
+        systemProperty(TEST_FEDERATION_TASK_PATH_KEY, path)
+        environment(TEST_FEDERATION_TASK_PATH_ENV_KEY, path)
+
+        val includeTags = testFramework.options.includeTags.joinToString(",")
+        val excludeTags = testFramework.options.excludeTags.joinToString(",")
+        systemProperty(TEST_FEDERATION_TASK_INCLUDE_TAGS_KEY, includeTags)
+        environment(TEST_FEDERATION_TASK_INCLUDE_TAGS_ENV_KEY, includeTags)
+        systemProperty(TEST_FEDERATION_TASK_EXCLUDE_TAGS_KEY, excludeTags)
+        environment(TEST_FEDERATION_TASK_EXCLUDE_TAGS_ENV_KEY, excludeTags)
 
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
