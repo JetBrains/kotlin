@@ -129,6 +129,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("breakLabel.kt")
+  public void testBreakLabel() {
+    run("breakLabel.kt");
+  }
+
+  @Test
   @TestMetadata("byteMinValueWithMinus.kt")
   public void testByteMinValueWithMinus() {
     run("byteMinValueWithMinus.kt");
@@ -198,6 +204,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   @TestMetadata("continueExpression.kt")
   public void testContinueExpression() {
     run("continueExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("continueLabel.kt")
+  public void testContinueLabel() {
+    run("continueLabel.kt");
   }
 
   @Test
@@ -276,6 +288,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   @TestMetadata("functionDeclaration.kt")
   public void testFunctionDeclaration() {
     run("functionDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitConstructorDelegationReference.kt")
+  public void testImplicitConstructorDelegationReference() {
+    run("implicitConstructorDelegationReference.kt");
   }
 
   @Test
@@ -408,6 +426,24 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
   @TestMetadata("javaEnhancedTypeExternalAnnotationAsTypeParameter.kt")
   public void testJavaEnhancedTypeExternalAnnotationAsTypeParameter() {
     run("javaEnhancedTypeExternalAnnotationAsTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("labelDefinition.kt")
+  public void testLabelDefinition() {
+    run("labelDefinition.kt");
+  }
+
+  @Test
+  @TestMetadata("labelReferenceInQualifiedSuper.kt")
+  public void testLabelReferenceInQualifiedSuper() {
+    run("labelReferenceInQualifiedSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("labelReferenceInQualifiedThis.kt")
+  public void testLabelReferenceInQualifiedThis() {
+    run("labelReferenceInQualifiedThis.kt");
   }
 
   @Test

@@ -1,0 +1,6 @@
+expression: '\n'
+constant: `
+`
+constantValueKind: CharValue
+constantValueSource: CHARACTER_CONSTANT
+constantValueSourceText: '\n'

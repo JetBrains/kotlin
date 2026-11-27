@@ -2602,6 +2602,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("functionTypeParameterDefaultValue.kt")
+    public void testFunctionTypeParameterDefaultValue() {
+      run("functionTypeParameterDefaultValue.kt");
+    }
+
+    @Test
     @TestMetadata("incompletePropertyWithAnnotation.kt")
     public void testIncompletePropertyWithAnnotation() {
       run("incompletePropertyWithAnnotation.kt");

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.getExpressionTypeByPsiOrNull
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferExpressionTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -49,7 +49,7 @@ internal class KaFirExpressionTypeProvider(
 ) : KaFirSessionComponent(), KaInternalsExpressionTypeProvider {
 
     override fun expressionType(expression: KtExpression): KaType? = expression.withPsiValidityAssertion {
-        expression.getExpressionTypeByPsiOrNull(noExpectedType = false, analysisSession = analysisSession)?.let { return it }
+        expression.inferExpressionTypeByPsi(mayHaveExpectedType = true, analysisSession = analysisSession)?.let { return it }
 
         val unwrappedElement = expression.unwrap()
 
@@ -66,20 +66,8 @@ internal class KaFirExpressionTypeProvider(
             }
         }
 
-        // There are various cases where we have no corresponding fir due to invalid code
-        // Some examples:
-        // ```
-        // when {
-        //   true, false -> {}
-        // }
-        // ```
-        // `false` does not have a corresponding element on the FIR side,
-        // and hence the containing `FirWhenBranch` is returned.
-        // ```
-        // @Volatile
-        // private var
-        // ```
-        // Volatile does not have a corresponding element, so `FirFileImpl` is returned
+        // For invalid code without FIR, such as the default value of a function type parameter, `getOrBuildFir` returns the FIR
+        // of an enclosing element, here `FirFunctionTypeParameter`.
         val fir = unwrappedElement.getOrBuildFir(resolutionFacade) ?: return null
         return try {
             getKtExpressionType(expression, fir)

@@ -1,0 +1,5 @@
+expression: 1e100f
+constant: Infinityf
+constantValueKind: FloatValue
+constantValueSource: FLOAT_CONSTANT
+constantValueSourceText: 1e100f
