@@ -70,8 +70,6 @@ FILE: dataOnVariousClasses.kt
         public final static val entries: R|kotlin/enums/EnumEntries<E>|
             public static get(): R|kotlin/enums/EnumEntries<E>|
 
-        public open override fun toString(): R|kotlin/String|
-
     }
     @R|lombok/Data|() public final annotation class Ann : R|kotlin/Annotation| {
         public constructor(s: R|kotlin/String|): R|Ann| {

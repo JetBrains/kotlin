@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -50,9 +52,22 @@ class LombokConstructorsGenerator(session: FirSession) :
     /**
      * A static factory is generated into the companion object, so a class that gets one needs a companion object to
      * hold it. A factory that would only be shadowed isn't generated, so it must not ask for an empty one either.
+     *
+     * The code inside almost duplicates [AbstractConstructorGeneratorPart.generatesStaticFactory],
+     * however due to possible phase violations, it seems too risky to reuse it here.
      */
     override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
-        parts.any { part -> part.generatesStaticFactory(owner) }
+        parts.any { part ->
+            val constructorInfo = part.getConstructorInfo(owner) ?: return@any false
+            when {
+                constructorInfo.staticName == null -> false
+                constructorInfo.accessLevel.toVisibility(owner) == null -> false
+                // Only regular classes may have static factory constructors (no objects/interfaces/enums/annotations)
+                owner.classKind != ClassKind.CLASS -> false
+                !owner.supportsGeneratedConstructor || owner.isInner -> false
+                else -> true
+            }
+        }
 
     private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::createConstructors)
@@ -72,7 +87,7 @@ class LombokConstructorsGenerator(session: FirSession) :
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
-        return cache.getValue(owner, context)?.filterIsInstance<FirNamedFunctionSymbol>().orEmpty()
+        return cache.getValue(owner, context)?.filter { it.callableId == callableId }?.filterIsInstance<FirNamedFunctionSymbol>().orEmpty()
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
@@ -83,7 +98,8 @@ class LombokConstructorsGenerator(session: FirSession) :
         return buildList {
             parts.forEach {
                 with(it) {
-                    addIfNonClashing(classSymbol, context)
+                    addConstructorOrFactoryIfNonClashing(classSymbol, context, privateConstructorMode = false)
+                    addConstructorOrFactoryIfNonClashing(classSymbol, context, privateConstructorMode = true)
                 }
             }
         }.takeIf { it.isNotEmpty() }?.map { it.symbol }

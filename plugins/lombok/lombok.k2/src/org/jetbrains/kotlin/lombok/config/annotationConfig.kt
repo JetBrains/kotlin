@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
@@ -20,6 +22,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
@@ -79,6 +83,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LEVEL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.MAKE_FINAL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.lombok.generators.containsExplicitConstructor
+import org.jetbrains.kotlin.lombok.generators.equalWhenResolved
 import org.jetbrains.kotlin.lombok.generators.primaryConstructorParameters
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -266,6 +271,29 @@ object ConeLombokAnnotations {
 
         fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
 
+        fun matchesGivenFunction(session: FirSession, classSymbol: FirClassSymbol<*>, functionSymbol: FirFunctionSymbol<*>): Boolean {
+            if (functionSymbol is FirNamedFunctionSymbol && functionSymbol.name.asString() != staticName) return false
+            return matchesFunctionParameters(session, classSymbol, functionSymbol)
+        }
+
+        fun hidesExplicitConstructor(session: FirSession, classSymbol: FirClassSymbol<*>, constructor: FirConstructor): Boolean {
+            if (staticName == null) return false
+            return matchesFunctionParameters(session, classSymbol, constructor.symbol)
+        }
+
+        @OptIn(SymbolInternals::class)
+        private fun matchesFunctionParameters(
+            session: FirSession, classSymbol: FirClassSymbol<*>, functionSymbol: FirFunctionSymbol<*>
+        ): Boolean {
+            val variables = getVariablesForParameters(classSymbol)
+            if (variables.size != functionSymbol.valueParameterSymbols.size) return false
+            return variables.zip(functionSymbol.valueParameterSymbols).all { [first, second] ->
+                first.returnTypeRef.equalWhenResolved(
+                    session, if (second.hasJavaOrigin) second.fir.returnTypeRef else second.resolvedReturnTypeRef
+                )
+            }
+        }
+
         fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
             return staticName == null && getVariablesForParameters(classSymbol).isEmpty()
         }
@@ -362,14 +390,17 @@ object ConeLombokAnnotations {
         fun asSetter(): Setter = Setter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
         fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
-        fun asRequiredArgsConstructor(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? =
-            runIf(!classSymbol.hasJavaOrigin || !containsExplicitConstructor(classSymbol)) {
+        fun asRequiredArgsConstructor(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
+            // Only for Java case with existing explicit constructor and without given static name,
+            // @Data does nothing with constructors
+            return runIf(!classSymbol.hasJavaOrigin || !containsExplicitConstructor(classSymbol) || staticConstructor != null) {
                 RequiredArgsConstructor(
                     accessLevel = AccessLevel.PUBLIC,
                     staticName = staticConstructor,
                     annotation = annotation,
                 )
             }
+        }
 
         fun toEqualsAndHashCode(): EqualsAndHashCode {
             return EqualsAndHashCode(null, null, annotation)
