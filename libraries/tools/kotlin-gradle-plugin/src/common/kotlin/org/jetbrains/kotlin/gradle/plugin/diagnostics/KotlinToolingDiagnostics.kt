@@ -2831,6 +2831,39 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object WasiCommandComponentWithoutMainFunction : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(wasmToolsMsg:String) = build {
+            title("The Wasm module has no main function")
+                .description {
+                    val hint = """
+                    It seems like the Wasm module has no main function, so `wasm-tools` can't make a WASI command component from it.
+                    
+                    You probably want to add a main function.
+                    
+                    Otherwise, if you either don't want to run the program,
+                    or want to export a custom entry point, change the WASI preview 1 adapter flavor
+                    to the reactor adapter (which does not require a main function) in the build script, like this:
+
+                        kotlinMultiplatform.wasmWasi {
+                            binaries.executable().forEach {
+                                (it as ExecutableWasmWasi).flavor.set(WasiAdapterFlavor.REACTOR)
+                            }
+                        }
+                    """.trimIndent()
+
+                    val fullMsg = "wasm-tools: ${wasmToolsMsg.indentLines(4)}\n" + hint
+
+                    // NOTE: IntelliJ cuts off the message at the first completely blank line, so ensure no lines are blank.
+                    //       "| " is somewhat arbitrary.
+                    fullMsg.trimIndent().lines().joinToString("\n") { "| $it" }
+                }
+                .solution("You probably want to add a main function or change the WASI preview 1 adapter flavor to the reactor adapter.")
+        }
+    }
+
     internal object PluginLoadedInMultipleProjectsError : ToolingDiagnosticFactory(
         ERROR,
         DiagnosticGroup.Kgp.Misconfiguration,
