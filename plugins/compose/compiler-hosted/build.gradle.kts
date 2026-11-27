@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.testFederation.Domain.AnalysisApi
 import org.jetbrains.kotlin.testFederation.Domain.CommonBackend
 import org.jetbrains.kotlin.testFederation.Domain.Js
 import org.jetbrains.kotlin.testFederation.Domain.Jvm
+import org.jetbrains.kotlin.testFederation.Domain.Native
 import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
@@ -203,7 +204,11 @@ projectTests {
         requirePlatformLibs = true,
         customTestDependencies = listOf(testNativeRuntime),
         compilerPluginDependencies = listOf(composePluginForNativeTests),
-    )
+    ) {
+        testFederation {
+            contractTestsFor(Native)
+        }
+    }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
 

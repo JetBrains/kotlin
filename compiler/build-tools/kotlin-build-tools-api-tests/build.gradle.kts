@@ -332,6 +332,11 @@ testing {
                         ) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 
+                            if (testTask.name == "testExample" || testTask.name == "testNative") {
+                                testFederation {
+                                    smokeTests()
+                                }
+                            }
                         }
                     }
                 }

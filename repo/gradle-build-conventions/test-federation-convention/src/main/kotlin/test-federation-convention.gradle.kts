@@ -87,6 +87,13 @@ tasks.withType<Test>().configureEach {
         systemProperty(TEST_FEDERATION_TASK_PATH_KEY, path)
         environment(TEST_FEDERATION_TASK_PATH_ENV_KEY, path)
 
+        val includeTags = testFramework.options.includeTags.joinToString(",")
+        val excludeTags = testFramework.options.excludeTags.joinToString(",")
+        systemProperty(TEST_FEDERATION_TASK_INCLUDE_TAGS_KEY, includeTags)
+        environment(TEST_FEDERATION_TASK_INCLUDE_TAGS_ENV_KEY, includeTags)
+        systemProperty(TEST_FEDERATION_TASK_EXCLUDE_TAGS_KEY, excludeTags)
+        environment(TEST_FEDERATION_TASK_EXCLUDE_TAGS_ENV_KEY, excludeTags)
+
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 

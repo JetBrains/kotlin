@@ -56,6 +56,9 @@ tasks.test.configure {
         "JUnit5", null -> useJUnitPlatform {
             /* Fixtures are executed by the tests themselves and may fail deliberately */
             excludeTags("tests.fixture")
+            if (envBoolean("_EXCLUDE_SMOKE_TAG_")) {
+                excludeTags("smoke")
+            }
         }
         "JUnit4" -> useJUnit()
     }

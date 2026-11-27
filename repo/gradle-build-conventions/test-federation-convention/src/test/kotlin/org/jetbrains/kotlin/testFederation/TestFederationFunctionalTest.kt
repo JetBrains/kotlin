@@ -208,6 +208,23 @@ class TestFederationFunctionalTest {
         assertContains(result.buildResult.output, "- ContractTestsForWasm")
     }
 
+    @ParameterizedTest
+    @EnumSource(TestSubset::class, names = ["AllTests", "ContractTestsForJs"])
+    fun `test - smokeTests not declared - smoke tests excluded by Gradle tags - runs`(subset: TestSubset) {
+        val result = runTestBuild(subset, declareSmokes = false, excludeSmokeTag = true)
+        val expectedTests = when (subset) {
+            AllTests -> setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
+            )
+            else -> setOf(TestResult("PseudoTest", "js contract test"))
+        }
+        assertEquals(expectedTests, result.executedTests)
+    }
+
     @Test
     fun `test - smokeTests not declared - test federation disabled - fails`() {
         val result = runTestBuild(AllTests, testFederationEnabled = false, declareSmokes = false, expectFailure = true)
@@ -841,6 +858,7 @@ private fun runTestBuild(
     smokeTestsIncludeAll: Boolean = false,
     declareSmokes: Boolean = true,
     declareContracts: Boolean = true,
+    excludeSmokeTag: Boolean = false,
     declareOwnDomainContracts: Boolean = false,
     notCompatibleWithTestFederation: Boolean = false,
     additionalCliArgs: List<String> = emptyList(),
@@ -859,6 +877,9 @@ private fun runTestBuild(
         }
         if (declareContracts) {
             this["_DECLARE_CONTRACTS_"] = "true"
+        }
+        if (excludeSmokeTag) {
+            this["_EXCLUDE_SMOKE_TAG_"] = "true"
         }
         if (declareOwnDomainContracts) {
             this["_DECLARE_OWN_DOMAIN_CONTRACTS_"] = "true"

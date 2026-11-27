@@ -13,6 +13,7 @@ import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.engine.TestTag
 import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.PostDiscoveryFilter
+import org.junit.platform.launcher.TagFilter
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.absoluteValue
 
@@ -22,7 +23,9 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
         val source = descriptor.source.getOrNull() as? MethodSource ?: return included("Not a method-based test")
         val test = FederatedTest(descriptor, source)
 
-        checkSubsetDeclarations(test)
+        if (!isExcludedByTaskTags(descriptor)) {
+            checkSubsetDeclarations(test)
+        }
 
         if (AllTests in requestedSubsets) {
             return included("Selected by AllTests")
@@ -42,6 +45,10 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
         }
         return excluded("Not selected plain test")
     }
+
+    private fun isExcludedByTaskTags(descriptor: TestDescriptor): Boolean =
+        taskIncludeTagsFilter?.apply(descriptor)?.excluded() == true ||
+                taskExcludeTagsFilter?.apply(descriptor)?.excluded() == true
 
     private class FederatedTest(
         val descriptor: TestDescriptor,
@@ -117,6 +124,8 @@ private fun TestSubset.gradleDeclaration(): String =
         }
     }
 
+private val taskIncludeTagsFilter = testFederationTaskIncludeTags?.let(TagFilter::includeTags)
+private val taskExcludeTagsFilter = testFederationTaskExcludeTags?.let(TagFilter::excludeTags)
 private val smokeTag = TestTag.create("smoke")
 private val selfContracts = testFederationDomains.map(::contractTestsSubsetOf).toSet()
 private val testFederationDomainsByContractSubset = Domain.entries.associateBy(::contractTestsSubsetOf)

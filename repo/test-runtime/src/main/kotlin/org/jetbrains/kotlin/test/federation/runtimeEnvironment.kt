@@ -15,6 +15,10 @@ internal const val TEST_FEDERATION_DECLARED_SUBSETS_KEY = "test.federation.decla
 internal const val TEST_FEDERATION_DECLARED_SUBSETS_ENV_KEY = "TEST_FEDERATION_DECLARED_SUBSETS"
 internal const val TEST_FEDERATION_TASK_PATH_KEY = "test.federation.task.path"
 internal const val TEST_FEDERATION_TASK_PATH_ENV_KEY = "TEST_FEDERATION_TASK_PATH"
+internal const val TEST_FEDERATION_TASK_INCLUDE_TAGS_KEY = "test.federation.task.include.tags"
+internal const val TEST_FEDERATION_TASK_INCLUDE_TAGS_ENV_KEY = "TEST_FEDERATION_TASK_INCLUDE_TAGS"
+internal const val TEST_FEDERATION_TASK_EXCLUDE_TAGS_KEY = "test.federation.task.exclude.tags"
+internal const val TEST_FEDERATION_TASK_EXCLUDE_TAGS_ENV_KEY = "TEST_FEDERATION_TASK_EXCLUDE_TAGS"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
 const val TEST_FEDERATION_DOMAINS_KEY = "test.federation.domains"
@@ -54,6 +58,19 @@ internal val testFederationDeclaredSubsets: Set<TestSubset> =
 internal val testFederationTaskPath: String =
     resolve(TEST_FEDERATION_TASK_PATH_KEY, TEST_FEDERATION_TASK_PATH_ENV_KEY) ?: "<unknown>"
 
+internal val testFederationTaskIncludeTags: List<String>? =
+    tagExpressions(TEST_FEDERATION_TASK_INCLUDE_TAGS_KEY, TEST_FEDERATION_TASK_INCLUDE_TAGS_ENV_KEY)
+
+internal val testFederationTaskExcludeTags: List<String>? =
+    tagExpressions(TEST_FEDERATION_TASK_EXCLUDE_TAGS_KEY, TEST_FEDERATION_TASK_EXCLUDE_TAGS_ENV_KEY)
+
+private fun tagExpressions(key: String, envKey: String): List<String>? =
+    resolve(key, envKey)
+        ?.split(",")
+        ?.map(String::trim)
+        ?.filter(String::isNotEmpty)
+        ?.takeIf(List<String>::isNotEmpty)
+
 private fun String.toTestSubsets(): Set<TestSubset> {
     val trimmed = trim()
     return when {
@@ -77,4 +94,3 @@ internal val autoSmokeTestPercentage: Int = run {
 
 private fun resolve(key: String, envKey: String): String? =
     System.getProperty(key) ?: System.getenv(envKey)
-
