@@ -453,6 +453,20 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object MavenPublicationIgnoredForTargetInKotlinArchive : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(targetName: String, trace: Throwable) = build(throwable = trace) {
+            title("Target Maven Publication Configuration Is Ignored")
+                .description(
+                    """
+                            |Target '$targetName' is published as part of Kotlin archive (.kar). 
+                            |Kotlin Gradle Plugin does not create a dedicated Maven publication for this target.
+                            |The 'mavenPublication {}' call for this target has no effect. 
+                            """.trimMargin()
+                )
+                .solution("Configure the root 'kotlinMultiplatform' publication, or remove the 'mavenPublication {}' call.")
+        }
+    }
+
     object UnsupportedKotlinArchiveUsage : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             libraries: Collection<File>,

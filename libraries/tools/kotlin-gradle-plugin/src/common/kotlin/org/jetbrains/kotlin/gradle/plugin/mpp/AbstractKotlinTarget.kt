@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
@@ -180,6 +182,12 @@ abstract class AbstractKotlinTarget(
         .domainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
 
     override fun mavenPublication(action: Action<MavenPublication>) {
+        val trace = Throwable()
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+            if (isStoredInKotlinArchive.get()) {
+                project.reportDiagnostic(KotlinToolingDiagnostics.MavenPublicationIgnoredForTargetInKotlinArchive(targetName, trace))
+            }
+        }
         publicationConfigureActions.add(action)
     }
 
