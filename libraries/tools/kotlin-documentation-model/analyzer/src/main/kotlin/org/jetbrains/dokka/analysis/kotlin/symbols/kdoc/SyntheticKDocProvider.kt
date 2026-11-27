@@ -75,11 +75,11 @@ internal fun getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJava
 context(_: KaSession)
 private fun loadTemplate(filePath: String): DocumentationNode {
     val kdoc = loadContent(filePath) ?: throw IllegalArgumentException("Template file not found: $filePath")
-    val externalDriProvider = { link: String ->
-        resolveKDocTextLinkToDRI(link)
+    val externalDeclarationIdProvider = { link: String ->
+        resolveKDocTextLinkToDeclarationId(link)
     }
 
-    val parser = MarkdownParser(externalDriProvider, filePath)
+    val parser = MarkdownParser(externalDeclarationIdProvider, filePath)
     return parser.parse(kdoc)
 }
 

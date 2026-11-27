@@ -23,7 +23,6 @@ import org.jetbrains.dokka.analysis.java.doccomment.JavaDocComment
 import org.jetbrains.dokka.analysis.java.parsers.doctag.PsiDocTagParser
 import org.jetbrains.dokka.analysis.java.util.*
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.Deprecated
 
@@ -133,12 +132,12 @@ internal class JavaPsiDocCommentParser(
         useSite: PsiElement
     ): Throws {
         val resolvedElement = tag.resolveToElement()
-        val exceptionAddress = resolvedElement?.let { DRI.from(it, useSite) }
+        val exceptionAddress = resolvedElement?.let { declarationIdFrom(it, useSite) }
 
         /* we always would like to have a fully qualified name as name,
          * because it will be used as a display name later and we would like to have those unified
          * even if documentation states shortened version
-         * Only if dri search fails we should use the provided phrase (since then we are not able to get a fq name)
+         * Only if ID resolution fails we should use the provided phrase (since then we are not able to get a fq name)
          */
         val fullyQualifiedExceptionName =
             resolvedElement?.getKotlinFqName() ?: tag.dataElements.firstOrNull()?.text.orEmpty()
@@ -227,7 +226,7 @@ internal class JavaPsiDocCommentParser(
         return See(
             root = wrapTagIfNecessary(docTags),
             name = fullyQualifiedSeeReference,
-            address = referenceElement?.toDocumentationLink(context = context, sourceSet = sourceSet)?.dri
+            address = referenceElement?.toDocumentationLink(context = context, sourceSet = sourceSet)?.declarationId
         )
     }
 
@@ -275,10 +274,10 @@ internal class JavaPsiDocCommentParser(
     }
 
     private fun PsiElement.toDocumentationLink(labelElement: PsiElement? = null, context: CommentResolutionContext, sourceSet: DokkaSourceSet): DocumentationLink? {
-        val resolvedElement = this.resolveToGetDri() ?: return null
-        val dri = DRI.from(resolvedElement, this) ?: return null
+        val resolvedElement = this.resolveToGetDeclarationId() ?: return null
+        val declarationId = declarationIdFrom(resolvedElement, this) ?: return null
         val label = labelElement ?: defaultLabel()
         val docTags = psiDocTagParser.parse(listOfNotNull(label), context, sourceSet)
-        return DocumentationLink(dri = dri, children = docTags)
+        return DocumentationLink(declarationId = declarationId, children = docTags)
     }
 }

@@ -4,9 +4,9 @@
 
 package org.jetbrains.dokka.model
 
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 
-internal fun DRI.isJvmName(): Boolean = packageName == "kotlin.jvm" && classNames == "JvmName"
+internal val JVM_NAME_DECLARATION_ID = KdElementId("kotlin.jvm/JvmName")
 
 @Suppress("unused")
-internal fun Annotations.Annotation.isJvmName(): Boolean = dri.isJvmName()
+internal fun Annotations.Annotation.isJvmName(): Boolean = classLikeId == JVM_NAME_DECLARATION_ID

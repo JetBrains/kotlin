@@ -6,11 +6,15 @@ package org.jetbrains.dokka.model
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
+import org.jetbrains.kotlin.documentation.KdElementId
 
-internal data class InheritedMember(val inheritedFrom: SourceSetDependent<DRI?>) : ExtraProperty<Documentable> {
+/**
+ * Marks a member that is not declared in the classlike it is listed under, but inherited from another one.
+ * [inheritedFrom] maps a source set to the [Documentable.declarationId] of the classlike that declares the member.
+ */
+internal data class InheritedMember(val inheritedFrom: SourceSetDependent<KdElementId?>) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, InheritedMember> {
         override fun mergeStrategyFor(left: InheritedMember, right: InheritedMember): MergeStrategy<Documentable> = MergeStrategy.Replace(
             InheritedMember(left.inheritedFrom + right.inheritedFrom)
@@ -57,9 +61,9 @@ internal object ObviousMember : ExtraProperty<Documentable>, ExtraProperty.Key<D
  * - Kotlin companion extensions
  *   (see [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md))
  *
- * The same condition is reflected in the [org.jetbrains.dokka.links.Callable.isCompanion]
- * field of the [DRI] so that companion and instance callables with the same name
- * can be distinguished by their DRI signature.
+ * The same condition participates in the callable's declaration-ID signature
+ * (see `generateDeclarationId` in `org.jetbrains.kotlin.documentation.analyzer.ids`), so companion and
+ * instance callables with the same name get different IDs.
  */
 @ExperimentalDokkaApi
 internal object IsCompanion : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, IsCompanion> {
@@ -85,7 +89,7 @@ internal data class IsAlsoParameter(val inSourceSets: List<DokkaSourceSet>) : Ex
     override val key: ExtraProperty.Key<DProperty, *> = IsAlsoParameter
 }
 
-internal data class CheckedExceptions(val exceptions: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
+internal data class CheckedExceptions(val exceptions: SourceSetDependent<List<KdElementId>>) : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
     companion object : ExtraProperty.Key<Documentable, CheckedExceptions> {
         override fun mergeStrategyFor(left: CheckedExceptions, right: CheckedExceptions): MergeStrategy<Documentable> =
             MergeStrategy.Replace(CheckedExceptions(left.exceptions + right.exceptions))

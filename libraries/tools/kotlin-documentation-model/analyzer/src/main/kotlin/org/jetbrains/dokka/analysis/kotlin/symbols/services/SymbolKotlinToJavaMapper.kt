@@ -4,35 +4,19 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.services
 
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.analysis.kotlin.internal.KotlinToJavaService
+import org.jetbrains.kotlin.documentation.analyzer.ids.classIdFromDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.escape
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap // see https://github.com/Kotlin/dokka/issues/3226
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.documentation.KdElementId
 
 /**
  * This is copy-pasted from org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.impl.DescriptorKotlinToJavaMapper
  */
 internal class SymbolKotlinToJavaMapper : KotlinToJavaService {
 
-    override fun findAsJava(kotlinDri: DRI): DRI? {
-        return kotlinDri.partialFqName().mapToJava()?.toDRI(kotlinDri)
+    override fun findAsJava(kotlinDeclarationId: KdElementId): KdElementId? {
+        val classId = classIdFromDeclarationId(kotlinDeclarationId)
+        return JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())?.let { KdElementId(it.escape()) }
     }
-
-    private fun DRI.partialFqName() = packageName?.let { "$it." } + classNames
-
-    private fun String.mapToJava(): ClassId? =
-        JavaToKotlinClassMap.mapKotlinToJava(FqName(this).toUnsafe())
-
-    private fun ClassId.toDRI(dri: DRI?): DRI = DRI(
-        packageName = packageFqName.asString(),
-        classNames = classNames(),
-        callable = dri?.callable,//?.asJava(), TODO: check this
-        extra = null,
-        target = PointingToDeclaration
-    )
-
-    private fun ClassId.classNames(): String =
-        shortClassName.identifier + (outerClassId?.classNames()?.let { ".$it" } ?: "")
 }

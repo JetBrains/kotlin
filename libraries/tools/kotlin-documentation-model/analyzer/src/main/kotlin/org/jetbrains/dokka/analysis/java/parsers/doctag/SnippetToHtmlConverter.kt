@@ -14,9 +14,8 @@ import com.intellij.psi.javadoc.PsiSnippetAttribute
 import com.intellij.psi.javadoc.PsiSnippetDocTag
 import com.intellij.psi.javadoc.PsiSnippetDocTagBody
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.analysis.java.util.from
 import org.jetbrains.dokka.analysis.java.util.getLocation
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.analysis.java.util.declarationIdFrom
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.htmlEscape
 import java.io.File
@@ -384,14 +383,14 @@ internal class DefaultSnippetToHtmlConverter(
             return null
         }
 
-        val dri = DRI.from(resolvedTarget, context) ?: run {
+        val declarationId = declarationIdFrom(resolvedTarget, context) ?: run {
             logger.warn("target '$target' in @link markup tag cannot be resolved")
             return null
         }
-        val driId = docTagParserContext.store(dri)
+        val id = docTagParserContext.store(declarationId)
 
         fun String.wrapInLink(): String =
-            """<a data-dri="${driId.htmlEscape()}" dokka-internal>$this</a dokka-internal>"""
+            """<a data-declaration-id="${id.htmlEscape()}" dokka-internal>$this</a dokka-internal>"""
 
         return TypedMarkupOperation(
             MarkupOperationType.LINK

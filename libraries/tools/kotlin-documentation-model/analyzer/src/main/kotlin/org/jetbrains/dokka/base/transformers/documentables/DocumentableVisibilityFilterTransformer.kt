@@ -9,6 +9,7 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 
 internal class DocumentableVisibilityFilterTransformer(
     val context: DokkaContext
@@ -93,7 +94,7 @@ internal class DocumentableVisibilityFilterTransformer(
                     else -> {
                         packagesListChanged = true
                         DPackage(
-                            it.dri,
+                            it.declarationId,
                             functions,
                             properties,
                             classlikes,
@@ -125,7 +126,7 @@ internal class DocumentableVisibilityFilterTransformer(
             alternativeCondition: (T, DokkaSourceSet) -> Boolean = ::alwaysFalse
         ) where T : Documentable, T : WithVisibility =
             sourceSets.filter { d ->
-                visibilityForPlatform(d)?.isAllowedInPackage(dri.packageName) == true &&
+                visibilityForPlatform(d)?.isAllowedInPackage(declarationIdToPackageName(declarationId)) == true &&
                         additionalCondition(this, d) ||
                         alternativeCondition(this, d)
             }.toSet()
@@ -178,8 +179,8 @@ internal class DocumentableVisibilityFilterTransformer(
             }
 
         private fun hasVisibleAccessorsForPlatform(property: DProperty, data: DokkaSourceSet) =
-            property.getter?.visibilityForPlatform(data)?.isAllowedInPackage(property.dri.packageName) == true ||
-                    property.setter?.visibilityForPlatform(data)?.isAllowedInPackage(property.dri.packageName) == true
+            property.getter?.visibilityForPlatform(data)?.isAllowedInPackage(declarationIdToPackageName(property.declarationId)) == true ||
+                    property.setter?.visibilityForPlatform(data)?.isAllowedInPackage(declarationIdToPackageName(property.declarationId)) == true
 
         private fun filterProperties(
             properties: List<DProperty>,
@@ -240,7 +241,7 @@ internal class DocumentableVisibilityFilterTransformer(
                     val classlikes = filterClasslikes(entry.classlikes) { _, data -> data in intersection }
 
                     DEnumEntry(
-                        entry.dri,
+                        entry.declarationId,
                         entry.name,
                         entry.documentation.filtered(intersection),
                         entry.expectPresentInSet.filtered(filteredPlatforms),

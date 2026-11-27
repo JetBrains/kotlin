@@ -9,6 +9,7 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.CustomTagWrapper
@@ -169,7 +170,7 @@ internal class SinceKotlinTransformer(
     }
 
     private fun List<Annotations.Annotation>.findSinceKotlinAnnotation(): Annotations.Annotation? =
-        this.find { it.dri.packageName == "kotlin" && it.dri.classNames == "SinceKotlin" }
+        this.find { it.classLikeId == KdElementId("kotlin/SinceKotlin") }
 
     private fun Documentable.getVersion(sourceSet: DokkaConfiguration.DokkaSourceSet): SinceKotlinVersion {
         val annotatedVersion =

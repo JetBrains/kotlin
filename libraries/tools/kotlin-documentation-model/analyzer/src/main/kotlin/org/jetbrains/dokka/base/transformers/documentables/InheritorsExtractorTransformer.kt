@@ -5,8 +5,8 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -16,8 +16,8 @@ internal class InheritorsExtractorTransformer : DocumentableTransformer {
     override fun invoke(original: DModule, context: DokkaContext): DModule =
         original.generateInheritanceMap().let { inheritanceMap -> original.appendInheritors(inheritanceMap) as DModule }
 
-    private fun <T : Documentable> T.appendInheritors(inheritanceMap: Map<DokkaSourceSet, Map<DRI, List<DRI>>>): Documentable =
-        InheritorsInfo(inheritanceMap.getForDRI(dri)).let { info ->
+    private fun <T : Documentable> T.appendInheritors(inheritanceMap: Map<DokkaSourceSet, Map<KdElementId, List<KdElementId>>>): Documentable =
+        InheritorsInfo(inheritanceMap.getForId(declarationId)).let { info ->
             when (this) {
                 is DModule -> copy(packages = packages.map { it.appendInheritors(inheritanceMap) as DPackage })
                 is DPackage -> copy(classlikes = classlikes.map { it.appendInheritors(inheritanceMap) as DClasslike })
@@ -50,9 +50,9 @@ internal class InheritorsExtractorTransformer : DocumentableTransformer {
 
     private fun InheritorsInfo.isNotEmpty() = this.value.values.fold(0) { acc, list -> acc + list.size } > 0
 
-    private fun Map<DokkaSourceSet, Map<DRI, List<DRI>>>.getForDRI(dri: DRI) =
+    private fun Map<DokkaSourceSet, Map<KdElementId, List<KdElementId>>>.getForId(declarationId: KdElementId) =
         map { (v, k) ->
-            v to k[dri]
+            v to k[declarationId]
         }.associate { (k, v) -> k to v.orEmpty() }
 
     private fun DModule.generateInheritanceMap() =
@@ -62,18 +62,18 @@ internal class InheritorsExtractorTransformer : DocumentableTransformer {
                     .groupBy({ it.first }) { it.second }.map { (k2, v2) -> k2 to v2.flatten() }.toMap()
             }.filter { it.second.values.isNotEmpty() }.toMap()
 
-    private fun <T : Documentable> T.getInheritanceEntriesRec(): List<Pair<DokkaSourceSet, List<Pair<DRI, DRI>>>> =
+    private fun <T : Documentable> T.getInheritanceEntriesRec(): List<Pair<DokkaSourceSet, List<Pair<KdElementId, KdElementId>>>> =
         this.toInheritanceEntries() + children.flatMap { it.getInheritanceEntriesRec() }
 
     private fun <T : Documentable> T.toInheritanceEntries() =
         (this as? WithSupertypes)?.let {
-            it.supertypes.map { (k, v) -> k to v.map { it.typeConstructor.dri to dri } }
+            it.supertypes.map { (k, v) -> k to v.map { it.typeConstructor.declarationId to declarationId } }
         }.orEmpty()
 
 }
 
 internal class InheritorsInfo(
-    val value: SourceSetDependent<List<DRI>>
+    val value: SourceSetDependent<List<KdElementId>>
 ) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, InheritorsInfo> {
         override fun mergeStrategyFor(left: InheritorsInfo, right: InheritorsInfo): MergeStrategy<Documentable> =

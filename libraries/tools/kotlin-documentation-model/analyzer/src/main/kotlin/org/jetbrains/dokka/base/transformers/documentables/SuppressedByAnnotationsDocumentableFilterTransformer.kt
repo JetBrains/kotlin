@@ -6,6 +6,8 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.sourceSet
@@ -20,7 +22,10 @@ internal class SuppressedByAnnotationsDocumentableFilterTransformer(
 
         val annotations = (d as? WithExtraProperties<*>)?.annotations() ?: return false
         return annotations.any { annotation ->
-            val fqName = listOfNotNull(annotation.dri.packageName, annotation.dri.classNames).joinToString(".")
+            val fqName = listOfNotNull(
+                declarationIdToPackageName(annotation.classLikeId).ifEmpty { null },
+                declarationIdToClassNames(annotation.classLikeId)
+            ).joinToString(".")
             fqName in suppressAnnotatedWith
         }
     }

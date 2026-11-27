@@ -70,7 +70,7 @@ private class ContextModuleAndPackageDocumentationReader(
 
     override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> {
         return findDocumentationNodes(pkg.sourceSets) { fragment ->
-            fragment.classifier == Classifier.Package && fragment.canonicalPackageName == pkg.dri.packageName
+            fragment.classifier == Classifier.Package && fragment.canonicalPackageName == pkg.packageName
         }
     }
 

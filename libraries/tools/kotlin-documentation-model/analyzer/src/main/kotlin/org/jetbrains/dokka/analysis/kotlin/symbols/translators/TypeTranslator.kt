@@ -9,7 +9,9 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator.Companion.getPresentableName
 import org.jetbrains.dokka.analysis.kotlin.symbols.utils.filterOutAny
 import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.analyzer.ids.UNRESOLVED_DECLARATION_ID
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.escape
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -19,16 +21,13 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
-
-internal const val ERROR_CLASS_NAME = "<ERROR CLASS>"
+import org.jetbrains.kotlin.documentation.analyzer.ids.generateOwnerDeclarationId
 
 internal class Location(private val symbol: KaSymbol) {
     context(_: KaSession)
     fun computePath(): String {
         val psi: PsiElement? = symbol.sourcePsiSafe<PsiElement>()
-        return if (psi != null)
-            getLocation(psi) ?: getDRIFromSymbol(symbol).toString()
-        else getDRIFromSymbol(symbol).toString()
+        return psi?.let { getLocation(it) ?: symbol.toString() } ?: symbol.toString()
     }
 }
 
@@ -72,7 +71,7 @@ internal class TypeTranslator(
                 typeAlias = asNullableIfMarked(
                     abbreviationType,
                     bound = GenericTypeConstructor(
-                        dri = getDRIFromClassType(abbreviationType),
+                        declarationId = KdElementId(abbreviationType.classId.escape()),
                         projections = abbreviationType.typeArguments.map { toProjection(it, location) }
                     )
                 ),
@@ -87,7 +86,7 @@ internal class TypeTranslator(
     context(_: KaSession)
     private fun toTypeConstructorFrom(classType: KaClassType, location: Location) =
         GenericTypeConstructor(
-            dri = getDRIFromClassType(classType),
+            declarationId = KdElementId(classType.classId.escape()),
             projections = classType.typeArguments.map { toProjection(it, location) },
             presentableName = classType.getPresentableName(),
             extra = PropertyContainer.withAll(
@@ -97,7 +96,7 @@ internal class TypeTranslator(
 
     context(_: KaSession)
     private fun toFunctionalTypeConstructorFrom(functionalType: KaFunctionType, location: Location) = FunctionalTypeConstructor(
-        dri = getDRIFromClassType(functionalType),
+        declarationId = KdElementId(functionalType.classId.escape()),
         projections = functionalType.typeArguments.map { toProjection(it, location) },
         isExtensionFunction = functionalType.receiverType != null,
         isSuspendable = functionalType.isSuspend,
@@ -123,7 +122,9 @@ internal class TypeTranslator(
         when (type) {
             is KaUsualClassType -> toTypeConstructorFrom(type, location)
             is KaTypeParameterType -> TypeParameter(
-                dri = getDRIFromTypeParameter(type.symbol),
+                containerDeclarationId = type.symbol.containingSymbol?.let { generateOwnerDeclarationId(it) } ?: error(
+                    "Type parameter $type has no containing symbol"
+                ),
                 name = type.name.asString(),
                 presentableName = type.getPresentableName(),
                 extra = PropertyContainer.withAll(
@@ -197,7 +198,7 @@ internal class TypeTranslator(
             @OptIn(KaNonPublicApi::class)
             TypeConstructorWithKind(
                 GenericTypeConstructor(
-                    dri = DRI(packageName = "", classNames = type.presentableText ?: "$ERROR_CLASS_NAME $type"),
+                    declarationId = UNRESOLVED_DECLARATION_ID,
                     projections = emptyList(),
 
                     ),

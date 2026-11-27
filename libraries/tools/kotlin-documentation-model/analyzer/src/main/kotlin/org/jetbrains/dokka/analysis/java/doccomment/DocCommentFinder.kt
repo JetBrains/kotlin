@@ -9,6 +9,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.dokka.InternalDokkaApi
+import org.jetbrains.dokka.analysis.java.util.declarationIdFrom
 import org.jetbrains.dokka.utilities.DokkaLogger
 
 @InternalDokkaApi
@@ -46,8 +47,8 @@ internal class DocCommentFinder(
         }
 
         logger.debug(
-            "Conflicting documentation for ${method.name}" +
-                    "${superMethods.map { it.name }}"
+            "Conflicting documentation for ${declarationIdFrom(method, method)}" +
+                    "${superMethods.map { declarationIdFrom(it, method) }}"
         )
 
         /* Prioritize super class over interface */

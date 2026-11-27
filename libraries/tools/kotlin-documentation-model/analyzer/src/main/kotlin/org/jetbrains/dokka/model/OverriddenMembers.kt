@@ -5,13 +5,13 @@
 
 package org.jetbrains.dokka.model
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
+import org.jetbrains.kotlin.documentation.KdElementId
 
-/** Identifiers of directly overridden declarations, by source set. */
+/** [Declaration IDs][org.jetbrains.dokka.model.Documentable.declarationId] of directly overridden declarations, by source set. */
 internal data class OverriddenMembers(
-    val members: SourceSetDependent<List<DRI>>,
+    val members: SourceSetDependent<List<KdElementId>>,
 ) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, OverriddenMembers> {
         override fun mergeStrategyFor(left: OverriddenMembers, right: OverriddenMembers): MergeStrategy<Documentable> =

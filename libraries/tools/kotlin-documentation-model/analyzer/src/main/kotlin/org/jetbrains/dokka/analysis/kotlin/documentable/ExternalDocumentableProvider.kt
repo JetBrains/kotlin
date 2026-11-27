@@ -5,8 +5,8 @@
 package org.jetbrains.dokka.analysis.kotlin.documentable
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 
@@ -24,12 +24,12 @@ import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
  *
  * For example, it can help you find a class that comes from a dependency, which can be useful
  * if you want to get more information about a supertype of the project's class,
- * because [DClass.supertypes] only provides the supertype's DRI, but not its full documentable.
+ * because [DClass.supertypes] only provides the supertype's declaration ID, but not its full documentable.
  *
  * It is expected to work with all languages supported by the analysis implementation,
  * meaning it should return Java classes if Java as an input language is supported.
  *
- * If you query DRIs of local project declarations (not external), it should generally work, although
+ * If you query IDs of local project declarations (not external), it should generally work, although
  * it's not guaranteed that the returned value will be 100% equal to that provided by Dokka by default.
  *
  * Note: because classpath entries consist of compiled code, the returned documentables may have some
@@ -39,16 +39,16 @@ import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 internal interface ExternalDocumentableProvider {
 
     /**
-     * Returns a valid and fully initialized [DClasslike] if the [dri] points to a class-like
+     * Returns a valid and fully initialized [DClasslike] if the [declarationId] points to a class-like
      * declaration (annotation, class, enum, interface, object) that can be found among
      * [DokkaSourceSet.classpath] entries.
      *
-     * If the [dri] points to a non-class-like declaration (like a function),
+     * If the [declarationId] points to a non-class-like declaration (like a function),
      * or the declaration cannot be found, it returns `null`.
      *
      * Note: the implementation is not expected to cache results or return pre-computed values, so
      * it may need to analyze parts of the project and instantiate new documentables on every invocation.
      * Use this function sparingly, and cache results on your side if you need to.
      */
-    fun getClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike?
+    fun getClasslike(declarationId: KdElementId, sourceSet: DokkaSourceSet): DClasslike?
 }

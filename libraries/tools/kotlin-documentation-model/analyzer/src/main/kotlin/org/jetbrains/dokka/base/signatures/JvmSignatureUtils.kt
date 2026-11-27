@@ -5,7 +5,6 @@
 package org.jetbrains.dokka.base.signatures
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
@@ -42,16 +41,5 @@ internal interface JvmSignatureUtils {
     }
 
 
-
-    infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
-        val parameterDris = parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds }
-        val receiverDris =
-            listOfNotNull(
-                receiver?.dri,
-                *receiver?.type?.drisOfAllNestedBounds?.toTypedArray() ?: emptyArray()
-            )
-        val allDris = parameterDris + receiverDris
-        return typeParameter.dri in allDris
-    }
 
 }

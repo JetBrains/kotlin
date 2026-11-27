@@ -8,8 +8,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.dokka.InternalDokkaApi
-import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
-import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.DocumentableSource
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
@@ -19,6 +17,8 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.generateDeclarationId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,7 +29,7 @@ internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
     get() = generateSequence(this) { if (it is PsiFile) null else it.parent }
 
 /**
- * Creates a [DRI] for the given resolved [psi] element using Analysis API symbols exclusively,
+ * The declaration ID of the given resolved [psi] element, built via Analysis API symbols exclusively,
  * or `null` if no symbol can be obtained for [psi].
  *
  * Requires an ambient [KaSession] which must see [psi] (for binary declarations,
@@ -38,9 +38,9 @@ internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
  * yield `null`.
  */
 context(_: KaSession)
-internal fun DRI.Companion.from(psi: PsiElement): DRI? {
+internal fun declarationIdFrom(psi: PsiElement): KdElementId? {
     val symbol = psi.toKaSymbol() ?: return null
-    return getDRIFromSymbol(symbol)
+    return generateDeclarationId(symbol)
 }
 
 /**
@@ -48,8 +48,8 @@ internal fun DRI.Companion.from(psi: PsiElement): DRI? {
  * the analysis is performed from [useSite]'s module instead.
  * [useSite] must be an element from a source file (a doc tag, an annotation, etc.).
  */
-internal fun DRI.Companion.from(psi: PsiElement, useSite: PsiElement): DRI? =
-    analyze(useSite) { from(psi) }
+internal fun declarationIdFrom(psi: PsiElement, useSite: PsiElement): KdElementId? =
+    analyze(useSite) { declarationIdFrom(psi) }
 
 /**
  * Returns a [KaSymbol] corresponding to the given [PsiElement].
@@ -120,7 +120,7 @@ private fun PsiClass.classIdOrNull(): ClassId? {
  * For source members, [org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol] is used;
  * other out-of-scope PSI (e.g. a source class of another source set) yields no symbol.
  *
- * Java enum constants are represented by [KaEnumEntrySymbol], so their DRI is generated
+ * Java enum constants are represented by [KaEnumEntrySymbol], so their declaration ID is generated
  * the same way as for Kotlin enum entries.
  */
 context(_: KaSession)

@@ -41,7 +41,7 @@ internal class KotlinDocCommentParser(
         return analyze(kotlinAnalysis.getModule(sourceSet)) {
             parseFromKDocTag(
                 kDocTag = element.comment,
-                externalDri = { resolveKDocLink(it, context.logger, sourceSet) },
+                externalDeclarationId = { resolveKDocLink(it, context.logger, sourceSet) },
                 kdocLocation = null,
                 parseWithChildren = parseWithChildren
             )

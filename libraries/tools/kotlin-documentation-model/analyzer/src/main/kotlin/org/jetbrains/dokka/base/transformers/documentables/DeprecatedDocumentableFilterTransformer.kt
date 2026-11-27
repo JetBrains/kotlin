@@ -6,6 +6,7 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaConfiguration.PackageOptions
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.EnumValue
@@ -35,7 +36,7 @@ internal class DeprecatedDocumentableFilterTransformer(
         if (deprecatedAnnotations.isEmpty())
             return false
 
-        val kotlinDeprecated = deprecatedAnnotations.find { it.dri.packageName == "kotlin" }
+        val kotlinDeprecated = deprecatedAnnotations.find { it.classLikeId == KdElementId("kotlin/Deprecated") }
         if (kotlinDeprecated?.isHidden() == true)
             return true
 
@@ -50,8 +51,7 @@ internal class DeprecatedDocumentableFilterTransformer(
 
     private fun filterDeprecatedAnnotations(annotations: List<Annotations.Annotation>): List<Annotations.Annotation> {
         return annotations.filter {
-            (it.dri.packageName == "kotlin" && it.dri.classNames == "Deprecated") ||
-                    (it.dri.packageName == "java.lang" && it.dri.classNames == "Deprecated")
+            it.classLikeId == KdElementId("kotlin/Deprecated") || it.classLikeId == KdElementId("java.lang/Deprecated")
         }
     }
 

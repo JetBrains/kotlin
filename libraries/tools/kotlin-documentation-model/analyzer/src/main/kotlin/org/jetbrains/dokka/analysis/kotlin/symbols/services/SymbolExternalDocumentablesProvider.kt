@@ -7,12 +7,12 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.services
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DokkaSymbolVisitor
-import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getClassIdFromDRI
-import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.analyzer.ids.classIdFromDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.isClassifierDeclarationId
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
@@ -29,8 +29,11 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
     private val lightMethodChecker = context.plugin<JavaAnalysisPlugin>().querySingle { kotlinLightMethodChecker }
 
-    override fun getClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike? {
-        val classId = getClassIdFromDRI(dri)
+    override fun getClasslike(declarationId: KdElementId, sourceSet: DokkaSourceSet): DClasslike? {
+        // Only classifier IDs denote a classlike; package and callable IDs (e.g. a function ID used
+        // by mistake) simply have no matching classlike.
+        if (!isClassifierDeclarationId(declarationId)) return null
+        val classId = classIdFromDeclarationId(declarationId)
 
         return analyze(kotlinAnalysis.getModule(sourceSet)) {
             val symbol = findClass(classId) ?: return@analyze null
@@ -50,11 +53,8 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
                 lightMethodChecker = lightMethodChecker
             )
 
-
-            val parentDRI = (symbol.containingSymbol as? KaDeclarationSymbol)?.let { getDRIFromSymbol(it) }
-                ?: /* top level */ DRI(dri.packageName)
             with(translator) {
-                return@analyze visitClassSymbol(symbol, parentDRI)
+                return@analyze visitClassSymbol(symbol)
             }
         }
     }

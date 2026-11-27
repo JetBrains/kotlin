@@ -4,9 +4,9 @@
 
 package org.jetbrains.dokka.model
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
+import org.jetbrains.kotlin.documentation.KdElementId
 
 internal class AdditionalModifiers(
     val content: SourceSetDependent<Set<ExtraModifiers>>
@@ -49,17 +49,18 @@ internal data class Annotations(
     override val key: ExtraProperty.Key<AnnotationTarget, *> = Annotations
 
     data class Annotation(
-        val dri: DRI,
+        /** The classifier declaration ID of the annotation class (see `generateDeclarationId`). */
+        val classLikeId: KdElementId,
         val params: Map<String, AnnotationParameterValue>,
         val mustBeDocumented: Boolean = false,
         val scope: AnnotationScope = AnnotationScope.DIRECT
     ) {
         override fun equals(other: Any?): Boolean = when (other) {
-            is Annotation -> dri == other.dri
+            is Annotation -> classLikeId == other.classLikeId
             else -> false
         }
 
-        override fun hashCode(): Int = dri.hashCode()
+        override fun hashCode(): Int = classLikeId.hashCode()
     }
 
     @Deprecated("Use directAnnotations or fileLevelAnnotations")
@@ -90,9 +91,9 @@ internal data class AnnotationValue(val annotation: Annotations.Annotation) : An
 
 internal data class ArrayValue(val value: List<AnnotationParameterValue>) : AnnotationParameterValue()
 
-internal data class EnumValue(val enumName: String, val enumDri: DRI) : AnnotationParameterValue()
+internal data class EnumValue(val enumName: String, val enumEntryId: KdElementId) : AnnotationParameterValue()
 
-internal data class ClassValue(val className: String, val classDRI: DRI) : AnnotationParameterValue()
+internal data class ClassValue(val className: String, val classLikeId: KdElementId) : AnnotationParameterValue()
 
 internal abstract class LiteralValue : AnnotationParameterValue() {
     abstract fun text() : String

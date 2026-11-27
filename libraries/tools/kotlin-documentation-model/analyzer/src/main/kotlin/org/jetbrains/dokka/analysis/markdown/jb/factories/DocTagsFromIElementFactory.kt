@@ -11,19 +11,19 @@ import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.analysis.markdown.jb.parseHtmlEncodedWithNormalisedSpaces
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.doc.DocTag.Companion.contentTypeParam
 import org.jsoup.Jsoup
 
 internal object DocTagsFromIElementFactory {
 
     @Suppress("IMPLICIT_CAST_TO_ANY")
-    fun getInstance(type: IElementType, children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap(), body: String? = null, dri: DRI? = null, keepFormatting: Boolean = false) =
+    fun getInstance(type: IElementType, children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap(), body: String? = null, declarationId: KdElementId? = null, keepFormatting: Boolean = false) =
         when(type) {
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.FULL_REFERENCE_LINK,
-            MarkdownElementTypes.INLINE_LINK            -> if(dri == null) A(children, params) else DocumentationLink(dri, children, params)
+            MarkdownElementTypes.INLINE_LINK            -> if(declarationId == null) A(children, params) else DocumentationLink(declarationId, children, params)
             MarkdownElementTypes.STRONG                 -> Strong(children, params)
             MarkdownElementTypes.BLOCK_QUOTE            -> BlockQuote(children, params)
             MarkdownElementTypes.CODE_SPAN              -> CodeInline(children, params)

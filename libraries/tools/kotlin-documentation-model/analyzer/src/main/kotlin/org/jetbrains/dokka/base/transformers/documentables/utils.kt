@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.base.transformers.documentables
 
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.ExceptionInSupertypes
@@ -31,6 +32,5 @@ internal fun <T : Documentable> WithExtraProperties<T>.isDeprecated(): Boolean =
  * @return true for [kotlin.Deprecated] and [java.lang.Deprecated]
  */
 internal fun Annotations.Annotation.isDeprecated(): Boolean {
-    return (this.dri.packageName == "kotlin" && this.dri.classNames == "Deprecated") ||
-            (this.dri.packageName == "java.lang" && this.dri.classNames == "Deprecated")
+    return classLikeId == KdElementId("kotlin/Deprecated") || classLikeId == KdElementId("java.lang/Deprecated")
 }

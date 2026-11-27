@@ -6,9 +6,9 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.services
 
 import com.intellij.psi.PsiClass
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.analysis.java.util.from
 import org.jetbrains.dokka.analysis.java.util.PsiDocumentableSource
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.analysis.java.util.declarationIdFrom
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.analysis.kotlin.internal.InheritanceBuilder
 import org.jetbrains.dokka.analysis.kotlin.internal.InheritanceNode
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
@@ -24,7 +24,7 @@ internal class SymbolInheritanceBuilder(context: DokkaContext) : InheritanceBuil
     private val symbolFullClassHierarchyBuilder =
         context.plugin<InternalKotlinAnalysisPlugin>().querySingle { fullClassHierarchyBuilder }
 
-    override fun build(documentables: Map<DRI, Documentable>): List<InheritanceNode> {
+    override fun build(documentables: Map<KdElementId, Documentable>): List<InheritanceNode> {
 
         // this statement is copy-pasted from the version for Descriptors
         val psiInheritanceTree =
@@ -40,11 +40,13 @@ internal class SymbolInheritanceBuilder(context: DokkaContext) : InheritanceBuil
                 .mapNotNull { (k, v) ->
                     // classes that have no symbol in any session (e.g. sources of another module,
                     // see `PsiClass.classSymbol()` in PsiUtil.kt) are skipped
-                    DRI.from(k, k)?.let { dri ->
+                    declarationIdFrom(k, k)?.let { declarationId ->
                         InheritanceNode(
-                            dri,
-                            v.mapNotNull { child -> DRI.from(child, child)?.let { InheritanceNode(it) } },
-                            k.supers.filter { it.isInterface }.mapNotNull { supertype -> DRI.from(supertype, supertype) },
+                            declarationId,
+                            v.mapNotNull { child -> declarationIdFrom(child, child)?.let { InheritanceNode(it) } },
+                            k.supers.filter { it.isInterface }.mapNotNull { supertype ->
+                                declarationIdFrom(supertype, supertype)
+                            },
                             k.isInterface
                         )
                     }
@@ -74,11 +76,11 @@ internal class SymbolInheritanceBuilder(context: DokkaContext) : InheritanceBuil
                 ?: throw IllegalStateException("Unexpected symbolFullClassHierarchyBuildertype") // TODO: https://github.com/Kotlin/dokka/issues/3225 Unify FullClassHierarchyBuilder and InheritanceBuilder into one builder
 
         fun ClassKind.isInterface() = this == KotlinClassKindTypes.INTERFACE || this == JavaClassKindTypes.INTERFACE
-        val symbolsInheritanceTree = typeConstructorsMap.map { (dri, superclasses) ->
+        val symbolsInheritanceTree = typeConstructorsMap.map { (declarationId, superclasses) ->
             InheritanceNode(
-                dri,
-                superclasses.superclasses.map { InheritanceNode(it.typeConstructor.dri) },
-                superclasses.superclasses.filter { it.kind.isInterface() }.map { it.typeConstructor.dri },
+                declarationId,
+                superclasses.superclasses.map { InheritanceNode(it.typeConstructor.declarationId) },
+                superclasses.superclasses.filter { it.kind.isInterface() }.map { it.typeConstructor.declarationId },
                 isInterface = superclasses.typeConstructorWithKind.kind.isInterface()
             )
         }

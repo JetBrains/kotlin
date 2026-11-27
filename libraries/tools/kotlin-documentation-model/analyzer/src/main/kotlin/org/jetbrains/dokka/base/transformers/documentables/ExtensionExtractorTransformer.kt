@@ -7,9 +7,8 @@ package org.jetbrains.dokka.base.transformers.documentables
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
 import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.plus
@@ -30,7 +29,7 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
                 emptyMap()
         }
 
-        val channel = Channel<Pair<DRI, Callable>>(10)
+        val channel = Channel<Pair<KdElementId, Callable>>(10)
         launch {
             original.packages.parallelForEach { collectExtensions(it, channel) }
             channel.close()
@@ -42,8 +41,8 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
     }
 
     private suspend fun <T : Documentable> T.addExtensionInformation(
-        classGraph: SourceSetDependent<Map<DRI, List<DRI>>>,
-        extensionMap: Map<DRI, List<Callable>>
+        classGraph: SourceSetDependent<Map<KdElementId, List<KdElementId>>>,
+        extensionMap: Map<KdElementId, List<Callable>>
     ): T = coroutineScope {
         val newClasslikes = (this@addExtensionInformation as? WithScope)
             ?.classlikes
@@ -100,7 +99,7 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
 
     private suspend fun collectExtensions(
         documentable: Documentable,
-        channel: SendChannel<Pair<DRI, Callable>>
+        channel: SendChannel<Pair<KdElementId, Callable>>
     ): Unit = coroutineScope {
         if (documentable is WithScope) {
             documentable.classlikes.forEach {
@@ -109,19 +108,19 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
 
             if (documentable is DObject || documentable is DPackage) {
                 (documentable.properties.asSequence() + documentable.functions.asSequence())
-                    .flatMap { it.asPairsWithReceiverDRIs() }
+                    .flatMap { it.asPairsWithReceiverDeclarationIds() }
                     .forEach { channel.send(it) }
             }
         }
     }
 
     private fun <T : Documentable> T.findExtensions(
-        classGraph: SourceSetDependent<Map<DRI, List<DRI>>>,
-        extensionMap: Map<DRI, List<Callable>>
+        classGraph: SourceSetDependent<Map<KdElementId, List<KdElementId>>>,
+        extensionMap: Map<KdElementId, List<Callable>>
     ): CallableExtensions? {
         val resultSet = mutableSetOf<Callable>()
 
-        fun collectFrom(element: DRI, isSupertype: Boolean) {
+        fun collectFrom(element: KdElementId, isSupertype: Boolean) {
             extensionMap[element]?.forEach { extension ->
                 // A companion extension belongs to the companion scope of its receiver type only.
                 // Such a scope is not inherited: it cannot be accessed through the name of a subtype
@@ -132,7 +131,7 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
                 classGraph[sourceSet]?.get(element)?.forEach { collectFrom(it, isSupertype = true) }
             }
         }
-        collectFrom(dri, isSupertype = false)
+        collectFrom(declarationId, isSupertype = false)
 
         return if (resultSet.isEmpty()) null else CallableExtensions(resultSet)
     }
@@ -144,31 +143,28 @@ internal class ExtensionExtractorTransformer : DocumentableTransformer {
         else -> false
     }
 
-    private fun Callable.asPairsWithReceiverDRIs(): Sequence<Pair<DRI, Callable>> =
-        receiver?.type?.let { findReceiverDRIs(it) }.orEmpty().map { it to this }
+    private fun Callable.asPairsWithReceiverDeclarationIds(): Sequence<Pair<KdElementId, Callable>> =
+        receiver?.type?.let { findReceiverDeclarationIds(it) }.orEmpty().map { it to this }
 
-    // In normal cases we return at max one DRI, but sometimes receiver type can be bound by more than one type constructor
-    // for example `fun <T> T.example() where T: A, T: B` is extension of both types A and B
-    // another one `typealias A = B`
-    // Note: in some cases returning empty sequence doesn't mean that we cannot determine the DRI but only that we don't
-    // care about it since there is nowhere to put documentation of given extension.
-    private fun Callable.findReceiverDRIs(bound: Bound): Sequence<DRI> = when (bound) {
-        is Nullable -> findReceiverDRIs(bound.inner)
-        is DefinitelyNonNullable -> findReceiverDRIs(bound.inner)
-        is TypeParameter ->
-            if (this is DFunction && bound.dri == this.dri)
-                generics.find { it.name == bound.name }?.bounds?.asSequence()?.flatMap { findReceiverDRIs(it) }
-                    .orEmpty()
-            else
-                emptySequence()
+    // In normal cases we return at max one declaration ID, but sometimes the receiver type can be bound by
+    // more than one type constructor, for example `fun <T> T.example() where T: A, T: B` is extension of
+    // both types A and B; another one is `typealias A = B`.
+    // Note: in some cases returning an empty sequence doesn't mean that we cannot determine the ID but only
+    // that we don't care about it since there is nowhere to put documentation of given extension.
+    private fun Callable.findReceiverDeclarationIds(bound: Bound): Sequence<KdElementId> = when (bound) {
+        is Nullable -> findReceiverDeclarationIds(bound.inner)
+        is DefinitelyNonNullable -> findReceiverDeclarationIds(bound.inner)
+        // NB: the old DRI-based code compared DRIs that could never match, so a type-parameter receiver
+        // never resolves to any class ID.
+        is TypeParameter -> emptySequence()
 
-        is TypeConstructor -> sequenceOf(bound.dri)
+        is TypeConstructor -> sequenceOf(bound.declarationId)
         is PrimitiveJavaType -> emptySequence()
         is Void -> emptySequence()
-        is JavaObject -> sequenceOf(DriOfAny)
-        is Dynamic -> sequenceOf(DriOfAny)
+        is JavaObject -> sequenceOf(KdElementId("kotlin/Any"))
+        is Dynamic -> sequenceOf(KdElementId("kotlin/Any"))
         is UnresolvedBound -> emptySequence()
-        is TypeAliased -> findReceiverDRIs(bound.typeAlias) + findReceiverDRIs(bound.inner)
+        is TypeAliased -> findReceiverDeclarationIds(bound.typeAlias) + findReceiverDeclarationIds(bound.inner)
     }
 
     private fun <T, U> Iterable<Pair<T, U>>.toMultiMap(): Map<T, List<U>> =

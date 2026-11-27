@@ -7,8 +7,8 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.doc.Suppress
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -18,17 +18,17 @@ import org.jetbrains.kotlin.psi.psiUtil.checkDecompiledText
 
 internal fun parseFromKDocTag(
     kDocTag: KDocTag?,
-    externalDri: (KDocLink) -> DRI?,
+    externalDeclarationId: (KDocLink) -> KdElementId?,
     kdocLocation: String?,
     parseWithChildren: Boolean = true
 ): DocumentationNode {
     return if (kDocTag == null) {
         DocumentationNode(emptyList())
     } else {
-        fun parseStringToDocNode(text: String, externalDRIProvider: (String) -> DRI?) =
-            MarkdownParser(externalDRIProvider, kdocLocation).parseStringToDocNode(text)
+        fun parseStringToDocNode(text: String, externalDeclarationIdProvider: (String) -> KdElementId?) =
+            MarkdownParser(externalDeclarationIdProvider, kdocLocation).parseStringToDocNode(text)
 
-        fun pointedLink(tag: KDocTag): DRI? = tag.getSubjectLink()?.let(externalDri)
+        fun pointedLink(tag: KDocTag): KdElementId? = tag.getSubjectLink()?.let(externalDeclarationId)
 
         val allTags =
             listOf(kDocTag) + if (kDocTag.canHaveParent() && parseWithChildren) getAllKDocTags(findParent(kDocTag)) else emptyList()
@@ -39,46 +39,46 @@ internal fun parseFromKDocTag(
                     links[it.getLinkText()] = it
                 }
 
-                val externalDRIProvider = { linkText: String -> links[linkText]?.let { externalDri(it) } }
+                val externalDeclarationIdProvider = { linkText: String -> links[linkText]?.let { externalDeclarationId(it) } }
 
                 when (tag.knownTag) {
-                    null -> if (tag.name == null) Description(parseStringToDocNode(tag.getContent(), externalDRIProvider)) else CustomTagWrapper(
-                        parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                    null -> if (tag.name == null) Description(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider)) else CustomTagWrapper(
+                        parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                         tag.name!!
                     )
-                    KDocKnownTag.AUTHOR -> Author(parseStringToDocNode(tag.getContent(), externalDRIProvider))
+                    KDocKnownTag.AUTHOR -> Author(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
                     KDocKnownTag.THROWS -> {
                         Throws(
-                            parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                            parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                             tag.getSubjectName().orEmpty(),
                             pointedLink(tag),
                         )
                     }
                     KDocKnownTag.EXCEPTION -> {
                         Throws(
-                            parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                            parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                             tag.getSubjectName().orEmpty(),
                             pointedLink(tag)
                         )
                     }
                     KDocKnownTag.PARAM -> Param(
-                        parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                        parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                         tag.getSubjectName().orEmpty(),
                         pointedLink(tag),
                     )
-                    KDocKnownTag.RECEIVER -> Receiver(parseStringToDocNode(tag.getContent(), externalDRIProvider))
-                    KDocKnownTag.RETURN -> Return(parseStringToDocNode(tag.getContent(), externalDRIProvider))
+                    KDocKnownTag.RECEIVER -> Receiver(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
+                    KDocKnownTag.RETURN -> Return(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
                     KDocKnownTag.SEE -> {
                         See(
-                            parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                            parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                             tag.getSubjectName().orEmpty(),
                             pointedLink(tag),
                         )
                     }
-                    KDocKnownTag.SINCE -> Since(parseStringToDocNode(tag.getContent(), externalDRIProvider))
-                    KDocKnownTag.CONSTRUCTOR -> Constructor(parseStringToDocNode(tag.getContent(), externalDRIProvider))
+                    KDocKnownTag.SINCE -> Since(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
+                    KDocKnownTag.CONSTRUCTOR -> Constructor(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
                     KDocKnownTag.PROPERTY -> Property(
-                        parseStringToDocNode(tag.getContent(), externalDRIProvider),
+                        parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider),
                         tag.getSubjectName().orEmpty()
                     )
                     KDocKnownTag.SAMPLE -> Sample(
@@ -89,7 +89,7 @@ internal fun parseFromKDocTag(
                         parseStringToDocNode(tag.getContent()) { null },
                         tag.getSubjectName().orEmpty()
                     )
-                    KDocKnownTag.SUPPRESS -> Suppress(parseStringToDocNode(tag.getContent(), externalDRIProvider))
+                    KDocKnownTag.SUPPRESS -> Suppress(parseStringToDocNode(tag.getContent(), externalDeclarationIdProvider))
                 }
             }
         )

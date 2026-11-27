@@ -5,7 +5,7 @@
 package org.jetbrains.dokka.analysis.kotlin.internal
 
 import org.jetbrains.dokka.InternalDokkaApi
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 
 @InternalDokkaApi
 internal interface KotlinToJavaService {
@@ -25,5 +25,5 @@ internal interface KotlinToJavaService {
      * kotlin.reflect.KFunction42 -> kotlin.reflect.KFunction
      * kotlin.reflect.KSuspendFunction42 -> kotlin.reflect.KFunction
      */
-    fun findAsJava(kotlinDri: DRI): DRI?
+    fun findAsJava(kotlinDeclarationId: KdElementId): KdElementId?
 }
