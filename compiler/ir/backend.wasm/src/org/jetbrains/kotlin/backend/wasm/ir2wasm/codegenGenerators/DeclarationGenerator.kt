@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSuspendLambdaMergingLowering
+import org.jetbrains.kotlin.backend.wasm.lower.propertyReferenceImplClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
@@ -387,11 +388,23 @@ class DeclarationGenerator(
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
 
-        // For callable reference and merged suspend lambda classes, do not use the FQN to ensure
-        // deterministic names across files during link-time deduplication.
+        // Classes generated for lambdas, callable references, and merged suspend lambdas are named
+        // by a deduplication key (e.g. Function1, KFunction1R, SuspendFunction0) with no source
+        // counterpart, so they must not be exposed by reflection, just like on the JVM.
+        val isSyntheticFunctionImplementationClass =
+            klass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL ||
+                klass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+
+        // Property references are implemented by dedicated stdlib classes, but similarly, only the
+        // compiler instantiates them as runtime carriers for `::property` references.
+        val isPropertyImplementationClass = klass.symbol in backendContext.wasmSymbols.propertyReferenceImplClasses
+
+        // Lambda, callable reference, and merged suspend lambda classes get no qualified names
+        // since compiler-generated classes should not be exposed by reflection (see the anonymous
+        // class flag below). Emitting only the plain deduplication key also keeps their names
+        // deterministic across files, which link-time deduplication relies on.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
-                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL &&
-                                      klass.origin != WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS)
+                                      !isSyntheticFunctionImplementationClass)
         val originalFqName = klass.originalFqName
         val qualifier =
             if (fqnShouldBeEmitted) {
@@ -424,7 +437,9 @@ class DeclarationGenerator(
 
             buildConstI64(linkerDataContext.referenceTypeId(symbol), location)
 
-            val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
+            val isAnonymousFlag =
+                if (klass.isAnonymousObject || isSyntheticFunctionImplementationClass || isPropertyImplementationClass)
+                    TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalDeclaration) TYPE_INFO_FLAG_LOCAL_CLASS else 0
             buildConstI32(isAnonymousFlag or isLocalFlag, location)
 

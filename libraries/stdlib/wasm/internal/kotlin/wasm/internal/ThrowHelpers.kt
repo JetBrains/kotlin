@@ -27,7 +27,8 @@ internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolea
 
     val message = if (obj != null) {
         @Suppress("UNSUPPORTED_REFLECTION_API")
-        val valueType = (obj::class).let { it.qualifiedName ?: it.simpleName } ?: "<unknown>"
+        val valueType = (obj::class).let { it.qualifiedName ?: it.simpleName }
+            ?: getQualifiedName(wasmGetObjectRtti(obj))
         if (klass == Nothing::class && isNullable) {
             "Expected null (Nothing?), got an instance of $valueType"
         } else {
