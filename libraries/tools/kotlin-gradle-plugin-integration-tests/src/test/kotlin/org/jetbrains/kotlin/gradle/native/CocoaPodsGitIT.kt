@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
@@ -40,6 +41,7 @@ import kotlin.test.assertTrue
 @DisplayName("Git connected K/N tests with cocoapods")
 @NativeGradlePluginTests
 @OptIn(EnvironmentalVariablesOverride::class)
+@MustRunOnChangesInGradle
 class CocoaPodsGitIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
