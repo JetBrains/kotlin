@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.test.data.manager.GroupingResult
 import org.jetbrains.kotlin.analysis.test.data.manager.VariantChainConflict
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.compiler.FakeFirTestGenerated
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.splitTestDataPaths
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.unresolvedTestDataPaths
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestABGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestBAGenerated
 import org.jetbrains.kotlin.analysis.test.data.manager.fakes.conflicts.FakeConflictingTestXBGenerated
@@ -346,6 +348,16 @@ internal class TestDiscoveryAndGroupingIntegrationTest : AbstractFakeTestIntegra
                 Variants: [[standalone]]
                 FakeStandaloneAnalysisApiTestGenerated.testSymbols() -> [standalone]
             """
+        )
+    }
+
+    @Test
+    fun `the testDataPath entries no discovered test is in`() {
+        val option = "testData/analysis/api/symbols,testData/analysis/api/symbols.txt,testData/compiler/fir/resolve/"
+        val tests = discoverFakeTests(testDataPath = option)
+        assertEquals(
+            listOf("testData/analysis/api/symbols.txt"),
+            TestDataManagerRunner.unmatchedTestDataPaths(splitTestDataPaths(option), unresolvedTestDataPaths(option), tests),
         )
     }
 

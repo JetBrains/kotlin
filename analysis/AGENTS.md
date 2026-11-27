@@ -46,13 +46,16 @@ with one command. Don't use `:test`, `-Pkotlin.test.update.test.data=true` or th
 plain test run doesn't order the variant chains and never writes a variant file.
 
 ```bash
-python3 analysis/test-data-manager/test-data-manager.py update --path <dir-or-file>[,<dir-or-file>...]
-python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-file>[,<dir-or-file>...]
+analysis/test-data-manager/test-data-manager update --path <dir-or-file>[,<dir-or-file>...]
+analysis/test-data-manager/test-data-manager check --path <dir-or-file>[,<dir-or-file>...]
 ```
+
+On Windows, the launcher is `test-data-manager.bat`. The first run, and the first one after a change of
+`analysis/test-data-manager`, builds the wrapper with Gradle before it starts.
 
 - `--path` is repository-relative, as in `@TestMetadata`; one test is its test data file (`.../foo.kt`), not its
   output (`foo.txt`). A new test data file needs `./gradlew generateTests` first.
-- The script picks the modules: don't add `--module`, don't split the run per module. Don't add `--incremental` or
+- The wrapper picks the modules: don't add `--module`, don't split the run per module. Don't add `--incremental` or
   `--golden-only` unless the user asks: they skip tests.
 - The output is a few lines: read it as is, don't pipe it into `tail`/`grep` (the pipe hides the exit code).
 - Wait for the command to exit and read its exit code; the output and the summary are its result. A run may outlast
@@ -69,10 +72,10 @@ python3 analysis/test-data-manager/test-data-manager.py check --path <dir-or-fil
 | 1    | `MISMATCH`, `MISSING_FILE`                                      | Intended change: `update --rerun <runId>`. Otherwise diff `actualFile` with `comparedFile` (in the module report, linked from the summary JSON; a missing file has only `actualFile`). After a golden file changes, its variants may be listed too, as `REDUNDANT_FILE` or `MISSING_FILE`: the same `update` settles them. |
 | 1    | `REDUNDANT_FILE`, `UNEXPECTED_FILE`                             | The file has to go, `update` deletes it: it equals the file it falls back to, or the test produces nothing for it. There is no output to diff.     |
 | 1    | `TEST ERROR`                                                    | The test crashed; `update` won't fix it. Fix the code or the test; the stack trace is in the module report (`testErrors[].stackTrace`). |
-| 2    | `ERROR …`, `GRADLE FAILURE`, `e: …`                             | Fix what the line names (a path, a compilation error) and rerun. `is an output file`: pass the test data file it names. `matches no managed test`: a new test data file needs `./gradlew generateTests`; otherwise the files aren't managed, use the area's own runner. |
+| 2    | `ERROR …`, `GRADLE FAILURE`, `e: …`                             | Fix what the line names (a path, a compilation error) and rerun. `outside the test data of every module`: the files aren't managed, use the area's own runner. `matches no managed test in the modules that ran`: pass the test data file, not its output; a new test data file needs `./gradlew generateTests`. |
 | 130  | `Interrupted …`                                                 | The run was interrupted; run it again.                                                                                                             |
 
-Options, the JSON summary and direct Gradle calls: [test-data-manager/README.md](test-data-manager/README.md#wrapper-script-recommended-for-agents-and-scripts)
+Options, the JSON summary and direct Gradle calls: [test-data-manager/README.md](test-data-manager/README.md#wrapper-recommended-for-agents-and-scripts)
 and [test-data-manager-convention](../repo/gradle-build-conventions/test-data-manager-convention/README.md).
 
 ## Key Components

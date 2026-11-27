@@ -183,6 +183,7 @@ fun RepositoryHandler.gradleLibsReleases() {
         }
         filter {
             includeGroup("org.gradle.experimental")
+            includeModule("org.gradle", "gradle-tooling-api")
         }
     }
 }

@@ -39,6 +39,9 @@ internal class TestDataManagerReport(
     var failedTests: Int = 0
     var skippedTests: Int = 0
 
+    /** The `testDataPath` entries, as given, that none of the tests of the module is in or under. */
+    val unmatchedTestDataPaths: MutableList<String> = mutableListOf()
+
     val problems: MutableList<TestDataProblem> = mutableListOf()
     val testErrors: MutableList<TestError> = mutableListOf()
     val fileActions: MutableList<FileAction> = mutableListOf()
@@ -112,6 +115,7 @@ internal class TestDataManagerReport(
             ),
             runErrors = runErrors,
             tests = TestCounts(discoveredTests, passedTests, failedTests, skippedTests),
+            unmatchedTestDataPaths = unmatchedTestDataPaths,
             problems = problems.sortedWith(compareBy({ it.file }, { it.testName })).map { problem ->
                 ModuleReport.Problem(
                     kind = problem.kind,

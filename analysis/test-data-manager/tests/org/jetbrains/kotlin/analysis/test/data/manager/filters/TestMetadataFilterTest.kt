@@ -179,7 +179,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
      */
     private fun assertResolved(option: String, expected: String) {
         repositoryRoot.resolve("module/testData/dir").createDirectories().resolve("file.kt").createFile()
-        val resolved = resolveTestDataPaths(option, repositoryRoot, projectDir = repositoryRoot.resolve("module"))
+        val resolved = resolveTestDataPaths(option, repositoryRoot, suggestionBases = listOf(repositoryRoot.resolve("module")))
         val actual = (resolved.paths.map { "path: $it" } + resolved.errors.map { "error: $it" }).joinToString("\n")
 
         assertEquals(expected.trimIndent(), actual)
@@ -217,7 +217,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     fun `module-relative path is an error with a suggestion`() {
         assertResolved(
             option = "testData/dir",
-            expected = "error: Missing(path=testData/dir, suggestion=module/testData/dir)",
+            expected = "error: Missing(path=testData/dir, suggestions=[module/testData/dir])",
         )
     }
 
@@ -227,7 +227,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
             option = "module/testData/dir/fi,module/testData/dir",
             expected = """
                 path: module/testData/dir
-                error: Missing(path=module/testData/dir/fi, suggestion=null)
+                error: Missing(path=module/testData/dir/fi, suggestions=[])
             """,
         )
     }
@@ -236,7 +236,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     fun `path with glob syntax is an error, not a crash`() {
         assertResolved(
             option = "module/testData/dir/fi[le",
-            expected = "error: Missing(path=module/testData/dir/fi[le, suggestion=null)",
+            expected = "error: Missing(path=module/testData/dir/fi[le, suggestions=[])",
         )
     }
 
@@ -253,8 +253,9 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
         val root = Path("/repo")
         val errors = listOf(
             TestDataPathError.OutsideRepository("../elsewhere"),
-            TestDataPathError.Missing("testData/dir", suggestion = null),
-            TestDataPathError.Missing("testData/dir", suggestion = TestMetadataPath("module/testData/dir")),
+            TestDataPathError.Missing("testData/dir", suggestions = emptyList()),
+            TestDataPathError.Missing("testData/dir", suggestions = listOf(TestMetadataPath("module/testData/dir"))),
+            TestDataPathError.Missing("testData", suggestions = listOf(TestMetadataPath("a/testData"), TestMetadataPath("b/testData"))),
         )
 
         assertEquals(
@@ -263,6 +264,8 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
                 "testDataPath 'testData/dir' does not exist; paths are relative to the repository root ${root.toAbsolutePath()}",
                 "testDataPath 'testData/dir' does not exist; paths are relative to the repository root ${root.toAbsolutePath()}. " +
                         "Did you mean 'module/testData/dir'?",
+                "testDataPath 'testData' does not exist; paths are relative to the repository root ${root.toAbsolutePath()}. " +
+                        "Did you mean 'a/testData' or 'b/testData'?",
             ),
             errors.map { it.render(root) },
         )
