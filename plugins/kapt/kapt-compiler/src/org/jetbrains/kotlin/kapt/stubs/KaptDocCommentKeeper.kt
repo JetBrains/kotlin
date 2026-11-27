@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.kapt.util.kdocBody
 import org.jetbrains.kotlin.kapt.util.kdocText
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -30,7 +31,8 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
             return
         }
 
-        val docComment = source.kdocText() ?: return
+        val session = kaptContext.firSession ?: return
+        val docComment = context(session.syntaxComponent) { source.kdocText() } ?: return
         docCommentTable.putComment(tree, KDocComment(extractComment(docComment)))
     }
 

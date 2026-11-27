@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.kapt.util.superTypeCallEntryRanges
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
@@ -761,7 +762,7 @@ abstract class ParameterizedKaptStubConverter<
             .takeIf { it.isNotEmpty() }
             ?: return Pair(null, emptyList())
 
-        val callEntryRanges = firClass.source?.superTypeCallEntryRanges().orEmpty()
+        val callEntryRanges = with(firClass.moduleData.session.syntaxComponent) { firClass.source?.superTypeCallEntryRanges() }.orEmpty()
 
         fun FirTypeRef.isSuperTypeCallEntry(): Boolean {
             val source = this.source ?: return false
