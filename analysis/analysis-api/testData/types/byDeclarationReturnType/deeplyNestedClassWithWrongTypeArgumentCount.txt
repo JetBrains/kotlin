@@ -5,19 +5,19 @@ KaClassErrorType:
     KaNamedClassSymbol(A.B.C)
   ]
   errorMessage: Wrong number of type arguments
-  presentableText: C.B.A
+  presentableText: A.B.C
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: C
-      symbol: KaNamedClassSymbol(A.B.C)
+      name: A
+      symbol: KaNamedClassSymbol(A)
       typeArguments: []
     KaResolvedClassTypeQualifier:
       name: B
       symbol: KaNamedClassSymbol(A.B)
       typeArguments: []
     KaResolvedClassTypeQualifier:
-      name: A
-      symbol: KaNamedClassSymbol(A)
+      name: C
+      symbol: KaNamedClassSymbol(A.B.C)
       typeArguments: []
   ]
   isMarkedNullable: false
@@ -25,4 +25,4 @@ KaClassErrorType:
   hasFlexibleNullability: true
 
 Rendered type:
-C.B.A
+A.B.C

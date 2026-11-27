@@ -5,15 +5,15 @@ KaClassErrorType:
     KaNamedClassSymbol(Outer.Nested)
   ]
   errorMessage: Wrong number of type arguments
-  presentableText: Nested.Outer
+  presentableText: Outer.Nested
   qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: Nested
-      symbol: KaNamedClassSymbol(Outer.Nested)
-      typeArguments: []
     KaResolvedClassTypeQualifier:
       name: Outer
       symbol: KaNamedClassSymbol(Outer)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Nested
+      symbol: KaNamedClassSymbol(Outer.Nested)
       typeArguments: []
   ]
   isMarkedNullable: false
@@ -21,4 +21,4 @@ KaClassErrorType:
   hasFlexibleNullability: true
 
 Rendered type:
-Nested.Outer
+Outer.Nested

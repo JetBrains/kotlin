@@ -5,15 +5,15 @@ KaClassErrorType:
     KaNamedClassSymbol(<local>/Inner)
   ]
   errorMessage: Wrong number of type arguments
-  presentableText: Inner.Local
+  presentableText: Local.Inner
   qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: Inner
-      symbol: KaNamedClassSymbol(<local>/Inner)
-      typeArguments: []
     KaResolvedClassTypeQualifier:
       name: Local
       symbol: KaNamedClassSymbol(<local>/Local)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(<local>/Inner)
       typeArguments: []
   ]
   isMarkedNullable: false
@@ -21,4 +21,4 @@ KaClassErrorType:
   hasFlexibleNullability: true
 
 Rendered type:
-Inner.Local
+Local.Inner

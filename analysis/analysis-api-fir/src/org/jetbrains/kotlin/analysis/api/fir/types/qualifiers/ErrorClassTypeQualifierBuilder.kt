@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirUnresolvedClassTypeQuali
 import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection
 
@@ -52,13 +51,16 @@ internal object ErrorClassTypeQualifierBuilder {
         return createQualifiersByClassSymbol(coneDiagnostic.symbol, builder)
     }
 
+    /**
+     * Returns the qualifiers of [firSymbol] and its containing classes, ordered outermost-first.
+     */
     private fun createQualifiersByClassSymbol(
         firSymbol: FirClassLikeSymbol<*>,
         builder: KaSymbolByFirBuilder
     ): List<KaResolvedClassTypeQualifier> {
-        return generateSequence(firSymbol) { it.getContainingClassSymbol() }.mapTo(mutableListOf()) { classSymbol ->
+        return UsualClassTypeQualifierBuilder.collectDesignation(firSymbol).map { qualifierSymbol ->
             KaFirResolvedClassTypeQualifier(
-                builder.classifierBuilder.buildClassLikeSymbol(classSymbol),
+                builder.classifierBuilder.buildClassLikeSymbol(qualifierSymbol.symbol),
                 emptyList(),
             )
         }
