@@ -52,12 +52,10 @@ function box() {
   const tmp0_subject = OK;
   if (!(tmp0_subject == null) && typeof tmp0_subject === 'string') {
     // Inline function 'inlineFunction' call
+  } else if (isNumber(tmp0_subject)) {
+    // Inline function 'inlineFunction' call
   } else {
-    if (isNumber(tmp0_subject)) {
-      // Inline function 'inlineFunction' call
-    } else {
-      // Inline function 'inlineFunction' call
-    }
+    // Inline function 'inlineFunction' call
   }
   sep('Call in try/catch/finally');
   try {

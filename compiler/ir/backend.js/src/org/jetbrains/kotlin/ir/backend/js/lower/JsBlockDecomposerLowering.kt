@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.EqualityAndComparisonCallsTransformer
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -101,7 +101,7 @@ class JsBlockDecomposerLowering(private val context: JsIrBackendContext) : BodyL
 }
 
 private class BlockDecomposerTransformer(
-    private val context: JsCommonBackendContext,
+    private val context: JsIrBackendContext,
     private val unreachableExpression: () -> IrExpression
 ) : IrElementTransformerVoid() {
     private lateinit var function: IrDeclarationParent
@@ -740,8 +740,11 @@ private class BlockDecomposerTransformer(
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
+            if (expression.statements.isEmpty()) {
+                return expression.run {
+                    IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue))
+                }
+            }
 
             val newStatements = mutableListOf<IrStatement>()
 
@@ -750,6 +753,13 @@ private class BlockDecomposerTransformer(
             }
 
             newStatements += destructureComposite(expression.statements.last().transformStatement(expressionTransformer))
+
+            (newStatements.singleOrNull() as? IrExpression)?.let { expression ->
+                // Unwrapping the block may result in worse debug info, so only do it when compiling for production.
+                if (!context.isDebugBuild) {
+                    return expression
+                }
+            }
 
             return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
