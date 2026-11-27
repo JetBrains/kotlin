@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableIdForName
 import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -51,52 +51,52 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     final override val lazyFirSymbol: Lazy<FirPropertySymbol>,
 ) : KaKotlinPropertySymbol(), KaFirKtBasedSymbol<P, FirPropertySymbol> {
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = entryPointImplementation { createReturnType() }
 
     /**
      * The type of the property inferred from its PSI without resolution, if possible.
      */
     val returnTypeByPsi: KaType?
-        get() = withValidityAssertion { backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession) }
+        get() = entryPointImplementation { backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession) }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { createContextReceivers() }
+        get() = entryPointImplementation { createContextReceivers() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = entryPointImplementation { emptyList() }
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
+        get() = entryPointImplementation { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
 
     val isInline: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
         }
 
     open val compilerVisibilityByPsi: Visibility?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.psiBasedVisibility(::isOverride)
         }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
+        get() = entryPointImplementation { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
 
     abstract val modalityByPsi: KaSymbolModality?
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion { modalityByPsi ?: firSymbol.kaSymbolModality }
+        get() = entryPointImplementation { modalityByPsi ?: firSymbol.kaSymbolModality }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val backingPsi = backingPsi
             if (backingPsi != null) {
                 val backingFieldPsi = (backingPsi as? KtProperty)?.fieldDeclaration
@@ -124,27 +124,27 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         }
 
     override val isLateInit: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit
         }
 
     override val isOverride: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             isOverrideWithWorkaround
         }
 
     override val isConst: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasModifier(KtTokens.CONST_KEYWORD) ?: firSymbol.isConst
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
+        get() = entryPointImplementation { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
+        get() = entryPointImplementation { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
-    override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
             return KaFirPsiBasedPropertySymbolPointer(it, this)
         }
@@ -230,7 +230,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
     }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi != null -> backingPsi.location
                 firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
@@ -240,22 +240,22 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val isDelegated: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasDelegate() ?: firSymbol.isDelegatedProperty
         }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             KaFirReceiverParameterSymbol.create(backingPsi, this, analysisSession = analysisSession)
         }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
         }
 
     override val isVal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 !backingPsi.isVar
             else
@@ -263,7 +263,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val isStatic: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // Kotlin doesn't have static properties
             if (backingPsi != null || origin == KaSymbolOrigin.SOURCE)
                 false
@@ -273,15 +273,15 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     @OptIn(KtExperimentalApi::class)
     override val isCompanion: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.isCompanion ?: firSymbol.isStatic
         }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { backingPsi != null || firSymbol.getterSymbol != null }
+        get() = entryPointImplementation { backingPsi != null || firSymbol.getterSymbol != null }
 
     override val getter: KaPropertyGetterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi != null ->
                     if (backingPsi.hasRegularGetter)
@@ -300,7 +300,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val hasSetter: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.isVar || backingPsi.setter != null
             else
@@ -308,7 +308,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val setter: KaPropertySetterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi != null -> when {
                     backingPsi.hasRegularSetter -> KaFirPropertySetterSymbol(this)
@@ -327,7 +327,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.run {
                 val modalityByModifiers = kaSymbolModalityByModifiers
                 when {
@@ -346,7 +346,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.callableId
             else
@@ -354,7 +354,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val initializer: KaInitializerValue?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi?.hasInitializer() == false) {
                 return null
             }
@@ -367,7 +367,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         ReplaceWith("primaryConstructorParameter != null")
     )
     override val isFromPrimaryConstructor: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 false
             else
@@ -375,22 +375,22 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val primaryConstructorParameter: KaValueParameterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 return null
             }
-            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@entryPointImplementation null
             return KaFirValueParameterSymbol(firValueParameter, analysisSession)
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
     override val hasBackingField: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 val fastAnswer = when {
                     backingPsi.isExpectDeclaration() -> false
@@ -448,19 +448,19 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
      * [KtParameter] in hands isn't enough to decide whether the parameter or generated property should be obtained
      */
     override val realPsi: PsiElement?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion { KaSymbolLocation.CLASS }
+        get() = entryPointImplementation { KaSymbolLocation.CLASS }
 
     override val isDelegated: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val isVal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 !backingPsi.isMutable
             else
@@ -468,23 +468,23 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val isStatic: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     @KaExperimentalApi
     override val isCompanion: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val getter: KaPropertyGetterSymbol?
-        get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
+        get() = entryPointImplementation { KaFirDefaultPropertyGetterSymbol(this) }
 
     override val hasSetter: Boolean
-        get() = withValidityAssertion { !isVal }
+        get() = entryPointImplementation { !isVal }
 
     override val setter: KaPropertySetterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (hasSetter)
                 KaFirDefaultPropertySetterSymbol(this)
             else
@@ -492,14 +492,14 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.run {
                 kaSymbolModalityByModifiers ?: psiBasedDefaultKaModality(::isOverride)
             }
         }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.callableIdForName(backingPsi.nameAsSafeName)
             else
@@ -521,7 +521,7 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
      * ```
      */
     override val initializer: KaInitializerValue?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.takeIf { it.containingClassOrObject?.isAnnotation() != true }
                 ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
@@ -531,25 +531,25 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
     )
     override val isFromPrimaryConstructor: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val primaryConstructorParameter: KaValueParameterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 return KaFirValueParameterSymbol(backingPsi, analysisSession)
             }
-            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@withValidityAssertion null
+            val firValueParameter = firSymbol.correspondingValueParameterFromPrimaryConstructor ?: return@entryPointImplementation null
             return KaFirValueParameterSymbol(firValueParameter, analysisSession)
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // a generated primary constructor property is external if its containing class is external (it can't be external by itself)
             backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     override val hasBackingField: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // A compiled annotation class declares its properties as constructor parameters, and at least on Kotlin/JVM
             // the backing field of such a property is not materialized
             val parameter = backingPsi
@@ -573,7 +573,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
     )
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi?.containingClassOrObject != null || firSymbol.dispatchReceiverType != null) {
                 KaSymbolLocation.CLASS
             } else {
@@ -582,16 +582,16 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         }
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.entryName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.entryName ?: firSymbol.name }
 
     override val isDelegated: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val isVal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 !backingPsi.isVar
             else
@@ -599,26 +599,26 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         }
 
     override val isStatic: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     @KaExperimentalApi
     override val isCompanion: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isOverride: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val getter: KaPropertyGetterSymbol?
-        get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
+        get() = entryPointImplementation { KaFirDefaultPropertyGetterSymbol(this) }
 
     override val hasSetter: Boolean
-        get() = withValidityAssertion { !isVal }
+        get() = entryPointImplementation { !isVal }
 
     override val setter: KaPropertySetterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (hasSetter)
                 KaFirDefaultPropertySetterSymbol(this)
             else
@@ -626,13 +626,13 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         }
 
     override val modalityByPsi: KaSymbolModality
-        get() = withValidityAssertion { KaSymbolModality.FINAL }
+        get() = entryPointImplementation { KaSymbolModality.FINAL }
 
     override val compilerVisibilityByPsi: Visibility
-        get() = withValidityAssertion { Visibilities.Public }
+        get() = entryPointImplementation { Visibilities.Public }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.callableIdForName(name)
             else
@@ -655,7 +655,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
      * It is unclear which behavior we should have, so for now it aligned with [getKtConstantInitializer].
      */
     override val initializer: KaInitializerValue?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
         }
 
@@ -664,19 +664,19 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         replaceWith = ReplaceWith("correspondingPrimaryConstructorParameter != null")
     )
     override val isFromPrimaryConstructor: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val primaryConstructorParameter: KaValueParameterSymbol?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     /** KT-70766 */
     override val hasBackingField: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     /** KT-70766 */
     override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 }

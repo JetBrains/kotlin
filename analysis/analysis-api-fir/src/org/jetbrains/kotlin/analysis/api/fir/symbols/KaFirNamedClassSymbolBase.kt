@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -42,7 +42,7 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Shared Operations
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = entryPointImplementation {
         if (this is KaFirKtBasedSymbol<*, *>) {
             psiBasedSymbolPointerOfTypeIfSource<KaNamedClassSymbol>()?.let { return it }
         }
@@ -65,7 +65,7 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
     }
 
     override val isFun: Boolean
-        get() = withValidityAssertion { context(analysisSession) { samConstructor != null } }
+        get() = entryPointImplementation { samConstructor != null }
 }
 
 @OptIn(FirExtensionApiInternals::class)

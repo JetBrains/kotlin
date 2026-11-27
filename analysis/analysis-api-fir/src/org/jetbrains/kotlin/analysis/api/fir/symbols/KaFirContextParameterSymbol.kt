@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirContextParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirUnrestorableSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -40,18 +40,18 @@ internal class KaFirContextParameterSymbol private constructor(
     )
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.parameterName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType(builder) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
-    override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaContextParameterSymbol>()?.let { return it }
 
-        val ownerSymbol = context(analysisSession) { containingDeclaration }
+        val ownerSymbol = containingDeclaration
             ?: error("Containing declaration is expected for a context parameter symbol")
 
         // Some non-relevant declarations still might have context parameters due to transition from

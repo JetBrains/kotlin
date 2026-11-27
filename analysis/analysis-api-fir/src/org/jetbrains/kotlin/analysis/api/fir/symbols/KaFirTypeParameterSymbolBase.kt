@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.fir.types.isNullableAny
 internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParameterSymbol(), KaFirPsiSymbol<P, FirTypeParameterSymbol> {
     @OptIn(UnexpandedTypeCheck::class)
     override val upperBounds: List<KaType>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             firSymbol.resolvedBounds.mapNotNull { type ->
                 if (type.isNullableAny) return@mapNotNull null
                 builder.typeBuilder.buildKtType(type)
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = entryPointImplementation {
         if (this is KaFirKtBasedSymbol<*, *>) {
             psiBasedSymbolPointerOfTypeIfSource<KaTypeParameterSymbol>()?.let { return it }
         }

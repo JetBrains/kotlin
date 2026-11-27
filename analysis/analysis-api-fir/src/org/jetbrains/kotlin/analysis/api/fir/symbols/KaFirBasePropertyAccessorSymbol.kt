@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModalityByModifiers
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.builtinTypes
@@ -73,18 +73,18 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
         get() = owningKaProperty.origin
 
     val isExpectImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasModifier(KtTokens.EXPECT_KEYWORD) == true ||
                     owningKaProperty.backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect
         }
 
     val isInlineImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) == true || owningKaProperty.backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline
         }
 
     val hasBodyImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             owningKaProperty.ifSource {
                 if (backingPsi?.hasBody() == true) {
                     return true
@@ -96,7 +96,7 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
         }
 
     val isDefaultImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             owningKaProperty.ifSource {
                 when (val property = owningKaProperty.backingPsi) {
                     // unsure -> compute by fir
@@ -111,29 +111,29 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
         }
 
     val modalityImpl: KaSymbolModality
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.kaSymbolModalityByModifiers ?: owningKaProperty.modalityByPsi ?: firSymbol.kaSymbolModality
         }
 
     val compilerVisibilityImpl: Visibility
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.visibilityByModifiers ?: owningKaProperty.compilerVisibilityByPsi ?: firSymbol.visibility
         }
 
     val returnTypeImpl: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = entryPointImplementation { createReturnType() }
 
     val receiverParameterImpl: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { owningKaProperty.receiverParameter }
+        get() = entryPointImplementation { owningKaProperty.receiverParameter }
 
     val callableIdImpl: CallableId?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     val hasStableParameterNamesImpl: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     val isExternalImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.hasExternalModifier() == true || owningKaProperty.isExternal
         }
 
@@ -141,11 +141,11 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
         get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
 
     val annotationsImpl: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi?.annotationEntries.isNullOrEmpty() &&
                 owningKaProperty.backingPsi?.hasAnnotation(annotationUseSiteTarget) == false
             ) {
-                KaFirEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(this.token)
             } else {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             }
@@ -156,34 +156,33 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
 
 internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymbol {
     override val returnTypeImpl: KaType
-        get() = withValidityAssertion { owningKaProperty.returnTypeByPsi ?: createReturnType() }
+        get() = entryPointImplementation { owningKaProperty.returnTypeByPsi ?: createReturnType() }
 
     override val isOverrideImpl: Boolean
-        get() = withValidityAssertion { owningKaProperty.isOverride }
+        get() = entryPointImplementation { owningKaProperty.isOverride }
 }
 
 internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymbol {
     override val returnTypeImpl: KaType
-        get() = withValidityAssertion { context(analysisSession) { builtinTypes.unit } }
+        get() = entryPointImplementation { builtinTypes.unit }
 
     override val isOverrideImpl: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // The existence of the `override` keyword doesn't guarantee that the setter overrides something
             // as its base version may have `val`
-            owningKaProperty.isOverride && context(analysisSession) {
-                val originalSymbol = owningKaProperty.fakeOverrideOriginal
-                    .takeIf { it.origin != owningKaProperty.origin } as? KaPropertySymbol
+            if (!owningKaProperty.isOverride) return@entryPointImplementation false
 
-                originalSymbol?.isVal?.not() ?: owningKaProperty.directlyOverriddenSymbols.any {
-                    it is KaPropertySymbol && !it.isVal
-                }
+            val originalSymbol = owningKaProperty.fakeOverrideOriginal
+                .takeIf { it.origin != owningKaProperty.origin } as? KaPropertySymbol
+
+            originalSymbol?.isVal?.not() ?: owningKaProperty.directlyOverriddenSymbols.any {
+                it is KaPropertySymbol && !it.isVal
             }
         }
 
     val parameterImpl: KaValueParameterSymbol
-        get() = withValidityAssertion {
-            context(analysisSession) {
-                backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
-            } ?: firSymbol.createKtValueParameters(builder).single()
+        get() = entryPointImplementation {
+            backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
+                ?: firSymbol.createKtValueParameters(builder).single()
         }
 }

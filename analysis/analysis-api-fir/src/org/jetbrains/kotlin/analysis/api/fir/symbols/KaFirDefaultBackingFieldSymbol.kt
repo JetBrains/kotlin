@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -26,7 +26,7 @@ internal class KaFirDefaultBackingFieldSymbol(
     private val backingOwningProperty: KaFirKotlinPropertySymbol<*>,
 ) : KaBackingFieldSymbol(), KaFirSymbol<FirBackingFieldSymbol> {
     override val psi: PsiElement?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val firSymbol: FirBackingFieldSymbol
         get() {
@@ -37,22 +37,22 @@ internal class KaFirDefaultBackingFieldSymbol(
         }
 
     override val owningProperty: KaKotlinPropertySymbol
-        get() = withValidityAssertion { backingOwningProperty }
+        get() = entryPointImplementation { backingOwningProperty }
 
     override val isNotDefault: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
+        get() = entryPointImplementation { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
 
     override val isVal: Boolean
-        get() = withValidityAssertion { backingOwningProperty.isVal }
+        get() = entryPointImplementation { backingOwningProperty.isVal }
 
     override val returnType: KaType
-        get() = withValidityAssertion { backingOwningProperty.returnType }
+        get() = entryPointImplementation { backingOwningProperty.returnType }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingOwningProperty.mayHaveBackingFieldAnnotation()) {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             } else {
@@ -60,7 +60,7 @@ internal class KaFirDefaultBackingFieldSymbol(
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = entryPointImplementation {
         KaFirBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
 

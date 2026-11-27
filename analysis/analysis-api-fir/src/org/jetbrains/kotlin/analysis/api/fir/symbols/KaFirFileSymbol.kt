@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -35,13 +35,13 @@ internal class KaFirFileSymbol private constructor(
         analysisSession = session,
     )
 
-    override fun createPointer(): KaSymbolPointer<KaFileSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaFileSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource()
             ?: TODO("Creating pointers for not PSI-backed files or files from a library is not supported yet")
     }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             psiOrSymbolAnnotationList()
         }
 

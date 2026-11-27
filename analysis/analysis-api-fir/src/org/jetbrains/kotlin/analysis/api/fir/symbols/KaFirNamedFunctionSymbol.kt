@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.fir.utils.kotlinFunctionInvokeCallableIds
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -63,13 +63,13 @@ internal class KaFirNamedFunctionSymbol private constructor(
         analysisSession = session,
     )
 
-    override val name: Name get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+    override val name: Name get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
+        get() = entryPointImplementation { callableId in kotlinFunctionInvokeCallableIds }
 
     override val contractEffects: List<KaContractEffectDeclaration>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null && !backingPsi.mayHaveContract() && !backingPsi.hasContractEffectList()) {
                 emptyList()
             } else {
@@ -81,33 +81,33 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = entryPointImplementation { createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             KaFirReceiverParameterSymbol.create(backingPsi, this, analysisSession = analysisSession)
         }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { createContextReceivers() }
+        get() = entryPointImplementation { createContextReceivers() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
         }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
         }
 
     override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaValueParameters() ?: firSymbol.createKtValueParameters(builder)
         }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 true
             else
@@ -115,10 +115,10 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val isSuspend: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend }
 
     /**
      * Some modifiers can be inherited, so we cannot guarantee **false** value for them by PSI in this case.
@@ -141,17 +141,17 @@ internal class KaFirNamedFunctionSymbol private constructor(
     }
 
     override val isOverride: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             isOverrideWithWorkaround
         }
 
     override val isInfix: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             psiHasModifierConsideringInheritance(KtTokens.INFIX_KEYWORD) ?: firSymbol.isInfix
         }
 
     override val isStatic: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // Kotlin doesn't have static functions
             if (backingPsi != null || origin == KaSymbolOrigin.SOURCE)
                 false
@@ -161,37 +161,37 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     @OptIn(KtExperimentalApi::class)
     override val isCompanion: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.isCompanion ?: firSymbol.isStatic
         }
 
     override val isTailRec: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.TAILREC_KEYWORD) ?: firSymbol.isTailRec }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.TAILREC_KEYWORD) ?: firSymbol.isTailRec }
 
     override val isOperator: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             psiHasModifierConsideringInheritance(KtTokens.OPERATOR_KEYWORD) ?: firSymbol.isOperator
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     override val isInline: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
+        get() = entryPointImplementation { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
+        get() = entryPointImplementation { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
+        get() = entryPointImplementation { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.callableId
             else
@@ -199,7 +199,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi != null -> backingPsi.location
                 firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
@@ -210,7 +210,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val psiBasedModality = backingPsi?.run {
                 val modalityByModifiers = kaSymbolModalityByModifiers
                 when {
@@ -233,12 +233,12 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val compilerVisibility = backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
             compilerVisibility.asKaSymbolVisibility
         }
 
-    override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>()?.let { return it }
 
         when (val kind = location) {

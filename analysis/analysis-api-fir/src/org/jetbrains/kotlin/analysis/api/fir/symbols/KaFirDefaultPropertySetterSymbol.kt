@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPropertySetterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -37,17 +37,17 @@ internal class KaFirDefaultPropertySetterSymbol(
         get() = isExpectImpl
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isExternal: Boolean
         get() = isExternalImpl
 
     override val isNotDefault: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val isInline: Boolean
         get() = isInlineImpl
@@ -57,7 +57,7 @@ internal class KaFirDefaultPropertySetterSymbol(
 
     @Deprecated("Use `isNotDefault` instead", replaceWith = ReplaceWith("isNotDefault"))
     override val hasBody: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val modality: KaSymbolModality
         get() = modalityImpl
@@ -81,9 +81,9 @@ internal class KaFirDefaultPropertySetterSymbol(
         get() = hasStableParameterNamesImpl
 
     override val parameter: KaValueParameterSymbol
-        get() = withValidityAssertion { KaFirDefaultSetterValueParameter(this) }
+        get() = entryPointImplementation { KaFirDefaultSetterValueParameter(this) }
 
-    override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = entryPointImplementation {
         KaFirPropertySetterSymbolPointer(owningKaProperty.createPointer(), this)
     }
 

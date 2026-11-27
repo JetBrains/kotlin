@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -55,22 +55,22 @@ internal class KaFirReceiverParameterSymbol private constructor(
         get() = throw UnsupportedOperationException()
 
     override val returnType: KaType
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             analysisSession.firSymbolBuilder.typeBuilder.buildKtType(firSymbol.resolvedType)
         }
 
     override val owningCallableSymbol: KaCallableSymbol
-        get() = withValidityAssertion { owningKaSymbol }
+        get() = entryPointImplementation { owningKaSymbol }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { owningKaSymbol.origin }
+        get() = entryPointImplementation { owningKaSymbol.origin }
 
-    override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = entryPointImplementation {
         KaFirReceiverParameterSymbolPointer(owningKaSymbol.createPointer(), this)
     }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
                 KaFirEmptyAnnotationList(this.token)
             else

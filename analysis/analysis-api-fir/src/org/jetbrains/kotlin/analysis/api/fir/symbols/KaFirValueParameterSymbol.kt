@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -50,13 +50,13 @@ internal class KaFirValueParameterSymbol private constructor(
     )
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.parameterName ?: firSymbol.name }
 
     override val isVararg: Boolean
-        get() = withValidityAssertion { backingPsi?.isVarArg ?: firSymbol.isVararg }
+        get() = entryPointImplementation { backingPsi?.isVarArg ?: firSymbol.isVararg }
 
     override val isImplicitLambdaParameter: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 false
             else
@@ -64,13 +64,13 @@ internal class KaFirValueParameterSymbol private constructor(
         }
 
     override val isCrossinline: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
 
     override val isNoinline: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.NOINLINE_KEYWORD) ?: firSymbol.isNoinline }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.NOINLINE_KEYWORD) ?: firSymbol.isNoinline }
 
     override val returnType: KaType
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession)?.let { return it }
 
             val returnType = firSymbol.resolvedReturnType
@@ -82,43 +82,41 @@ internal class KaFirValueParameterSymbol private constructor(
         }
 
     override val hasDefaultValue: Boolean
-        get() = withValidityAssertion {
-            context(analysisSession) {
-                if (hasDeclaredDefaultValue) {
-                    return true
-                }
+        get() = entryPointImplementation {
+            if (hasDeclaredDefaultValue) {
+                return true
+            }
 
-                val parameterIndex = index
-                val ownerFunction = containingDeclaration as? KaFunctionSymbol ?: return false
+            val parameterIndex = index
+            val ownerFunction = containingDeclaration as? KaFunctionSymbol ?: return false
 
-                // Checks the effective (possibly inherited) default value of the matching parameter, not just the declared one. The
-                // recursion into `hasDefaultValue` lets a default propagate across several hops at once, e.g., from the `expect`
-                // counterpart of the base an `actual` override inherits from.
-                fun KaDeclarationSymbol.hasMatchingDefaultParameter(): Boolean =
-                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDefaultValue == true
+            // Checks the effective (possibly inherited) default value of the matching parameter, not just the declared one. The
+            // recursion into `hasDefaultValue` lets a default propagate across several hops at once, e.g., from the `expect`
+            // counterpart of the base an `actual` override inherits from.
+            fun KaDeclarationSymbol.hasMatchingDefaultParameter(): Boolean =
+                (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDefaultValue == true
 
-                // An implicit default value can only be inherited from an overridden declaration (for a named function) or from the
-                // matched `expect` declaration (for a named function or a constructor). Other function kinds cannot have one.
-                when (ownerFunction) {
-                    is KaNamedFunctionSymbol ->
-                        ownerFunction.isOverride && ownerFunction.directlyOverriddenSymbols.any { it.hasMatchingDefaultParameter() } ||
-                                ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
-                    is KaConstructorSymbol ->
-                        ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
-                    else -> false
-                }
+            // An implicit default value can only be inherited from an overridden declaration (for a named function) or from the
+            // matched `expect` declaration (for a named function or a constructor). Other function kinds cannot have one.
+            when (ownerFunction) {
+                is KaNamedFunctionSymbol ->
+                    ownerFunction.isOverride && ownerFunction.directlyOverriddenSymbols.any { it.hasMatchingDefaultParameter() } ||
+                            ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
+                is KaConstructorSymbol ->
+                    ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingDefaultParameter() }
+                else -> false
             }
         }
 
     override val hasDeclaredDefaultValue: Boolean
-        get() = withValidityAssertion { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
+        get() = entryPointImplementation { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null && backingPsi.annotationEntries.isEmpty()) {
                 val property = (backingPsi.ownerDeclaration as? KtPropertyAccessor)?.property
                 if (property?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) != true) {
-                    return@withValidityAssertion KaFirEmptyAnnotationList(token)
+                    return@entryPointImplementation KaFirEmptyAnnotationList(this.token)
                 }
             }
 
@@ -126,7 +124,7 @@ internal class KaFirValueParameterSymbol private constructor(
         }
 
     override val primaryConstructorProperty: KaKotlinPropertySymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 return if (backingPsi.hasValOrVar() && backingPsi.ownerFunction is KtPrimaryConstructor) {
                     KaFirKotlinPropertySymbol.create(backingPsi, analysisSession = analysisSession)
@@ -139,7 +137,7 @@ internal class KaFirValueParameterSymbol private constructor(
             return KaFirKotlinPropertySymbol.create(propertySymbol, analysisSession = analysisSession)
         }
 
-    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
         return KaFirValueParameterSymbolPointer(
             ownerPointer = createOwnerPointer(),

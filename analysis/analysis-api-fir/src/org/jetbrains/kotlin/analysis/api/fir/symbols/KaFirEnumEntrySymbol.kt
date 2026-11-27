@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.isExternalDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -46,34 +46,34 @@ internal class KaFirEnumEntrySymbol private constructor(
     )
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
+        get() = entryPointImplementation { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // an enum entry is external if its containing enum class is external (it can't be external by itself)
             backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType(builder) }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null)
                 backingPsi.callableId
             else
                 firSymbol.getCallableId()
         }
     override val initializer: KaAnonymousObjectSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (firSymbol.fir.initializer == null) {
-                return@withValidityAssertion null
+                return@entryPointImplementation null
             }
 
             firSymbol.fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -89,16 +89,16 @@ internal class KaFirEnumEntrySymbol private constructor(
 
     @Deprecated("Use 'initializer' instead. See KT-87199", replaceWith = ReplaceWith("initializer"))
     override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (firSymbol.fir.initializer == null) {
-                return@withValidityAssertion null
+                return@entryPointImplementation null
             }
 
             initializer as? KaFirEnumEntryInitializerSymbol
                 ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
         }
 
-    override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>()
             ?: KaFirEnumEntrySymbolPointer(createOwnerPointer(), name, this)
     }

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -41,30 +41,30 @@ internal class KaFirBackingFieldSymbol private constructor(
     )
 
     override val owningProperty: KaKotlinPropertySymbol
-        get() = withValidityAssertion { backingOwningProperty }
+        get() = entryPointImplementation { backingOwningProperty }
 
     override val isNotDefault: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
+        get() = entryPointImplementation { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
 
     override val isVal: Boolean
-        get() = withValidityAssertion { backingOwningProperty.isVal }
+        get() = entryPointImplementation { backingOwningProperty.isVal }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
+        get() = entryPointImplementation { firSymbol.returnType(analysisSession.firSymbolBuilder) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (!backingPsi?.annotationEntries.isNullOrEmpty() || backingOwningProperty.mayHaveBackingFieldAnnotation()) {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             } else {
-                KaFirEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(this.token)
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaBackingFieldSymbol>()
             ?: KaFirBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
