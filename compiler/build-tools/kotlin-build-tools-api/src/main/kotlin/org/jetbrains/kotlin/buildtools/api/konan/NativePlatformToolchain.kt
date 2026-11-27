@@ -36,6 +36,13 @@ public interface NativePlatformToolchain : KotlinToolchains.Toolchain {
         destination: Path,
     ): NativeKlibCompilationOperation.Builder
 
+    /**
+     * The hosts that the Kotlin/Native compiler of this toolchain can run on.
+     *
+     * The list describes the compiler version and does not depend on the machine it is requested on.
+     */
+    public val supportedHosts: List<NativeHost>
+
     public companion object {
         /**
          * Gets a [NativePlatformToolchain] instance from [KotlinToolchains].

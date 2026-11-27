@@ -2204,9 +2204,15 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/konan/NativeHost {
+	public abstract fun getLinkableTargets ()Ljava/util/Set;
+	public abstract fun getTarget ()Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain$Companion;
 	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;
+	public abstract fun getSupportedHosts ()Ljava/util/List;
 	public abstract fun nativeKlibCompilationOperationBuilder (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/konan/operations/NativeKlibCompilationOperation$Builder;
 }
 
