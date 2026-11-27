@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.ParseTreeKind
@@ -235,6 +236,10 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.isChildOfForLoop(): Boolean {
         return unwrap().psi.parent is KtForExpression
+    }
+
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
+        return unwrap().psi.startOffsetSkippingComments
     }
 
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {

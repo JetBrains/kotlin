@@ -333,6 +333,15 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         return source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.FOR
     }
 
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
+        val unwrap = unwrap()
+        val children = unwrap.lighterASTNode.getChildren(unwrap.treeStructure)
+        // The solution to find first non comment children will not work here. `treeStructure` can have different root
+        // than original program. Because of that `startOffset` is relative and not in absolute value.
+        val comments = children.takeWhile { it.tokenType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
+        return unwrap.startOffset + comments.sumOf { it.textLength }
+    }
+
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
         val source = unwrap()
         val tree = source.treeStructure

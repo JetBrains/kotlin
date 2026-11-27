@@ -122,6 +122,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
         notYetImplemented()
     }

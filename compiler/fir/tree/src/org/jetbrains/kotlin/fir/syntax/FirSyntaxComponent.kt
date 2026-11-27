@@ -231,6 +231,11 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.isChildOfForLoop(): Boolean
 
     /**
+     * Returns the start offset of the element, skipping its leading comments (e.g., KDoc) and the whitespace after them.
+     */
+    abstract fun KtSourceElement.getStartOffsetSkippingComments(): Int
+
+    /**
      * Finds the annotations on [typeArgument] of the call if it's an underscore type argument (`_`).
      * Here, the receiver is the call.
      */

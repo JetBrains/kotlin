@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
-import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.diagnostics.isFiller
-import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
@@ -20,36 +19,39 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
+import org.jetbrains.kotlin.fir.syntax.SyntaxIdPredicate
+import org.jetbrains.kotlin.fir.syntax.getChild
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
-import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
-fun AbstractKtSourceElement?.startOffsetSkippingComments(keywordTokens: TokenSet? = null): Int? {
-    if (keywordTokens != null) {
-        (this as? KtSourceElement)?.getChildTokenStartOffsetOrNull(keywordTokens)?.let { return it }
-    }
-
-    return when (this) {
-        is KtPsiSourceElement -> this.psi.startOffsetSkippingComments
-        is KtLightSourceElement -> this.startOffsetSkippingComments
-        else -> null
+/**
+ * Returns the start offset of the first direct child matching [keywordTokens] (if specified and there is such a child),
+ * otherwise, the start offset of the element skipping its leading comments.
+ */
+context(c: Fir2IrComponents)
+internal fun KtSourceElement.startOffsetSkippingComments(keywordTokens: SyntaxIdSet? = null): Int {
+    return withSyntax {
+        keywordTokens?.let { getChild(it, depth = 1) }?.startOffset ?: getStartOffsetSkippingComments()
     }
 }
 
+context(c: Fir2IrComponents)
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     val tokenSet = when (this) {
         is FirNamedFunction -> FUNCTION_KEYWORD_TOKENS
         is FirConstructor -> CONSTRUCTOR_KEYWORD_TOKENS
-        is FirVariable -> VAL_VAR
+        is FirVariable -> KotlinSyntaxIdSets.VAL_VAR
         else -> null
     }
     return source.convertWithOffsets(tokenSet, f)
 }
 
+context(c: Fir2IrComponents)
 internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
     defaultStartOffset: Int,
     defaultEndOffset: Int,
@@ -75,11 +77,12 @@ internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
         }
     }
 
-    return source.convertWithOffsets(VAL_VAR, f)
+    return source.convertWithOffsets(KotlinSyntaxIdSets.VAL_VAR, f)
 }
 
+context(c: Fir2IrComponents)
 internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(
-    keywordTokens: TokenSet?,
+    keywordTokens: SyntaxIdSet?,
     f: (startOffset: Int, endOffset: Int) -> T,
 ): T {
     val startOffset: Int
@@ -94,13 +97,14 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        startOffset = this?.startOffsetSkippingComments(keywordTokens) ?: this?.startOffset ?: UNDEFINED_OFFSET
+        startOffset = this?.startOffsetSkippingComments(keywordTokens) ?: UNDEFINED_OFFSET
         endOffset = this?.endOffset ?: UNDEFINED_OFFSET
     }
 
     return f(startOffset, endOffset)
 }
 
+context(c: Fir2IrComponents)
 internal fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     if (shouldUseCalleeReferenceAsItsSourceInIr()) {
         return convertWithOffsets(calleeReference, f)
@@ -127,10 +131,12 @@ fun FirQualifiedAccessExpression.shouldUseCalleeReferenceAsItsSourceInIr(): Bool
     }
 }
 
+context(c: Fir2IrComponents)
 internal inline fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     return source.convertWithOffsets(keywordTokens = null, f)
 }
 
+context(c: Fir2IrComponents)
 internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T
@@ -141,7 +147,7 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
+        startOffset = calleeReference.source?.startOffsetSkippingComments() ?: UNDEFINED_OFFSET
         endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     }
     return f(startOffset, endOffset)
@@ -160,37 +166,29 @@ private fun isCompiledElement(element: PsiElement?): Boolean {
     return containingFile !is KtFile || containingFile.isCompiled
 }
 
+/**
+ * Returns the offsets of the property declaration up to (not including) `=` before its initializer,
+ * or `null` if the property has no initializer.
+ */
+context(c: Fir2IrComponents)
 private fun FirProperty.computeOffsetsWithoutInitializer(): Pair<Int, Int>? {
     val propertySource = source ?: return null
-    val initializerNode = initializer?.source?.lighterASTNode ?: return null
-    val children = propertySource.lighterASTNode.getChildren(propertySource.treeStructure)
+    if (initializer?.source == null) return null
 
-    var lastMeaningfulChild: LighterASTNode? = null
-
-    for (i in children.indices) {
-        val child = children[i]
-
-        if (child == initializerNode) {
-            break
-        }
-
-        if (!child.isFiller() && child.tokenType != KtTokens.EQ) {
-            lastMeaningfulChild = child
+    var endOffset = UNDEFINED_OFFSET
+    withSyntax {
+        propertySource.forEachChildMatching(depth = 1, reverse = false, NON_FILLER_TOKENS) {
+            if (it.syntaxId == KotlinSyntaxTokenIds.EQ) return@forEachChildMatching false
+            endOffset = it.endOffset
+            true
         }
     }
+    if (endOffset == UNDEFINED_OFFSET) return null
 
-    if (lastMeaningfulChild == null) {
-        return null
-    }
-
-    val endOffset = lastMeaningfulChild.endOffset
-    val startOffset = propertySource.startOffsetSkippingComments(VAL_VAR)
-        ?: propertySource.startOffset
+    val startOffset = propertySource.startOffsetSkippingComments(KotlinSyntaxIdSets.VAL_VAR)
     return startOffset to endOffset
 }
 
-private val CONSTRUCTOR_KEYWORD_TOKENS = TokenSet.create(KtTokens.CONSTRUCTOR_KEYWORD)
-private val FUNCTION_KEYWORD_TOKENS = TokenSet.create(KtTokens.FUN_KEYWORD)
-
-internal fun KtSourceElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet): Int? =
-    lighterASTNode.getChildren(treeStructure).firstOrNull { it.tokenType in tokenSet }?.startOffset
+private val CONSTRUCTOR_KEYWORD_TOKENS = SyntaxIdSet.of(KotlinSyntaxTokenIds.CONSTRUCTOR_KEYWORD)
+private val FUNCTION_KEYWORD_TOKENS = SyntaxIdSet.of(KotlinSyntaxTokenIds.FUN_MODIFIER)
+private val NON_FILLER_TOKENS = SyntaxIdPredicate { it !in KotlinSyntaxIdSets.WHITE_SPACE_OR_COMMENT_BIT_SET }
