@@ -805,11 +805,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs
 	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainManagementDsl$DefaultImpls {
 	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainManagementDsl;)V
 	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainService : org/gradle/api/services/BuildService {
@@ -885,11 +887,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiad
 	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl$DefaultImpls {
 	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl;)V
 	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService : org/gradle/api/services/BuildService {
@@ -948,11 +952,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmto
 	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl$DefaultImpls {
 	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;)V
 	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService : org/gradle/api/services/BuildService {

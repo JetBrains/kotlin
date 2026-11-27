@@ -49,6 +49,16 @@ interface NodeJsToolchainManagementDsl {
     fun toolchainService(configure: DefaultNodeJsToolchainService.Parameters.() -> Unit)
 
     /**
+     * [Action] based version of [toolchainService] above.
+     */
+    @ExperimentalNodeJsToolchainDsl
+    fun toolchainService(configure: Action<DefaultNodeJsToolchainService.Parameters>) {
+        toolchainService {
+            configure.execute(this)
+        }
+    }
+
+    /**
      * Selects [serviceClass] as the [NodeJsToolchainService] used by the whole build, and configures its
      * [parameters][NodeJsToolchainService.Parameters].
      */
