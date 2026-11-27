@@ -1,0 +1,4 @@
+open var foo: kotlin.String!
+  get()
+  @java.lang.Override
+  set(value: kotlin.String!)

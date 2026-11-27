@@ -44,7 +44,10 @@ internal class KaFirJavaSyntheticPropertyAccessorFunctionSymbolPointer(
             syntheticProperty.setter?.delegate?.symbol ?: return null
         }
 
-        return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(functionSymbol)
+        val symbol = analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(functionSymbol)
+
+        // The property in the scope of the owner can take the accessor from a superclass, which has another owner
+        return symbol.takeIf { it.isMemberOf(owner) }
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.utils.isJavaFieldOrFakeOverrideOfJavaField
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -27,8 +28,15 @@ internal class KaFirJavaFieldSymbolPointer(
         candidates: FirScope,
         owner: FirClassSymbol<*>,
     ): KaJavaFieldSymbol? {
-        val javaField = candidates.getProperties(fieldName).mapNotNull { it.fir as? FirJavaField }.singleOrNull() ?: return null
-        return analysisSession.firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
+        val javaField = candidates.getProperties(fieldName)
+            .mapNotNull { it.fir as? FirField }
+            .singleOrNull { it.isJavaFieldOrFakeOverrideOfJavaField() }
+            ?: return null
+
+        val symbol = analysisSession.firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
+
+        // The scope of the owner also has the fields of its superclasses, which have other owners
+        return symbol.takeIf { it.isMemberOf(owner) }
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

@@ -51,9 +51,93 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolRestoreFromDifferentModul
   }
 
   @Test
+  @TestMetadata("deletedHidingJavaField.kt")
+  public void testDeletedHidingJavaField() {
+    run("deletedHidingJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("deletedHidingJavaFieldOfGenericSuperclass.kt")
+  public void testDeletedHidingJavaFieldOfGenericSuperclass() {
+    run("deletedHidingJavaFieldOfGenericSuperclass.kt");
+  }
+
+  @Test
+  @TestMetadata("deletedHidingStaticJavaField.kt")
+  public void testDeletedHidingStaticJavaField() {
+    run("deletedHidingStaticJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("deletedOverridingJavaGetter.kt")
+  public void testDeletedOverridingJavaGetter() {
+    run("deletedOverridingJavaGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("deletedOverridingJavaSetter.kt")
+  public void testDeletedOverridingJavaSetter() {
+    run("deletedOverridingJavaSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("hidingJavaField.kt")
+  public void testHidingJavaField() {
+    run("hidingJavaField.kt");
+  }
+
+  @Test
+  @TestMetadata("javaOverriddenSyntheticPropertyWithDeletedOverridingGetter.kt")
+  public void testJavaOverriddenSyntheticPropertyWithDeletedOverridingGetter() {
+    run("javaOverriddenSyntheticPropertyWithDeletedOverridingGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaOverriddenSyntheticPropertyWithOverridingGetter.kt")
+  public void testJavaOverriddenSyntheticPropertyWithOverridingGetter() {
+    run("javaOverriddenSyntheticPropertyWithOverridingGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSyntheticPropertyWithDeletedOverridingGetter.kt")
+  public void testJavaSyntheticPropertyWithDeletedOverridingGetter() {
+    run("javaSyntheticPropertyWithDeletedOverridingGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSyntheticPropertyWithDeletedOverridingSetter.kt")
+  public void testJavaSyntheticPropertyWithDeletedOverridingSetter() {
+    run("javaSyntheticPropertyWithDeletedOverridingSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSyntheticPropertyWithOverridingGetter.kt")
+  public void testJavaSyntheticPropertyWithOverridingGetter() {
+    run("javaSyntheticPropertyWithOverridingGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSyntheticPropertyWithOverridingSetter.kt")
+  public void testJavaSyntheticPropertyWithOverridingSetter() {
+    run("javaSyntheticPropertyWithOverridingSetter.kt");
+  }
+
+  @Test
   @TestMetadata("noDependency.kt")
   public void testNoDependency() {
     run("noDependency.kt");
+  }
+
+  @Test
+  @TestMetadata("overridingJavaGetter.kt")
+  public void testOverridingJavaGetter() {
+    run("overridingJavaGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("overridingJavaSetter.kt")
+  public void testOverridingJavaSetter() {
+    run("overridingJavaSetter.kt");
   }
 
   @Test

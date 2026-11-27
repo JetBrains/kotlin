@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaSynthetic
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -91,11 +95,49 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol> = withValidityAssertion {
         KaFirJavaSyntheticPropertySymbolPointer(
-            ownerPointer = createOwnerPointer(),
+            ownerPointer = createSyntheticPropertyOwnerPointer(),
             propertyName = name,
             isSynthetic = firSymbol is SyntheticSymbol,
             originalSymbol = this
         )
+    }
+
+    /**
+     * Returns the pointer of the class to restore this property from.
+     *
+     * A property from the synthetic properties scope is contained in the class of its getter. If its setter comes from a subclass of
+     * that class, the scope of the getter's class has another setter or none, so the pointer takes the class of the setter.
+     *
+     * For example, `foo` has `Derived.setFoo` in the scope of `Derived` and `Base.setFoo` in the scope of `Base`:
+     *
+     * ```java
+     * public class Base {
+     *     public String getFoo() { return ""; }
+     *     public void setFoo(String value) {}
+     * }
+     *
+     * public class Derived extends Base {
+     *     @Override
+     *     public void setFoo(String value) {}
+     * }
+     * ```
+     */
+    private fun createSyntheticPropertyOwnerPointer(): KaSymbolPointer<KaDeclarationContainerSymbol> {
+        // A property from the member scope of a Java class is contained in that class, whose member scope has both accessors
+        if (firSymbol !is SyntheticSymbol) return createOwnerPointer()
+
+        val firSession = analysisSession.firSession
+        val getterClass = firSymbol.getterSymbol?.delegateFunctionSymbol?.containingClassLookupTag()
+        val setterClass = firSymbol.setterSymbol?.delegateFunctionSymbol?.containingClassLookupTag()?.toRegularClassSymbol(firSession)
+        val isSetterFromSubclass = getterClass != null && setterClass != null &&
+                setterClass.isSubclassOf(getterClass, firSession, isStrict = true, lookupInterfaces = true)
+
+        return if (isSetterFromSubclass) {
+            builder.classifierBuilder.buildNamedClassSymbol(setterClass).createPointer()
+        } else {
+            // The class of the getter, which is the containing declaration
+            createOwnerPointer()
+        }
     }
 
     /**
