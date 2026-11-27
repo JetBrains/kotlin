@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.engine
 
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")!!
@@ -30,7 +30,7 @@ abstract class ProcessBasedScriptEngine(
         val stderr = vm.errorStream
 
         val writer = stdin.writer()
-        writer.write(StringUtil.convertLineSeparators(script, "\\n") + "\n")
+        writer.write(StringUtilsKt.convertLineSeparators(script, "\\n") + "\n")
         writer.flush()
 
         val out = StringBuilder()

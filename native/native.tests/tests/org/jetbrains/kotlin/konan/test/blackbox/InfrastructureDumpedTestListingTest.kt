@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.testFramework.TestDataFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.utils.StringUtilsKt.convertLineSeparators
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

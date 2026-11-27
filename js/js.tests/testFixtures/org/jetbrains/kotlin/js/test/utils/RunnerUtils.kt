@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.finalizePath
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.DFS.topologicalOrder
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
@@ -264,7 +264,7 @@ fun extractEntryModulePath(
 internal const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
 
 internal fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleKind, moduleId: String): String {
-    val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
+    val escapedModuleId = StringUtilsKt.escapeStringCharacters(moduleId)
 
     return when (moduleKind) {
         ModuleKind.COMMON_JS -> "$KOTLIN_TEST_INTERNAL.beginModule();\n" +

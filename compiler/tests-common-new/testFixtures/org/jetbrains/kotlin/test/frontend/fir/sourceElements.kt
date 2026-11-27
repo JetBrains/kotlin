@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import kotlin.collections.forEach
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 /**
  * Checks that all FIR declarations in the given [files] have distinct [KtSourceElement]s. This is a requirement of FIR as Data (KT-84343)
@@ -81,7 +80,7 @@ private fun KtSourceElement?.toLocationDescription(): String =
         null -> "<unknown location: no source element>"
 
         is KtPsiSourceElement -> {
-            val pos = StringUtil.offsetToLineColumn(psi.containingFile.text, startOffset)
+            val pos = StringUtilsKt.offsetToLineColumn(psi.containingFile.text, startOffset)
             val lineColumn = "${pos.line + 1}:${pos.column + 1}"
 
             buildString {

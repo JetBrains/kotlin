@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
+    implementation(project(":compiler:util"))
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit5"))

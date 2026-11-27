@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.tests;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -120,7 +120,7 @@ public class GenerateRangesCodegenTestData {
             String expectedListElements
     ) {
         return template
-                .replace("$RANGE_EXPR_ESCAPED", StringUtil.escapeStringCharacters(rangeExpression))
+                .replace("$RANGE_EXPR_ESCAPED", StringUtilsKt.escapeStringCharacters(rangeExpression))
                 .replace("$RANGE_EXPR", rangeExpression)
                 .replace("$LIST_ELEMENTS", expectedListElements)
                 .replace("$LIST", "list" + number)

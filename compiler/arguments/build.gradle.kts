@@ -41,6 +41,7 @@ dependencies {
     embedded(project(":generators")) {
         isTransitive = false
     }
+    compileOnly(project(":compiler:util"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))

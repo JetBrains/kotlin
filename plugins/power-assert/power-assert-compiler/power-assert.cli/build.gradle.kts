@@ -10,6 +10,7 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(project(":compiler:util"))
 
     implementation(project(":kotlin-power-assert-compiler-plugin.backend"))
     implementation(project(":kotlin-power-assert-compiler-plugin.frontend"))

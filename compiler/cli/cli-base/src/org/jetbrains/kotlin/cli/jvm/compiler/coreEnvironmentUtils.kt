@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
 
 class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
@@ -168,6 +168,6 @@ fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration): L
 fun List<KtFile>.countLinesOfCode(): Int {
     return sumOf { sourceFile ->
         val text = sourceFile.text
-        StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+        StringUtilsKt.getLineBreakCount(text) + (if (StringUtilsKt.endsWithLineBreak(text)) 0 else 1)
     }
 }

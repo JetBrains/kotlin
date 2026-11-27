@@ -17,19 +17,13 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
-import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
-import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
-import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
-import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
@@ -48,6 +42,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideType
 import org.jetbrains.kotlin.util.tryMeasureSideTime
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 private val RELEVANT_JAVA_FILE_EXTENSIONS = JavaFileExtensions(JavaFileExtension.CLASS, JavaFileExtension.SIG, JavaFileExtension.JAVA)
@@ -310,7 +305,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 return if (className == topLevelClass.name) topLevelClass else null
             }
 
-            val segments = StringUtil.split(className, ".").iterator()
+            val segments = className.split(".").iterator()
             if (!segments.hasNext() || segments.next() != topLevelClass.name) {
                 return null
             }

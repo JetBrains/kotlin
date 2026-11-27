@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.applyIf
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -432,8 +432,8 @@ class RenderIrElementVisitor(
 
     private fun Any.escapeIfRequired() =
         when (this) {
-            is String -> "\"${StringUtil.escapeStringCharacters(this)}\""
-            is Char -> "'${StringUtil.escapeStringCharacters(this.toString())}'"
+            is String -> "\"${StringUtilsKt.escapeStringCharacters(this)}\""
+            is Char -> "'${StringUtilsKt.escapeStringCharacters(this.toString())}'"
             else -> this
         }
 

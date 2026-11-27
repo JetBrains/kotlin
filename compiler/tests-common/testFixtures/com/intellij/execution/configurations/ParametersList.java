@@ -11,7 +11,6 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.ObjectUtils;
@@ -24,6 +23,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -65,7 +65,7 @@ public final class ParametersList implements Cloneable {
         Map<String, String> result = new LinkedHashMap<>();
         JBIterable<Matcher> matchers = JBIterable.from(myParameters).map(PROPERTY_PATTERN::matcher).filter(Matcher::matches);
         for (Matcher matcher : matchers) {
-            result.put(matcher.group(1), StringUtil.notNullize(matcher.group(2), valueIfMissing));
+            result.put(matcher.group(1), StringUtilsKt.notNullize(matcher.group(2), valueIfMissing));
         }
         return result;
     }
@@ -107,7 +107,7 @@ public final class ParametersList implements Cloneable {
     }
 
     public void addParametersString(@Nullable @NonNls String parameters) {
-        if (StringUtil.isEmptyOrSpaces(parameters)) return;
+        if (StringUtilsKt.isEmptyOrSpaces(parameters)) return;
         for (String param : parse(parameters)) {
             add(param);
         }
@@ -224,7 +224,7 @@ public final class ParametersList implements Cloneable {
      * replaces the value of the last property if defined.
      */
     public void addNotEmptyProperty(@NotNull @NonNls String propertyName, @Nullable @NonNls String propertyValue) {
-        if (StringUtil.isEmptyOrSpaces(propertyValue)) return;
+        if (StringUtilsKt.isEmptyOrSpaces(propertyValue)) return;
         addProperty(propertyName, propertyValue);
     }
 
@@ -248,7 +248,7 @@ public final class ParametersList implements Cloneable {
             int position,
             @NotNull Condition<? super String> existingCondition) {
         int index = indexOfParameter(existingCondition);
-        boolean setNewValue = StringUtil.isNotEmpty(replacement);
+        boolean setNewValue = !replacement.isEmpty();
         if (index > -1 && setNewValue) {
             myParameters.set(index, replacement);
         }

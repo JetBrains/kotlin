@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
+import org.jetbrains.kotlin.utils.StringUtilsKt.convertLineSeparators
 import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG

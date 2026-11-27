@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.test.handlers
 
-import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.util.*
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
@@ -41,7 +41,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             .sortedBy { it.sourceFile.name }
             .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
+        val actual = StringUtilsKt.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 

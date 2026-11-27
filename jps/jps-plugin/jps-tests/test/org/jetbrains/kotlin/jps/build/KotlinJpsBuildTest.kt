@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.io.URLUtil
@@ -59,6 +58,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesW
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -736,7 +736,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertTrue(legacyModesWarning in warnings, "Deprecation of legacy modes is expected: $warnings")
         val warning = warnings.filterNot { it == legacyModesWarning }.single()
 
-        val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
+        val expectedText = StringUtilsKt.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
         assertEquals(expectedText, warning)
     }
 

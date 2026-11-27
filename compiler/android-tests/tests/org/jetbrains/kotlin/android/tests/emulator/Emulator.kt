@@ -17,12 +17,12 @@ package org.jetbrains.kotlin.android.tests.emulator
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.kotlin.android.tests.PathManager
 import org.jetbrains.kotlin.android.tests.run.runProcessCancellable
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -294,6 +294,6 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
         private val isRunningInCi: Boolean
             get() = java.lang.Boolean.getBoolean("kotlin.test.android.teamcity")
-                    || !StringUtil.isEmpty(System.getenv("TEAMCITY_VERSION"))
+                    || !System.getenv("TEAMCITY_VERSION").isNullOrEmpty()
     }
 }

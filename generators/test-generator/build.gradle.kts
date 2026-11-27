@@ -16,6 +16,7 @@ dependencies {
     testFixturesImplementation(intellijCore())
 
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesImplementation(project(":compiler:util"))
     testFixturesImplementation(project(":repo:test-runtime"))
 }
 
@@ -24,4 +25,3 @@ sourceSets {
     "test" { none() }
     "testFixtures" { projectDefault() }
 }
-

@@ -5,11 +5,11 @@
 package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.FileCollectionFactory;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,20 +72,6 @@ public final class TestProjectBuilderLogger extends ProjectBuilderLoggerBase {
   @Override
   protected void logLine(String message) {
     myLogLines.add(message);
-  }
-
-  public String getFullLog(final File... baseDirs) {
-    return StringUtil.join(myLogLines, s -> {
-      for (File dir : baseDirs) {
-        if (dir != null) {
-          String path = FileUtil.toSystemIndependentName(dir.getAbsolutePath()) + "/";
-          if (s.startsWith(path)) {
-            return s.substring(path.length());
-          }
-        }
-      }
-      return s;
-    }, "\n");
   }
 
   @Override

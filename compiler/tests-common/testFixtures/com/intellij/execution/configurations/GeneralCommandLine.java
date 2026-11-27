@@ -17,7 +17,6 @@ import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.containers.CollectionFactory;
@@ -27,6 +26,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -291,7 +291,7 @@ public class GeneralCommandLine implements UserDataHolder {
     @NotNull
     public List<String> getCommandLineList(@Nullable String exeName) {
         List<@NlsSafe String> commands = new ArrayList<>();
-        String exe = StringUtil.notNullize(exeName, StringUtil.notNullize(myExePath, "<null>"));
+        String exe = StringUtilsKt.notNullize(exeName, StringUtilsKt.notNullize(myExePath, "<null>"));
         commands.add(exe);
 
         commands.addAll(myProgramParams.getList());
@@ -319,7 +319,7 @@ public class GeneralCommandLine implements UserDataHolder {
     @NotNull
     public String getPreparedCommandLine(@NotNull Platform platform) {
         String exePath = myExePath != null ? myExePath : "";
-        return StringUtil.join(prepareCommandLine(exePath, myProgramParams.getList(), platform), "\n");
+        return StringUtilsKt.join(prepareCommandLine(exePath, myProgramParams.getList(), platform), "\n");
     }
 
     @NotNull
@@ -362,7 +362,7 @@ public class GeneralCommandLine implements UserDataHolder {
                 }
             }
 
-            if (StringUtil.isEmptyOrSpaces(myExePath)) {
+            if (StringUtilsKt.isEmptyOrSpaces(myExePath)) {
                 throw new ExecutionException("executable not specified");
             }
         }

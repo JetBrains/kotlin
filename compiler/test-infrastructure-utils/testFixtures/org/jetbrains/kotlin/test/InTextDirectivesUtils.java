@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,7 +77,7 @@ public final class InTextDirectivesUtils {
     }
 
     public static List<String> splitValues(@NotNull List<String> result, @NotNull String line) {
-        String unquoted = StringUtil.unquoteString(line);
+        String unquoted = StringUtilsKt.unquoteString(line);
         if (!unquoted.equals(line)) {
             result.add(unquoted);
         }
@@ -104,7 +104,7 @@ public final class InTextDirectivesUtils {
         if (strings.size() != 1) {
             throw new IllegalStateException("There is more than one string with given prefixes " +
                                             Arrays.toString(prefixes) + ":\n" +
-                                            StringUtil.join(strings, "\n") + "\n" +
+                                            StringUtilsKt.join(strings, "\n") + "\n" +
                                             "Use findListWithPrefixes() instead.");
         }
 
@@ -144,7 +144,7 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
 
                         List<String> resultList = result.computeIfAbsent(prefix, s -> new ArrayList<>());
-                        String notSplit = trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1));
+                        String notSplit = trim ? noPrefixLine.trim() : trimTrailing(StringsKt.drop(noPrefixLine, 1));
                         if (separatedValues) {
                             List<String> split = Arrays.asList(notSplit.split(", *"));
                             resultList.addAll(split);
@@ -180,8 +180,7 @@ public final class InTextDirectivesUtils {
     private static String probableDirective(@NotNull String line) {
         String[] arr = line.split(" ", 2);
         String firstWord = arr[0];
-
-        if (firstWord.length() > 1 && StringUtil.toUpperCase(firstWord).equals(firstWord)) {
+        if (firstWord.length() > 1 && firstWord.toUpperCase().equals(firstWord)) {
             return firstWord;
         }
 
@@ -193,7 +192,7 @@ public final class InTextDirectivesUtils {
 
         for (String prefix : prefixes) {
             if (prefix.startsWith("//") || prefix.startsWith("##")) {
-                resultPrefixes.add(StringUtil.trimLeading(prefix.substring(2)));
+                resultPrefixes.add(trimLeading(prefix.substring(2)));
             }
             else {
                 resultPrefixes.add(prefix);
@@ -345,5 +344,17 @@ public final class InTextDirectivesUtils {
     // Whether the target test is supposed to pass successfully on targetBackend
     public static boolean isPassingTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
         return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file);
+    }
+
+    private static @NotNull String trimLeading(@NotNull String string) {
+        int index = 0;
+        while (index < string.length() && Character.isWhitespace(string.charAt(index))) index++;
+        return string.subSequence(index, string.length()).toString();
+    }
+
+    private static @NotNull String trimTrailing(@NotNull String string) {
+        int index = string.length() - 1;
+        while (index >= 0 && Character.isWhitespace(string.charAt(index))) index--;
+        return string.subSequence(0, index + 1).toString();
     }
 }

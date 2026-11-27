@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -20,6 +19,7 @@ import org.jetbrains.jps.incremental.MessageHandler;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.DoneSomethingNotification;
 import org.jetbrains.jps.incremental.storage.OutputToTargetRegistry;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public final class BuildResult implements MessageHandler {
   private static void dumpSourceToOutputMappings(ProjectDescriptor pd, PrintStream stream) throws IOException {
     List<BuildTarget<?>> targets = new ArrayList<>(pd.getBuildTargetIndex().getAllTargets());
     targets.sort((o1, o2) -> {
-      return StringUtil.comparePairs(o1.getTargetType().getTypeId(), o1.getId(), o2.getTargetType().getTypeId(), o2.getId(), false);
+      return StringUtilsKt.comparePairs(o1.getTargetType().getTypeId(), o1.getId(), o2.getTargetType().getTypeId(), o2.getId(), false);
     });
     final Int2ObjectMap<BuildTarget<?>> id2Target = new Int2ObjectOpenHashMap<>();
     for (BuildTarget<?> target : targets) {
@@ -83,7 +83,7 @@ public final class BuildResult implements MessageHandler {
           hashCodeToOutputPath.put(FileUtil.pathHashCode(output), output);
         }
         String sourceToCompare = SystemInfo.isFileSystemCaseSensitive ? source : source.toLowerCase(Locale.US);
-        stream.println(" " + sourceToCompare + " -> " + StringUtil.join(outputs, ","));
+        stream.println(" " + sourceToCompare + " -> " + StringUtilsKt.join(outputs, ","));
       }
       stream.println("End Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")");
     }
@@ -149,8 +149,8 @@ public final class BuildResult implements MessageHandler {
   public void assertSuccessful() {
     if (!isSuccessful()) {
       fail("Build failed.\n" +
-           "Errors:\n" + StringUtil.join(myErrorMessages, "\n") + "\n" +
-           "Info messages:\n" + StringUtil.join(myInfoMessages, "\n"));
+           "Errors:\n" + StringUtilsKt.join(myErrorMessages, "\n") + "\n" +
+           "Info messages:\n" + StringUtilsKt.join(myInfoMessages, "\n"));
     }
   }
 

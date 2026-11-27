@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
-import com.intellij.openapi.util.text.StringUtil.substringAfter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -41,8 +40,8 @@ internal class NativeTestGroupingMessageCollector(
             ) {
                 isProducingStaticCache = true
             } else {
-                includedLibraryName = includedLibraryName ?: substringAfter(arg, "-Xinclude=")
-                cachedLibraryName = cachedLibraryName ?: substringAfter(arg, "-Xadd-cache=")
+                includedLibraryName = includedLibraryName ?: arg.substringAfterOrNull("-Xinclude=")
+                cachedLibraryName = cachedLibraryName ?: arg.substringAfterOrNull("-Xadd-cache=")
             }
 
             if (isProducingStaticCache && includedLibraryName != null && cachedLibraryName != null)
@@ -88,7 +87,7 @@ internal class NativeTestGroupingMessageCollector(
         }
 
     private fun isPreReleaseBinariesWarning(message: String): Boolean {
-        val languageFeatures = substringAfter(message, PRE_RELEASE_WARNING_PREFIX)
+        val languageFeatures = message.substringAfterOrNull(PRE_RELEASE_WARNING_PREFIX)
             ?.split(", ")
             ?.takeIf(Collection<String>::isNotEmpty)
             ?: return false
@@ -97,7 +96,7 @@ internal class NativeTestGroupingMessageCollector(
     }
 
     private fun isUnsafeCompilerArgumentsWarning(message: String): Boolean {
-        val languageFeatures = substringAfter(message, UNSAFE_COMPILER_ARGS_WARNING_PREFIX)
+        val languageFeatures = message.substringAfterOrNull(UNSAFE_COMPILER_ARGS_WARNING_PREFIX)
             ?.lineSequence()
             ?.takeWhile(String::isNotBlank)
             ?.map { parseLanguageFeatureArg(it) ?: "<non-parsable command line argument>" }
@@ -109,7 +108,7 @@ internal class NativeTestGroupingMessageCollector(
     }
 
     private fun isLibraryIncludedMoreThanOnceWarning(message: String): Boolean {
-        val libraryPath = substringAfter(message, LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX)
+        val libraryPath = message.substringAfterOrNull(LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX)
             ?.takeIf(String::isNotBlank)
             ?: return false
 
@@ -153,6 +152,11 @@ internal class NativeTestGroupingMessageCollector(
         private val DUPLICATED_SIGNATURE_IN_DEPENDENCIES_WARNING_REGEX = """Libraries .* declare \d+ top-level declarations? with the same signatures?: .*""".toRegex()
 
         private fun parseLanguageFeatureArg(arg: String): String? =
-            substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
+            arg.substringAfterOrNull("-XXLanguage:-") ?: arg.substringAfterOrNull("-XXLanguage:+")
+
+        private fun String.substringAfterOrNull(prefix: String): String? {
+            if (isEmpty()) return null
+            return substringAfter(prefix, missingDelimiterValue = "").takeIf { it.isNotEmpty() }
+        }
     }
 }

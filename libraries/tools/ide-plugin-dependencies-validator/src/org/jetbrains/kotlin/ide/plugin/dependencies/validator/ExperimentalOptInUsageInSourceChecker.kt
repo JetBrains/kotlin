@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ide.plugin.dependencies.validator
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.nio.file.Path
 import kotlin.io.path.exists
 
@@ -47,7 +47,7 @@ object ExperimentalOptInUsageInSourceChecker {
                 if (experimentalAnnotations.isEmpty()) return@flatMap emptyList()
 
                 /* offsetToLineNumber's indexing starts from 0*/
-                val lineNumber = StringUtil.offsetToLineNumber(ktFile.text, annotationEntry.startOffset) + 1
+                val lineNumber = StringUtilsKt.offsetToLineNumber(ktFile.text, annotationEntry.startOffset) + 1
 
                 experimentalAnnotations.map { annotation ->
                     ExperimentalAnnotationUsage(file, lineNumber, annotation)

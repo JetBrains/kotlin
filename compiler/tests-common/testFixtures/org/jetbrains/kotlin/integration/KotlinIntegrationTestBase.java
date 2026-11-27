@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.integration;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.*;
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.Regex;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
@@ -91,7 +94,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, new File(System.getProperty("java.home")), "[JavaHome]");
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
-        content = StringUtil.convertLineSeparators(content);
+        content = StringUtilsKt.convertLineSeparators(content);
         content = content.replaceAll("\n.*Picked up [_A-Z]+:.*\n", "\n");
         content = content.replaceFirst("\nERR:\n\nReturn code:", "\nReturn code:");
         return content;

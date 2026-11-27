@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.test.testFramework;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 import org.opentest4j.AssertionFailedError;
@@ -63,8 +64,8 @@ public final class KtUsefulTestCase {
     @NotNull
     public static String getTestName(@Nullable String name, boolean lowercaseFirstLetter) {
         if (name == null) return "";
-        name = StringUtil.trimStart(name, "test");
-        return StringUtil.isEmpty(name) ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
+        name = StringsKt.removePrefix(name, "test");
+        return name.isEmpty() ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
     }
 
     @NotNull
@@ -113,8 +114,8 @@ public final class KtUsefulTestCase {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String expected = StringUtil.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
-        String actual = StringUtil.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
+        String expected = StringUtilsKt.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
+        String actual = StringUtilsKt.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
         if (!Objects.equals(expected, actual)) {
             throw new AssertionFailedError(
                     null,

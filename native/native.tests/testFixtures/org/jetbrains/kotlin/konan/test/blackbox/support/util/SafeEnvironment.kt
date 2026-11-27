@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
-import com.intellij.openapi.util.text.StringUtil.containsLineBreak
-import com.intellij.openapi.util.text.StringUtil.escapeLineBreak
+import org.jetbrains.kotlin.utils.StringUtilsKt.containsLineBreak
 import java.util.*
 
 internal data class NameAndSafeValue(val name: String, val safeValue: String)
@@ -102,3 +101,16 @@ private fun isUnsafeVariableName(name: String) = name
     }
 
 private fun doEscape(value: String) = if (containsLineBreak(value)) escapeLineBreak(value) else value
+
+private fun escapeLineBreak(text: String): String {
+    val buffer = StringBuilder(text.length)
+    for (i in text.indices) {
+        val c = text.get(i)
+        when (c) {
+            '\n' -> buffer.append("\\n")
+            '\r' -> buffer.append("\\r")
+            else -> buffer.append(c)
+        }
+    }
+    return buffer.toString()
+}

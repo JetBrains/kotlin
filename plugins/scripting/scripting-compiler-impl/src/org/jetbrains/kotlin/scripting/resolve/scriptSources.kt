@@ -7,12 +7,12 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -63,7 +63,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     LightVirtualFile(
         name,
         KotlinLanguage.INSTANCE,
-        StringUtil.convertLineSeparators(text)
+        StringUtilsKt.convertLineSeparators(text)
     ) {
 
     init {

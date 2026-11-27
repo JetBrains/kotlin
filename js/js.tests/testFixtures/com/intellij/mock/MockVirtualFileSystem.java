@@ -5,7 +5,6 @@
 
 package com.intellij.mock;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +13,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.CollectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.util.Map;
@@ -33,9 +33,9 @@ public final class MockVirtualFileSystem extends DeprecatedVirtualFileSystem {
     @Override
     public MyVirtualFile findFileByPath(@NotNull String path) {
         String normalized = path.replace(File.separatorChar, '/').replace('/', ':');
-        if (StringUtil.startsWithChar(normalized, ':')) normalized = normalized.substring(1);
+        if (normalized.charAt(0) == ':') normalized = normalized.substring(1);
         MyVirtualFile file = myRoot;
-        for (String component : StringUtil.split(normalized, ":")) {
+        for (String component : StringUtilsKt.split(normalized, ":")) {
             file = file.getOrCreate(component);
         }
         return file;

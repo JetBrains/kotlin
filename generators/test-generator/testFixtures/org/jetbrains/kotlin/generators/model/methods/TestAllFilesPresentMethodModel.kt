@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.generators.model.methods
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
 import org.jetbrains.kotlin.generators.util.getFilePath
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.util.regex.Pattern
 
 /**
@@ -39,7 +39,7 @@ class TestAllFilesPresentMethodModel(val classModel: SimpleTestClassModel) : Met
                 val exclude = StringBuilder()
                 for (dir in classModel.allExcludedDirs) {
                     exclude.append(", \"")
-                    exclude.append(StringUtil.escapeStringCharacters(dir))
+                    exclude.append(StringUtilsKt.escapeStringCharacters(dir))
                     exclude.append("\"")
                 }
                 val excludePattern = classModel.excludePattern
@@ -47,7 +47,7 @@ class TestAllFilesPresentMethodModel(val classModel: SimpleTestClassModel) : Met
                     "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
                     classModel.rootFile.getFilePath(),
                     "\"), Pattern.compile(\"",
-                    StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
+                    StringUtilsKt.escapeStringCharacters(classModel.filenamePattern.pattern()),
                     "\"), ",
                 )
                 p.printExcludePattern(excludePattern)
@@ -65,7 +65,7 @@ class TestAllFilesPresentMethodModel(val classModel: SimpleTestClassModel) : Met
             if (excludePattern != null) {
                 printWithNoIndent(
                     "Pattern.compile(\"",
-                    StringUtil.escapeStringCharacters(excludePattern.pattern()),
+                    StringUtilsKt.escapeStringCharacters(excludePattern.pattern()),
                     "\")"
                 )
             } else {

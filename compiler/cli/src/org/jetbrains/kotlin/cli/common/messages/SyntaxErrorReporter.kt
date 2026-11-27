@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.syntax.PsiParseTreeKind
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 object SyntaxErrorReporter {
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
@@ -67,7 +67,7 @@ object SyntaxErrorReporter {
                 hasErrors = true
                 createAndReportSyntaxError(
                     element,
-                    if (StringUtil.isEmpty(description)) "Syntax error" else description
+                    if (description.isEmpty()) "Syntax error" else description
                 )
             }
         }

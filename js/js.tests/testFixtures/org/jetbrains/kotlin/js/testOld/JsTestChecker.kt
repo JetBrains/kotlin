@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.js.testOld
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
 import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.Assertions
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
@@ -121,7 +121,7 @@ object V8JsTestChecker {
         }
     }
 
-    private fun String.normalize() = StringUtil.convertLineSeparators(this)
+    private fun String.normalize() = StringUtilsKt.convertLineSeparators(this)
 
     fun run(files: List<String>, f: ScriptEngine.() -> String): String {
         periodicScriptEngineRecreate { engineTL.remove() }
