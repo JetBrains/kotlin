@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -19,6 +20,7 @@ import java.nio.file.Path
 
 @DisplayName("Tests for checking klib cross-compilation in KGP")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class KlibCrossCompilationNativeIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
