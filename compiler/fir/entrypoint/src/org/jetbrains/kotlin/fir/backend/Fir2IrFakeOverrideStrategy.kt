@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class Fir2IrFakeOverrideStrategy(
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
+    override val checkPropertyTypeAndMutability: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()

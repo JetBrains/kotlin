@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -46,8 +47,8 @@ class IrOverrideChecker(
         overrider: MemberWithOriginal,
         candidate: MemberWithOriginal,
     ): OverridabilityResult {
-        val result1 = isOverridableBy(candidate, overrider, checkIsInlineFlag = false)
-        val result2 = isOverridableBy(overrider, candidate, checkIsInlineFlag = false)
+        val result1 = isOverridableBy(candidate, overrider, checkIsInlineFlag = false, checkProperties = false)
+        val result2 = isOverridableBy(overrider, candidate, checkIsInlineFlag = false, checkProperties = false)
         return if (result1 == result2) result1 else incompatible
     }
 
@@ -55,8 +56,9 @@ class IrOverrideChecker(
         superMember: MemberWithOriginal,
         subMember: MemberWithOriginal,
         checkIsInlineFlag: Boolean,
+        checkProperties: Boolean,
     ): OverridabilityResult {
-        val basicResult = isOverridableByWithoutExternalConditions(superMember.member, subMember.member, checkIsInlineFlag)
+        val basicResult = isOverridableByWithoutExternalConditions(superMember.member, subMember.member, checkIsInlineFlag, checkProperties)
 
         return runExternalOverridabilityConditions(superMember, subMember, basicResult)
     }
@@ -65,6 +67,7 @@ class IrOverrideChecker(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
         checkIsInlineFlag: Boolean,
+        checkProperties: Boolean,
     ): OverridabilityResult {
         val [superFunction, subFunction] = when (superMember) {
             is IrSimpleFunction -> {
@@ -118,6 +121,29 @@ class IrOverrideChecker(
         for ([index, superValueParameter] in superValueParameters.withIndex()) {
             if (!AbstractTypeChecker.equalTypes(typeCheckerState, subValueParameters[index].type, superValueParameter.type)) {
                 return incompatible
+            }
+        }
+
+        if (checkProperties && superMember is IrProperty && subMember is IrProperty) {
+            val superIsEffectivelyVar = superMember.isVar && superMember.setter?.visibility?.let(DescriptorVisibilities::isPrivate) == false
+            val superPropertyType = superFunction?.returnType ?: return incompatible
+            val subPropertyType = subFunction?.returnType ?: return incompatible
+
+            when {
+                superIsEffectivelyVar && !subMember.isVar -> return incompatible
+
+                superIsEffectivelyVar && subMember.isVar -> {
+                    if (!AbstractTypeChecker.equalTypes(typeCheckerState, subPropertyType, superPropertyType)) {
+                        return incompatible
+                    }
+                }
+
+                // val -> var/val
+                else -> {
+                    if (!AbstractTypeChecker.isSubtypeOf(typeCheckerState, subType = subPropertyType, superType = superPropertyType)) {
+                        return incompatible
+                    }
+                }
             }
         }
 
