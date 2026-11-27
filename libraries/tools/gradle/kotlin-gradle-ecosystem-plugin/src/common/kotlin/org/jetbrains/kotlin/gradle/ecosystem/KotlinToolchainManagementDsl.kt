@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.ecosystem
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.ExperimentalExternalToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.binaryen.BinaryenToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainManagementDsl
@@ -273,6 +275,29 @@ interface KotlinToolchainManagementDsl {
     @ExperimentalWasmDsl
     fun wasmTools(configure: Action<WasmToolsToolchainManagementDsl>) {
         wasmTools {
+            configure.execute(this)
+        }
+    }
+
+    /**
+     * Configures the Binaryen toolchain service used by the whole build.
+     *
+     * Binaryen (`wasm-opt`) optimizes the Kotlin/Wasm binaries. Select a default, pre-installed,
+     * or custom service with [BinaryenToolchainManagementDsl.toolchainService].
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalExternalToolchainDsl
+    fun binaryen(configure: BinaryenToolchainManagementDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [binaryen] above.
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalExternalToolchainDsl
+    fun binaryen(configure: Action<BinaryenToolchainManagementDsl>) {
+        binaryen {
             configure.execute(this)
         }
     }

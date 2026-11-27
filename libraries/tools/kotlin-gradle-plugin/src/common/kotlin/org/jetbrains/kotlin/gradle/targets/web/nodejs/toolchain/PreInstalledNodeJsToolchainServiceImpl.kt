@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
-import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -17,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsExecutable
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -96,29 +93,8 @@ internal abstract class PreInstalledNodeJsToolchainServiceImpl @Inject internal 
         return NodeJsVersion(version) to BuildPlatform(if (os == "win32") WINDOWS_OS_NAME else os, arch)
     }
 
-    companion object {
+    private companion object {
         private const val DELIMITER: Char = ' '
         private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join('$DELIMITER')"
-
-        internal fun registerIfAbsent(
-            gradle: Gradle,
-            configureBuildServiceParameters: (PreInstalledNodeJsToolchainService.Parameters) -> Unit,
-        ): Provider<PreInstalledNodeJsToolchainServiceImpl> {
-            return gradle.sharedServices.registerIfAbsent(
-                nodeJsServiceName,
-                PreInstalledNodeJsToolchainServiceImpl::class.java,
-            ) { spec ->
-                spec.parameters.nodeJsExecutable.convention("node")
-                configureBuildServiceParameters(spec.parameters)
-            }
-        }
-
-        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainServiceImpl> {
-            return registerIfAbsent(
-                project.gradle,
-            ) { parameters ->
-                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainPreinstalledExecutablePath.orElse("node"))
-            }
-        }
     }
 }

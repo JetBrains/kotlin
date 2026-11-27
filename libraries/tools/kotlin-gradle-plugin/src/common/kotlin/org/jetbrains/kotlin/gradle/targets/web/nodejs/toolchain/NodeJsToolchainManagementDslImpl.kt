@@ -23,10 +23,7 @@ abstract class NodeJsToolchainManagementDslImpl @Inject internal constructor(
     private var configured = false
 
     override fun toolchainService(configure: DefaultNodeJsToolchainService.Parameters.() -> Unit) {
-        toolchainService(DefaultNodeJsToolchainService::class) {
-            offline.set(gradle.startParameter.isOffline)
-            configure()
-        }
+        toolchainService(DefaultNodeJsToolchainService::class, configure)
     }
 
     override fun <P : NodeJsToolchainService.Parameters, T : NodeJsToolchainService<P>> toolchainService(
@@ -39,6 +36,7 @@ abstract class NodeJsToolchainManagementDslImpl @Inject internal constructor(
         }
         configured = true
 
-        registerNodeJsToolchainServiceIfAbsent(gradle, serviceClass.java, configure)
+        @Suppress("UNCHECKED_CAST")
+        gradle.registerNodeJsToolchainService(serviceClass.java) { (it as P).configure() }
     }
 }

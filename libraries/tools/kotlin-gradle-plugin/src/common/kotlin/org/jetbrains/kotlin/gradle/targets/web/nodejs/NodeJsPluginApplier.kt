@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isNodeJsToolchainDisabled
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.locateOrRegisterNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
@@ -78,7 +78,7 @@ internal class NodeJsPluginApplier(
             // it would add a project repository, which is forbidden by `RepositoriesMode.FAIL_ON_PROJECT_REPOS` (KT-55620).
             download.convention(
                 @OptIn(ExperimentalNodeJsToolchainDsl::class)
-                registerNodeJsToolchainServiceIfAbsent(this@createNodeJsEnvSpec).map { it.isNodeJsToolchainDisabled() }
+                this@createNodeJsEnvSpec.locateOrRegisterNodeJsToolchainService().map { it.isNodeJsToolchainDisabled() }
             )
             // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
             downloadBaseUrl.set("https://nodejs.org/dist")

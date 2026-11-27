@@ -96,6 +96,19 @@ internal fun setUpNodeJs(logger: Logger, archive: File, destination: File, isWin
     }
 }
 
+/**
+ * Prepares a Node.js distribution extracted into [nodeDir].
+ *
+ * Non-Windows distributions are `tar.gz` archives, whose `npm` and `npx` symlinks are broken by the extraction,
+ * and whose `node` executable may lose its executable permission.
+ */
+internal fun prepareNodeJsInstallation(logger: Logger, nodeDir: File, isWindows: Boolean) {
+    if (isWindows) return
+
+    fixBrokenSymlinks(logger, nodeDir.toPath(), isWindows = false)
+    computeNodeBinDir(nodeDir.toPath(), isWindows = false).resolve("node").toFile().setExecutable(true)
+}
+
 private fun fixBrokenSymlinks(logger: Logger, destinationDir: Path, isWindows: Boolean) {
     val nodeBinDir = computeNodeBinDir(destinationDir, isWindows)
     fixBrokenSymlink(logger, "npm", nodeBinDir, destinationDir, isWindows)

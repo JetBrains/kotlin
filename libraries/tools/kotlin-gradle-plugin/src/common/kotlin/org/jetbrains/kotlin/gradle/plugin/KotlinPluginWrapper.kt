@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttri
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.registerWasiAdapterToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.registerWasmToolsToolchainServiceIfAbsent
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPomValidationHelpers
@@ -122,8 +121,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinPluginLoadedInMultipleProjectsDetectorService.detect(project)
 
         KotlinNativeBundleBuildService.registerIfAbsent(project)
-
-        registerNodeJsToolchainServiceIfAbsent(project)
 
         registerWasiAdapterToolchainServiceIfAbsent(project)
 

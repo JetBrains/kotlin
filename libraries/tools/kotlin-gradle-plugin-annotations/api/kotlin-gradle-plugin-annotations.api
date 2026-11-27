@@ -11,6 +11,9 @@ public final class org/jetbrains/kotlin/gradle/DelicateKotlinGradlePluginApiKind
 	public static final field REQUIRES_KNOWLEDGE Ljava/lang/String;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalExternalToolchainDsl : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalJsTestDsl : java/lang/annotation/Annotation {
 }
 

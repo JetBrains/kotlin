@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DisabledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.toolchains.externalToolchainServiceName
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -30,7 +32,7 @@ class NodeJsToolchainManagementDslTest {
         }
 
     private fun registeredService(project: Project) = project.gradle.sharedServices.registrations
-        .getByName(nodeJsServiceName)
+        .getByName(externalToolchainServiceName(NodeJsToolchainService::class.java))
         .service
         .get()
 
@@ -41,7 +43,7 @@ class NodeJsToolchainManagementDslTest {
         dsl.toolchainService {
             downloadBaseUrl.set("https://example.com/dist")
         }
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
         assertEquals("https://example.com/dist", service.parameters.downloadBaseUrl.get())
@@ -55,10 +57,22 @@ class NodeJsToolchainManagementDslTest {
             nodeJsExecutable.set("/opt/node/bin/node")
         }
 
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         val service = assertIs<PreInstalledNodeJsToolchainServiceImpl>(registeredService(project))
         assertEquals("/opt/node/bin/node", service.parameters.nodeJsExecutable.get())
+    }
+
+    @Test
+    fun `toolchainService without parameters uses the official download URL and the Gradle offline mode`() {
+        val (project, dsl) = buildProjectAndDsl()
+
+        dsl.toolchainService { }
+        project.locateOrRegisterNodeJsToolchainService()
+
+        val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
+        assertEquals("https://nodejs.org/dist", service.parameters.downloadBaseUrl.get())
+        assertEquals(project.gradle.startParameter.isOffline, service.parameters.offline.get())
     }
 
     // KT-90287
@@ -67,7 +81,7 @@ class NodeJsToolchainManagementDslTest {
         val (project, dsl) = buildProjectAndDsl()
 
         dsl.toolchainService { }
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
         assertTrue(service.parameters.installationDir.isPresent, "installationDir has no default value")
@@ -79,7 +93,7 @@ class NodeJsToolchainManagementDslTest {
         val (project, dsl) = buildProjectAndDsl()
 
         dsl.toolchainService(DefaultNodeJsToolchainService::class) { }
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
         assertTrue(service.parameters.installationDir.isPresent, "installationDir has no default value")
@@ -90,7 +104,7 @@ class NodeJsToolchainManagementDslTest {
         val (project, dsl) = buildProjectAndDsl()
 
         dsl.disable()
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         assertIs<DisabledNodeJsToolchainServiceImpl>(registeredService(project))
     }
@@ -100,7 +114,7 @@ class NodeJsToolchainManagementDslTest {
         val (project, dsl) = buildProjectAndDsl()
 
         dsl.toolchainService(DisabledNodeJsToolchainService::class) { }
-        registerNodeJsToolchainServiceIfAbsent(project)
+        project.locateOrRegisterNodeJsToolchainService()
 
         assertIs<DisabledNodeJsToolchainServiceImpl>(registeredService(project))
     }

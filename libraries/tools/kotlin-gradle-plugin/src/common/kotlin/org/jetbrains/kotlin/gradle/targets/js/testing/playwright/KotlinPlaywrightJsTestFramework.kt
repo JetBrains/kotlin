@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isNodeJsToolchainDisabled
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.locateOrRegisterNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
 import org.jetbrains.kotlin.gradle.utils.asPathOrNull
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -141,7 +141,7 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
 
     @get:Internal
-    internal val nodeJsToolchainService = registerNodeJsToolchainServiceIfAbsent(compilation.project)
+    internal val nodeJsToolchainService = compilation.project.locateOrRegisterNodeJsToolchainService()
 
     @Suppress("DEPRECATION")
     override val executable: Provider<String> = executableProvider(

@@ -59,7 +59,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitTransformRegisteringSetupAction
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainExtension
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.SetupNpmDependencyReportSideEffect
+import org.jetbrains.kotlin.gradle.toolchains.binaryen.BinaryenToolchainExtension
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolParallelismLimitSetupAction
@@ -82,6 +84,8 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, FinalizeConfigurationFusMetricAction)
 
         register(project, AbiValidationSetupAction)
+        register(project, BinaryenToolchainExtension)
+        register(project, NodeJsToolchainExtension)
 
         register(project, KotlinImportModelsDumpTaskSetupAction)
 

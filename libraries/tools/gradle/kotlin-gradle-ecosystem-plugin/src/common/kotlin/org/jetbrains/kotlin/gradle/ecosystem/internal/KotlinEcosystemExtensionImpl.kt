@@ -8,6 +8,7 @@
     ExperimentalNodeJsToolchainDsl::class,
     ExperimentalKotlinGradlePluginApi::class,
     ExperimentalWasmDsl::class,
+    ExperimentalExternalToolchainDsl::class,
 )
 
 package org.jetbrains.kotlin.gradle.ecosystem.internal
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.gradle.ecosystem.KotlinToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainManagementDslImpl
+import org.jetbrains.kotlin.gradle.toolchains.binaryen.BinaryenToolchainManagementDslImpl
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeSettingsDslImpl
 import javax.inject.Inject
 
@@ -40,6 +42,7 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
         objects.newInstance(NodeJsToolchainManagementDslImpl::class.java, settings.gradle),
         objects.newInstance(WasiAdapterToolchainManagementDslImpl::class.java, settings.gradle),
         objects.newInstance(WasmToolsToolchainManagementDslImpl::class.java, settings.gradle),
+        objects.newInstance(BinaryenToolchainManagementDslImpl::class.java, settings.gradle),
     )
 
     override fun toolchainManagement(configure: KotlinToolchainManagementDsl.() -> Unit) {

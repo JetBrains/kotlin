@@ -127,8 +127,11 @@ abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
                 requestedVersions = listOf(NODE_JS_VERSION),
                 installationsDir = tempDir,
                 buildAction = BuildActions.buildAndFail,
+                buildAssertions = {
+                    assertOutputContains("The Node.js toolchain installation '$incompleteInstallation' is incomplete")
+                },
             ) {
-                assertEquals(listOf(archiveRequest(NODE_JS_VERSION, hostPlatform)), server.downloadRequests)
+                assertEquals(emptyList(), server.downloadRequests)
                 assertTrue { leftover.exists() }
             }
         }
@@ -183,8 +186,7 @@ abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
                 buildAction = BuildActions.buildAndFail,
                 buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "--offline"),
                 buildAssertions = {
-                    assertOutputContains("Node.js $NODE_JS_VERSION for $hostPlatform is not installed")
-                    assertOutputContains("the build is running in offline mode")
+                    assertOutputContains("The requested toolchain is not installed and cannot be downloaded in offline mode")
                 }) {
                 assertEquals(emptyList(), server.downloadRequests)
             }
