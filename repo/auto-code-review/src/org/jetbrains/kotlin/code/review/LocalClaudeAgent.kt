@@ -25,12 +25,12 @@ import kotlin.reflect.KProperty
 
 class LocalClaudeAgent private constructor(
     private val project: LocalProject,
-    private val authMethod: AuthMethod,
+    private val configuration: AgentConfiguration,
     private val command: List<String>,
 ) : Agent {
     companion object {
-        suspend fun create(project: LocalProject, authMethod: AuthMethod): LocalClaudeAgent =
-            LocalClaudeAgent(project, authMethod, createCommand(authMethod))
+        suspend fun create(project: LocalProject, configuration: AgentConfiguration): LocalClaudeAgent =
+            LocalClaudeAgent(project, configuration, createCommand(configuration))
 
         private val json = Json {
             ignoreUnknownKeys = true
@@ -61,7 +61,7 @@ class LocalClaudeAgent private constructor(
          */
         private const val EFFORT = "medium"
 
-        private suspend fun createCommand(authMethod: AuthMethod): List<String> = buildList {
+        private suspend fun createCommand(configuration: AgentConfiguration): List<String> = buildList {
             val prompt = """
                 The input contains a code rule and the path to a file with a git diff of files subject to the rule.
                 Your task is to check whether this diff meets this rule, and report any violations.
@@ -88,7 +88,7 @@ class LocalClaudeAgent private constructor(
 
             val jsonSchemaString = Json.encodeToString(jsonSchema)
 
-            when (authMethod) {
+            when (configuration.authMethod) {
                 AuthMethod.LocalConfiguration -> {
                     add("claude")
 
@@ -97,7 +97,7 @@ class LocalClaudeAgent private constructor(
                 }
                 is AuthMethod.JetBrainsCentralRun -> {
                     // `central run` provides the authentication to Claude Code through environment variables.
-                    add(authMethod.binary)
+                    add(configuration.authMethod.binary)
                     add("run")
                     add("claude")
                     add("--")
@@ -220,7 +220,7 @@ class LocalClaudeAgent private constructor(
                 @OptIn(ExperimentalPathApi::class)
                 runDir.deleteRecursively()
             }
-            val claudeStdout = when (authMethod) {
+            val claudeStdout = when (configuration.authMethod) {
                 AuthMethod.LocalConfiguration -> executionResult.stdout
                 is AuthMethod.JetBrainsCentralRun -> {
                     // `central run` prints a message to stdout before running Claude Code.

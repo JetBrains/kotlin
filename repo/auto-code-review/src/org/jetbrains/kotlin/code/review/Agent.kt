@@ -29,3 +29,17 @@ interface Agent {
         diffOrigin: GitDiff.Origin,
     ): AgentResult
 }
+
+class AgentConfiguration(
+    val authMethod: Agent.AuthMethod = Agent.AuthMethod.LocalConfiguration,
+) {
+    companion object {
+
+        fun fromSystemProperties(): AgentConfiguration = AgentConfiguration(
+            authMethod = when (val jetbrainsCentralBinary = System.getProperty("kotlin.autoCodeReview.useJetBrainsCentralCLI")) {
+                null -> Agent.AuthMethod.LocalConfiguration
+                else -> Agent.AuthMethod.JetBrainsCentralRun(jetbrainsCentralBinary)
+            },
+        )
+    }
+}

@@ -16,16 +16,9 @@ suspend fun main(args: Array<String>) {
     val repoRoot = File(args[1])
     val baseRevString = args.getOrNull(2) ?: "origin/master"
 
-    val jetbrainsCentralBinary = System.getProperty("kotlin.autoCodeReview.useJetBrainsCentralCLI")
-    val agentAuthMethod = if (jetbrainsCentralBinary != null) {
-        Agent.AuthMethod.JetBrainsCentralRun(jetbrainsCentralBinary)
-    } else {
-        Agent.AuthMethod.LocalConfiguration
-    }
-
     val gitTree = GitWorkingTree(repoRoot, GitCLI)
     val baseRev = GitRevision(baseRevString)
-    val agent = LocalClaudeAgent.create(gitTree.project, agentAuthMethod)
+    val agent = LocalClaudeAgent.create(gitTree.project, AgentConfiguration.fromSystemProperties())
 
     val diff = gitTree.getDiffFromMergeBase(baseRev)
     val reviewResult = runReview(gitTree.project, diff, agent)
