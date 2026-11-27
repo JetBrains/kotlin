@@ -113,8 +113,21 @@ public actual inline fun <reified T : Enum<T>> enumValues(): Array<T> = enumValu
  *
  * The [name] must exactly match an existing enum constant of type [T] (case-sensitive).
  *
+ * ```kotlin
+ * enum class Direction { NORTH, SOUTH, EAST, WEST }
+ *
+ * val east: Direction = enumValueOf("EAST") // returns Direction.EAST
+ * println(east.ordinal) // 2
+ *
+ * // The lookup fails if a string does not correspond to any of the enum entries
+ * enumValueOf<Direction>("UP") // fails with IllegalArgumentException
+ * enumValueOf<Direction>("") // fails with IllegalArgumentException
+ *
+ * // The lookup is case-sensitive and fails if the name doesn't match any constant
+ * enumValueOf<Direction>("east") // fails with IllegalArgumentException
+ * ```
+ *
  * @throws IllegalArgumentException if no enum constant with the specified [name] exists in [T].
- * @sample samples.misc.Enums.enumValueOfSample
  */
 @SinceKotlin("1.1")
 public actual inline fun <reified T : Enum<T>> enumValueOf(name: String): T = enumValueOfIntrinsic<T>(name)
