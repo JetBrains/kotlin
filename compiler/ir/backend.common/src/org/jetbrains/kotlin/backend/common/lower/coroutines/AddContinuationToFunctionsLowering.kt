@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.builders.irReturnUnit
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -22,13 +21,15 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.functionWithContinuations
 import org.jetbrains.kotlin.ir.suspendFunction
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -116,36 +117,33 @@ private fun IrSimpleFunction.createSuspendFunctionStub(
     lowerReturnType: (IrType) -> IrType,
 ): IrSimpleFunction {
     require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with continuation" }
-    return factory.buildFun {
-        updateFrom(this@createSuspendFunctionStub)
+    val original = this
+    val typeSubstitution: Map<IrTypeParameterSymbol, IrType>
+    val parameters: Map<IrValueParameterSymbol, IrValueParameterSymbol>
+    return factory.irFunction {
+        updateFrom(original)
         isSuspend = false
-        name = this@createSuspendFunctionStub.name
         origin = IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
-        returnType = lowerReturnType(this@createSuspendFunctionStub.returnType)
-    }.also { function ->
-        function.parent = parent
-
-        function.metadata = metadata
-
-        function.copyAnnotationsFrom(this)
-        function.copyAttributes(this)
-        function.copyTypeParametersFrom(this)
-        val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyParametersFrom(this, substitutionMap)
-
-        function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
+        returnType = lowerReturnType(original.returnType)
+        parent = original.parent
+        metadata = original.metadata
+        annotations = original.copyAnnotations()
+        overriddenSymbols = original.overriddenSymbols.memoryOptimizedMap {
             factory.stageController.restrictTo(it.owner) {
                 it.owner.getOrCreateFunctionWithContinuationStub(context, lowerReturnType).symbol
             }
         }
-
-        function.addValueParameter {
-            startOffset = function.startOffset
-            endOffset = function.endOffset
+        typeSubstitution = copyTypeParameters(original.typeParameters)
+        parameters = copyParameters(original.parameters, typeSubstitution)
+        valueParameter {
+            setSourceRange(original)
             origin = IrDeclarationOrigin.CONTINUATION
             name = Name.identifier("\$completion")
-            type = continuationType(context).substitute(substitutionMap)
+            type = original.continuationType(context).substitute(typeSubstitution)
         }
+    }.also { function ->
+        function.copyAttributes(original)
+        function.copyDefaultValuesFrom(parameters, typeSubstitution)
     }
 }
 
