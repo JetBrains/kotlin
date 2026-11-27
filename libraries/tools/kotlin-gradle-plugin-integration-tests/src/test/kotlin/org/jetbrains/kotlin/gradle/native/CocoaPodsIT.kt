@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -41,6 +42,7 @@ import kotlin.test.assertTrue
 @DisplayName("CocoaPods plugin tests")
 @NativeGradlePluginTests
 @OptIn(EnvironmentalVariablesOverride::class)
+@MustRunOnChangesInGradle
 class CocoaPodsIT : KGPBaseTest() {
 
     private val podfileImportPodPlaceholder = "#import_pod_directive"
