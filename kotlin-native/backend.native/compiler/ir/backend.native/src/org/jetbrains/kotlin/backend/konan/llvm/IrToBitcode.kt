@@ -1499,6 +1499,16 @@ internal class CodeGeneratorVisitor(
         val srcArg = evaluateExpression(value.argument, resultSlot)
         require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
         val srcType = value.argument.type
+        srcType.classOrNull?.let {
+            // We are about to make a decision, whether to optimize the cast/typecheck away.
+            // This decision depends on the type of the argument: if the type is a user-defined `class`, changing its superclass
+            // or superinterfaces must lead to reevaluating the optimization.
+            // This check is duplicated:
+            // * in CastsLowering.kt for unsafe casts, when genericSafeCasts are disabled in a non-optimized build
+            // * (here) in IrToBitcode.kt for all other cases, when genericSafeCasts are disabled
+            // * in CastsOptimization.kt for all cases, when genericSafeCasts are enabled
+            generationState.dependenciesTracker.add(it.owner)
+        }
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
 
         if (isSuperClassCast) {

@@ -1,0 +1,62 @@
+// Class: BaseClass
+STEP 0:
+    modifications:
+        U : bases.kt -> bases.kt
+        U : checkClass.kt -> checkClass.kt
+        U : checkInterface.kt -> checkInterface.kt
+        U : castClass.kt -> castClass.kt
+        U : castInterface.kt -> castInterface.kt
+        U : class.kt -> class.kt
+    added cache: bases.kt, checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, class.kt
+
+// Class
+STEP 1:
+    modifications:
+        U : class.1.kt -> class.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, class.kt
+    unchanged cache: bases.kt
+
+// Class: BaseInterface
+STEP 2:
+    modifications:
+        U : class.2.kt -> class.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, class.kt
+    unchanged cache: bases.kt
+
+// Class
+STEP 3:
+    modifications:
+        U : class.3.kt -> class.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, class.kt
+    unchanged cache: bases.kt
+
+// Repeating the same changes, but hidden behind an additional intermediate class.
+// Class : (MidClass : BaseClass)
+STEP 4:
+    modifications:
+        U : midClass.4.kt -> midClass.kt
+        U : class.4.kt -> class.kt
+    added cache: midClass.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, class.kt
+    unchanged cache: bases.kt
+
+// Class : MidClass
+STEP 5:
+    modifications:
+        U : midClass.5.kt -> midClass.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, midClass.kt, class.kt
+    unchanged cache: bases.kt
+
+// Class : (MidClass : BaseInterface)
+STEP 6:
+    modifications:
+        U : midClass.6.kt -> midClass.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, midClass.kt, class.kt
+    unchanged cache: bases.kt
+
+// Class : MidClass
+STEP 7:
+    modifications:
+        U : midClass.7.kt -> midClass.kt
+    modified cache: checkClass.kt, checkInterface.kt, castClass.kt, castInterface.kt, midClass.kt, class.kt
+    unchanged cache: bases.kt

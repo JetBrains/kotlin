@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
@@ -36,7 +37,7 @@ internal fun IrType.isSuperClassCastTo(dstClass: IrClass): Boolean =
         dstClass.isAny() || (this.classifierOrNull !is IrTypeParameterSymbol // Due to unsafe casts, see unchecked_cast8.kt as an example.
                 && this.isSubtypeOfClass(dstClass.symbol))
 
-internal class CastsLowering(val context: NativeLoweringContext) : BodyLoweringPass {
+internal class CastsLowering(val context: NativeGenerationState) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -50,6 +51,16 @@ internal class CastsLowering(val context: NativeLoweringContext) : BodyLoweringP
                 val srcType = expression.argument.type
                 val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
                 val isNullable = expression.typeOperand.isNullable()
+                // We are going to use `srcType` for a possible decision to optimize some cast/typecheck away.
+                // If the `srcType`'s type is a user-defined `class`, changing its superclass or superinterfaces must lead to
+                // reevaluating the optimization.
+                // This check is duplicated:
+                // * (here) in CastsLowering.kt for unsafe casts, when genericSafeCasts are disabled in a non-optimized build
+                // * in IrToBitcode.kt for all other cases, when genericSafeCasts are disabled
+                // * in CastsOptimization.kt for all cases, when genericSafeCasts are enabled
+                srcType.classOrNull?.let {
+                    context.dependenciesTracker.add(it.owner)
+                }
                 return when {
                     isSuperClassCast && isNullable -> expression.argument
                     isSuperClassCast && !isNullable ->

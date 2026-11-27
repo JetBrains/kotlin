@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -416,6 +417,7 @@ internal class CastsOptimization(val context: NativeGenerationState) : BodyLower
                     TypeCheckResult.ALWAYS_SUCCEEDS -> true
                     TypeCheckResult.NEVER_SUCCEEDS -> false
                 }
+
                 irBuilder.at(expression)
                 return when (expression.operator) {
                     IrTypeOperator.INSTANCEOF -> irBuilder.keepingSideEffectsOf(expression.argument) { irBoolean(typeCheckResult) }
@@ -714,11 +716,24 @@ internal class CastsOptimization(val context: NativeGenerationState) : BodyLower
                     }
                 }
 
+        fun IrValueDeclaration.trackValueType() {
+            type.classOrNull?.let {
+                // We are going to use `this`'s type for a possible decision to optimize some cast/typecheck away.
+                // If the `this`'s type is a user-defined `class`, changing its superclass or superinterfaces must lead to
+                // reevaluating the optimization.
+                // This check is duplicated:
+                // * in CastsLowering.kt for unsafe casts, when genericSafeCasts are disabled in a non-optimized build
+                // * in IrToBitcode.kt for all other cases, when genericSafeCasts are disabled
+                // * (here) in CastsOptimization.kt for all cases, when genericSafeCasts are enabled
+                context.dependenciesTracker.add(it.owner)
+            }
+        }
+
         fun buildIsNotSubtypeOfPredicate(variable: IrValueDeclaration, type: IrType): Predicate =
-                Predicates.invert(Predicates.isSubtypeOf((variableAliases[variable] ?: variable), type, ::buildSimpleTerm))
+                Predicates.invert(buildIsSubtypeOfPredicate(variable, type))
 
         fun buildIsSubtypeOfPredicate(variable: IrValueDeclaration, type: IrType): Predicate =
-                Predicates.isSubtypeOf((variableAliases[variable] ?: variable), type, ::buildSimpleTerm)
+                Predicates.isSubtypeOf((variableAliases[variable] ?: variable).also { it.trackValueType() }, type, ::buildSimpleTerm)
 
         fun buildNullablePredicate(variable: IrValueDeclaration): NullablePredicate =
                 variableAliases[variable]?.let { buildNullablePredicate(it) }
