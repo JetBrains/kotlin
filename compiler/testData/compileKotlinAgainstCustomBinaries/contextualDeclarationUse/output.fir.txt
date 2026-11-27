@@ -1,13 +1,14 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:6:9: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
-        f()
-        ^
+5 |     with(42) {
+6 |         f()
+  |         ^
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:8:11: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
-        a.p
-          ^
+8 |         a.p
+  |           ^
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:9:11: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
-        a.m()
-          ^
+9 |         a.m()
+  |           ^
 compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:10:9: error: to call contextual declarations, specify the '-Xcontext-parameters' compiler option.
-        p
-        ^
+10 |         p
+   |         ^
 COMPILATION_ERROR

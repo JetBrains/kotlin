@@ -1,7 +1,8 @@
 compiler/testData/cli/jvm/reportInternalDiagnosticNames.kt:2:19: error: [INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected 'String', actual 'Int'.
-    val x: String = 1
-                  ^
+1 | fun test_2(): String {
+2 |     val x: String = 1
+  |                   ^
 compiler/testData/cli/jvm/reportInternalDiagnosticNames.kt:3:1: error: [NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY] Missing return statement.
-}
-^
+3 | }
+  | ^
 COMPILATION_ERROR

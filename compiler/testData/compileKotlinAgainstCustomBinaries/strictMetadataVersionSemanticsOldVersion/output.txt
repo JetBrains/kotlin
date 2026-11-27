@@ -2,28 +2,34 @@ error: incompatible classes were found in dependencies that could not be read by
 $TMP_DIR$/library.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is $ABI_VERSION_NEXT$, expected version is $ABI_VERSION$.
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:3:13: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
-fun test(c: C) {
-            ^
+In source code:
+3 | fun test(c: C) {
+  |             ^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:4:5: error: unresolved reference 'f'.
-    f()
-    ^
+3 | fun test(c: C) {
+4 |     f()
+  |     ^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:5:5: error: unresolved reference 'v'.
-    v
-    ^
+5 |     v
+  |     ^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:5: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
-    c.let { C() }
-    ^
+In source code:
+6 |     c.let { C() }
+  |     ^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:7: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
-    c.let { C() }
-      ^^^
+In source code:
+6 |     c.let { C() }
+  |       ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:11: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
-    c.let { C() }
-          ^^^^^^^
+In source code:
+6 |     c.let { C() }
+  |           ^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:13: error: class 'a.C' was compiled with an incompatible version of Kotlin. The actual metadata version is $ABI_VERSION_NEXT$, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library.jar!/a/C.class
-    c.let { C() }
-            ^^^
+In source code:
+6 |     c.let { C() }
+  |             ^^^
 COMPILATION_ERROR

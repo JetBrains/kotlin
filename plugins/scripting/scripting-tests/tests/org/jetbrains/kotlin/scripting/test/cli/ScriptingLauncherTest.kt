@@ -142,8 +142,8 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
             expectedExitCode = 1,
             expectedStderr = """
                 script.kts:1:1: error: unresolved reference 'println'.
-                println(42)
-                ^
+                1 | println(42)
+                  | ^
                 """.trimIndent()
         )
     }
@@ -191,8 +191,8 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
             "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1,
             expectedStderr = """plugins/scripting/scripting-tests/testData/cli/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
-@file:CompilerOptions("-Xno-inline")
-      ^
+1 | @file:CompilerOptions("-Xno-inline")
+  |       ^
 """
         )
         runProcess(

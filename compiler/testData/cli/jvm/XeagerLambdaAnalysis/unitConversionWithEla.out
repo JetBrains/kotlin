@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/XeagerLambdaAnalysis/unitConversion.kt:7:13: error: expression 'produce' of type '() -> String' does not conform to value parameter 'f' of type '() -> Unit'.
-    runUnit(produce)
-            ^^^^^^^
+7 |     runUnit(produce)
+  |             ^^^^^^^
 COMPILATION_ERROR

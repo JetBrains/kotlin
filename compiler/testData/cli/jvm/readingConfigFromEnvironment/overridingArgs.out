@@ -1,4 +1,5 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.kt:2:21: warning: unused return value of 'length'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
-    Annotated.bar().length
-                    ^^^^^^
+1 | fun main() {
+2 |     Annotated.bar().length
+  |                     ^^^^^^
 OK

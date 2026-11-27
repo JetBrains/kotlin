@@ -591,9 +591,8 @@ Caused by: java.lang.AssertionError: assert
             expectedStdout = "",
             expectedStderr = $$"""
                 $TMP_DIR$/test.kt:1:20: [1;31merror: [0;1minitializer type mismatch: expected 'String', actual 'Int'.[m
-                val result: String = 42
-                                   ^
-                
+                1 | val result: String = 42
+                  |                    ^
             """.trimIndent(),
         )
     }

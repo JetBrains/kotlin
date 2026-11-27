@@ -1,7 +1,7 @@
 compiler/tests-integration/testData/javaModules/specifyPathToModuleInfoInArguments/moduleB/usage.kt:9:5: error: symbol is declared in module 'moduleA' which does not export package 'unexported'.
-    Unexported()
-    ^^^^^^^^^^
+9 |     Unexported()
+  |     ^^^^^^^^^^
 compiler/tests-integration/testData/javaModules/specifyPathToModuleInfoInArguments/moduleB/usage.kt:13:5: error: unresolved reference 'Unrelated'.
-    Unrelated()
-    ^^^^^^^^^
+13 |     Unrelated()
+   |     ^^^^^^^^^
 COMPILATION_ERROR

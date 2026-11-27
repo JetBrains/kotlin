@@ -42,8 +42,12 @@ object CliProcessUtils {
         runProcess(
             executableName = executableName,
             args = args,
-            checkStdout = { stdout -> assertEquals(expectedStdout.trim(), stdout.trim()) },
-            checkStderr = { stderr -> assertTrue(expectedStderr.matches(stderr)) },
+            checkStdout = { stdout ->
+                assertEquals(expectedStdout.trim(), stdout.trim(), "Expected stdout: ${expectedStdout.trim()}, actual stdout: ${stdout.trim()}")
+            },
+            checkStderr = { stderr ->
+                assertTrue(expectedStderr.matches(stderr), "Expected stderr: $expectedStderr, actual stderr: $stderr")
+            },
             expectedExitCode = expectedExitCode,
             workDirectory = workDirectory,
             environment = environment,

@@ -2,8 +2,8 @@
 Exit code: OK
 Output:
 compiler/tests-integration/testData/multiplatform/defaultArguments/methodDefaultArgsViaTypealias/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
-expect class A(p: String = "constructor") {
-^^^^^^
+3 | expect class A(p: String = "constructor") {
+  | ^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
@@ -13,5 +13,6 @@ compiler/tests-integration/testData/multiplatform/defaultArguments/methodDefault
 
     expect constructor(p: String = ...): A
 
-actual typealias A = AImpl
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+In source code:
+8 | actual typealias A = AImpl
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^

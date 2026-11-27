@@ -1,6 +1,7 @@
 ERR:
 reflect.kt:6:19: warning: unused return value of 'annotations'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
-    String::class.annotations
-                  ^^^^^^^^^^^
+5 | fun main() {
+6 |     String::class.annotations
+  |                   ^^^^^^^^^^^
 
 Return code: 0
