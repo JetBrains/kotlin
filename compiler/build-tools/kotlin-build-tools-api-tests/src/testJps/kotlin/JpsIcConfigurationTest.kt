@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertExactOutput
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.*
@@ -100,6 +102,19 @@ class JpsIcConfigurationTest : BaseJpsTest() {
                 assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class", "apkg/AClass.class")
             }
             module.executeCompiledClass("bpkg.MainKt") { assertExactOutput("Output: <XYZ>") }
+        }
+    }
+
+    @DisplayName("A JPS-managed compilation with an error ends with COMPILATION_ERROR and reports the error")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("compilation-error")
+    fun compilationErrorIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("compilation-error")
+            module.compile(compilationConfigAction = { it.withJpsIc() }) {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*[Uu]nresolved reference.*doesNotExist.*".toRegex())
+            }
         }
     }
 

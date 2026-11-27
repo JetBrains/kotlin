@@ -28,7 +28,7 @@ public interface CompilerFileMappingTracker {
 
     /**
      * A callback that will be invoked when a source file is read while producing declarations for a compiler
-     * plugin.
+     * plugin. It is invoked only when a lookup tracker is set as well.
      *
      * @param sourceFilePath the source file that was read
      */

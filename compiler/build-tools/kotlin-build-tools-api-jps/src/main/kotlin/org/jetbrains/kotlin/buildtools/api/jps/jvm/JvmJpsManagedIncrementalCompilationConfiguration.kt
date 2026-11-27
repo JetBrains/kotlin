@@ -89,9 +89,8 @@ public interface JvmJpsManagedIncrementalCompilationConfiguration : JvmIncrement
          * Without it, a consumer cannot tell which files referred to a declaration that later changes, so it has no
          * basis for recompiling their use sites.
          *
-         * This is the tracker for a build whose incremental state this configuration describes; it is separate from
-         * [org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.LOOKUP_TRACKER], which reports the lookups of
-         * a compilation the implementation keeps the state for.
+         * It takes precedence over [org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.LOOKUP_TRACKER]: if
+         * both are set, only this one is informed.
          */
         @JvmField
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> =
