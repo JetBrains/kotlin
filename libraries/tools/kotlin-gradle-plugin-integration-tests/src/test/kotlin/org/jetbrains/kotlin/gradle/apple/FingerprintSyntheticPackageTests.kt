@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import kotlin.String
 import kotlin.io.path.toPath
@@ -39,6 +40,7 @@ import kotlin.test.assertNotEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class FingerprintSyntheticPackageTests : KGPBaseTest() {
 
     @GradleTest
