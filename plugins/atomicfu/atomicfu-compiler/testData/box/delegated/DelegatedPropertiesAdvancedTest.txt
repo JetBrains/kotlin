@@ -31,8 +31,10 @@ public final class ContainersKt {
     inner (anonymous) class ContainersKt$testNestedType$1
     inner (local) class ContainersKt$testNestedType$Nested Nested
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method testBoolProperty(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KMutableProperty0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
     public final static method testIntProperty(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KMutableProperty0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function0): void
     public final static method testNestedType(): void
+    public final static method testRefProperty(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KMutableProperty0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
     public final inner class SameContainerCompanionObject$Companion
 }
 
@@ -208,47 +210,87 @@ public final class SameContainer {
 }
 
 @kotlin.Metadata
-synthetic final class SameContainerCompanionBlock$test$1 {
-    // source: 'Containers.kt'
-    enclosing method SameContainerCompanionBlock.test()V
-    public final static field INSTANCE: SameContainerCompanionBlock$test$1
-    inner (anonymous) class SameContainerCompanionBlock$test$1
-    static method <clinit>(): void
-    method <init>(): void
-    public method get(): java.lang.Object
-    public method set(p0: java.lang.Object): void
-}
-
-@kotlin.Metadata
-synthetic final class SameContainerCompanionBlock$test$2 {
-    // source: 'Containers.kt'
-    enclosing method SameContainerCompanionBlock.test()V
-    public final static field INSTANCE: SameContainerCompanionBlock$test$2
-    inner (anonymous) class SameContainerCompanionBlock$test$2
-    static method <clinit>(): void
-    method <init>(): void
-    public method get(): java.lang.Object
-    public method set(p0: java.lang.Object): void
-}
-
-@kotlin.Metadata
-synthetic final class SameContainerCompanionBlock$test$3 {
-    // source: 'Containers.kt'
-    enclosing method SameContainerCompanionBlock.test()V
-    public final static field INSTANCE: SameContainerCompanionBlock$test$3
-    inner (anonymous) class SameContainerCompanionBlock$test$3
-    static method <clinit>(): void
-    method <init>(): void
-    public method get(): java.lang.Object
-    public method set(p0: java.lang.Object): void
-}
-
-@kotlin.Metadata
 synthetic final class SameContainerCompanionBlock$test$4 {
     // source: 'Containers.kt'
     enclosing method SameContainerCompanionBlock.test()V
-    public final static field INSTANCE: SameContainerCompanionBlock$test$4
     inner (anonymous) class SameContainerCompanionBlock$test$4
+    method <init>(p0: java.lang.Object): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$7 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    inner (anonymous) class SameContainerCompanionBlock$test$7
+    method <init>(p0: java.lang.Object): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$1 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$1
+    method <init>(p0: java.lang.Object): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$2 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$2
+    method <init>(p0: java.lang.Object): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$3 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    public final static field INSTANCE: SameContainerCompanionBlock$test$properties$3
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$3
+    static method <clinit>(): void
+    method <init>(): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$4 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    public final static field INSTANCE: SameContainerCompanionBlock$test$properties$4
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$4
+    static method <clinit>(): void
+    method <init>(): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$5 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    public final static field INSTANCE: SameContainerCompanionBlock$test$properties$5
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$5
+    static method <clinit>(): void
+    method <init>(): void
+    public method get(): java.lang.Object
+    public method set(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+synthetic final class SameContainerCompanionBlock$test$properties$6 {
+    // source: 'Containers.kt'
+    enclosing method SameContainerCompanionBlock.test()V
+    public final static field INSTANCE: SameContainerCompanionBlock$test$properties$6
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$6
     static method <clinit>(): void
     method <init>(): void
     public method get(): java.lang.Object
@@ -258,23 +300,39 @@ synthetic final class SameContainerCompanionBlock$test$4 {
 @kotlin.Metadata
 public final class SameContainerCompanionBlock {
     // source: 'Containers.kt'
-    private synthetic final static field atomicProperty: java.util.concurrent.atomic.AtomicInteger
-    inner (anonymous) class SameContainerCompanionBlock$test$1
-    inner (anonymous) class SameContainerCompanionBlock$test$2
-    inner (anonymous) class SameContainerCompanionBlock$test$3
+    private synthetic final static field atomicBool: java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static field atomicInt: java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static field atomicReference: java.util.concurrent.atomic.AtomicReference
     inner (anonymous) class SameContainerCompanionBlock$test$4
+    inner (anonymous) class SameContainerCompanionBlock$test$7
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$1
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$2
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$3
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$4
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$5
+    inner (anonymous) class SameContainerCompanionBlock$test$properties$6
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final static method getAtomicProperty(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getAtomicBool(): java.util.concurrent.atomic.AtomicBoolean
+    private synthetic final static method getAtomicInt(): java.util.concurrent.atomic.AtomicInteger
+    private synthetic final static method getAtomicReference(): java.util.concurrent.atomic.AtomicReference
     public final static method getDelegated(): int
+    public final method getDelegatedBool(): boolean
     public final static method getDelegatedExplicit(): int
+    public final method getDelegatedInt(): int
+    public final method getDelegatedIntExplicit(): int
+    public final @org.jetbrains.annotations.Nullable method getDelegatedReference(): java.lang.Object
     public final static method getSecondDelegated(): int
     public final static method getSecondDelegatedExplicit(): int
     public final static method setDelegated(p0: int): void
+    public final method setDelegatedBool(p0: boolean): void
     public final static method setDelegatedExplicit(p0: int): void
+    public final method setDelegatedInt(p0: int): void
+    public final method setDelegatedIntExplicit(p0: int): void
+    public final method setDelegatedReference(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public final static method setSecondDelegated(p0: int): void
     public final static method setSecondDelegatedExplicit(p0: int): void
-    public final static method test(): void
+    public final method test(): void
 }
 
 @kotlin.Metadata
