@@ -93,7 +93,9 @@ public class GroupingMessageCollector implements MessageCollectorWithDiagnosticI
                 CollectionsKt.sortedWith(groupedMessages.keySet(), Comparator.nullsFirst(CompilerMessageLocationComparator.INSTANCE));
         for (CompilerMessageSourceLocation location : sortedKeys) {
             for (Message message : groupedMessages.get(location)) {
-                if (!hasExplicitErrors || reportAllWarnings || message.severity.isError() || message.severity == CompilerMessageSeverity.STRONG_WARNING) {
+                if (!hasExplicitErrors || reportAllWarnings || message.severity.isError() ||
+                    message.severity == CompilerMessageSeverity.FIXED_WARNING || message.severity == CompilerMessageSeverity.STRONG_WARNING
+                ) {
                     MessageCollectorKt.report(delegate, message.severity, message.message, message.location, message.diagnosticId);
                 }
             }

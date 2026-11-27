@@ -23,6 +23,11 @@ fun warningWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
 }
 
 context(container: KtDiagnosticsContainer)
+fun fixedWarningWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
+    return SourcelessDiagnosticFactoryDelegateProvider(Severity.FIXED_WARNING, container)
+}
+
+context(container: KtDiagnosticsContainer)
 fun infoWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
     return SourcelessDiagnosticFactoryDelegateProvider(Severity.INFO, container)
 }

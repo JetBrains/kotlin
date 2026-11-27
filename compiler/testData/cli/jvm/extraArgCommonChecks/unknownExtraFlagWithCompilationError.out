@@ -1,0 +1,5 @@
+warning: flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.
+compiler/testData/cli/jvm/extraArgCommonChecks/unknownExtraFlagWithCompilationError.kt:2:5: error: unresolved reference 'unresolved'.
+    unresolved()
+    ^^^^^^^^^^
+COMPILATION_ERROR

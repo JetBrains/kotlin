@@ -1,3 +1,6 @@
 error: diagnostic "UNINITIALIZED_VARIABLE" is an error. Changing the severity of errors is prohibited
 error: warning with name "non-existing-diagnostic" does not exist
+testData/cli/warningsSuppressionDisablesErrors_Native.kt:3:13: error: variable 'it' must be initialized.
+    println(it)
+            ^^
 COMPILATION_ERROR
