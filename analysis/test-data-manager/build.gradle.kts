@@ -37,6 +37,7 @@ projectTests {
     testTask {
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.analysis.test.data.manager.fakes.*")
+            excludeTestsMatching("org.example.testdatamanager.fakes.*")
         }
     }
 

@@ -103,6 +103,9 @@ internal object TestDataManagerRunner {
      */
     internal const val DEFAULT_TEST_PACKAGE = "org.jetbrains.kotlin"
 
+    /** The suffix of the generated test classes, the only ones the test data manager runs, with their nested classes. */
+    internal const val GENERATED_TEST_CLASS_SUFFIX = "Generated"
+
     /**
      * Holds timing measurements collected during test data manager execution.
      */
@@ -508,7 +511,7 @@ internal object TestDataManagerRunner {
                 EngineFilter.includeEngines("junit-jupiter"),
                 // Only generated tests are included to significantly reduce the number of candidates
                 // since anyway this tool is not replacement for the standard `test` command
-                ClassNameFilter.includeClassNamePatterns(".*Generated"),
+                ClassNameFilter.includeClassNamePatterns(".*$GENERATED_TEST_CLASS_SUFFIX"),
                 ManagedTestFilter(goldenOnly),
             )
 

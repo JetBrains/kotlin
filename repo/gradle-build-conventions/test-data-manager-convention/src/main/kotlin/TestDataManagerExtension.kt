@@ -21,6 +21,7 @@ abstract class TestDataManagerExtension {
     /**
      * Packages of the managed tests of this project, `org.jetbrains.kotlin` if empty. The test data manager discovers tests only in
      * these packages and their subpackages, so it needs them for tests in other packages, and narrower ones make the discovery faster.
+     * A generated managed test outside them fails in the `test` task of the project.
      */
     abstract val testPackages: ListProperty<String>
 }

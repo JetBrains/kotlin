@@ -51,6 +51,8 @@ testDataManager {
 }
 ```
 
+The module's `test` task gets the packages too: a generated managed test outside them fails there, as the tasks wouldn't find it.
+
 ## Usage
 
 ### Per-Module Execution
