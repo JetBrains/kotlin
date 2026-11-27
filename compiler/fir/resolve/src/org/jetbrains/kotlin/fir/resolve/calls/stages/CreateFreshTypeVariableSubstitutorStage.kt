@@ -232,8 +232,12 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, context.session)
             .let {
-                // TODO(KT-92053): missed typealias-to-SAM constructor
-                val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorInfo?.substitutor
+                // For typealiased SAM constructors, the `substitutor` is always `null`:
+                // use sites of a normal `constructor(): MyClass<args>` look like `MyClass<args>()`,
+                // so a typealiased call `TA<args#2>()` needs to know how to map `args#2` to `args`,
+                // but use sites of a typealiased SAM constructor `fun samConstructor(): MyClass<args>`
+                // look like `samConstructor<args#2>()` instead.
+                val typeAliasConstructorSubstitutor = (declaration as? FirFunction)?.typeAliasConstructorInfo?.substitutor
                 if (typeAliasConstructorSubstitutor != null) {
                     ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
                 } else {
