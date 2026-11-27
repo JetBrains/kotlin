@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPM
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -27,6 +28,7 @@ import kotlin.test.assertTrue
 )
 @DisplayName("SwiftPM import default identifier synchronization integration tests")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
