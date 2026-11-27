@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -46,6 +47,7 @@ import kotlin.test.assertEquals
 )
 @OptIn(EnvironmentalVariablesOverride::class)
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
 
     @TestMetadata("emptyxcode")
@@ -83,6 +85,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
 
     @TestMetadata("emptyxcode")
     @GradleTest
+    @MustRunOnChangesInNative
     fun `shared xcframework consumed from both kotlin and swift sides with dynamic framework`(version: GradleVersion) {
         project("emptyxcode", version) {
             // 1. Create SharedLib xcframework wrapped in a local Swift package
