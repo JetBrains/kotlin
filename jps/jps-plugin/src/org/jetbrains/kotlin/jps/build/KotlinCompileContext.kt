@@ -10,6 +10,7 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
+import org.jetbrains.jps.incremental.java.ModulePathSplitter
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.build.joinToReadableString
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
 import org.jetbrains.kotlin.jps.targets.KotlinUnsupportedModuleBuildTarget
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  *  KotlinCompileContext is shared between all threads (i.e. it is [GlobalContextKey]).
@@ -92,6 +94,10 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     )
 
     val lookupStorageManager = JpsLookupStorageManager(dataManager, icContext)
+
+    // One per build, as in the JPS Java builder, so the module descriptors of the dependencies aren't read again for each target
+    val modulePathSplitter = ModulePathSplitter()
+    val javaModuleNames = ConcurrentHashMap<File, String>()
 
     /**
      * Flag to prevent rebuilding twice.
