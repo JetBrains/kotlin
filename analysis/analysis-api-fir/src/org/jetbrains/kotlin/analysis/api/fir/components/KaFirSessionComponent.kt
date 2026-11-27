@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaDiagnostic
@@ -16,8 +17,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.createTypeCheckerContext
 import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -34,14 +33,11 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-internal abstract class KaFirSessionComponent : KaLifetimeOwner {
+internal abstract class KaFirSessionComponent : KaFirSessionBoundOwner {
     abstract val analysisSessionProvider: () -> KaFirSession
 
-    val analysisSession: KaFirSession
+    final override val analysisSession: KaFirSession
         get() = analysisSessionProvider()
-
-    final override val token: KaLifetimeToken
-        get() = analysisSession.token
 }
 
 context(sessionComponent: KaFirSessionComponent)
