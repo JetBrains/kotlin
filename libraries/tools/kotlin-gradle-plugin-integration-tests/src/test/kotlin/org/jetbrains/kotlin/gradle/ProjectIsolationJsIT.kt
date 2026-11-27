@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -23,6 +24,7 @@ import kotlin.test.assertTrue
     // Temp smoke test until KT-80311. Only check the latest Gradle for faster CI and simpler tests.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
+@MustRunOnChangesInGradle
 class ProjectIsolationJsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
