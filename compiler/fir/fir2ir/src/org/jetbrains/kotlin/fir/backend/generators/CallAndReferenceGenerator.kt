@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -895,7 +896,7 @@ class CallAndReferenceGenerator(
         val thisClass = thisReceiver.calleeReference.boundSymbol as? FirClassSymbol<*> ?: return receiver
         val propertySymbol = variableAssignment.calleeReference?.toResolvedPropertySymbol() ?: return receiver
         val propertyDispatchReceiverType = propertySymbol.dispatchReceiverType ?: return receiver
-        return when (thisClass.defaultType().isSubtypeOf(propertyDispatchReceiverType, session)) {
+        return when (thisClass.defaultType().isSubtypeOf(propertyDispatchReceiverType)) {
             true -> thisReceiver
             false -> receiver
         }

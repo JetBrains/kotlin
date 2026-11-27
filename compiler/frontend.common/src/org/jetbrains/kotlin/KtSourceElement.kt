@@ -345,8 +345,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     /**
      * `when (x) { "abc" -> 42 }` --> `when(val $subj = x) { $subj == "abc" -> 42 }`
-     * where `$subj == "42"` has fake psi source which refers to "42" as inner expression
-     * and `$subj` fake source refers to "42" as `KtWhenCondition`.
+     * where `$subj == "abc"` and `$subj` have fake source which refers to `"abc"`.
      */
     object WhenCondition : KtFakeSourceElementKind()
 

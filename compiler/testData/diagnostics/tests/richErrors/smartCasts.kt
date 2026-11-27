@@ -7,9 +7,9 @@ fun testSimple(x: String | Foo) {
     if (x is NonError?) x.length
     if (x !is RichError) x.length
     if (x !is RichError?) x.length
-    if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
+    if (x !is Foo) x.length
     if (x !is NonError?) { val y: RichError = x }
-    if (x !is NonError?) { val y: Foo = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
+    if (x !is NonError?) { val y: Foo = x }
 }
 
 fun testSimpleAs1(x: String | Foo) {

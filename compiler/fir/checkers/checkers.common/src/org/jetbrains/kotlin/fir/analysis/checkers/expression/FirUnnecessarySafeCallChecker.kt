@@ -34,7 +34,7 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
             NullSafe -> if (!receiverType.canBeNull() && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, "non-null", receiverType)
             }
-            ErrorSafe -> if (receiverType.isSubtypeOf(StandardTypes.NullableNonError, context.session)) {
+            ErrorSafe -> if (receiverType.isSubtypeOf(StandardTypes.NullableNonError)) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, "non-union", receiverType)
             }
         }

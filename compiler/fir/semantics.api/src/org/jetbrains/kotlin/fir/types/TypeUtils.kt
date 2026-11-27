@@ -830,6 +830,17 @@ private class CapturedArguments(val capturedArguments: Array<out ConeTypeProject
     }
 }
 
+context(holder: SessionHolder)
+fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, errorTypesEqualToAnything: Boolean = false): Boolean {
+    return isSubtypeOf(superType, holder.session, errorTypesEqualToAnything)
+}
+
+@Deprecated("Use contextual overload", ReplaceWith("isSubtypeOf(superType)"))
+context(_: SessionHolder)
+fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession): Boolean {
+    return isSubtypeOf(superType, session, errorTypesEqualToAnything = false)
+}
+
 fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
     AbstractTypeChecker.isSubtypeOf(
         session.typeContext.newTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything = false),

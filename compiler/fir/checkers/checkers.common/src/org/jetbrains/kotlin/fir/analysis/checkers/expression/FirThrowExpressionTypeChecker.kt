@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 
 object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -19,7 +20,7 @@ object FirThrowExpressionTypeChecker : FirThrowExpressionChecker(MppCheckerKind.
         val expectedType = context.session.builtinTypes.throwableType.coneType
         val actualType = expression.exception.resolvedType
 
-        if (!actualType.isSubtypeOf(expectedType, context.session)) {
+        if (!actualType.isSubtypeOf(expectedType)) {
             reporter.reportOn(
                 expression.exception.source ?: expression.source,
                 FirErrors.TYPE_MISMATCH,

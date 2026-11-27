@@ -4,7 +4,7 @@
 // exhaustive
 fun test1(n: Nothing) = when (n) { }
 fun test2(n: Nothing?) = when (n) {
-    <!SENSELESS_COMPARISON!>null<!> -> {}
+    null -> {}
 }
 
 // not exhaustive

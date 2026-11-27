@@ -130,7 +130,7 @@ class FunctionCallTransformer(
                 val actualReturnType = expression.anonymousFunction.body?.resolvedType
                     ?: return@all true
 
-                actualReturnType.isSubtypeOf(expectedReturnType, session)
+                actualReturnType.isSubtypeOf(expectedReturnType)
             }
         if (!allReturnTypesAreValid) return call
         return transformers

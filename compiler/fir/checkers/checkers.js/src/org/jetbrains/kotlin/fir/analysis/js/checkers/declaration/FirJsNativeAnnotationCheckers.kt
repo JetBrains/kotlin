@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonAbstractNativeAnnotationChecker
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
@@ -39,7 +40,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
             if (
                 firstParameter !is ConeErrorType &&
                 !firstParameter.isString &&
-                !firstParameter.isSubtypeOf(builtIns.numberType.coneType, context.session)
+                !firstParameter.isSubtypeOf(builtIns.numberType.coneType)
             ) {
                 reporter.reportOn(
                     firstParameterDeclaration.source,
@@ -104,7 +105,7 @@ internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsS
         }
 
         val secondParameterType = declaration.valueParameters[1].returnTypeRef.coneType
-        if (secondParameterType.isSubtypeOf(returnType, context.session)) {
+        if (secondParameterType.isSubtypeOf(returnType)) {
             return
         }
 

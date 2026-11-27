@@ -50,7 +50,7 @@ fun testNullable(arg: Any?) = when (arg) {
 }
 
 fun testNullable(arg: Nothing?) = when (arg) {
-    <!SENSELESS_COMPARISON!>null<!> -> true
+    null -> true
 }
 
 fun testNullable(arg: Unit?) = when (arg) {
@@ -170,7 +170,7 @@ class Inv<T>(val x: T)
 fun testCaptured1(inv1: Inv<*>, inv2: Inv<out Number?>) {
     val arg1 = when (inv1.x) {
         is Any -> true
-        <!SENSELESS_COMPARISON!>null<!> -> false
+        null -> false
     }
 
     val arg2 = when (inv2.x) {

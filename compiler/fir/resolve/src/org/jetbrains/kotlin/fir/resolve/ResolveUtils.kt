@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -544,7 +545,27 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
 
     val intersectedUpperType = when {
-        allUpperTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
+        allUpperTypes.any { it !is ConeDynamicType } -> {
+            val lowerTypes by lazy(NONE) {
+                smartcastStatement.lowerTypes.mapNotNull {
+                    when (it) {
+                        is Cone -> it.type
+                        is Symbol -> (it.symbol as? FirClassLikeSymbol)?.defaultType()
+                        is BooleanLiteral -> null
+                    }
+                }
+            }
+
+            val lowerAndUpperStabilityMatch = smartcastStatement.lowerTypesStability == smartcastStatement.upperTypesStability
+
+            ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes.map {
+                if (it is ConeUnionType && lowerAndUpperStabilityMatch && lowerTypes.isNotEmpty()) {
+                    it.subtract(lowerTypes)
+                } else {
+                    it
+                }
+            })
+        }
         else -> null
     }.takeUnless {
         it == originalType && it !is ConeDynamicType
@@ -605,6 +626,17 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
             .takeIf { smartcastStatement.lowerTypesStability == SmartcastStability.STABLE_VALUE }
             .orEmpty()
     }
+}
+
+context(holder: SessionHolder)
+private fun ConeUnionType.subtract(lowerTypes: List<ConeKotlinType>): ConeKotlinType {
+    return ConeTypeUnifier.unify(
+        primaryType.takeUnless { type -> lowerTypes.any { type.isSubtypeOf(it) } }
+            ?: StandardTypes.Nothing,
+        richErrorTypes.filterNot { type -> lowerTypes.any { type.isSubtypeOf(it) } },
+        attributes,
+        holder.session.typeContext,
+    )
 }
 
 fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
@@ -976,7 +1008,7 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
 context(holder: SessionHolder)
 fun ConeKotlinType.isUnsafeUnion(): Boolean {
     return unionSuperTypeOrNull(holder.session) != null &&
-            !isSubtypeOf(StandardTypes.NullableNonError, holder.session)
+            !isSubtypeOf(StandardTypes.NullableNonError)
 }
 
 /**

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -114,7 +115,7 @@ private fun checkDispatchReceiver(
         // symbol.dispatchReceiverType is only equal to actualDispatchReceiverType in case of fake overrides
         // Prominent counter examples are equals, hashCode and toString defined in Any.
         !enhancedApproximatedType.isSubtypeOf(
-            expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType, context.session
+            expectedDispatchReceiverType.replaceArgumentsWithStarProjectionsOrNull() ?: expectedDispatchReceiverType
         )
     ) {
         val scope = symbol.dispatchReceiverScope()
@@ -189,7 +190,7 @@ private fun shouldSuppressWarningForExtensionReceiver(
             (it.receiverParameterSymbol?.resolvedType as? ConeSimpleKotlinType)
                 ?.replaceArgumentsWithStarProjectionsOrNull()
                 ?: return@any false
-        actualTypeForComparison.isSubtypeOf(receiverType, context.session)
+        actualTypeForComparison.isSubtypeOf(receiverType)
     }
 }
 

@@ -28,7 +28,7 @@ fun testNullableCharSequence(x: CharSequence?): Int {
 
     i += when (x) {
         is Any -> 1
-        <!SENSELESS_COMPARISON!>null<!> -> 2
+        null -> 2
     }
     i += when (x) {
         is CharSequence -> 1

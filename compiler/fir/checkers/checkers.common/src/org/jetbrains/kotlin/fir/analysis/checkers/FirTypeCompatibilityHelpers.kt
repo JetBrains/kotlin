@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -141,14 +142,14 @@ internal fun FirExpression.toArgumentInfo(): ArgumentInfo {
 private fun ConeKotlinType.getCounterpartRelativelyToPlatform(session: FirSession): ConeKotlinType? =
     toKotlinTypeIfPlatform(session) ?: toPlatformTypeIfKotlin(session)
 
-context(context: CheckerContext)
 /**
  * This function de-facto replicates a single-side check from [org.jetbrains.kotlin.types.CastDiagnosticsUtil.isRelated].
  */
+context(context: CheckerContext)
 private fun TypeInfo.isSubtypeOf(other: TypeInfo): Boolean {
-    val isDirectSubtype = notNullType.isSubtypeOf(other.notNullType, context.session)
+    val isDirectSubtype = notNullType.isSubtypeOf(other.notNullType)
     val counterpart = other.notNullType.getCounterpartRelativelyToPlatform(context.session)
-    return isDirectSubtype || counterpart?.let { notNullType.isSubtypeOf(it, context.session) } == true
+    return isDirectSubtype || counterpart?.let { notNullType.isSubtypeOf(it) } == true
 }
 
 context(context: CheckerContext)
@@ -159,10 +160,10 @@ internal fun areUnrelated(a: TypeInfo, b: TypeInfo): Boolean {
 context(context: CheckerContext)
 internal fun areRelated(a: TypeInfo, b: TypeInfo): Boolean = !areUnrelated(a, b)
 
-context(context: CheckerContext)
 /**
  * See [KT-57779](https://youtrack.jetbrains.com/issue/KT-57779) for more information.
  */
+context(context: CheckerContext)
 internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo): Boolean {
     val oneIsFinal = l.isFinal || r.isFinal
     val bothAreConcrete = l.type is ConeClassLikeType && r.type is ConeClassLikeType
