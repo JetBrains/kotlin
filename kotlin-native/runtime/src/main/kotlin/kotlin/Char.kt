@@ -48,6 +48,7 @@ public actual class Char private constructor() : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INC)
     public actual external operator fun inc(): Char
 
@@ -56,6 +57,7 @@ public actual class Char private constructor() : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.DEC)
     public actual external operator fun dec(): Char
 

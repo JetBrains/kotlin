@@ -36,6 +36,7 @@ public expect class Char : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Char
 
     /**
@@ -43,6 +44,7 @@ public expect class Char : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Char
 
     /** Creates a range from this value to the specified [other] value. */

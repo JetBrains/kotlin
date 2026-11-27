@@ -49,6 +49,7 @@ internal constructor(private val value: Int) : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Char =
         (value + 1).toChar()
 
@@ -57,6 +58,7 @@ internal constructor(private val value: Int) : Comparable<Char> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Char =
         (value - 1).toChar()
 

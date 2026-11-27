@@ -261,6 +261,7 @@ public inline value class ULong @kotlin.internal.IntrinsicConstEvaluation @Publi
      * @sample samples.misc.Builtins.inc
      */
     @kotlin.internal.InlineOnly
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun inc(): ULong = ULong(data.inc())
 
     /**
@@ -269,6 +270,7 @@ public inline value class ULong @kotlin.internal.IntrinsicConstEvaluation @Publi
      * @sample samples.misc.Builtins.dec
      */
     @kotlin.internal.InlineOnly
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun dec(): ULong = ULong(data.dec())
 
     /** Creates a range from this value to the specified [other] value. */
