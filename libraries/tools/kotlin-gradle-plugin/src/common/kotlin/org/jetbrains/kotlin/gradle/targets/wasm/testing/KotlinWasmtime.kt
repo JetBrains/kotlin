@@ -63,7 +63,7 @@ internal class KotlinWasmtime(
         )
 
         val args = mutableListOf<String>().apply {
-            addAll(wasmtimeInvokeArgs(WASM_WASI_START_UNIT_TESTS_EXPORT))
+            addAll(wasmtimeInvokeArgs("$WASM_WASI_START_UNIT_TESTS_EXPORT()"))
             add(compiledFile.absolutePath)
             addAll(cliArgs.toList())
         }
