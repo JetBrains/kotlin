@@ -392,7 +392,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 description = if (isNightly) {
                     "Runs all nightly tests for Kotlin Gradle plugins against Gradle $gradleVersion"
                 } else {
-                    "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                    "Runs all non-nightly tests for Kotlin Gradle plugins against Gradle $gradleVersion"
                 }
                 maxParallelForks = if (junitTag.maxParallelForks > 0) junitTag.maxParallelForks else maxParallelTestForks
 
