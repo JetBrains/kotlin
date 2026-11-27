@@ -95,7 +95,7 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest(
             configuration
         ) {
             this.documentablesMergingStage = { module ->
-                val packageNames = module.packages.map { it.dri.packageName ?: "NULL" }
+                val packageNames = module.packages.map { it.packageName }
                 assertEquals(
                     listOf("", "common", "js", "jvm").sorted(), packageNames.sorted(),
                     "Expected all packages to be present"
@@ -106,7 +106,7 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest(
                 assertEquals("This is moduleA", module.documentation.texts.distinct().joinToString())
 
                 /* Assert root package */
-                val rootPackage = module.packages.single { it.dri.packageName == "" }
+                val rootPackage = module.packages.single { it.packageName == "" }
                 assertEquals(3, rootPackage.documentation.keys.size, "Expected all three source sets")
                 assertEquals(
                     listOf("This is the root package", "This is also the root package"),
@@ -114,19 +114,19 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest(
                 )
 
                 /* Assert common package */
-                val commonPackage = module.packages.single { it.dri.packageName == "common" }
+                val commonPackage = module.packages.single { it.packageName == "common" }
                 assertEquals(3, commonPackage.documentation.keys.size, "Expected all three source sets")
                 assertEquals("This is the common package", commonPackage.documentation.texts.distinct().joinToString())
 
                 /* Assert js package */
-                val jsPackage = module.packages.single { it.dri.packageName == "js" }
+                val jsPackage = module.packages.single { it.packageName == "js" }
                 assertEquals(
                     "This is the js package",
                     jsPackage.documentation.texts.joinToString()
                 )
 
                 /* Assert the jvm package */
-                val jvmPackage = module.packages.single { it.dri.packageName == "jvm" }
+                val jvmPackage = module.packages.single { it.packageName == "jvm" }
                 assertEquals(
                     "This is the jvm package",
                     jvmPackage.documentation.texts.joinToString()

@@ -5,11 +5,9 @@
 package parsers.javadoc
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import java.nio.file.Paths
 import kotlin.test.Test
@@ -789,95 +787,42 @@ class SnippetTest : BaseAbstractTest() {
                         CodeBlock(
                             children = listOf(
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "System",
-                                        callable = Callable(
-                                            name = "out",
-                                            params = emptyList(),
-                                            isProperty = true,
-                                            isCompanion = true
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.lang/System#out#IfqD6rn7vBU"),
                                     children = listOf(Text("System.out"))
                                 ),
                                 Text(".println(\"Hello World!\");\n"),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "System",
-                                        callable = Callable(
-                                            name = "out",
-                                            params = emptyList(),
-                                            isProperty = true,
-                                            isCompanion = true
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.lang/System#out#IfqD6rn7vBU"),
                                     children = listOf(Text("System.out"))
                                 ),
                                 Text("."),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.io",
-                                        classNames = "PrintStream",
-                                        callable = Callable(
-                                            name = "println",
-                                            params = listOf(JavaClassReference("java.lang.String"))
-                                        ),
-                                    ), children = listOf(Text("println"))
+                                    declarationId = KdElementId("java.io/PrintStream#println#VMudsCHwk_c"),
+                                    children = listOf(Text("println"))
                                 ),
                                 Text("(\"link\");\n\n"),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.util",
-                                        classNames = "List"
-                                    ),
+                                    declarationId = KdElementId("java.util/List"),
                                     children = listOf(Text("List"))
                                 ),
                                 Text("<String> items = new ArrayList<>();\nitems."),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.util",
-                                        classNames = "Collection",
-                                        callable = Callable(
-                                            name = "stream",
-                                            params = emptyList()
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.util/Collection#stream#KK4ERoLQuv0"),
                                     children = listOf(Text("stream"))
                                 ),
                                 Text("()\n    .filter(s -> !s.isEmpty())\n    .map("),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "String"
-                                    ),
+                                    declarationId = KdElementId("java.lang/String"),
                                     children = listOf(Text("String"))
                                 ),
                                 Text("::toUpperCase)\n    .forEach("),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "System",
-                                        callable = Callable(
-                                            name = "out",
-                                            params = emptyList(),
-                                            isProperty = true,
-                                            isCompanion = true
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.lang/System#out#IfqD6rn7vBU"),
                                     children = listOf(Text("System.out"))
                                 ),
                                 Text("::println);\n\n"),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "example",
-                                        classNames = "Test",
-                                        callable = Callable(
-                                            name = "processItems",
-                                            params = listOf(JavaClassReference("java.util.List<java.lang.String>"))
-                                        )
-                                    ),
+                                    declarationId = KdElementId("example/Test#processItems#5N3mTHEx0K8"),
                                     children = listOf(Text("processItems"))
                                 ),
                                 Text("(items);")
@@ -916,26 +861,12 @@ class SnippetTest : BaseAbstractTest() {
                             children = listOf(
                                 Text("String s = \"...\"."),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "String",
-                                        callable = Callable(
-                                            name = "toUpperCase",
-                                            params = emptyList()
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.lang/String#toUpperCase#KK4ERoLQuv0"),
                                     children = listOf(Text("toUpperCase"))
                                 ),
                                 Text("()."),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.lang",
-                                        classNames = "String",
-                                        callable = Callable(
-                                            name = "trim",
-                                            params = emptyList()
-                                        )
-                                    ),
+                                    declarationId = KdElementId("java.lang/String#trim#KK4ERoLQuv0"),
                                     children = listOf(Text("trim"))
                                 ),
                                 Text("();")

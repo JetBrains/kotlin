@@ -5,6 +5,9 @@
 package translators
 
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.analyzer.ids.UNRESOLVED_DECLARATION_ID
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import java.io.File
@@ -95,8 +98,8 @@ class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
         ) {
             with((this / "example" / "f").cast<DFunction>()) {
                 val annotation = extra[Annotations]?.directAnnotations?.values?.first()?.first().notNull("annotation")
-                assertEquals("ExperimentalWasmInterop", annotation.dri.classNames)
-                assertEquals("kotlin.wasm", annotation.dri.packageName)
+                assertEquals("ExperimentalWasmInterop", declarationIdToClassNames(annotation.classLikeId))
+                assertEquals("kotlin.wasm", declarationIdToPackageName(annotation.classLikeId))
                 assertEquals(0, logger.warnMessages.size)
             }
         }
@@ -126,7 +129,7 @@ class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
         ) {
             with((this / "example" / "f").cast<DFunction>()) {
                 val annotation = extra[Annotations]?.directAnnotations?.values?.first()?.first().notNull("annotation")
-                assertEquals("<ERROR CLASS>", annotation.dri.classNames)
+                assertEquals(UNRESOLVED_DECLARATION_ID, annotation.classLikeId)
                 assertEquals(1, logger.warnMessages.size)
             }
         }

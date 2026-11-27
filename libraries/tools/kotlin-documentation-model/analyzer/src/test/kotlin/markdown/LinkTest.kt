@@ -4,20 +4,21 @@
 
 package markdown
 
-import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.*
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.callableNameOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.ownerDeclarationIdOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.receiverDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.valueParameterDeclarationId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
+import utils.name
 import utils.text
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 @MustRunOnChangesInAnalysisApi
 class LinkTest : BaseAbstractTest() {
@@ -54,13 +55,10 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
+                // a link to a member resolves to the member's own ID
                 assertEquals(
-                    DRI(
-                        packageName = "java.lang",
-                        classNames = "ClassLoader",
-                        callable = Callable("clearAssertionStatus", null, emptyList())
-                    ),
-                    module.getLinkDRIFrom("test")
+                    KdElementId("java.lang/ClassLoader#clearAssertionStatus#KK4ERoLQuv0"),
+                    module.getLinkDeclarationIdFrom("test")
                 )
             }
         }
@@ -94,9 +92,10 @@ class LinkTest : BaseAbstractTest() {
                 val inner = outer.classlikes.single { it.name == "Inner" } as DClass
                 val foo = inner.functions.single { it.name == "foo" }
 
-                val destinationDri = outer.generics.first().dri
-                assertEquals("/Outer///PointingToGenericParameters(0)/", destinationDri.toString())
-                assertEquals(destinationDri, (foo.type as TypeParameter).dri)
+                val fooType = foo.type as TypeParameter
+                // the return type carries the ID of the declaration that declares the referenced type parameter
+                assertEquals(outer.declarationId, fooType.containerDeclarationId)
+                assertEquals(outer.generics.first().name, fooType.name)
             }
         }
     }
@@ -108,7 +107,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Test.kt
             |package example
             |
-            |/** 
+            |/**
             |* Link to [waitAMinute]
             |*/
             |fun stop(hammerTime: String, waitAMinute: String) {}
@@ -117,11 +116,15 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val parameter = module.dfs { it.name == "waitAMinute" }
-                val link = module.dfs { it.name == "stop" }!!.documentation.values.single()
+                val stop = module.dfs { it.name == "stop" } as DFunction
+                val parameter = stop.parameters.single { it.name == "waitAMinute" }
+                val link = stop.documentation.values.single()
                     .dfs { it is DocumentationLink } as DocumentationLink
 
-                assertEquals(parameter!!.dri, link.dri)
+                // a parameter link points to the parameter's own ID
+                assertEquals(valueParameterDeclarationId(stop.declarationId, 1), link.declarationId)
+                // while the parameter itself has a synthetic ID hanging off the function's ID
+                assertEquals(valueParameterDeclarationId(stop.declarationId, 1), parameter.declarationId)
             }
         }
     }
@@ -133,7 +136,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Test.kt
             |package example
             |
-            |/** 
+            |/**
             |* Link to [this]
             |*/
             |fun String.stop() {}
@@ -145,7 +148,7 @@ class LinkTest : BaseAbstractTest() {
                 val link = fn.documentation.values.single()
                     .dfs { it is DocumentationLink } as DocumentationLink
 
-                assertEquals(DRI("kotlin", "String"), link.dri)
+                assertEquals(receiverDeclarationId(fn.declarationId), link.declarationId)
             }
         }
     }
@@ -169,7 +172,8 @@ class LinkTest : BaseAbstractTest() {
                 val link = fn.documentation.values.single()
                     .dfs { it is DocumentationLink } as DocumentationLink
 
-                assertEquals(fn.generics.first().dri, link.dri)
+                // a receiver link points to the receiver documentable of the owner callable
+                assertEquals(receiverDeclarationId(fn.declarationId), link.declarationId)
             }
         }
     }
@@ -181,7 +185,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Test.kt
             |package example
             |
-            |/** 
+            |/**
             |* Link to [this]
             |*/
             |fun dynamic.stop() {}
@@ -193,7 +197,8 @@ class LinkTest : BaseAbstractTest() {
                 val link = fn.documentation.values.single()
                     .dfs { it is DocumentationLink } as DocumentationLink
 
-                assertEquals(DRI(packageName = "", classNames = "<ERROR CLASS> dynamic"), link.dri)
+                // the link points to the receiver documentable even for the prohibited `dynamic` receiver
+                assertEquals(receiverDeclarationId(fn.declarationId), link.declarationId)
             }
         }
     }
@@ -205,7 +210,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Test.kt
             |package example
             |
-            |/** 
+            |/**
             |* Link to [this]
             |*/
             |fun <T> (T&Any).stop() {}
@@ -217,7 +222,8 @@ class LinkTest : BaseAbstractTest() {
                 val link = fn.documentation.values.single()
                     .dfs { it is DocumentationLink } as DocumentationLink
 
-                assertEquals(fn.generics.first().dri, link.dri)
+                // a receiver link points to the receiver documentable of the owner callable
+                assertEquals(receiverDeclarationId(fn.declarationId), link.declarationId)
             }
         }
     }
@@ -229,7 +235,7 @@ class LinkTest : BaseAbstractTest() {
             |/src/main/kotlin/Test.kt
             |package example
             |
-            |/** 
+            |/**
             |* Link to ![waitAMinute]
             |*/
             |fun stop(hammerTime: String, waitAMinute: String) {}
@@ -246,18 +252,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("Link to !"),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            callable = Callable(
-                                                "stop",
-                                                receiver = null,
-                                                params = listOf(
-                                                    TypeConstructor("kotlin.String", emptyList()),
-                                                    TypeConstructor("kotlin.String", emptyList())
-                                                )
-                                            ),
-                                            target = PointingToCallableParameters(1)
-                                        ),
+                                        declarationId = KdElementId("example#stop#70vAuuBWtk0#param[1]"),
                                         children = listOf(
                                             Text("waitAMinute")
                                         ),
@@ -301,12 +296,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("Link to !"),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = "Testing",
-                                            callable = Callable("property", null, emptyList(), isProperty = true),
-                                            target = PointingToDeclaration
-                                        ),
+                                        declarationId = KdElementId("example/Testing#property#ctE8McQtNZQ"),
                                         children = listOf(
                                             Text("Testing.property")
                                         ),
@@ -349,11 +339,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("reference in constructor "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = "AllKDocTagsClass",
-                                            target = PointingToDeclaration
-                                        ),
+                                        declarationId = KdElementId("example/AllKDocTagsClass"),
                                         children = listOf(
                                             Text("AllKDocTagsClass")
                                         ),
@@ -394,11 +380,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("ref to "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "kotlin.collections",
-                                            classNames = "List",
-                                            target = PointingToDeclaration
-                                        ),
+                                        declarationId = KdElementId("kotlin.collections/List"),
                                         children = listOf(
                                             Text("List")
                                         ),
@@ -406,11 +388,7 @@ class LinkTest : BaseAbstractTest() {
                                     ),
                                     Text(" or "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "kotlin.collections",
-                                            classNames = "Set",
-                                            target = PointingToDeclaration
-                                        ),
+                                        declarationId = KdElementId("kotlin.collections/Set"),
                                         children = listOf(
                                             Text("Set")
                                         ),
@@ -450,15 +428,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("ref to "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "java.applet",
-                                            classNames = "AppletContext",
-                                            callable = Callable(
-                                                name = "showDocument",
-                                                params = listOf(JavaClassReference("java.net.URL"))
-                                            ),
-                                            target = PointingToDeclaration
-                                        ),
+                                        declarationId = KdElementId("java.applet/AppletContext#showDocument#najpYeH8v3E"),
                                         children = listOf(
                                             Text("java.applet.AppletContext.showDocument")
                                         ),
@@ -501,15 +471,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("ref to fun "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "x",
-                                                params = listOf(TypeConstructor("kotlin.Int", emptyList()))
-                                            )
-                                        ),
+                                        declarationId = KdElementId("example#x#hDKzvCWNlUY"),
                                         children = listOf(
                                             Text("x")
                                         ),
@@ -565,15 +527,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("refs to the function "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            callable = Callable(
-                                                "fn",
-                                                params = listOf(TypeConstructor("kotlin.Int", emptyList()))
-                                            ),
-                                            target = PointingToDeclaration,
-                                        ),
+                                        declarationId = KdElementId("example#fn#hDKzvCWNlUY"),
                                         children = listOf(
                                             Text("example.fn")
                                         ),
@@ -581,16 +535,7 @@ class LinkTest : BaseAbstractTest() {
                                     ),
                                     Text(" and the property "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "x",
-                                                params = emptyList(),
-                                                isProperty = true
-                                            )
-                                        ),
+                                        declarationId = KdElementId("example#x#ctE8McQtNZQ"),
                                         children = listOf(
                                             Text("example.x")
                                         ),
@@ -637,11 +582,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("refs to the class "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = "example",
-                                            target = PointingToDeclaration,
-                                        ),
+                                        declarationId = KdElementId("example/example"),
                                         children = listOf(
                                             Text("example")
                                         ),
@@ -686,15 +627,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("refs to the function "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            callable = Callable(
-                                                "example",
-                                                params = emptyList()
-                                            ),
-                                            target = PointingToDeclaration,
-                                        ),
+                                        declarationId = KdElementId("example#example#KK4ERoLQuv0"),
                                         children = listOf(
                                             Text("example")
                                         ),
@@ -743,15 +676,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("refs to the overload "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "f",
-                                                params = listOf(TypeConstructor("kotlin.Int", emptyList()))
-                                            )
-                                        ),
+                                        declarationId = KdElementId("example#f#hDKzvCWNlUY"),
                                         children = listOf(
                                             Text("f")
                                         ),
@@ -760,15 +685,7 @@ class LinkTest : BaseAbstractTest() {
 
                                     Text(" and "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "f2",
-                                                params = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                            )
-                                        ),
+                                        declarationId = KdElementId("example#f2#P7n-P2YFLsg"),
                                         children = listOf(
                                             Text("f2")
                                         ),
@@ -818,15 +735,7 @@ class LinkTest : BaseAbstractTest() {
                                 children = listOf(
                                     Text("refs to the overload "),
                                     DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "f",
-                                                params = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                            )
-                                        ),
+                                        declarationId = KdElementId("example#f#P7n-P2YFLsg"),
                                         children = listOf(
                                             Text("f")
                                         ),
@@ -861,15 +770,8 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    DRI(
-                        "example",
-                        null,
-                        callable = Callable(
-                            "bar",
-                            receiver = TypeConstructor("example.Bar", params = emptyList()),
-                            params = emptyList()
-                        )
-                    ), module.getLinkDRIFrom("usage")
+                    KdElementId("example#bar#ISBoUF6tO3Y"),
+                    module.getLinkDeclarationIdFrom("usage")
                 )
             }
         }
@@ -890,42 +792,26 @@ class LinkTest : BaseAbstractTest() {
             |interface MyListWithNumber : List<Number>
             |
             |/**
-            | * 1 [List.foo] 
+            | * 1 [List.foo]
             | * 2 [MutableList.foo] is resolved only in K2, but unresolved in K1
             | * 3 [MyListWithT.foo] is resolved only in K2, but unresolved in K1
             | * 4 [MyListWithTNumberBound.foo]
-            | * 5 [MyListWithNumber.foo] 
+            | * 5 [MyListWithNumber.foo]
             | */
             |fun usage() {}
         """.trimMargin(),
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val fooDRI = DRI(
-                    "example",
-                    null,
-                    callable = Callable(
-                        "foo",
-                        receiver = TypeConstructor(
-                            "kotlin.collections.List",
-                            params = listOf(
-                                TypeParam(
-                                    name = "T",
-                                    bounds = listOf(TypeConstructor("kotlin.Number", emptyList()))
-                                )
-                            )
-                        ),
-                        params = emptyList()
-                    )
-                )
+                val fooId = KdElementId("example#foo#slM7akVXc1o")
                 assertEquals(
                     listOf(
-                        "List.foo" to fooDRI,
-                        "MutableList.foo" to fooDRI,
-                        "MyListWithT.foo" to fooDRI,
-                        "MyListWithTNumberBound.foo" to fooDRI,
-                        "MyListWithNumber.foo" to fooDRI,
-                    ), module.getAllLinkDRIFrom("usage")
+                        "List.foo" to fooId,
+                        "MutableList.foo" to fooId,
+                        "MyListWithT.foo" to fooId,
+                        "MyListWithTNumberBound.foo" to fooId,
+                        "MyListWithNumber.foo" to fooId,
+                    ), module.getAllLinkDeclarationIdsFrom("usage")
                 )
             }
         }
@@ -954,33 +840,26 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val links = module.getAllLinkDRIFrom("usage").toMap()
+                val links = module.getAllLinkDeclarationIdsFrom("usage").toMap()
 
-                fun assertResolvesTo(link: String, functionName: String) {
-                    val dri = links.getValue(link)
-
-                    // we do assert only required properties, ignoring type and callable parameters
-                    assertEquals("kotlin.collections", dri.packageName)
-                    assertEquals(null, dri.classNames)
-                    assertEquals(functionName, dri.callable?.name)
-                    assertEquals(
-                        "kotlin.collections.Iterable",
-                        (dri.callable?.receiver as? TypeConstructor)?.fullyQualifiedName
-                    )
-                    assertEquals(PointingToDeclaration, dri.target)
-                    assertEquals(null, dri.extra)
+                fun assertResolvesTo(link: String) {
+                    // each link resolves to the top-level extension in `kotlin.collections`:
+                    // its own callable ID with that package as the owner
+                    val id = links.getValue(link)
+                    assertEquals(KdElementId("kotlin.collections"), ownerDeclarationIdOf(id))
+                    assertEquals(link.substringAfter('.'), callableNameOf(id))
                 }
 
                 // there should be all 8 resolved links
                 assertEquals(links.size, 8)
-                assertResolvesTo("Iterable.map", "map")
-                assertResolvesTo("Iterable.flatMap", "flatMap")
-                assertResolvesTo("Iterable.flatten", "flatten")
-                assertResolvesTo("Iterable.min", "min")
-                assertResolvesTo("List.map", "map")
-                assertResolvesTo("List.flatMap", "flatMap")
-                assertResolvesTo("List.flatten", "flatten")
-                assertResolvesTo("List.min", "min")
+                assertResolvesTo("Iterable.map")
+                assertResolvesTo("Iterable.flatMap")
+                assertResolvesTo("Iterable.flatten")
+                assertResolvesTo("Iterable.min")
+                assertResolvesTo("List.map")
+                assertResolvesTo("List.flatMap")
+                assertResolvesTo("List.flatten")
+                assertResolvesTo("List.min")
             }
         }
     }
@@ -1003,13 +882,9 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "String.length" to DRI(
-                            "kotlin",
-                            "String",
-                            Callable(name = "length", receiver = null, params = emptyList(), isProperty = true)
-                        )
+                        "String.length" to KdElementId("kotlin/String#length#ctE8McQtNZQ")
                     ),
-                    module.getAllLinkDRIFrom("usage")
+                    module.getAllLinkDeclarationIdsFrom("usage")
                 )
             }
         }
@@ -1023,7 +898,7 @@ class LinkTest : BaseAbstractTest() {
             |package example
             |typealias F = String
             |/**
-            | * Refs to typealiases [kotlin.collections.ArrayList] and [kotlin.IllegalArgumentException] 
+            | * Refs to typealiases [kotlin.collections.ArrayList] and [kotlin.IllegalArgumentException]
             | * and [example.F]
             | */
             |val usage = 0
@@ -1033,11 +908,11 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "kotlin.collections.ArrayList" to DRI("kotlin.collections", "ArrayList"),
-                        "kotlin.IllegalArgumentException" to DRI("kotlin", "IllegalArgumentException"),
-                        "example.F" to DRI("example", "F")
+                        "kotlin.collections.ArrayList" to KdElementId("kotlin.collections/ArrayList"),
+                        "kotlin.IllegalArgumentException" to KdElementId("kotlin/IllegalArgumentException"),
+                        "example.F" to KdElementId("example/F")
                     ),
-                    module.getAllLinkDRIFrom("usage")
+                    module.getAllLinkDeclarationIdsFrom("usage")
                 )
             }
         }
@@ -1053,7 +928,7 @@ class LinkTest : BaseAbstractTest() {
             |/**
             | * refs to typealias [demos.F]
             | */
-            |val usage = 0            
+            |val usage = 0
             |/src/main/kotlin/demos/F.kt
             |package demos
             |typealias F = String
@@ -1061,7 +936,7 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assertEquals(DRI("demos", "F"), module.getLinkDRIFrom("usage"))
+                assertEquals(KdElementId("demos/F"), module.getLinkDeclarationIdFrom("usage"))
             }
         }
     }
@@ -1076,7 +951,7 @@ class LinkTest : BaseAbstractTest() {
             |/**
             | * [Storage.value]
             | */
-            |val usage = 0            
+            |val usage = 0
             |/src/example/Storage.java
             |package example;
             |@interface Storage {
@@ -1087,8 +962,8 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    DRI("example", "Storage", Callable("value", null, emptyList(), isProperty = true)),
-                    module.getLinkDRIFrom("usage")
+                    KdElementId("example/Storage#value#ctE8McQtNZQ"),
+                    module.getLinkDeclarationIdFrom("usage")
                 )
             }
         }
@@ -1104,9 +979,9 @@ class LinkTest : BaseAbstractTest() {
             |/**
             | * value: [Storage.value] is unresolved
             | * setValue: [Storage.setValue]
-            | * prop: [Storage.prop] is resolve in K2, but unresolved in K1 
+            | * prop: [Storage.prop] is resolve in K2, but unresolved in K1
             | */
-            |val usage = 0            
+            |val usage = 0
             |/src/example/Storage.java
             |package example;
             |class Storage {
@@ -1119,15 +994,11 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "Storage.setValue" to DRI(
-                            "example",
-                            "Storage",
-                            Callable("setValue", null, listOf(JavaClassReference("java.lang.String")))
-                        ),
+                        "Storage.setValue" to KdElementId("example/Storage#setValue#VMudsCHwk_c"),
                         // refers to a Java synthetic property, see https://youtrack.jetbrains.com/issue/KT-86394
-                        "Storage.prop" to DRI("example", "Storage", Callable("prop", null, emptyList(), isProperty = true))
+                        "Storage.prop" to KdElementId("example/Storage#prop#ctE8McQtNZQ")
                     ),
-                    module.getAllLinkDRIFrom("usage")
+                    module.getAllLinkDeclarationIdsFrom("usage")
                 )
             }
         }
@@ -1148,7 +1019,7 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                assertEquals(null, module.getLinkDRIFrom("usage"))
+                assertEquals(null, module.getLinkDeclarationIdFrom("usage"))
             }
         }
     }
@@ -1181,7 +1052,7 @@ class LinkTest : BaseAbstractTest() {
 
                 val docLink = doc.firstMemberOfType<DocumentationLink>()
                 assertEquals("some declaration", docLink.children.first().text())
-                assertEquals(Callable("usage", null, emptyList()), docLink.dri.callable)
+                assertEquals(KdElementId("#usage#KK4ERoLQuv0"), docLink.declarationId)
             }
         }
     }
@@ -1205,34 +1076,15 @@ class LinkTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val DRItoBensureActive = DRI(
-                    "",
-                    classNames = null,
-                    callable = Callable(
-                        name = "ensureActive",
-                        receiver = TypeConstructor(fullyQualifiedName = "B", params = emptyList()),
-                        params = emptyList()
-                    )
-                )
-                val link1 = module.dfs {
-                    it.dri == DRItoBensureActive
-                }?.documentation?.values?.single()?.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
-                val link2 = module.getLinkDRIFrom("B")
+                val bEnsureActive = module.dfs {
+                    it.name == "ensureActive" && (it as? DFunction)?.receiver?.type?.name == "B"
+                }
+                val link1 = bEnsureActive?.documentation?.values?.single()
+                    ?.firstMemberOfTypeOrNull<DocumentationLink>()?.declarationId
+                val link2 = module.getLinkDeclarationIdFrom("B")
 
-
-                assertEquals(
-                    link1,
-                    DRI(
-                        "",
-                        classNames = null,
-                        callable = Callable(
-                            name = "ensureActive",
-                            receiver = TypeConstructor(fullyQualifiedName = "C", params = emptyList()),
-                            params = emptyList()
-                        )
-                    )
-                )
-
+                // both links point to the top-level extension `C.ensureActive`
+                assertEquals(KdElementId("#ensureActive#yMbDuoEfqAI"), link1)
                 assertEquals(link1, link2)
             }
         }
@@ -1246,7 +1098,7 @@ class LinkTest : BaseAbstractTest() {
             |package example
             |/**
             |* Class: [Quoted Class Name] is unresolved in K2, but resolved in K1
-            |* [`Quoted Class Name`] is resolved in K2, but unresolved in K1 
+            |* [`Quoted Class Name`] is resolved in K2, but unresolved in K1
             |* [example.`Quoted Class Name`] is resolved in K2 and K1
             |*/
             |class `Quoted Class Name`
@@ -1256,10 +1108,10 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "`Quoted Class Name`" to DRI("example", "Quoted Class Name"),
-                        "example.`Quoted Class Name`" to DRI("example", "Quoted Class Name"),
+                        "`Quoted Class Name`" to KdElementId("example/Quoted%20Class%20Name"),
+                        "example.`Quoted Class Name`" to KdElementId("example/Quoted%20Class%20Name"),
                     ),
-                    module.getAllLinkDRIFrom("Quoted Class Name")
+                    module.getAllLinkDeclarationIdsFrom("Quoted Class Name")
                 )
             }
         }
@@ -1299,16 +1151,16 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "example.Foo" to DRI("example", "Foo"),
+                        "example.Foo" to KdElementId("example/Foo"),
                     ),
-                    module.getAllLinkDRIFrom("root")
+                    module.getAllLinkDeclarationIdsFrom("root")
                 )
                 assertEquals(
                     listOf(
-                        "example.Foo" to DRI("example", "Foo"),
-                        "Bar" to DRI("example", "Bar"),
+                        "example.Foo" to KdElementId("example/Foo"),
+                        "Bar" to KdElementId("example/Bar"),
                     ),
-                    module.getAllLinkDRIFrom("example")
+                    module.getAllLinkDeclarationIdsFrom("example")
                 )
             }
         }
@@ -1380,9 +1232,9 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "Call" to DRI("example", "Call"),
+                        "Call" to KdElementId("example/Call"),
                     ),
-                    module.getAllLinkDRIFrom("protocol")
+                    module.getAllLinkDeclarationIdsFrom("protocol")
                 )
             }
         }
@@ -1399,16 +1251,16 @@ class LinkTest : BaseAbstractTest() {
             |* @constructor text some description with reference.
             |*     But with a few lines and indent [Call]
             |*/
-            |class A(val text: String) 
+            |class A(val text: String)
         """.trimMargin(),
             configuration
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "Call" to DRI("example", "Call"),
+                        "Call" to KdElementId("example/Call"),
                     ),
-                    module.getAllLinkDRIFrom("A")
+                    module.getAllLinkDeclarationIdsFrom("A")
                 )
             }
         }
@@ -1445,10 +1297,10 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "UTC" to DRI("example", "UTC"),
-                        "IllegalTimeZoneException" to DRI("example", "IllegalTimeZoneException"),
+                        "UTC" to KdElementId("example/UTC"),
+                        "IllegalTimeZoneException" to KdElementId("example/IllegalTimeZoneException"),
                     ),
-                    module.getAllLinkDRIFrom("currentSystemDefault")
+                    module.getAllLinkDeclarationIdsFrom("currentSystemDefault")
                 )
             }
         }
@@ -1470,18 +1322,8 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    DRI(
-                        "example",
-                        null,
-                        Callable(
-                            "saveFromResponse",
-                            null,
-                            emptyList(),
-                            listOf(TypeConstructor("kotlin.String", emptyList()))
-                        ),
-                        @OptIn(ExperimentalDokkaApi::class) PointingToContextParameters(0)
-                    ),
-                    module.getLinkDRIFrom("saveFromResponse")
+                    KdElementId("example#saveFromResponse#GXn-IuN_dvE#context-param[0]"),
+                    module.getLinkDeclarationIdFrom("saveFromResponse")
                 )
             }
         }
@@ -1506,17 +1348,10 @@ class LinkTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 assertEquals(
                     listOf(
-                        "System.currentTimeMillis" to DRI(
-                            "java.lang", "System", Callable(
-                                "currentTimeMillis",
-                                receiver = null,
-                                params = emptyList(),
-                                isCompanion = true
-                            )
-                        ),
-                        "JavaNetCookieJar" to DRI("example", "JavaNetCookieJar"),
+                        "System.currentTimeMillis" to KdElementId("java.lang/System#currentTimeMillis#jIdvB92_wHY"),
+                        "JavaNetCookieJar" to KdElementId("example/JavaNetCookieJar"),
                     ),
-                    module.getAllLinkDRIFrom("saveFromResponse")
+                    module.getAllLinkDeclarationIdsFrom("saveFromResponse")
                 )
             }
         }
@@ -1540,8 +1375,8 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    DRI("example", "Call"),
-                    module.getLinkDRIFrom("protocol")
+                    KdElementId("example/Call"),
+                    module.getLinkDeclarationIdFrom("protocol")
                 )
             }
         }
@@ -1609,12 +1444,12 @@ class LinkTest : BaseAbstractTest() {
             configuration = configuration
         ) {
             documentablesMergingStage = { module ->
-                val dri = DRI("com.example", "A")
-                val allLinks = module.getAllLinkDRIFrom("f")
+                val classId = KdElementId("com.example/A")
+                val allLinks = module.getAllLinkDeclarationIdsFrom("f")
                 assertEquals(
                     listOf(
-                        "com.example.A" to dri,
-                        "A" to dri,
+                        "com.example.A" to classId,
+                        "A" to classId,
                     ),
                     allLinks
                 )
@@ -1654,17 +1489,12 @@ class LinkTest : BaseAbstractTest() {
             configuration = configuration
         ) {
             documentablesMergingStage = { module ->
-                val dri = DRI(
-                    "kotlinx.coroutines",
-                    "MainCoroutineDispatcher",
-                    Callable("immediate", null, emptyList(), isProperty = true)
-                )
                 assertEquals(
                     listOf(
-                        "MainCoroutineDispatcher.immediate" to dri,
-                        "kotlinx.coroutines.MainCoroutineDispatcher.immediate" to dri,
+                        "MainCoroutineDispatcher.immediate" to KdElementId("kotlinx.coroutines/MainCoroutineDispatcher#immediate#ctE8McQtNZQ"),
+                        "kotlinx.coroutines.MainCoroutineDispatcher.immediate" to KdElementId("kotlinx.coroutines/MainCoroutineDispatcher#immediate#ctE8McQtNZQ"),
                     ),
-                    module.getAllLinkDRIFrom("TestClass")
+                    module.getAllLinkDeclarationIdsFrom("TestClass")
                 )
             }
 
@@ -1707,36 +1537,11 @@ class LinkTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 // a property of the `companion object` - a regular member of `Vector.Companion`
-                val zeroObject = DRI(
-                    "example", "Vector.Companion",
-                    Callable("ZeroObject", null, emptyList(), isProperty = true)
-                )
-                // a property of the `companion { }` block - lives in `Vector`'s static scope (isCompanion)
-                val zeroBlock = DRI(
-                    "example", "Vector",
-                    Callable("ZeroBlock", null, emptyList(), isProperty = true, isCompanion = true)
-                )
-                // a top-level extension on `Vector.Companion`
-                val unitXObjectExtension = DRI(
-                    "example", null,
-                    Callable(
-                        "UnitXObjectExtension",
-                        receiver = TypeConstructor("example.Vector.Companion", emptyList()),
-                        params = emptyList(),
-                        isProperty = true
-                    )
-                )
-                // a companion extension on `Vector` - lives in `Vector`'s static scope (isCompanion)
-                val unitXExtension = DRI(
-                    "example", null,
-                    Callable(
-                        "UnitXExtension",
-                        receiver = TypeConstructor("example.Vector", emptyList()),
-                        params = emptyList(),
-                        isProperty = true,
-                        isCompanion = true
-                    )
-                )
+                val zeroObject = KdElementId("example/Vector.Companion#ZeroObject#ctE8McQtNZQ")
+                // a property of the `companion { }` block - a member of `Vector`
+                val zeroBlock = KdElementId("example/Vector#ZeroBlock#IfqD6rn7vBU")
+                val unitXObjectExtension = KdElementId("example#UnitXObjectExtension#XlBjAzG0_ms")
+                val unitXExtension = KdElementId("example#UnitXExtension#B2o17J_ttyQ")
 
                 assertEquals(
                     listOf(
@@ -1751,23 +1556,23 @@ class LinkTest : BaseAbstractTest() {
                         // [Vector.Companion.UnitXExtension] is intentionally unresolved:
                         // a companion extension extends `Vector`, not `Vector.Companion`
                     ),
-                    module.getAllLinkDRIFrom("usage")
+                    module.getAllLinkDeclarationIdsFrom("usage")
                 )
             }
         }
     }
 
-    private fun DModule.getLinkDRIFrom(name: String): DRI? {
+    private fun DModule.getLinkDeclarationIdFrom(name: String): KdElementId? {
         val doc = this.dfs { it.name == name }?.documentation?.values?.single()
             ?: throw IllegalStateException("Can't find documentation for declaration '$name'")
         val link = doc.firstMemberOfTypeOrNull<DocumentationLink>()
-        return link?.dri
+        return link?.declarationId
     }
 
-    private fun DModule.getAllLinkDRIFrom(name: String): List<Pair<String, DRI>> {
-        val result = mutableListOf<Pair<String, DRI>>()
+    private fun DModule.getAllLinkDeclarationIdsFrom(name: String): List<Pair<String, KdElementId>> {
+        val result = mutableListOf<Pair<String, KdElementId>>()
         this.dfs { it.name == name }?.documentation?.values?.single()?.dfs {
-            if (it is DocumentationLink) result.add(it.textWithCodeInline() to it.dri)
+            if (it is DocumentationLink) result.add(it.textWithCodeInline() to it.declarationId)
             false
         }
         return result

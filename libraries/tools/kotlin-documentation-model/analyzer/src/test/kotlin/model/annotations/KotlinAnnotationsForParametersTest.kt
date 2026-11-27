@@ -5,8 +5,8 @@
 package model.annotations
 
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
@@ -27,10 +27,10 @@ class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/a
         ) {
             with((this / "annotations" / "foo").cast<DFunction>()) {
                 val annotations = generics.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }
-                val driOfHello = DRI("annotations", "Hello")
+                val idOfHello = KdElementId("annotations/Hello")
                 val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
-                assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                assertEquals(listOf(idOfHello), annotations?.map { it.classLikeId })
                 assertEquals(listOf("abc"), annotationsValues)
             }
         }
@@ -48,10 +48,10 @@ class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/a
             with((this / "annotations" / "foo").cast<DFunction>()) {
                 val annotations = (generics.first().bounds.first() as GenericTypeConstructor)
                     .extra[Annotations]?.directAnnotations?.flatMap { it.value }
-                val driOfHello = DRI("annotations", "Hello")
+                val idOfHello = KdElementId("annotations/Hello")
                 val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
-                assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                assertEquals(listOf(idOfHello), annotations?.map { it.classLikeId })
                 assertEquals(listOf("abc"), annotationsValues)
             }
         }
@@ -78,7 +78,7 @@ class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/a
                     .flatten()
 
                 assertEquals(1, paramAnnotations.size)
-                assertEquals(DRI("annotations", "Hello"), paramAnnotations[0].dri)
+                assertEquals(KdElementId("annotations/Hello"), paramAnnotations[0].classLikeId)
             }
         }
     }

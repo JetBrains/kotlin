@@ -4,7 +4,6 @@
 
 package model
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DInterface
@@ -12,6 +11,7 @@ import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.utilities.cast
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.name
@@ -36,7 +36,7 @@ class NestedTypealiasesTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
     ) = with(this) {
         val ta = this.cast<DTypeAlias>()
         ta.name equals expectedName
-        ta.dri equals DRI("classes", "Foo.$expectedName")
+        ta.declarationId equals KdElementId("classes/Foo.$expectedName")
         ta.type.name equals expectedType
         ta.underlyingType.values.single().name equals expectedUnderlyingType
     }

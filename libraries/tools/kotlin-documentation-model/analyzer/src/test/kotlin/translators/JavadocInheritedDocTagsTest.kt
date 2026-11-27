@@ -7,10 +7,9 @@ package translators
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -128,7 +127,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                     name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.RuntimeException",
-                DRI("java.lang", "RuntimeException", target = PointingToDeclaration)
+                KdElementId("java.lang/RuntimeException")
             )
 
             assertEquals(expectedTag, renderedTag)
@@ -151,7 +150,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                     name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.IllegalStateException",
-                DRI("java.lang", "IllegalStateException", target = PointingToDeclaration)
+                KdElementId("java.lang/IllegalStateException")
             )
 
             assertEquals(expectedTag, renderedTag)
@@ -193,7 +192,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
                     name = MARKDOWN_ELEMENT_FILE_NAME
                 ),
                 "java.lang.String",
-                DRI("java.lang", "String")
+                KdElementId("java.lang/String")
             )
 
             assertEquals(expectedTag, renderedTag)

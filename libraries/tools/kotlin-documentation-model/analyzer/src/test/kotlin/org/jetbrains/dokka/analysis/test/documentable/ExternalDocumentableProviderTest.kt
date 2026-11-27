@@ -8,8 +8,8 @@ import org.jetbrains.dokka.analysis.test.api.javaTestProject
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.useServices
 import org.jetbrains.dokka.analysis.test.api.util.getResourceAbsolutePath
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import kotlin.test.*
 
 class ExternalDocumentableProviderTest {
@@ -35,20 +35,19 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val arrayListDRI = DRI("java.util", "ArrayList")
+            val arrayListId = KdElementId("java.util/ArrayList")
 
-            val arrayListClasslike = externalDocumentableProvider.getClasslike(arrayListDRI, sourceSet)
+            val arrayListClasslike = externalDocumentableProvider.getClasslike(arrayListId, sourceSet)
             assertNotNull(arrayListClasslike)
 
             assertEquals("ArrayList", arrayListClasslike.name)
-            assertEquals(arrayListDRI, arrayListClasslike.dri)
+            assertEquals(arrayListId, arrayListClasslike.declarationId)
             assertTrue(arrayListClasslike is DClass)
             assertTrue(arrayListClasslike.functions.size > 10, "java.util.ArrayList is expected to have >10 functions")
 
             val superTypes = arrayListClasslike.supertypes.entries.single().value
             val abstractListSuperType = superTypes.firstOrNull {
-                val dri = it.typeConstructor.dri
-                dri.packageName == "java.util" && dri.classNames == "AbstractList"
+                it.typeConstructor.declarationId == KdElementId("java.util/AbstractList")
             }
             assertNotNull(abstractListSuperType, "java.util.ArrayList is expected to extend java.util.AbstractList")
 
@@ -76,13 +75,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val jvmFieldDRI = DRI("kotlin.jvm", "JvmField")
+            val jvmFieldId = KdElementId("kotlin.jvm/JvmField")
 
-            val jvmFieldAnnotation = externalDocumentableProvider.getClasslike(jvmFieldDRI, sourceSet)
+            val jvmFieldAnnotation = externalDocumentableProvider.getClasslike(jvmFieldId, sourceSet)
             assertNotNull(jvmFieldAnnotation)
 
             assertEquals("JvmField", jvmFieldAnnotation.name)
-            assertEquals(jvmFieldDRI, jvmFieldAnnotation.dri)
+            assertEquals(jvmFieldId, jvmFieldAnnotation.declarationId)
             assertTrue(jvmFieldAnnotation is DAnnotation)
         }
     }
@@ -108,13 +107,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val deprecationLevelDRI = DRI("kotlin", "DeprecationLevel")
+            val deprecationLevelId = KdElementId("kotlin/DeprecationLevel")
 
-            val deprecationLevelEnum = externalDocumentableProvider.getClasslike(deprecationLevelDRI, sourceSet)
+            val deprecationLevelEnum = externalDocumentableProvider.getClasslike(deprecationLevelId, sourceSet)
             assertNotNull(deprecationLevelEnum)
 
             assertEquals("DeprecationLevel", deprecationLevelEnum.name)
-            assertEquals(deprecationLevelDRI, deprecationLevelEnum.dri)
+            assertEquals(deprecationLevelId, deprecationLevelEnum.declarationId)
             assertTrue(deprecationLevelEnum is DEnum)
             assertEquals(3, deprecationLevelEnum.entries.size)
 
@@ -144,13 +143,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val sequenceDRI = DRI("kotlin.sequences", "Sequence")
+            val sequenceId = KdElementId("kotlin.sequences/Sequence")
 
-            val sequenceInterface = externalDocumentableProvider.getClasslike(sequenceDRI, sourceSet)
+            val sequenceInterface = externalDocumentableProvider.getClasslike(sequenceId, sourceSet)
             assertNotNull(sequenceInterface)
 
             assertEquals("Sequence", sequenceInterface.name)
-            assertEquals(sequenceDRI, sequenceInterface.dri)
+            assertEquals(sequenceId, sequenceInterface.declarationId)
             assertTrue(sequenceInterface is DInterface)
 
             val iteratorFunction = sequenceInterface.functions.firstOrNull { it.name == "iterator" }
@@ -179,13 +178,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val emptyCoroutineContextDRI = DRI("kotlin.coroutines", "EmptyCoroutineContext")
+            val emptyCoroutineContextId = KdElementId("kotlin.coroutines/EmptyCoroutineContext")
 
-            val emptyCoroutineContext = externalDocumentableProvider.getClasslike(emptyCoroutineContextDRI, sourceSet)
+            val emptyCoroutineContext = externalDocumentableProvider.getClasslike(emptyCoroutineContextId, sourceSet)
             assertNotNull(emptyCoroutineContext)
 
             assertEquals("EmptyCoroutineContext", emptyCoroutineContext.name)
-            assertEquals(emptyCoroutineContextDRI, emptyCoroutineContext.dri)
+            assertEquals(emptyCoroutineContextId, emptyCoroutineContext.declarationId)
             assertTrue(emptyCoroutineContext is DObject)
         }
     }
@@ -219,13 +218,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val argTypeDRI = DRI("kotlinx.cli", "ArgType")
+            val argTypeId = KdElementId("kotlinx.cli/ArgType")
 
-            val argTypeClass = externalDocumentableProvider.getClasslike(argTypeDRI, sourceSet)
+            val argTypeClass = externalDocumentableProvider.getClasslike(argTypeId, sourceSet)
             assertNotNull(argTypeClass)
 
             assertEquals("ArgType", argTypeClass.name)
-            assertEquals(argTypeDRI, argTypeClass.dri)
+            assertEquals(argTypeId, argTypeClass.declarationId)
             assertTrue(argTypeClass is DClass)
             assertEquals(KotlinModifier.Abstract, argTypeClass.modifier.values.single())
         }
@@ -252,13 +251,13 @@ class ExternalDocumentableProviderTest {
 
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
-            val mapEntryDRI = DRI("java.util", "Map.Entry")
+            val mapEntryId = KdElementId("java.util/Map.Entry")
 
-            val mapEntryInterface = externalDocumentableProvider.getClasslike(mapEntryDRI, sourceSet)
+            val mapEntryInterface = externalDocumentableProvider.getClasslike(mapEntryId, sourceSet)
             assertNotNull(mapEntryInterface)
 
             assertEquals("Entry", mapEntryInterface.name)
-            assertEquals(mapEntryDRI, mapEntryInterface.dri)
+            assertEquals(mapEntryId, mapEntryInterface.declarationId)
             assertTrue(mapEntryInterface is DInterface)
         }
     }
@@ -285,14 +284,14 @@ class ExternalDocumentableProviderTest {
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
 
-            val nonExistingDRI = DRI("com.example.pckg", "NonExistingClassname")
-            val nonExistingClasslike = externalDocumentableProvider.getClasslike(nonExistingDRI, sourceSet)
+            val nonExistingId = KdElementId("com.example.pckg/NonExistingClassname")
+            val nonExistingClasslike = externalDocumentableProvider.getClasslike(nonExistingId, sourceSet)
             assertNull(nonExistingClasslike)
         }
     }
 
     @Test
-    fun `should return null for querying a classlike with a function dri`() {
+    fun `should return null for querying a classlike with a function declaration id`() {
         val project = kotlinJvmTestProject {
             ktFile("org/jetbrains/test/dokka/MyKotlinFile.kt") {
                 +"class MyKotlinClass {}"
@@ -312,8 +311,9 @@ class ExternalDocumentableProviderTest {
             // query for an external documentable that is not part of the project itself
             val sourceSet = context.configuration.sourceSets.single()
 
-            val functionDRI = DRI("kotlin.collections", "listOf")
-            val queriedClasslike = externalDocumentableProvider.getClasslike(functionDRI, sourceSet)
+            // a callable ID: owner package, name, and a signature hash segment
+            val functionId = KdElementId("kotlin.collections#listOf#AAA")
+            val queriedClasslike = externalDocumentableProvider.getClasslike(functionId, sourceSet)
             assertNull(queriedClasslike)
         }
     }
@@ -329,12 +329,12 @@ class ExternalDocumentableProviderTest {
         project.useServices { context ->
             val sourceSet = context.configuration.sourceSets.single()
 
-            val userProjectClassDRI = DRI("org.jetbrains.test.dokka", "MyKotlinClass")
-            val userProjectClass = externalDocumentableProvider.getClasslike(userProjectClassDRI, sourceSet)
+            val userProjectClassId = KdElementId("org.jetbrains.test.dokka/MyKotlinClass")
+            val userProjectClass = externalDocumentableProvider.getClasslike(userProjectClassId, sourceSet)
             assertNotNull(userProjectClass)
 
             assertEquals("MyKotlinClass", userProjectClass.name)
-            assertEquals(userProjectClassDRI, userProjectClass.dri)
+            assertEquals(userProjectClassId, userProjectClass.declarationId)
             assertTrue(userProjectClass is DClass)
         }
     }

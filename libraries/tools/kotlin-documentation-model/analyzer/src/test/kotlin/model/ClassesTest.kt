@@ -4,15 +4,15 @@
 
 package model
 
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.DRIExtraContainer
-import org.jetbrains.dokka.links.EnumEntryDRIExtra
-import org.jetbrains.dokka.links.PointingToDeclaration
-import org.jetbrains.dokka.links.TypeConstructor
-import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.KotlinModifier.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.callableNameOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.enumEntryDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.ownerDeclarationIdOf
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.assertNull
@@ -195,7 +195,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "Deprecated"
+                        classLikeId equals KdElementId("kotlin/Deprecated")
                         params.entries counts 1
                         (params["message"].assertNotNull("message") as StringValue).value equals "should no longer be used"
                     }
@@ -231,7 +231,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 with((this / "f").cast<DFunction>()) {
                     modifier.values.forEach { it equals Open }
                 }
-                D.supertypes.flatMap { it.component2() }.firstOrNull()?.typeConstructor?.dri equals C.dri
+                D.supertypes.flatMap { it.component2() }.firstOrNull()?.typeConstructor?.declarationId equals C.declarationId
             }
         }
     }
@@ -268,8 +268,8 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 modifier.values.forEach { it equals Final }
 
             }
-            D.supers.single().typeConstructor.dri equals C.dri
-            E.supers.single().typeConstructor.dri equals D.dri
+            D.supers.single().typeConstructor.declarationId equals C.declarationId
+            E.supers.single().typeConstructor.declarationId equals D.declarationId
         }
     }
 
@@ -310,7 +310,9 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         ) {
             with((this / "classes").cast<DPackage>()) {
                 properties.single().name equals "x"
-                (properties.single().receiver?.dri?.callable?.receiver as? TypeConstructor)?.fullyQualifiedName equals "classes.Klass.Default"
+                with(properties.single().receiver.assertNotNull("receiver")) {
+                    (type as? GenericTypeConstructor).assertNotNull("receiver type").declarationId equals KdElementId("classes/Klass.Default")
+                }
             }
         }
     }
@@ -361,7 +363,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "SinceKotlin"
+                        classLikeId equals KdElementId("kotlin/SinceKotlin")
                         params.entries counts 1
                         (params["version"].assertNotNull("version") as StringValue).value equals "1.1"
                     }
@@ -427,7 +429,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                     extra[Annotations]?.directAnnotations?.values?.firstOrNull()?.firstOrNull()
                         .assertNotNull("annotations")
                 ) {
-                    dri.toString() equals "kotlin/Suppress///PointingToDeclaration/"
+                    classLikeId equals KdElementId("kotlin/Suppress")
                     (params["names"].assertNotNull("param") as ArrayValue).value equals listOf(StringValue("abc"))
                 }
             }
@@ -449,15 +451,12 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "Retention"
+                        classLikeId equals KdElementId("java.lang.annotation/Retention")
                         params["value"].assertNotNull("value") equals EnumValue(
                             "RetentionPolicy.SOURCE",
-                            DRI(
-                                "java.lang.annotation",
-                                "RetentionPolicy.SOURCE",
-                                null,
-                                PointingToDeclaration,
-                                DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                            enumEntryDeclarationId(
+                                ClassId(FqName("java.lang.annotation"), FqName("RetentionPolicy"), false),
+                                "SOURCE"
                             )
                         )
                     }
@@ -529,7 +528,8 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ) {
             with((this / "classes" / "Tested").cast<DClass>()) {
-                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }
+                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value
+                    ?.mapNotNull { declarationIdToClassNames(it.declarationId) }
                     ?.sorted() equals listOf("Highest", "Lower", "LowerImplInterface").sorted()
             }
         }
@@ -545,7 +545,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ) {
             with((this / "classes" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames }.single() equals "B"
+                supertypes.entries.single().value.map { it.typeConstructor.name }.single() equals "B"
             }
         }
     }
@@ -562,7 +562,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ) {
             with((this / "classes" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }
+                supertypes.entries.single().value.map { it.typeConstructor.name to it.kind }
                     .sortedBy { it.first } equals listOf(
                     "B" to KotlinClassKindTypes.CLASS,
                     "Y" to KotlinClassKindTypes.INTERFACE
@@ -669,7 +669,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
     }
 
     @Test
-    fun `members implemented by delegation should have the correct DRI`() {
+    fun `members implemented by delegation should have the correct declaration ID`() {
         inlineModelTest(
             """
                |interface CookieJar {
@@ -677,7 +677,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                |    * Saves cookies
                |     */
                |    fun saveFromResponse(url: String)
-               |    val prop: String 
+               |    val prop: String
                |}
                |
                |class CookieJarImpl() : CookieJar {
@@ -690,45 +690,33 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                |) : CookieJar by delegate
             """.trimMargin()
         ) {
-            with((this / "classes" / "CookieJar"/ "saveFromResponse").cast<DFunction>()) {
+            val cookieJar = (this / "classes" / "CookieJar").cast<DInterface>()
+            val cookieJarImpl = (this / "classes" / "CookieJarImpl").cast<DClass>()
+            val javaNetCookieJar = (this / "classes" / "JavaNetCookieJar").cast<DClass>()
+
+            with((cookieJar / "saveFromResponse").cast<DFunction>()) {
                 name equals "saveFromResponse"
-                dri equals DRI(
-                    "classes",
-                    "CookieJar",
-                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
-                )
+                callableNameOf(declarationId) equals "saveFromResponse"
+                ownerDeclarationIdOf(declarationId) equals cookieJar.declarationId
             }
-            with((this / "classes" / "CookieJarImpl"/ "saveFromResponse").cast<DFunction>()) {
+            with((cookieJarImpl / "saveFromResponse").cast<DFunction>()) {
                 name equals "saveFromResponse"
-                dri equals DRI(
-                    "classes",
-                    "CookieJarImpl",
-                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
-                )
+                callableNameOf(declarationId) equals "saveFromResponse"
+                ownerDeclarationIdOf(declarationId) equals cookieJarImpl.declarationId
             }
-            with((this / "classes" / "JavaNetCookieJar"/ "saveFromResponse").cast<DFunction>()) {
+            with((javaNetCookieJar / "saveFromResponse").cast<DFunction>()) {
                 name equals "saveFromResponse"
-                dri equals DRI(
-                    "classes",
-                    "CookieJar",
-                    Callable("saveFromResponse", params = listOf(TypeConstructor("kotlin.String", emptyList())))
-                )
+                // Implemented by delegation: it shares the ID of the interface member it overrides
+                declarationId equals (cookieJar / "saveFromResponse").cast<DFunction>().declarationId
             }
-            with((this / "classes" / "CookieJarImpl"/ "prop").cast<DProperty>()) {
+            with((cookieJarImpl / "prop").cast<DProperty>()) {
                 name equals "prop"
-                dri equals DRI(
-                    "classes",
-                    "CookieJarImpl",
-                    Callable("prop", params =  emptyList(), isProperty = true)
-                )
+                callableNameOf(declarationId) equals "prop"
+                ownerDeclarationIdOf(declarationId) equals cookieJarImpl.declarationId
             }
-            with((this / "classes" / "JavaNetCookieJar"/ "prop").cast<DProperty>()) {
+            with((javaNetCookieJar / "prop").cast<DProperty>()) {
                 name equals "prop"
-                dri equals DRI(
-                    "classes",
-                    "CookieJar",
-                    Callable("prop", params =  emptyList(), isProperty = true)
-                )
+                declarationId equals (cookieJar / "prop").cast<DProperty>().declarationId
             }
         }
     }

@@ -7,12 +7,12 @@ package model
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.documentation.analyzer.ids.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.assertNotNull
@@ -45,7 +45,7 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
                 with(map.keys.also { it counts 1 }.find { it.analysisPlatform == Platform.jvm }.assertNotNull("jvm key").let { map[it]!! }
                 ) {
                     this counts 1
-                    first().classNames equals "B"
+                    declarationIdToClassNames(first()) equals "B"
                 }
             }
         }
@@ -65,7 +65,7 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
                 with(map.keys.also { it counts 1 }.find { it.analysisPlatform == Platform.jvm }.assertNotNull("jvm key").let { map[it]!! }
                 ) {
                     this counts 2
-                    mapNotNull { it.classNames }.sorted() equals listOf("B", "C")
+                    mapNotNull { declarationIdToClassNames(it) }.sorted() equals listOf("B", "C")
                 }
             }
         }
@@ -117,12 +117,12 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
                     with(map.keys.also { it counts 2 }) {
                         with(find { it.analysisPlatform == Platform.jvm }.assertNotNull("jvm key").let { map[it]!! }) {
                             this counts 1
-                            first().classNames equals "B"
+                            declarationIdToClassNames(first()) equals "B"
                         }
                         with(find { it.analysisPlatform == Platform.js }.assertNotNull("js key").let { map[it]!! }) {
                             this counts 2
                             val classes = listOf("B", "C")
-                            assertTrue(all { classes.contains(it.classNames) }, "One of subclasses missing in js" )
+                            assertTrue(all { classes.contains(declarationIdToClassNames(it)) }, "One of subclasses missing in js" )
                         }
                     }
 
@@ -520,43 +520,47 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
     }
 
     @Test
-    fun `DRI of generic inherited members (fake override) should lead to super member`() {
+    fun `declaration id of generic inherited members (fake override) should lead to super member`() {
         inlineModelTest(
             """
                 |interface A<T> { fun x(): T }
                 |interface B : A<Int> { }
                 """
         ) {
+            val superXId = (this / "inheritors" / "A" / "x").cast<DFunction>().declarationId
             with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
-                dri.classNames equals "A"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "A"
+                declarationIdToPackageName(declarationId) equals "inheritors"
             }
             with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
-                dri.classNames equals "A"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "A"
+                declarationIdToPackageName(declarationId) equals "inheritors"
+                declarationId equals superXId
             }
         }
     }
     @Test
-    fun `DRI of inherited members should lead to super member`() {
+    fun `declaration id of inherited members should lead to super member`() {
         inlineModelTest(
             """
                 |interface A { fun x() = 0 }
                 |interface B : A { }
                 """
         ) {
+            val superXId = (this / "inheritors" / "A" / "x").cast<DFunction>().declarationId
             with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
-                dri.classNames equals "A"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "A"
+                declarationIdToPackageName(declarationId) equals "inheritors"
             }
             with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
-                dri.classNames equals "A"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "A"
+                declarationIdToPackageName(declarationId) equals "inheritors"
+                declarationId equals superXId
             }
         }
     }
     @Test
-    fun `DRI of generic override members should lead to themself`() {
+    fun `declaration id of generic override members should lead to themself`() {
         inlineModelTest(
             """
                 |open class A<T> { open fun x(p: T):T  { return p } }
@@ -564,12 +568,12 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
                 """
         ) {
             with((this / "inheritors" / "A" / "x").cast<DFunction>()) {
-                dri.classNames equals "A"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "A"
+                declarationIdToPackageName(declarationId) equals "inheritors"
             }
             with((this / "inheritors" / "B" / "x").cast<DFunction>()) {
-                dri.classNames equals "B"
-                dri.packageName equals "inheritors"
+                declarationIdToClassNames(declarationId) equals "B"
+                declarationIdToPackageName(declarationId) equals "inheritors"
             }
         }
     }
@@ -733,7 +737,7 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
     }
 
     @Test
-    fun `intersection overridden should have KDoc and correct DRI`() {
+    fun `intersection overridden should have KDoc and correct declaration id`() {
         inlineModelTest(
             """
             |open class FirstParent {
@@ -752,15 +756,20 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             |class ChildWithTwoParent : FirstParent(), ISecondParent
         """
         ) {
+            val firstParentToStringId =
+                (this / "inheritors" / "FirstParent" / "toString").cast<DFunction>().declarationId
             with((this / "inheritors" / "ChildWithTwoParent" / "toString").cast<DFunction>()) {
                 comments() equals "Some doc\n"
-                dri equals DRI("inheritors", "FirstParent", org.jetbrains.dokka.links.Callable("toString", null, emptyList()) )
+                declarationIdToClassNames(declarationId) equals "FirstParent"
+                declarationIdToPackageName(declarationId) equals "inheritors"
+                callableNameOf(declarationId) equals "toString"
+                declarationId equals firstParentToStringId
             }
         }
     }
 
     @Test
-    fun `fake intersected and overridden fake fun should have correct DRI`() {
+    fun `fake intersected and overridden fake fun should have correct declaration id`() {
         inlineModelTest(
             """
             |class NamedDomainObjectContainerScope<T : Any> 
@@ -777,14 +786,19 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             |}
         """
         ) {
+            val delegateGetNamerId =
+                (this / "inheritors" / "NamedDomainObjectContainerDelegate" / "getNamer").cast<DFunction>().declarationId
             with((this / "inheritors" / "NamedDomainObjectContainerScope" / "getNamer").cast<DFunction>()) {
-                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("getNamer", null, emptyList()) )
+                declarationIdToClassNames(declarationId) equals "NamedDomainObjectContainerDelegate"
+                declarationIdToPackageName(declarationId) equals "inheritors"
+                callableNameOf(declarationId) equals "getNamer"
+                declarationId equals delegateGetNamerId
             }
         }
     }
 
     @Test
-    fun `fake intersected and overridden fake property should have correct DRI`() {
+    fun `fake intersected and overridden fake property should have correct declaration id`() {
         inlineModelTest(
             """
             |class NamedDomainObjectContainerScope<T : Any> 
@@ -801,8 +815,13 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             |}
         """
         ) {
+            val delegateNamerId =
+                (this / "inheritors" / "NamedDomainObjectContainerDelegate" / "namer").cast<DProperty>().declarationId
             with((this / "inheritors" / "NamedDomainObjectContainerScope" / "namer").cast<DProperty>()) {
-                dri equals DRI("inheritors", "NamedDomainObjectContainerDelegate", org.jetbrains.dokka.links.Callable("namer", null, emptyList(), isProperty = true) )
+                declarationIdToClassNames(declarationId) equals "NamedDomainObjectContainerDelegate"
+                declarationIdToPackageName(declarationId) equals "inheritors"
+                callableNameOf(declarationId) equals "namer"
+                declarationId equals delegateNamerId
             }
         }
     }

@@ -5,12 +5,12 @@
 package transformers
 
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
+import org.jetbrains.kotlin.documentation.KdElementId
 import testApi.testRunner.TestDokkaConfigurationBuilder
 import testApi.testRunner.dPackage
 import kotlin.test.BeforeTest
@@ -53,7 +53,7 @@ class ContextModuleAndPackageDocumentationReaderTest3 : AbstractContextModuleAnd
 
     @Test
     fun `root package is matched by empty string and the root keyword`() {
-        val documentation = reader.read(dPackage(DRI(""), sourceSets = setOf(sourceSet)))
+        val documentation = reader.read(dPackage(KdElementId("/"), sourceSets = setOf(sourceSet)))
         assertEquals(
             listOf("This is the root package", "This is also the root package"), documentation.texts
         )

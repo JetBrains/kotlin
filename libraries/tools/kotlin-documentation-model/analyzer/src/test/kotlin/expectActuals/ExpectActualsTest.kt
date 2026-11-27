@@ -6,15 +6,15 @@ package expectActuals
 
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToContextParameters
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DProperty
+import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.dfs
-import org.jetbrains.dokka.transformers.documentation.ClashingDriIdentifier
+import org.jetbrains.dokka.transformers.documentation.ClashingDeclarationId
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.contextParameterDeclarationId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.junit.jupiter.api.Nested
 import translators.findClasslike
@@ -301,10 +301,10 @@ class ExpectActualsTest : BaseAbstractTest() {
                     sourceSetGroups
                 )
 
-                // all three are marked as clashing DRIs, so there is no leftover ungrouped 'A'
+                // all three are marked as clashing declaration IDs, so there is no leftover ungrouped 'A'
                 assertTrue(
-                    classes.all { it.extra[ClashingDriIdentifier] != null },
-                    "Each 'A' should be marked with a ClashingDriIdentifier"
+                    classes.all { it.extra[ClashingDeclarationId] != null },
+                    "Each 'A' should be marked with a ClashingDeclarationId"
                 )
             }
         }
@@ -475,9 +475,9 @@ class ExpectActualsTest : BaseAbstractTest() {
                 val first = functions[0]
                 assertEquals("f", first.name)
                 with(first.contextParameters.single()) {
-                    assertEquals(DRI("kotlin", "Int"), type.driOrNull)
+                    assertEquals(KdElementId("kotlin/Int"), (type as? GenericTypeConstructor)?.declarationId)
                     assertEquals("_", name)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
+                    assertEquals(contextParameterDeclarationId(first.declarationId, 0), declarationId)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
                     )
@@ -489,9 +489,9 @@ class ExpectActualsTest : BaseAbstractTest() {
                 val second = functions[1]
                 assertEquals("f", second.name)
                 with(second.contextParameters.single()) {
-                    assertEquals(DRI("kotlin", "String"), type.driOrNull)
+                    assertEquals(KdElementId("kotlin/String"), (type as? GenericTypeConstructor)?.declarationId)
                     assertEquals("_", name)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
+                    assertEquals(contextParameterDeclarationId(second.declarationId, 0), declarationId)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
                     )
@@ -526,8 +526,8 @@ class ExpectActualsTest : BaseAbstractTest() {
                 val property = module.packages.single().properties.single()
                 assertEquals("i", property.name)
                 with(property.contextParameters.single()) {
-                    assertEquals(DRI("kotlin", "String"), type.driOrNull)
-                    assertEquals(0, (dri.target as? PointingToContextParameters)?.parameterIndex)
+                    assertEquals(KdElementId("kotlin/String"), (type as? GenericTypeConstructor)?.declarationId)
+                    assertEquals(contextParameterDeclarationId(property.declarationId, 0), declarationId)
                     assertEquals("_", name)
                     assertEquals(
                         setOf("common", "jvm", "native"), this.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()

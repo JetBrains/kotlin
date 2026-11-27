@@ -5,12 +5,12 @@
 package filter
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.FunctionalTypeConstructor
 import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.Invariance
 import org.jetbrains.dokka.model.WithTypealiases
+import org.jetbrains.kotlin.documentation.KdElementId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -49,7 +49,7 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
 
                 assertEquals(typeArrayNames.size, params?.size)
                 params?.forEachIndexed{ i, param ->
-                    assertEquals(GenericTypeConstructor(DRI("kotlin", typeArrayNames[i]), emptyList()),
+                    assertEquals(GenericTypeConstructor(KdElementId("kotlin/${typeArrayNames[i]}"), emptyList()),
                         param.type)
                 }
             }
@@ -72,13 +72,13 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             preMergeDocumentablesTransformationStage = {
                 val params = it.firstOrNull()?.packages?.firstOrNull()?.functions?.firstOrNull()?.parameters
                 assertEquals(
-                    Invariance(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList())),
+                    Invariance(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList())),
                     (params?.firstOrNull()?.type as? GenericTypeConstructor)?.projections?.firstOrNull())
                 assertEquals(
-                    Invariance(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList())),
+                    Invariance(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList())),
                     (params?.get(1)?.type as? FunctionalTypeConstructor)?.projections?.get(0))
                 assertEquals(
-                    Invariance(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList())),
+                    Invariance(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList())),
                     (params?.get(1)?.type as? FunctionalTypeConstructor)?.projections?.get(1))
             }
         }
@@ -106,11 +106,11 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
                 val myTestClass = it.firstOrNull()?.packages?.firstOrNull()?.classlikes?.firstOrNull()
                 val property = myTestClass?.properties?.firstOrNull()
 
-                assertEquals(GenericTypeConstructor(DRI("kotlin", "BooleanArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/BooleanArray"), emptyList()),
                     property?.type)
-                assertEquals(GenericTypeConstructor(DRI("kotlin", "BooleanArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/BooleanArray"), emptyList()),
                     property?.getter?.type)
-                assertEquals(GenericTypeConstructor(DRI("kotlin", "BooleanArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/BooleanArray"), emptyList()),
                     property?.setter?.parameters?.firstOrNull()?.type)
             }
         }
@@ -131,7 +131,7 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             preMergeDocumentablesTransformationStage = {
                 val arrTypealias = it.firstOrNull()?.packages?.firstOrNull()?.typealiases?.firstOrNull()
 
-                assertEquals(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     arrTypealias?.underlyingType?.values?.firstOrNull())
             }
         }
@@ -159,7 +159,7 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
                     ?.typealiases?.firstOrNull()
 
                 assertEquals(
-                    GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                    GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     arrTypealias?.underlyingType?.values?.firstOrNull()
                 )
             }
@@ -185,9 +185,9 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
                 val testFun = it.firstOrNull()?.packages?.firstOrNull()?.functions?.firstOrNull()
                 val myTestClass = it.firstOrNull()?.packages?.firstOrNull()?.classlikes?.firstOrNull() as? DClass
 
-                assertEquals(GenericTypeConstructor(DRI("kotlin","IntArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     testFun?.generics?.firstOrNull()?.bounds?.firstOrNull())
-                assertEquals(GenericTypeConstructor(DRI("kotlin","IntArray"), emptyList()),
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     myTestClass?.generics?.firstOrNull()?.bounds?.firstOrNull())
             }
         }
@@ -228,12 +228,12 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             preMergeDocumentablesTransformationStage = {
                 val paramsJS = it[1].packages.firstOrNull()?.functions?.firstOrNull()?.parameters
                 assertNotEquals(
-                    GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                    GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     paramsJS?.firstOrNull()?.type)
 
                 val paramsJVM = it.firstOrNull()?.packages?.firstOrNull()?.functions?.firstOrNull()?.parameters
                 assertEquals(
-                    GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                    GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                     paramsJVM?.firstOrNull()?.type)
             }
         }

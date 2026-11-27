@@ -5,9 +5,9 @@
 package content.annotations
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.StringValue
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -77,7 +77,7 @@ class FileLevelJvmNameTest : BaseAbstractTest() {
         ) {
             documentablesCreationStage = { modules ->
                 val expectedAnnotation = Annotations.Annotation(
-                    dri = DRI("kotlin.jvm", "JvmName"),
+                    classLikeId = KdElementId("kotlin.jvm/JvmName"),
                     params = mapOf("name" to StringValue("CustomJvmName")),
                     scope = Annotations.AnnotationScope.FILE,
                     mustBeDocumented = true
@@ -100,7 +100,7 @@ class FileLevelJvmNameTest : BaseAbstractTest() {
         ) {
             documentablesCreationStage = { modules ->
                 val expectedAnnotation = Annotations.Annotation(
-                    dri = DRI("kotlin.jvm", "JvmName"),
+                    classLikeId = KdElementId("kotlin.jvm/JvmName"),
                     params = mapOf("name" to StringValue("CustomJvmName")),
                     scope = Annotations.AnnotationScope.FILE,
                     mustBeDocumented = true

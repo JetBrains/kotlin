@@ -6,10 +6,10 @@ package superFields
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,13 +51,13 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 val property = kotlinProperties.single { it.name == "a" }
                 val propertyInheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), propertyInheritedFrom)
+                assertEquals(KdElementId("test/A"), propertyInheritedFrom)
 
                 assertNull(property.setter)
                 assertNotNull(property.getter)
 
                 val getterInheritedFrom = property.getter.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), getterInheritedFrom)
+                assertEquals(KdElementId("test/A"), getterInheritedFrom)
 
                 assertNull(property.extra[IsVar])
             }
@@ -123,7 +123,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 val property = kotlinProperties.single { it.name == "a" }
                 property.extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
                     assertEquals(
-                        DRI(packageName = "test", classNames = "A"),
+                        KdElementId("test/A"),
                         this
                     )
                 }
@@ -132,13 +132,13 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertNotNull(getter)
                 assertEquals("getA", getter.name)
                 val getterInheritedFrom = getter.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), getterInheritedFrom)
+                assertEquals(KdElementId("test/A"), getterInheritedFrom)
 
                 val setter = property.setter
                 assertNotNull(setter)
                 assertEquals("setA", setter.name)
                 val setterInheritedFrom = setter.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), setterInheritedFrom)
+                assertEquals(KdElementId("test/A"), setterInheritedFrom)
 
                 assertNotNull(property.extra[IsVar])
             }
@@ -226,7 +226,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertEquals(0, testedClass.functions.size)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+                assertEquals(KdElementId("test/A"), inheritedFrom)
 
                 assertNotNull(property.extra[IsVar])
             }
@@ -284,7 +284,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertEquals(KotlinVisibility.Protected, setterVisibility)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+                assertEquals(KdElementId("test/A"), inheritedFrom)
 
                 assertNotNull(property.extra[IsVar])
             }
@@ -334,7 +334,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertEquals(KotlinVisibility.Protected, propertyVisibility)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
-                assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+                assertEquals(KdElementId("test/A"), inheritedFrom)
 
                 assertNotNull(property.extra[IsVar])
             }

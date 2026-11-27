@@ -5,8 +5,8 @@
 package model.annotations
 
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
@@ -28,9 +28,9 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 with((this / "fn").cast<DFunction>()) {
-                    val dri =
-                        parameters.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }?.map { it.dri }
-                    assertEquals(listOf(DRI("java.lang", "Deprecated")), dri)
+                    val classLikeIds =
+                        parameters.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }?.map { it.classLikeId }
+                    assertEquals(listOf(KdElementId("java.lang/Deprecated")), classLikeIds)
                 }
             }
         }
@@ -54,10 +54,10 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
                 with((this / "foo").cast<DFunction>()) {
                     val annotations =
                         parameters.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }
-                    val driOfHello = DRI("java", "Hello")
+                    val idOfHello = KdElementId("java/Hello")
                     val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
-                    assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                    assertEquals(listOf(idOfHello), annotations?.map { it.classLikeId })
                     assertEquals(listOf("baz"), annotationsValues)
                 }
             }
@@ -83,10 +83,10 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
             with((this / "java" / "Test").cast<DClass>()) {
                 with((this / "foo").cast<DFunction>()) {
                     val annotations = generics.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }
-                    val driOfHello = DRI("java", "Hello")
+                    val idOfHello = KdElementId("java/Hello")
                     val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
-                    assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                    assertEquals(listOf(idOfHello), annotations?.map { it.classLikeId })
                     assertEquals(listOf("baz"), annotationsValues)
                 }
             }
@@ -113,10 +113,10 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
                 with((this / "foo").cast<DFunction>()) {
                     val annotations = (generics.first().bounds.first() as GenericTypeConstructor)
                         .extra[Annotations]?.directAnnotations?.flatMap { it.value }
-                    val driOfHello = DRI("java", "Hello")
+                    val idOfHello = KdElementId("java/Hello")
                     val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
-                    assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                    assertEquals(listOf(idOfHello), annotations?.map { it.classLikeId })
                     assertEquals(listOf("baz"), annotationsValues)
                 }
             }
@@ -147,7 +147,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
                         .flatten()
 
                     assertEquals(1, paramAnnotations.size)
-                    assertEquals(DRI("java", "Hello"), paramAnnotations[0].dri)
+                    assertEquals(KdElementId("java/Hello"), paramAnnotations[0].classLikeId)
                 }
             }
         }

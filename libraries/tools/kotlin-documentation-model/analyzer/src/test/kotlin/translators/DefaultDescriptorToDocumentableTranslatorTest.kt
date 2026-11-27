@@ -9,10 +9,9 @@ import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.modifiers
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.text
 import kotlin.test.*
@@ -682,7 +681,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
             documentablesMergingStage = { module ->
                 val type = module.packages.single().functions.single().type as GenericTypeConstructor
                 assertEquals(
-                    Annotations.Annotation(DRI("sample", "Hello"), emptyMap()),
+                    Annotations.Annotation(KdElementId("sample/Hello"), emptyMap()),
                     type.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 )
             }
@@ -709,10 +708,10 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
             documentablesMergingStage = { module ->
                 val type = module.packages.single().functions.single().type as GenericTypeConstructor
                 assertEquals(
-                    Annotations.Annotation(DRI("sample", "Hello"), emptyMap()),
+                    Annotations.Annotation(KdElementId("sample/Hello"), emptyMap()),
                     type.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 )
-                assertEquals("kotlin/Int///PointingToDeclaration/", type.dri.toString())
+                assertEquals(KdElementId("kotlin/Int"), type.declarationId)
             }
         }
     }
@@ -882,17 +881,11 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 val valuesFunction = kotlinEnum.functions.single { it.name == "values" }
 
                 val expectedValuesType = GenericTypeConstructor(
-                    dri = DRI(
-                        packageName = "kotlin",
-                        classNames = "Array"
-                    ),
+                    declarationId = KdElementId("kotlin/Array"),
                     projections = listOf(
                         Invariance(
                             GenericTypeConstructor(
-                                dri = DRI(
-                                    packageName = "test",
-                                    classNames = "KotlinEnum"
-                                ),
+                                declarationId = KdElementId("test/KotlinEnum"),
                                 projections = emptyList()
                             )
                         )
@@ -956,17 +949,11 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
 
                 val entriesProperty = kotlinEnum.properties.single { it.name == "entries" }
                 val expectedEntriesType = GenericTypeConstructor(
-                    dri = DRI(
-                        packageName = "kotlin.enums",
-                        classNames = "EnumEntries"
-                    ),
+                    declarationId = KdElementId("kotlin.enums/EnumEntries"),
                     projections = listOf(
                         Invariance(
                             GenericTypeConstructor(
-                                dri = DRI(
-                                    packageName = "test",
-                                    classNames = "KotlinEnum"
-                                ),
+                                declarationId = KdElementId("test/KotlinEnum"),
                                 projections = emptyList()
                             )
                         )
@@ -983,7 +970,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                         "Returns an immutable "
                                     ),
                                     DocumentationLink(
-                                        DRI("kotlin.enums", "EnumEntries"),
+                                        KdElementId("kotlin.enums/EnumEntries"),
                                         listOf(Text("kotlin.enums.EnumEntries")),
                                         params = mapOf("href" to "[kotlin.enums.EnumEntries]")
                                     ),
@@ -1021,10 +1008,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 assertNotNull(kotlinEnum)
 
                 val expectedValueOfType = GenericTypeConstructor(
-                    dri = DRI(
-                        packageName = "test",
-                        classNames = "KotlinEnum"
-                    ),
+                    declarationId = KdElementId("test/KotlinEnum"),
                     projections = emptyList()
                 )
 
@@ -1053,11 +1037,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                             name = MARKDOWN_ELEMENT_FILE_NAME
                         ),
                         name = "kotlin.IllegalArgumentException",
-                        exceptionAddress = DRI(
-                            packageName = "kotlin",
-                            classNames = "IllegalArgumentException",
-                            target = PointingToDeclaration
-                        ),
+                        exceptionAddress = KdElementId("kotlin/IllegalArgumentException"),
                     )
                 ))
 
@@ -1065,8 +1045,8 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                 assertEquals(expectedDocumentation, valueOfFunction.documentation.values.single())
                 assertEquals(expectedValueOfType, valueOfFunction.type)
 
-                val valueOfParamDRI = (valueOfFunction.parameters.single().type as GenericTypeConstructor).dri
-                assertEquals(DRI(packageName = "kotlin", classNames = "String"), valueOfParamDRI)
+                val valueOfParamId = (valueOfFunction.parameters.single().type as GenericTypeConstructor).declarationId
+                assertEquals(KdElementId("kotlin/String"), valueOfParamId)
             }
         }
     }

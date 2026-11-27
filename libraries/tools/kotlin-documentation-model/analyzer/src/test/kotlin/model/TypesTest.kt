@@ -5,13 +5,13 @@
 package model
 
 import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.assertIsInstance
 import utils.assertNotNull
+import utils.name
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,7 +31,8 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 name equals "HttpExceptionCallback"
                 assertTrue(type is GenericTypeConstructor)
                 type.projections counts 1
-                underlyingType.values.first().driOrNull equals DRI("kotlin", "Function2")
+                val underlying = underlyingType.values.first().assertIsInstance<FunctionalTypeConstructor>()
+                underlying.declarationId equals KdElementId("kotlin/Function2")
             }
             with((this / "types" / "exception").cast<DFunction>()) {
                 name equals "exception"
@@ -40,9 +41,9 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
                     typeAlias.projections counts 1
-                    assertTrue(inner is FunctionalTypeConstructor)
-                    inner.dri equals DRI("kotlin", "Function2")
-                    inner.projections counts 3
+                    val innerType = inner.assertIsInstance<FunctionalTypeConstructor>()
+                    innerType.declarationId equals KdElementId("kotlin/Function2")
+                    innerType.projections counts 3
                 }
             }
         }
@@ -59,7 +60,8 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 assertTrue(type is GenericTypeConstructor)
                 type.projections counts 0
                 name equals "CompletionHandler"
-                underlyingType.values.first().driOrNull equals DRI("kotlin", "Function1")
+                val underlying = underlyingType.values.first().assertIsInstance<FunctionalTypeConstructor>()
+                underlying.declarationId equals KdElementId("kotlin/Function1")
             }
             with((this / "types" / "exception").cast<DFunction>()) {
                 name equals "exception"
@@ -67,9 +69,9 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 assertTrue(parameterType is TypeAliased)
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
-                    assertTrue(inner is FunctionalTypeConstructor)
-                    inner.dri equals DRI("kotlin", "Function1")
-                    inner.projections counts 2
+                    val innerType = inner.assertIsInstance<FunctionalTypeConstructor>()
+                    innerType.declarationId equals KdElementId("kotlin/Function1")
+                    innerType.projections counts 2
                 }
             }
         }
@@ -86,7 +88,8 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 assertTrue(type is GenericTypeConstructor)
                 type.projections counts 0
                 name equals "CompletionHandler"
-                underlyingType.values.first().driOrNull equals DRI("kotlin", "Function3")
+                val underlying = underlyingType.values.first().assertIsInstance<FunctionalTypeConstructor>()
+                underlying.declarationId equals KdElementId("kotlin/Function3")
             }
             with((this / "types" / "exception").cast<DFunction>()) {
                 name equals "exception"
@@ -94,12 +97,12 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 assertTrue(parameterType is TypeAliased)
                 with(parameterType) {
                     assertTrue(typeAlias is GenericTypeConstructor)
-                    assertTrue(inner is FunctionalTypeConstructor)
-                    inner.dri equals DRI("kotlin", "Function3")
-                    inner.projections counts 4
-                    inner.contextParametersCount equals 2
+                    val innerType = inner.assertIsInstance<FunctionalTypeConstructor>()
+                    innerType.declarationId equals KdElementId("kotlin/Function3")
+                    innerType.projections counts 4
+                    innerType.contextParametersCount equals 2
                     val classNamesOfProjections =
-                        inner.projections.map { ((it as Invariance<*>).inner as GenericTypeConstructor).dri.classNames }
+                        innerType.projections.map { ((it as Invariance<*>).inner as GenericTypeConstructor).name }
                     classNamesOfProjections equals listOf("String", "Any", "Throwable", "Unit")
                 }
             }
@@ -119,7 +122,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
-                        dri = DRI("kotlin", "ParameterName"),
+                        classLikeId = KdElementId("kotlin/ParameterName"),
                         params = mapOf("name" to StringValue("param")),
                         mustBeDocumented = false
                     ),
@@ -142,7 +145,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
-                        dri = DRI("kotlin", "ParameterName"),
+                        classLikeId = KdElementId("kotlin/ParameterName"),
                         params = mapOf("name" to StringValue("param")),
                         mustBeDocumented = true
                     ),
@@ -166,7 +169,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     isExtensionFunction equals true
                     contextParametersCount equals 2
                     val classNamesOfProjections =
-                        projections.map { ((it as Invariance<*>).inner as GenericTypeConstructor).dri.classNames }
+                        projections.map { ((it as Invariance<*>).inner as GenericTypeConstructor).name }
                     classNamesOfProjections equals listOf("String", "Double", "Boolean", "Int", "String")
                 }
             }
@@ -189,7 +192,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
 
                 name equals "Nullable"
                 assertTrue(underlyingType.values.first() is Nullable)
-                underlyingType.values.first().driOrNull equals DRI("kotlin", "String")
+                underlyingType.values.first().name equals "String"
             }
 
             with((this / "types" / "NonNullable").cast<DTypeAlias>()) {
@@ -199,7 +202,7 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
 
                 name equals "NonNullable"
                 assertTrue(underlyingType.values.first() is GenericTypeConstructor)
-                underlyingType.values.first().driOrNull equals DRI("kotlin", "String")
+                underlyingType.values.first().name equals "String"
             }
 
             with((this / "types" / "nonNullableParameters").cast<DFunction>()) {
@@ -211,20 +214,20 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     assertIsInstance<TypeAliased>()
 
                     typeAlias.assertIsInstance<GenericTypeConstructor>()
-                    typeAlias.driOrNull equals DRI("types", "Nullable")
+                    typeAlias.declarationId equals KdElementId("types/Nullable")
 
                     inner.assertIsInstance<Nullable>()
-                    inner.driOrNull equals DRI("kotlin", "String")
+                    inner.name equals "String"
                 }
 
                 with(nonNullable.type) {
                     assertIsInstance<TypeAliased>()
 
                     typeAlias.assertIsInstance<GenericTypeConstructor>()
-                    typeAlias.driOrNull equals DRI("types", "NonNullable")
+                    typeAlias.declarationId equals KdElementId("types/NonNullable")
 
                     inner.assertIsInstance<GenericTypeConstructor>()
-                    inner.driOrNull equals DRI("kotlin", "String")
+                    inner.name equals "String"
                 }
             }
 
@@ -237,10 +240,10 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     assertIsInstance<TypeAliased>()
 
                     typeAlias.assertIsInstance<Nullable>()
-                    typeAlias.driOrNull equals DRI("types", "Nullable")
+                    typeAlias.inner.assertIsInstance<GenericTypeConstructor>().declarationId equals KdElementId("types/Nullable")
 
                     inner.assertIsInstance<Nullable>()
-                    inner.driOrNull equals DRI("kotlin", "String")
+                    inner.name equals "String"
                 }
 
                 // nullability is propagated from the typealias to the underlying type
@@ -248,10 +251,10 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     assertIsInstance<TypeAliased>()
 
                     typeAlias.assertIsInstance<Nullable>()
-                    typeAlias.driOrNull equals DRI("types", "NonNullable")
+                    typeAlias.inner.assertIsInstance<GenericTypeConstructor>().declarationId equals KdElementId("types/NonNullable")
 
                     inner.assertIsInstance<Nullable>()
-                    inner.driOrNull equals DRI("kotlin", "String")
+                    inner.name equals "String"
                 }
             }
         }
@@ -274,8 +277,8 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 name equals "AliasToTopLevelClassInsideNested"
                 val nestedTypeAlias = underlyingType.values.first()
                 nestedTypeAlias.assertIsInstance<TypeAliased>()
-                nestedTypeAlias.driOrNull equals DRI("types", "AliasHolder.NestedAlias")
-                nestedTypeAlias.inner.driOrNull equals DRI("kotlin", "String")
+                nestedTypeAlias.typeAlias.name equals "AliasHolder.NestedAlias"
+                nestedTypeAlias.inner.name equals "String"
             }
         }
     }
@@ -299,15 +302,15 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     // the getter return type must match the property's inferred type
                     val getterType = type
                     getterType.assertIsInstance<GenericTypeConstructor>()
-                    getterType.driOrNull equals DRI("kotlin.collections", "List")
+                    getterType.declarationId equals KdElementId("kotlin.collections/List")
 
                     val elementType = (getterType.projections.single() as Variance<*>).inner
                     elementType.assertIsInstance<GenericTypeConstructor>()
-                    elementType.driOrNull equals DRI("types", "ParameterDataProvider")
+                    elementType.declarationId equals KdElementId("types/ParameterDataProvider")
 
                     val elementTypeOfParameterDataProvider = (elementType.projections.single() as Variance<*>).inner
                     elementTypeOfParameterDataProvider.assertIsInstance<GenericTypeConstructor>()
-                    elementTypeOfParameterDataProvider.driOrNull equals DRI("kotlin", "Any")
+                    elementTypeOfParameterDataProvider.declarationId equals KdElementId("kotlin/Any")
                 }
             }
         }
