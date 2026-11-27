@@ -134,6 +134,9 @@ abstract class IrModuleDeserializer(
         topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
     )
+
+    @IrLinkerInternalApi
+    abstract fun finalizeInitialization()
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -266,4 +269,6 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltInsCallableIdMap[topLevelCallableId]?.let { output += it }
         delegate.collectAllMatchingSignatures(topLevelCallableId, output)
     }
+
+    override fun finalizeInitialization() = delegate.finalizeInitialization()
 }

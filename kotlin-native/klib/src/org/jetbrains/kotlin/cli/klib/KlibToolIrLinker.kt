@@ -203,6 +203,9 @@ internal class KlibToolIrLinker(
 
         @IrLinkerInternalApi
         override fun collectAllMatchingSignatures(topLevelCallableId: TopLevelCallableIdAndKind, output: MutableCollection<IdSignature>) = error("Not supported")
+
+        @IrLinkerInternalApi
+        override fun finalizeInitialization() = Unit
     }
 
     companion object {

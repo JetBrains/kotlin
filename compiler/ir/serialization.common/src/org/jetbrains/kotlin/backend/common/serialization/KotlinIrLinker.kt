@@ -82,6 +82,10 @@ abstract class KotlinIrLinker(
      */
     fun finalizeInitialization() {
         state.switchTo(LINKING)
+
+        for (moduleDeserializer in allModuleDeserializers) {
+            moduleDeserializer.finalizeInitialization()
+        }
     }
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
