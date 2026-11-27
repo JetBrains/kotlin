@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -39,6 +41,7 @@ import kotlin.test.assertTrue
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
 @SwiftExportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftExportIT : KGPBaseTest() {
 
     // Raw USR expectations are hardcoded with demangled form for readability.
@@ -157,6 +160,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInSwiftExport
     @DisplayName("check Swift Export incremental build")
     @GradleTest
     fun testSwiftExportIncrementalBuild(
@@ -348,6 +352,7 @@ class SwiftExportIT : KGPBaseTest() {
 
     @DisplayName("check Swift Export contains symbols for different API surfaces")
     @GradleTest
+    @MustRunOnChangesInSwiftExport
     fun testSwiftExportMultipleAPISurfaces(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
@@ -761,6 +766,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-86015: swiftPMDependencies cinterop klib is visible to Swift Export binary link task")
     @GradleTest
+    @MustRunOnChangesInSwiftExport
     @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testMainCinteropKlibIsLinkedInSwiftExportBinary(
         gradleVersion: GradleVersion,
@@ -904,6 +910,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: a SwiftPM-import cinterop klib is reexported through Swift Export")
     @GradleTest
+    @MustRunOnChangesInSwiftExport
     @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testSwiftPMImportCinteropIsReexportedThroughSwiftExport(
         gradleVersion: GradleVersion,
@@ -1016,6 +1023,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: a dependency's SwiftPM-import cinterop klib is reexported through Swift Export")
     @GradleTest
+    @MustRunOnChangesInSwiftExport
     @Suppress("DEPRECATION")
     fun testDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
         gradleVersion: GradleVersion,
@@ -1139,6 +1147,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: a SwiftPM-import cinterop klib of a dependency that is not exported is reexported when its API leaks")
     @GradleTest
+    @MustRunOnChangesInSwiftExport
     fun testLeakedDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
@@ -1255,6 +1264,7 @@ class SwiftExportIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-90760: bridges compile after a build with the stable release's per build type layout")
+    @MustRunOnChangesInSwiftExport
     @GradleTest
     fun testBridgesCompileAfterBuildWithStableRelease(
         gradleVersion: GradleVersion,
