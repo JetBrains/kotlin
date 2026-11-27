@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -37,6 +38,7 @@ import kotlin.test.assertTrue
  */
 @DisplayName("CInterop dependency transformation")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     private val projectDependencyMode = "-PdependencyMode=project"
