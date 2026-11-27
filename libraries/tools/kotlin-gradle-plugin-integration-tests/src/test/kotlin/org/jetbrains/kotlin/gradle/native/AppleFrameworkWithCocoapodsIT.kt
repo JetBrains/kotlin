@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.condition.OS
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("Tests for K/N nontrivial setup with embedAdSign and cocoapods")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
 
     @BeforeAll
