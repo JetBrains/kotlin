@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -45,6 +46,7 @@ import kotlin.test.assertTrue
     """,
     ReplaceWith("KotlinNativeCompilerDownloadIT")
 )
+@MustRunOnChangesInGradle
 class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     private val platformName: String = HostManager.platformName()
