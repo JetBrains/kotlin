@@ -158,6 +158,7 @@ object JvmStandardClassIds {
         val JvmVolatile = "Volatile".jvmId()
         val Throws = "Throws".jvmId()
         val ThrowsAlias = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("Throws"))
+        val ValueBased = "ValueBased".jdkInternalId()
 
         object Java {
             val Deprecated = "Deprecated".javaLangId()
@@ -210,6 +211,8 @@ private fun String.jvmId() = ClassId(JvmStandardClassIds.BASE_JVM_PACKAGE, Name.
 
 private val JAVA_LANG_PACKAGE = FqName("java.lang")
 private val JAVA_LANG_ANNOTATION_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("annotation"))
+private val JDK_INTERNAL_PACKAGE = FqName("jdk.internal")
 
 private fun String.javaLangId() = ClassId(JAVA_LANG_PACKAGE, Name.identifier(this))
 private fun String.javaAnnotationId() = ClassId(JAVA_LANG_ANNOTATION_PACKAGE, Name.identifier(this))
+private fun String.jdkInternalId() = ClassId(JDK_INTERNAL_PACKAGE, Name.identifier(this))

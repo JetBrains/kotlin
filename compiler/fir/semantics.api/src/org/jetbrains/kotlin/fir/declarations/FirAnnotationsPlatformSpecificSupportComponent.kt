@@ -24,6 +24,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
     protected abstract val repeatableAnnotations: Set<ClassId>
+    abstract val willBecomeValueAnnotations: Set<ClassId>
 
     @LegacyJvmInlineHandling
     abstract val hasJvmInlineAnnotation: Boolean
@@ -74,6 +75,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
         override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
         override val repeatableAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.repeatableAnnotations }
+        override val willBecomeValueAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.willBecomeValueAnnotations }
 
         @LegacyJvmInlineHandling
         override val hasJvmInlineAnnotation: Boolean = components.any { it.hasJvmInlineAnnotation }
@@ -165,6 +167,10 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
         override val repeatableAnnotations: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Repeatable,
         )
+
+        override val willBecomeValueAnnotations: Set<ClassId> = [
+            StandardClassIds.Annotations.WillBecomeValue,
+        ]
 
         @LegacyJvmInlineHandling
         override val hasJvmInlineAnnotation: Boolean

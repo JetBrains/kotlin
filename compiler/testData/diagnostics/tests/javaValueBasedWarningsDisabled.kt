@@ -4,11 +4,11 @@
 // JDK_KIND: FULL_JDK_21
 
 fun testSynchronized(p1: java.time.LocalDate) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p1<!>) { }
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p1<!>) { }
 }
 
 fun testIdentity(p1: java.time.LocalDate, p2: Any) {
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!> === p2
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p1 === p2<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, lambdaLiteral */

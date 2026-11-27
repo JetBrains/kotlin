@@ -5,12 +5,12 @@
 // JDK_KIND: FULL_JDK_21
 
 fun test(ld: java.time.LocalDate?, ld2: java.time.LocalDate) {
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld2<!>
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> !== <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld2<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>ld === ld2<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>ld !== ld2<!>
     ld === null
     ld as Any === ld2 as Any
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> === Any()
-    Any() === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>ld === Any()<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>Any() === ld<!>
 }
 
 fun getVersion(): Runtime.Version {
@@ -18,18 +18,18 @@ fun getVersion(): Runtime.Version {
 }
 
 fun testReturnVal() {
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getVersion() === getVersion()<!>
 }
 
 fun testLambda() {
     val version = getVersion()
     val lambda = {
-        <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>version<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
+        <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>version === getVersion()<!>
     }
 }
 
 fun testMultiple(x: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Integer<!>) {
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> && <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>x === x<!> && <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>x === x<!>
 }
 
 /* GENERATED_FIR_TAGS: andExpression, asExpression, equalityExpression, flexibleType, functionDeclaration, javaFunction,

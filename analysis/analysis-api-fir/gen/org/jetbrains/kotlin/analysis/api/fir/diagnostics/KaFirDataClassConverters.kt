@@ -3265,6 +3265,7 @@ private fun KaDiagnosticConverterBuilder.addConversions66() {
     add(FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
         IdentitySensitiveOperationOnWillBecomeValueClassImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6757,13 +6758,6 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
     add(FirJvmErrors.DEPRECATED_JAVA_ANNOTATION) { firDiagnostic ->
         DeprecatedJavaAnnotationImpl(
             firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS) { firDiagnostic ->
-        SynchronizedBlockOnJavaValueBasedClassImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
