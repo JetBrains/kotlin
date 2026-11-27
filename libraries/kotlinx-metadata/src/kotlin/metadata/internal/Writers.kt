@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.MetadataExtensions
@@ -74,6 +75,7 @@ private fun WriteContext.writeTypeProjection(argument: KmTypeProjection): ProtoB
     return t
 }
 
+@OptIn(ExperimentalRichErrors::class)
 private fun WriteContext.writeType(kmType: KmType): ProtoBuf.Type.Builder {
     val t = ProtoBuf.Type.newBuilder()
     when (val cls = kmType.classifier) {
@@ -94,6 +96,8 @@ private fun WriteContext.writeType(kmType: KmType): ProtoBuf.Type.Builder {
     }
 
     extensions.forEach { it.writeTypeExtensions(kmType, t, this) }
+    kmType.richErrors.forEach { t.addRichError(writeType(it).build()) }
+    kmType.unionTypeAnnotations.forEach { t.addUnionTypeAnnotation(it.writeAnnotation(strings).build()) }
 
     if (kmType.isNullable) {
         t.nullable = true

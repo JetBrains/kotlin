@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import java.util.Collections
 import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.MetadataExtensions
@@ -319,6 +320,7 @@ private fun ProtoBuf.TypeParameter.toKmTypeParameter(
     return ktp
 }
 
+@OptIn(ExperimentalRichErrors::class)
 private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
     // We don't need to check for cycles if type table is not used.
     if (c.types.types.isEmpty()) return readKmType(c)
@@ -372,6 +374,8 @@ private fun ProtoBuf.Type.readKmType(c: ReadContext): KmType {
     }
 
     c.extensions.forEach { it.readTypeExtensions(v, this, c) }
+    v.richErrors = richErrors(c.types).map { it.toKmType(c) }
+    v.unionTypeAnnotations = unionTypeAnnotationList.map { it.readAnnotation(c.strings) }
 
     return v
 }

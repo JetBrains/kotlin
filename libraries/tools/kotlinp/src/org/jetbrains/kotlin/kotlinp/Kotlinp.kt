@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kotlinp
 
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.*
 
 abstract class Kotlinp(protected val settings: Settings) {
@@ -86,6 +87,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalRichErrors::class)
     fun renderClass(clazz: KmClass, printer: Printer): Unit = with(printer) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
@@ -103,6 +105,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             clazz.isExpect to "expect",
             clazz.isValue to "value",
             clazz.isFunInterface to "fun",
+            clazz.isRichError to "error",
         )
         append(CLASS_KIND_MAP[clazz.kind])
         appendName(clazz)
@@ -426,6 +429,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendCollectionIfNotEmpty(typeParameters, prefix = "<", postfix = ">$postfix") { renderTypeParameter(it, this) }
     }
 
+    @OptIn(ExperimentalRichErrors::class)
     fun renderType(type: KmType, printer: Printer) {
         val classifier = when (val cls = type.classifier) {
             is KmClassifier.Class -> cls.name
@@ -436,6 +440,11 @@ abstract class Kotlinp(protected val settings: Settings) {
         val outerType = type.outerType
         val abbreviatedType = type.abbreviatedType
         val platformTypeUpperBound = type.flexibleTypeUpperBound?.let { renderFlexibleTypeUpperBound(it) }
+
+        if (type.unionTypeAnnotations.isNotEmpty()) {
+            printer.appendAnnotations(type.unionTypeAnnotations, onePerLine = false)
+            printer += "("
+        }
 
         printer += printString {
             appendAnnotations(getAnnotations(type), onePerLine = false)
@@ -473,6 +482,12 @@ abstract class Kotlinp(protected val settings: Settings) {
             } else if (platformTypeUpperBound != null) {
                 append("..").append(platformTypeUpperBound)
             }
+
+            type.richErrors.forEach { append(" | ").appendType(it) }
+        }
+
+        if (type.unionTypeAnnotations.isNotEmpty()) {
+            printer += ")"
         }
     }
 

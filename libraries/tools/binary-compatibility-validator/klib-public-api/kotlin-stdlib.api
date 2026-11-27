@@ -69,6 +69,10 @@ open annotation class kotlin.experimental/ExperimentalObjCRefinement : kotlin/An
     constructor <init>() // kotlin.experimental/ExperimentalObjCRefinement.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.experimental/ExperimentalRichErrors : kotlin/Annotation { // kotlin.experimental/ExperimentalRichErrors|null[0]
+    constructor <init>() // kotlin.experimental/ExperimentalRichErrors.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.experimental/ExperimentalTypeInference : kotlin/Annotation { // kotlin.experimental/ExperimentalTypeInference|null[0]
     constructor <init>() // kotlin.experimental/ExperimentalTypeInference.<init>|<init>(){}[0]
 }
