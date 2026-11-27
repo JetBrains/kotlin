@@ -31,13 +31,14 @@ import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -186,83 +187,77 @@ open class LiveLiteralTransformer(
         val clazz = liveLiteralsClass!!
         val stateType = stateInterface.owner.typeWith(literalType).makeNullable()
         val stateGetValue = stateInterface.getPropertyGetter("value")!!
-        val defaultProp = clazz.addProperty {
+        val defaultField: IrFieldSymbol
+        val defaultGetter: IrSimpleFunctionSymbol
+        val defaultProp = clazz.irProperty {
             name = Name.identifier(key)
             visibility = DescriptorVisibilities.PRIVATE
-        }.also { p ->
-            p.backingField = context.irFactory.buildField {
+            defaultField = backingField {
                 name = Name.identifier(key)
+                origin = IrDeclarationOrigin.DEFINED
                 isStatic = true
                 type = literalType
                 visibility = DescriptorVisibilities.PRIVATE
-            }.also { f ->
-                f.correspondingPropertySymbol = p.symbol
-                f.parent = clazz
-                f.initializer = context.irFactory.createExpressionBody(
-                    SYNTHETIC_OFFSET,
-                    SYNTHETIC_OFFSET,
-                    literalValue
-                )
             }
-            p.addGetter {
+            defaultGetter = getter {
                 returnType = literalType
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-            }.also { fn ->
-                fn.correspondingPropertySymbol = p.symbol
-                val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.parameters += thisParam
-                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
-                }
             }
         }
-        val stateProp = clazz.addProperty {
+        defaultField.owner.initializer = context.irFactory.createExpressionBody(
+            SYNTHETIC_OFFSET,
+            SYNTHETIC_OFFSET,
+            literalValue
+        )
+        defaultGetter.owner.let { fn ->
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                +irReturn(irGetField(irGet(fn.dispatchReceiverParameter!!), defaultField.owner))
+            }
+        }
+        val stateField: IrFieldSymbol
+        val stateGetter: IrSimpleFunctionSymbol
+        val stateSetter: IrSimpleFunctionSymbol
+        val valueParam: IrValueParameterSymbol
+        val stateProp = clazz.irProperty {
             name = Name.identifier("State\$$key")
             visibility = DescriptorVisibilities.PRIVATE
             isVar = true
-        }.also { p ->
-            p.backingField = context.irFactory.buildField {
+            stateField = backingField {
                 name = Name.identifier("State\$$key")
+                origin = IrDeclarationOrigin.DEFINED
                 type = stateType
                 visibility = DescriptorVisibilities.PRIVATE
                 isStatic = true
-            }.also { f ->
-                f.correspondingPropertySymbol = p.symbol
-                f.parent = clazz
             }
-            p.addGetter {
+            stateGetter = getter {
                 returnType = stateType
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-            }.also { fn ->
-                fn.correspondingPropertySymbol = p.symbol
-                val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.parameters += thisParam
-                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
-                }
             }
-            p.addSetter {
+            stateSetter = setter {
                 returnType = context.irBuiltIns.unitType
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-            }.also { fn ->
-                fn.correspondingPropertySymbol = p.symbol
-                val thisParam = clazz.thisReceiver!!.copyTo(fn)
-                fn.parameters += thisParam
-                val valueParam = fn.addValueParameter("value", stateType)
-                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                    +irSetField(irGet(thisParam), p.backingField!!, irGet(valueParam))
-                }
+                valueParam = valueParameter("value", stateType)
             }
         }
-        return clazz.addFunction(
-            name = key,
+        stateGetter.owner.let { fn ->
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                +irReturn(irGetField(irGet(fn.dispatchReceiverParameter!!), stateField.owner))
+            }
+        }
+        stateSetter.owner.let { fn ->
+            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                +irSetField(irGet(fn.dispatchReceiverParameter!!), stateField.owner, irGet(valueParam.owner))
+            }
+        }
+        return clazz.irFunction {
+            name = Name.identifier(key)
             returnType = literalType
-        ).also { fn ->
+            annotations = listOf(irLiveLiteralInfoAnnotation(key, startOffset))
+        }.also { fn ->
             val thisParam = fn.dispatchReceiverParameter!!
-            fn.annotations += irLiveLiteralInfoAnnotation(key, startOffset)
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 // if (!isLiveLiteralsEnabled) return defaultValueField
                 // val a = stateField
@@ -427,21 +422,20 @@ open class LiveLiteralTransformer(
                 val prevEnabledSymbol = liveLiteralsEnabledSymbol
                 var nextEnabledSymbol: IrSimpleFunctionSymbol? = null
                 val prevClass = liveLiteralsClass
-                val nextClass = context.irFactory.buildClass {
+                val nextClass = context.irFactory.irClass {
                     kind = ClassKind.OBJECT
                     visibility = DescriptorVisibilities.INTERNAL
                     val shortName = PackagePartClassUtils.getFilePartShortName(fileName)
                     // the name of the LiveLiterals class is per-file, so we use the same name that
                     // the kotlin file class lowering produces, prefixed with `LiveLiterals$`.
                     name = Name.identifier("LiveLiterals${"$"}$shortName")
-                }.also {
-                    it.createThisReceiverParameter()
-
                     // store the full file path to the file that this class is associated with in an
                     // annotation on the class. This will be used by tooling to associate the keys
                     // inside of this class with actual PSI in the editor.
-                    it.annotations += irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name)
-                    it.addConstructor {
+                    annotations = listOf(irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name))
+                    thisReceiver()
+                }.also {
+                    it.irConstructor {
                         isPrimary = true
                     }.also { ctor ->
                         ctor.body = DeclarationIrBuilder(context, it.symbol).irBlockBody {
@@ -456,37 +450,35 @@ open class LiveLiteralTransformer(
                     }
 
                     if (usePerFileEnabledFlag) {
-                        val enabledProp = it.addProperty {
+                        val enabledField: IrFieldSymbol
+                        val enabledGetter: IrSimpleFunctionSymbol
+                        it.irProperty {
                             name = Name.identifier("enabled")
                             visibility = DescriptorVisibilities.PRIVATE
-                        }.also { p ->
-                            p.backingField = context.irFactory.buildField {
+                            enabledField = backingField {
                                 name = Name.identifier("enabled")
+                                origin = IrDeclarationOrigin.DEFINED
                                 isStatic = true
                                 type = builtIns.booleanType
                                 visibility = DescriptorVisibilities.PRIVATE
-                            }.also { f ->
-                                f.correspondingPropertySymbol = p.symbol
-                                f.parent = it
-                                f.initializer = context.irFactory.createExpressionBody(
-                                    SYNTHETIC_OFFSET,
-                                    SYNTHETIC_OFFSET,
-                                    irConst(false)
-                                )
                             }
-                            p.addGetter {
+                            enabledGetter = getter {
                                 returnType = builtIns.booleanType
                                 visibility = DescriptorVisibilities.PRIVATE
                                 origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                            }.also { fn ->
-                                val thisParam = it.thisReceiver!!.copyTo(fn)
-                                fn.parameters += thisParam
-                                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
-                                }
                             }
                         }
-                        nextEnabledSymbol = enabledProp.getter?.symbol
+                        enabledField.owner.initializer = context.irFactory.createExpressionBody(
+                            SYNTHETIC_OFFSET,
+                            SYNTHETIC_OFFSET,
+                            irConst(false)
+                        )
+                        enabledGetter.owner.let { fn ->
+                            fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                                +irReturn(irGetField(irGet(fn.dispatchReceiverParameter!!), enabledField.owner))
+                            }
+                        }
+                        nextEnabledSymbol = enabledGetter
                     }
                 }
                 try {
@@ -748,37 +740,5 @@ open class LiveLiteralTransformer(
             }
             declaration
         }
-    }
-
-    inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
-        IrFunctionBuilder().run {
-            name = Name.special("<set-${this@addSetter.name}>")
-            builder()
-            context.irFactory.buildFunction(this).also { setter ->
-                this@addSetter.setter = setter
-                setter.parent = this@addSetter.parent
-            }
-        }
-
-    fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-        createSimpleFunction(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = name,
-            visibility = visibility,
-            isInline = isInline,
-            isExpect = isExpect,
-            returnType = returnType,
-            modality = modality,
-            symbol = IrSimpleFunctionSymbolImpl(),
-            isTailrec = isTailrec,
-            isSuspend = isSuspend,
-            isOperator = isOperator,
-            isInfix = isInfix,
-            isExternal = isExternal,
-            containerSource = containerSource,
-            isFakeOverride = isFakeOverride
-        )
     }
 }
