@@ -34,6 +34,25 @@ public class IncrementalCompilation {
         System.setProperty(INCREMENTAL_COMPILATION_JVM_PROPERTY, String.valueOf(value));
     }
 
+    /**
+     * Kept only for binary compatibility: {@code EnableICFixture} from {@code kotlin-jps-plugin-tests-for-ide}.
+     * Scheduled to be removed once IntelliJ upgrades to bundled JPS version 2.5.20+.
+     */
+    @Deprecated
+    @TestOnly
+    public static boolean isEnabledForJs() {
+        return Boolean.valueOf(System.getProperty(INCREMENTAL_COMPILATION_JS_PROPERTY));
+    }
+
+    /**
+     * Kept only for binary compatibility, see {@link #isEnabledForJs()}.
+     */
+    @Deprecated
+    @TestOnly
+    public static void setIsEnabledForJs(boolean value) {
+        System.setProperty(INCREMENTAL_COMPILATION_JS_PROPERTY, String.valueOf(value));
+    }
+
     @Deprecated
     public static void toJvmArgs(List<String> jvmArgs) {
         if (isEnabledForJvm()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JVM_PROPERTY);
