@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.listDirectoryEntries
@@ -64,6 +65,7 @@ import kotlin.test.assertTrue
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
 
     @GradleTest
