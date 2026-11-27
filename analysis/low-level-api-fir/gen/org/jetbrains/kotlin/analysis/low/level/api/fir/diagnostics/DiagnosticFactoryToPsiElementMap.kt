@@ -324,6 +324,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.OPT_IN_WITHOUT_ARGUMENTS to KtAnnotationEntry::class.java,
     FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER to KtClassLiteralExpression::class.java,
     FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET to KtAnnotationEntry::class.java,
+    FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET_WARNING to KtAnnotationEntry::class.java,
     FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION to KtAnnotationEntry::class.java,
     FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET to KtAnnotationEntry::class.java,
     FirErrors.OPT_IN_MARKER_ON_OVERRIDE to KtAnnotationEntry::class.java,
