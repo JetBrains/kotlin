@@ -8,23 +8,17 @@
 package org.jetbrains.kotlin
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.TreeBackedLighterAST
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
 import java.util.Objects
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 /**
  * The kind of a [KtSourceElement], used to distinguish different source elements backed by the same real source.
@@ -1090,8 +1084,6 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
      */
     abstract val syntaxId: SyntaxId
     abstract val kind: KtSourceElementKind
-    abstract val lighterASTNode: LighterASTNode
-    abstract val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
 
     abstract fun getElementTextInContextForDebug(): String
 
@@ -1112,24 +1104,8 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 }
 
 // NB: in certain situations, psi.node could be null (see e.g. KT-44152)
-// Potentially exceptions can be provoked by syntaxId / lighterASTNode
+// Potentially exceptions can be provoked by syntaxId
 sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
-    companion object {
-        @JvmStatic
-        private val lighterASTNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            KtPsiSourceElement::class.java,
-            LighterASTNode::class.java,
-            "_lighterASTNode"
-        )
-
-        @JvmStatic
-        private val treeStructureNodeUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            KtPsiSourceElement::class.java,
-            FlyweightCapableTreeStructure::class.java,
-            "_treeStructure"
-        )
-    }
-
     @OptIn(KtImplementationDetail::class)
     override val syntaxId: SyntaxId
         get() = psi.node?.elementType?.syntaxId() ?: BasicSyntaxElementTypeIds.NO_ID
@@ -1140,100 +1116,8 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     override val endOffset: Int
         get() = psi.textRange.endOffset
 
-    @Volatile
-    private var _lighterASTNode: LighterASTNode? = null
-    final override val lighterASTNode: LighterASTNode
-        get() {
-            _lighterASTNode?.let { return it }
-            lighterASTNodeUpdater.compareAndSet(
-                /* obj = */ this,
-                /* expect = */ null,
-                /* update = */ TreeBackedLighterAST.wrap(psi.node)
-            )
-            return _lighterASTNode!!
-        }
-
-    @Volatile
-    private var _treeStructure: FlyweightCapableTreeStructure<LighterASTNode>? = null
-    final override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>
-        get() {
-            _treeStructure?.let { return it }
-            treeStructureNodeUpdater.compareAndSet(
-                /* obj = */ this,
-                /* expect = */ null,
-                /* update = */ WrappedTreeStructure(psi.containingFile)
-            )
-            return _treeStructure!!
-        }
-
     override fun getElementTextInContextForDebug(): String {
         return getElementTextWithContext(psi)
-    }
-
-    internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
-        private val lighterAST = TreeBackedLighterAST(file.node)
-
-        fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
-
-        override fun toString(node: LighterASTNode): CharSequence = unwrap(node).text
-
-        override fun getRoot(): LighterASTNode = lighterAST.root
-
-        override fun getParent(node: LighterASTNode): LighterASTNode? =
-            unwrap(node).psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
-
-        override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
-            val psi = unwrap(node).psi
-            val children = mutableListOf<PsiElement>()
-            var child = psi.firstChild
-            while (child != null) {
-                children += child
-                child = child.nextSibling
-            }
-            if (children.isEmpty()) {
-                nodesRef.set(LighterASTNode.EMPTY_ARRAY)
-            } else {
-                nodesRef.set(children.map { TreeBackedLighterAST.wrap(it.node) }.toTypedArray())
-            }
-            return children.size
-        }
-
-        override fun disposeChildren(p0: Array<out LighterASTNode>?, p1: Int) {
-        }
-
-        override fun getStartOffset(node: LighterASTNode): Int {
-            return getStartOffset(unwrap(node).psi)
-        }
-
-        private fun getStartOffset(element: PsiElement): Int {
-            var child = element.firstChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.nextSibling
-                }
-                if (child != null) {
-                    return getStartOffset(child)
-                }
-            }
-            return element.textRange.startOffset
-        }
-
-        override fun getEndOffset(node: LighterASTNode): Int {
-            return getEndOffset(unwrap(node).psi)
-        }
-
-        private fun getEndOffset(element: PsiElement): Int {
-            var child = element.lastChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.prevSibling
-                }
-                if (child != null) {
-                    return getEndOffset(child)
-                }
-            }
-            return element.textRange.endOffset
-        }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -1379,28 +1263,15 @@ sealed class KtSourceElementOffsetStrategy {
 }
 
 class KtLightSourceElement(
-    override val lighterASTNode: LighterASTNode,
+    val lighterASTNode: LighterASTNode,
     override val startOffset: Int,
     override val endOffset: Int,
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
+    val treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
     override val kind: KtSourceElementKind = KtRealSourceElementKind,
 ) : KtSourceElement() {
     @OptIn(KtImplementationDetail::class)
     override val syntaxId: SyntaxId
         get() = lighterASTNode.tokenType.syntaxId()
-
-    /**
-     * We can create a [KtLightSourceElement] from a [KtPsiSourceElement] by using [KtPsiSourceElement.lighterASTNode];
-     * [unwrapToKtPsiSourceElement] allows to get original [KtPsiSourceElement] in such case.
-     *
-     * If it is `pure` [KtLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToKtPsiSourceElement] `null`.
-     * Otherwise, return some not-null result.
-     */
-    fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
-        if (treeStructure !is KtPsiSourceElement.WrappedTreeStructure) return null
-        val node = treeStructure.unwrap(lighterASTNode)
-        return node.psi?.toKtPsiSourceElement(kind)
-    }
 
     override fun getElementTextInContextForDebug(): String {
         return treeStructure.toString(lighterASTNode).toString()
