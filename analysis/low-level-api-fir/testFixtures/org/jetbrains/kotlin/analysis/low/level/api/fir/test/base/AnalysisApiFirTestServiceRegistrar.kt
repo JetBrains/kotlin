@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.SOURCE_BASED_SYMBOL_IDS_REGISTRY_KEY
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.TestKotlinActualDeclarationProvider
@@ -32,6 +34,12 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
+        // Source-based symbol IDs are disabled by default, but they should be covered by Analysis API tests. The registry key is not
+        // declared in Standalone mode, so we have to set it via the system property, which the registry falls back to.
+        // The property is set for the whole JVM and never reset, which is fine since all Analysis API tests use source-based symbol IDs.
+        @OptIn(LLFirInternals::class)
+        System.setProperty(SOURCE_BASED_SYMBOL_IDS_REGISTRY_KEY, "true")
+
         application.apply {
             registerService(KotlinForeignValueProviderService::class.java, TestForeignValueProviderService())
         }

@@ -951,6 +951,7 @@ class JavaClassUseSiteMemberScope(
             propertyTypeRef = returnTypeRef,
             visibility = status.visibility,
             propertySymbol = symbol,
+            symbol = FirPropertyAccessorSymbol(),
             modality = status.modality,
         )
 
@@ -966,6 +967,7 @@ class JavaClassUseSiteMemberScope(
             propertyTypeRef = returnTypeRef,
             visibility = status.visibility,
             propertySymbol = symbol,
+            propertyAccessorSymbol = FirPropertyAccessorSymbol(),
             modality = status.modality,
         )
 

@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 
+/**
+ * @see AbstractLightTreeRawFirBuilder
+ */
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,

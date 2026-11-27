@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java.symbols
 
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
 
@@ -42,6 +45,13 @@ import org.jetbrains.kotlin.name.CallableId
  * And Java "overrides" Kotlin's "base Annotation" class (yes, technically there is no base class for annotations).
  */
 class FirJavaOverriddenSyntheticPropertySymbol(
+    symbolId: FirSymbolId<FirJavaOverriddenSyntheticPropertySymbol>,
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId)
+) : FirSyntheticPropertySymbol(symbolId, propertyId, getterId) {
+    /**
+     * Creates a [FirJavaOverriddenSyntheticPropertySymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(propertyId: CallableId, getterId: CallableId) : this(FirUniqueSymbolId(), propertyId, getterId)
+}

@@ -89,6 +89,8 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 deprecationsProvider = EmptyDeprecationsProvider
                 name = variableName
                 isVar = false
+                // Foreign values are provided by the debugger and have no source element. The scope is created anew for each request, so
+                // the foreign value declarations don't need to be discardable and can have unique symbol IDs.
                 symbol = FirLocalPropertySymbol()
             }
 

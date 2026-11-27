@@ -288,6 +288,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
                 propertySymbol,
+                symbol = FirPropertyAccessorSymbol(),
                 status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
                     this.isStatic = isStatic
                 },
@@ -354,6 +355,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
                 propertySymbol,
+                propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                 status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
                     this.isStatic = isStatic
                 },
@@ -470,8 +472,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 backingFieldAnnotations,
                 returnTypeRef,
                 isVar,
-                symbol,
-                status,
+                symbol = FirBackingFieldSymbol(),
+                propertySymbol = symbol,
+                status = status,
             )
 
             if (hasGetter) {
