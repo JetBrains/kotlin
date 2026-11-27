@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -26,6 +27,7 @@ import kotlin.test.assertEquals
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @NativeGradlePluginTests
 @DisplayName("Test multiplatform resources publication embedded in XCFramework")
+@MustRunOnChangesInGradle
 class XCFrameworkResourcesIT : KGPBaseTest() {
 
     /**
