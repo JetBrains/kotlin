@@ -301,7 +301,8 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
         }
 
         // The error may be wrapped by lazy resolution, so we have to check the whole cause chain.
-        val isDescriptiveError = generateSequence(exception) { it.cause }.any { it.message?.contains("nested dangling files") == true }
+        val isDescriptiveError = generateSequence(exception) { it.cause }
+            .any { it.message?.contains("Nested dangling files are not supported") == true }
         assertions.assertTrue(isDescriptiveError) {
             "Expected a descriptive error about nested dangling files, but got:\n${exception.stackTraceToString()}"
         }
