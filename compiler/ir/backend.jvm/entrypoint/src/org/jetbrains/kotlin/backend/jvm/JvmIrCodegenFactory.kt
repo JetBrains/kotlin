@@ -92,7 +92,10 @@ class JvmIrCodegenFactory(
         val configuration: CompilerConfiguration,
         val diagnosticReporter: DiagnosticReporter,
         val newFragmentCaptureParameters: List<Triple<String, KotlinType, DeclarationDescriptor>>,
-    )
+    ) {
+        @Deprecated("Use `classFileFactory` instead.")
+        val factory: ClassFileFactory get() = classFileFactory
+    }
 
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
         get() = this.getCompilerExtensions(IrGenerationExtension)
