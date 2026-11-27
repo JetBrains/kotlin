@@ -28,6 +28,7 @@ public expect fun String.toUpperCase(): String
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
+@kotlin.internal.IntrinsicConstEvaluation
 public expect fun String.uppercase(): String
 
 /**
@@ -46,6 +47,7 @@ public expect fun String.toLowerCase(): String
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
+@kotlin.internal.IntrinsicConstEvaluation
 public expect fun String.lowercase(): String
 
 /**
@@ -178,6 +180,7 @@ public fun CharSequence.trim(): CharSequence = trim(Char::isWhitespace)
  * Returns a string having leading and trailing whitespace removed.
  */
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun String.trim(): String = (this as CharSequence).trim().toString()
 
 /**
@@ -189,6 +192,7 @@ public fun CharSequence.trimStart(): CharSequence = trimStart(Char::isWhitespace
  * Returns a string having leading whitespace removed.
  */
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun String.trimStart(): String = (this as CharSequence).trimStart().toString()
 
 /**
@@ -200,6 +204,7 @@ public fun CharSequence.trimEnd(): CharSequence = trimEnd(Char::isWhitespace)
  * Returns a string having trailing whitespace removed.
  */
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun String.trimEnd(): String = (this as CharSequence).trimEnd().toString()
 
 /**
