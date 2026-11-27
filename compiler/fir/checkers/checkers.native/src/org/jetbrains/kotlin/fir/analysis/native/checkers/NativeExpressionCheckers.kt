@@ -22,7 +22,7 @@ object NativeExpressionCheckers : ExpressionCheckers() {
         FirSuperCallWithDefaultsChecker,
         FirNativeAtomicReferenceToPrimitiveCallChecker,
         FirNativeAtomicArrayToPrimitiveCallChecker,
-        FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
+        FirNativeIdentitySensitiveOperationChecker,
         FirNativeVariadicFunctionPointerChecker,
         FirNativeObjCStringAsVariadicChecker,
         FirNativeVariadicSpreadChecker,

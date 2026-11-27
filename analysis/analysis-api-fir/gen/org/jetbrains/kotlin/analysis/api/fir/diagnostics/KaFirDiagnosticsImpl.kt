@@ -2202,6 +2202,7 @@ internal class IdentitySensitiveOperationsWithValueTypeImpl(
 
 internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
     override val type: KaType,
+    override val willBecomeValueLikeAnnotation: ClassId,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
@@ -3285,12 +3286,6 @@ internal class AtomicRefWithoutConsistentIdentityImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AtomicRefWithoutConsistentIdentity
-
-internal class AtomicRefCallArgumentWithoutConsistentIdentityImpl(
-    override val argumentType: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AtomicRefCallArgumentWithoutConsistentIdentity
 
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KaCallableSymbol,
@@ -6832,12 +6827,6 @@ internal class InapplicableJvmFieldWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InapplicableJvmFieldWarning
 
-internal class SynchronizedBlockOnJavaValueBasedClassImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.SynchronizedBlockOnJavaValueBasedClass
-
 internal class SynchronizedBlockOnValueClassOrPrimitiveErrorImpl(
     override val valueClassOrPrimitive: KaType,
     firDiagnostic: KtDiagnosticWithSource,
@@ -7492,12 +7481,6 @@ internal class NativeSpecificAtomicImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KaFirDiagnostic.NativeSpecificAtomic
-
-internal class IdentityHashCodeOnValueTypeImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentityHashCodeOnValueType
 
 internal class VariadicFunctionPointersAreNotSupportedImpl(
     override val function: KaSymbol,

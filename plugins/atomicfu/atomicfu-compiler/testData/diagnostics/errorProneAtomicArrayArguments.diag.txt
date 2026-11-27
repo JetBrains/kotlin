@@ -1,5 +1,5 @@
 /K.kt:16:21: error: Function parameters with kotlinx.atomicfu.Atomic* types are unsupported.
 
-/K.kt:17:26: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
+/K.kt:17:26: warning: Identity-sensitive operation on an instance of identityless type 'Foo' may cause unexpected behavior or errors.
 
-/K.kt:17:31: warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
+/K.kt:17:31: warning: Identity-sensitive operation on an instance of identityless type 'Foo' may cause unexpected behavior or errors.

@@ -444,7 +444,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val WILL_BECOME_VALUE_NOT_APPLICABLE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WILL_BECOME_VALUE_NOT_APPLICABLE", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS", ERROR, PositioningStrategyKinds.DECLARATION_NAME, getRendererFactory())
     val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
-    val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory2<ConeKotlinType, ClassId> = KtDiagnosticFactory2("IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL", ERROR, PositioningStrategyKinds.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_OPEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_OPEN", ERROR, PositioningStrategyKinds.MODALITY_MODIFIER, getRendererFactory())
     val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS", ERROR, PositioningStrategyKinds.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
@@ -625,7 +625,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val INFERRED_INVISIBLE_RETURN_TYPE_WARNING: KtDiagnosticFactory2<FirBasedSymbol<*>, ConeKotlinType> = KtDiagnosticFactory2("INFERRED_INVISIBLE_RETURN_TYPE_WARNING", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL", ProhibitGenericQualifiersOnConstructorCalls, PositioningStrategyKinds.TYPE_ARGUMENT_LIST_OR_SELF, getRendererFactory())
     val ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY: KtDiagnosticFactory3<ClassId, ConeKotlinType, ClassId?> = KtDiagnosticFactory3("ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
-    val ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED", ERROR, PositioningStrategyKinds.REFERENCE_BY_QUALIFIED, getRendererFactory())

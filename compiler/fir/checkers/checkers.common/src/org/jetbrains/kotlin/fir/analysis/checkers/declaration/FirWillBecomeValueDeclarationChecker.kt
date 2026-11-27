@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasWillBecomeValueAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeKotlinValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
-import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -75,7 +71,7 @@ object FirWillBecomeValueIdentityBasedMembersChecker : FirRegularClassChecker(Mp
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         // The members of an expect class come from its actual class, which is checked instead.
-        if (declaration.isExpect || !declaration.symbol.willBecomeKotlinValueClass(context.session)) return
+        if (declaration.isExpect || !declaration.symbol.hasWillBecomeValueAnnotation()) return
         // Without the platform module, as in the metadata compilation, an expect superclass doesn't have the members of its actual class.
         if (declaration.symbol.hasExpectSuperclass(context.session)) return
         checkIdentityBasedMembers(declaration.symbol, declaration.source)
@@ -89,20 +85,6 @@ object FirWillBecomeValueIdentityBasedMembersChecker : FirRegularClassChecker(Mp
             superclass = superclass.getSuperClassSymbolOrAny(session)
         }
         return false
-    }
-}
-
-/**
- * An actual typealias to a Java class annotated with '@WillBecomeValue' is checked for the identity-based members of that class,
- * which the class checkers never see, as they only run on Kotlin declarations.
- */
-object FirWillBecomeValueActualTypeAliasToJavaChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirTypeAlias) {
-        if (!declaration.isActual) return
-        val expandedClass = declaration.expandedClassLikeType?.toRegularClassSymbol(context.session) ?: return
-        if (expandedClass.origin !is FirDeclarationOrigin.Java || !expandedClass.willBecomeKotlinValueClass(context.session)) return
-        checkIdentityBasedMembers(expandedClass, declaration.source)
     }
 }
 

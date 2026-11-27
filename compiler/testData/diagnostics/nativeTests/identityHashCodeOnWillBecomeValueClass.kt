@@ -15,7 +15,7 @@ class Wrapper(val x: Int) {
 
 @OptIn(ExperimentalNativeApi::class)
 fun test(p: Wrapper, p2: Wrapper?) {
-    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p.identityHashCode()<!>
-    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p2.identityHashCode()<!>
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p<!>.identityHashCode()
+    <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p2<!>.identityHashCode()
     with(p) { <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>identityHashCode()<!> }
 }

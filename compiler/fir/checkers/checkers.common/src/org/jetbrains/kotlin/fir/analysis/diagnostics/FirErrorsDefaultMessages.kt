@@ -148,7 +148,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_IN_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_IN_INTERFACE
@@ -2528,11 +2527,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
             suggestIfNotNull(" Consider using ''{0}'' instead.", CLASS_ID_RELATIVE_NAME_ONLY),
         )
-        map.put(
-            ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY,
-            "This call may have inconsistent results because the type of this argument, ''{0}'', does not have a consistent identity.",
-            RENDER_TYPE,
-        )
 
         // Reflection
         map.put(
@@ -2611,13 +2605,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
-            "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
+            "Identity-sensitive operation on an instance of identityless type ''{0}'' may cause unexpected behavior or errors.",
             RENDER_TYPE,
         )
         map.put(
             IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
-            "Identity-sensitive operation on ''{0}'', which is annotated with ''@WillBecomeValue''. It will be forbidden once the class becomes a value class.",
+            "Identity-sensitive operation on ''{0}'', which is annotated with ''@{1}''. It will be forbidden once the class becomes a value class.",
             RENDER_TYPE,
+            CLASS_ID,
         )
         map.put(WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL, "Class annotated with '@WillBecomeValue' cannot be local or inner.")
         map.put(

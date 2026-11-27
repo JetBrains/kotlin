@@ -1,70 +1,70 @@
 /J.kt:16:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInteger' instead.
 
-/J.kt:16:22: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/J.kt:16:22: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
-/J.kt:16:25: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/J.kt:16:25: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
 /J.kt:21:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
 
-/J.kt:21:22: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/J.kt:21:22: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
-/J.kt:21:26: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/J.kt:21:26: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
 /J.kt:26:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Char' does not have a consistent identity.
 
-/J.kt:26:22: warning: This call may have inconsistent results because the type of this argument, 'Char', does not have a consistent identity.
+/J.kt:26:22: warning: Identity-sensitive operation on an instance of identityless type 'Char' may cause unexpected behavior or errors.
 
-/J.kt:26:27: warning: This call may have inconsistent results because the type of this argument, 'Char', does not have a consistent identity.
+/J.kt:26:27: warning: Identity-sensitive operation on an instance of identityless type 'Char' may cause unexpected behavior or errors.
 
 /J.kt:33:5: warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntegerArray' instead.
 
-/J.kt:33:25: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/J.kt:33:25: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
-/J.kt:33:28: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/J.kt:33:28: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
 /J.kt:38:5: warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
 
-/J.kt:38:25: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/J.kt:38:25: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
-/J.kt:38:29: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/J.kt:38:29: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
 /J.kt:43:5: warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Boolean' does not have a consistent identity.
 
-/J.kt:43:25: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/J.kt:43:25: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.
 
-/J.kt:43:31: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/J.kt:43:31: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.
 /K.kt:57:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
 
-/K.kt:57:22: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/K.kt:57:22: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
-/K.kt:57:27: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/K.kt:57:27: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
 /K.kt:62:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
 
-/K.kt:62:22: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/K.kt:62:22: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
-/K.kt:62:28: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/K.kt:62:28: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
 /K.kt:67:5: warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Boolean' does not have a consistent identity. Consider using 'AtomicBoolean' instead.
 
-/K.kt:67:22: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/K.kt:67:22: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.
 
-/K.kt:67:29: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/K.kt:67:29: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.
 
 /K.kt:74:5: warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntArray' instead.
 
-/K.kt:74:27: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/K.kt:74:27: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
-/K.kt:74:32: warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+/K.kt:74:32: warning: Identity-sensitive operation on an instance of identityless type 'Int' may cause unexpected behavior or errors.
 
 /K.kt:79:5: warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
 
-/K.kt:79:27: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/K.kt:79:27: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
-/K.kt:79:33: warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+/K.kt:79:33: warning: Identity-sensitive operation on an instance of identityless type 'Long' may cause unexpected behavior or errors.
 
 /K.kt:84:5: warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Boolean' does not have a consistent identity.
 
-/K.kt:84:27: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/K.kt:84:27: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.
 
-/K.kt:84:34: warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+/K.kt:84:34: warning: Identity-sensitive operation on an instance of identityless type 'Boolean' may cause unexpected behavior or errors.

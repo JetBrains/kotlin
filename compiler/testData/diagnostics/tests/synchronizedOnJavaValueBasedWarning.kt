@@ -7,8 +7,8 @@
 typealias LocalDateAlias = java.time.LocalDate
 
 fun test(p1: java.time.LocalDate, p2: LocalDateAlias) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p1<!>) { }
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p2<!>) { }
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p1<!>) { }
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>p2<!>) { }
     synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Integer.valueOf(1)<!>) {}
 }
 
@@ -22,17 +22,17 @@ fun testMostTypes() {
     synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Character.valueOf('a')<!>) {}
     synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Boolean.valueOf(true)<!>) {}
 
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.lang.Runtime.version()<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.lang.Runtime.version()<!>) {}
 
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.LocalDate.MIN<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.time.LocalDate.MIN<!>) {}
 
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.util.Optional.empty<Any>()<!>) {}
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.util.OptionalInt.empty()<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.util.Optional.empty<Any>()<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.util.OptionalInt.empty()<!>) {}
 
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.LocalDate.MIN<!>) {}
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.chrono.JapaneseDate.now()<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.time.LocalDate.MIN<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.time.chrono.JapaneseDate.now()<!>) {}
 
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.lang.ProcessHandle.current()<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>java.lang.ProcessHandle.current()<!>) {}
 }
 
 class TestField {
@@ -47,7 +47,7 @@ fun getVersion(): Runtime.Version {
 }
 
 fun testReturnVal() {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>getVersion()<!>) {
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getVersion()<!>) {
 
     }
 }
@@ -55,7 +55,7 @@ fun testReturnVal() {
 fun testLambda() {
     val version = getVersion()
     val lambda = {
-        synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>version<!>) {
+        synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>version<!>) {
 
         }
     }

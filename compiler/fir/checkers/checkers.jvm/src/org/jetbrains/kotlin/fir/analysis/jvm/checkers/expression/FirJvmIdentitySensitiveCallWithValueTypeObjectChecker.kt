@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.ifFutureValueType
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationIfWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -110,8 +108,16 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                     reporter.reportOn(
                         argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
+                } else {
+                    ifFutureValueType(type) { (valueType, willBecomeValueLikeAnnotation) ->
+                        reporter.reportOn(
+                            argument.source,
+                            FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+                            valueType,
+                            willBecomeValueLikeAnnotation,
+                        )
+                    }
                 }
-                reportIdentitySensitiveOperationIfWillBecomeValueClass(argument.source, type)
             }
 
             in operationsToCheckFirstTypeArgCallableIds -> {
@@ -121,8 +127,16 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                     reporter.reportOn(
                         typeArgument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
+                } else {
+                    ifFutureValueType(type) { (valueType, willBecomeValueLikeAnnotation) ->
+                        reporter.reportOn(
+                            typeArgument.source,
+                            FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+                            valueType,
+                            willBecomeValueLikeAnnotation,
+                        )
+                    }
                 }
-                reportIdentitySensitiveOperationIfWillBecomeValueClass(typeArgument.source, type)
             }
         }
     }
@@ -130,12 +144,18 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkComparedValue(argument: FirExpression) {
         val type = argument.resolvedType
-        if (type.lowerBoundIfFlexible().isPrimitiveOrNullablePrimitive || type.isValueClass(context.session) ||
-            type.isJavaValueBasedClass()
-        ) {
-            reporter.reportOn(argument.source, FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, type)
+        if (type.lowerBoundIfFlexible().isPrimitiveOrNullablePrimitive || type.isValueClass(context.session)) {
+            reporter.reportOn(argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
+        } else {
+            ifFutureValueType(type) { (valueType, willBecomeValueLikeAnnotation) ->
+                reporter.reportOn(
+                    argument.source,
+                    FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+                    valueType,
+                    willBecomeValueLikeAnnotation,
+                )
+            }
         }
-        reportIdentitySensitiveOperationIfWillBecomeValueClass(argument.source, type)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -147,17 +167,23 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session)) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
-            } else if (type.isJavaValueBasedClass()) {
-                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
             } else if (type.isFlexiblePrimitive()) {
-                reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
+                reporter.reportOn(argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
+            } else {
+                ifFutureValueType(type) { (valueType, willBecomeValueLikeAnnotation) ->
+                    reporter.reportOn(
+                        argument.source,
+                        FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+                        valueType,
+                        willBecomeValueLikeAnnotation,
+                    )
+                }
             }
-            reportIdentitySensitiveOperationIfWillBecomeValueClass(argument.source, type)
         }
     }
 
     context(sessionHolder: SessionHolder)
     private fun ConeKotlinType.isValueType(): Boolean {
-        return isPrimitiveOrNullablePrimitive || isValueClass(sessionHolder.session) || isFlexiblePrimitive() || isJavaValueBasedClass()
+        return isPrimitiveOrNullablePrimitive || isValueClass(sessionHolder.session) || isFlexiblePrimitive()
     }
 }

@@ -15,7 +15,7 @@ import kotlinx.atomicfu.*
 
 fun testTypealiasedKotlin(bar: Foo) {
     <!ATOMIC_LOCALS_ARE_FORBIDDEN!>val<!> foo = atomic<Any>(Foo(1u))
-    foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
+    foo.compareAndSet(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bar<!>, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classDeclaration, classReference, flexibleType,

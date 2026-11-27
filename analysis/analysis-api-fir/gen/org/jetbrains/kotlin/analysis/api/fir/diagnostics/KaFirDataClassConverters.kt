@@ -3265,6 +3265,7 @@ private fun KaDiagnosticConverterBuilder.addConversions66() {
     add(FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
         IdentitySensitiveOperationOnWillBecomeValueClassImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6761,13 +6762,6 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
             token,
         )
     }
-    add(FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS) { firDiagnostic ->
-        SynchronizedBlockOnJavaValueBasedClassImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions133() {
@@ -7546,13 +7540,6 @@ private fun KaDiagnosticConverterBuilder.addConversions149() {
     }
     add(FirErrors.RETURN_NOT_ALLOWED) { firDiagnostic ->
         ReturnNotAllowedImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE) { firDiagnostic ->
-        IdentityHashCodeOnValueTypeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -9786,13 +9773,6 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
     }
     add(FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
         AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY) { firDiagnostic ->
-        AtomicRefCallArgumentWithoutConsistentIdentityImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

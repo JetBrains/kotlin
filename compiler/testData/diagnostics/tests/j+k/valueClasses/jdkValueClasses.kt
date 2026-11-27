@@ -18,7 +18,7 @@ fun test(date: LocalDate, optional: Optional<String>, zone: ZoneId, number: Numb
     // A Java `Integer`, seen as `Int!`.
     synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>Integer.valueOf(1)<!>) {}
     // Value-based, but not a value class.
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>zone<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>zone<!>) {}
     // A Kotlin class whose Java class `java.lang.Number` is a value class.
     synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>number<!>) {}
 }

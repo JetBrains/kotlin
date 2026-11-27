@@ -823,6 +823,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("type")
+            parameter<ClassId>("willBecomeValueLikeAnnotation")
         }
         val WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategyKind.INLINE_OR_VALUE_MODIFIER)
         val WILL_BECOME_VALUE_CLASS_OPEN by error<KtDeclaration>(PositioningStrategyKind.MODALITY_MODIFIER)
@@ -1330,9 +1331,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ClassId>("atomicRef")
             parameter<ConeKotlinType>("argumentType")
             parameter<ClassId?>("suggestedType")
-        }
-        val ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY by warning<PsiElement> {
-            parameter<ConeKotlinType>("argumentType")
         }
     }
 

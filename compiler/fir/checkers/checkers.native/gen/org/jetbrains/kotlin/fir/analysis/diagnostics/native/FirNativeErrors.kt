@@ -65,7 +65,6 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val CONFLICTING_OBJC_OVERLOADS: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CONFLICTING_OBJC_OVERLOADS", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val INAPPLICABLE_OBJC_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_OBJC_OVERRIDE", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val NATIVE_SPECIFIC_ATOMIC: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("NATIVE_SPECIFIC_ATOMIC", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
-    val IDENTITY_HASH_CODE_ON_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_HASH_CODE_ON_VALUE_TYPE", WARNING, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED", ERROR, PositioningStrategyKinds.OVERRIDE_MODIFIER, getRendererFactory())
     val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())

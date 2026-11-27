@@ -3103,6 +3103,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = IdentitySensitiveOperationOnWillBecomeValueClass::class
 
         public val type: KaType
+        public val willBecomeValueLikeAnnotation: ClassId
     }
 
     @KaUnstableDiagnosticApi
@@ -4635,15 +4636,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         public val atomicRef: ClassId
         public val argumentType: KaType
         public val suggestedType: ClassId?
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface AtomicRefCallArgumentWithoutConsistentIdentity : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass: KClass<AtomicRefCallArgumentWithoutConsistentIdentity>
-            get() = AtomicRefCallArgumentWithoutConsistentIdentity::class
-
-        public val argumentType: KaType
     }
 
     @KaUnstableDiagnosticApi
@@ -9675,15 +9667,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface SynchronizedBlockOnJavaValueBasedClass : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<SynchronizedBlockOnJavaValueBasedClass>
-            get() = SynchronizedBlockOnJavaValueBasedClass::class
-
-        public val type: KaType
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface SynchronizedBlockOnValueClassOrPrimitiveError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<SynchronizedBlockOnValueClassOrPrimitiveError>
             get() = SynchronizedBlockOnValueClassOrPrimitiveError::class
@@ -10623,15 +10606,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NativeSpecificAtomic::class
 
         public val name: Name
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface IdentityHashCodeOnValueType : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<IdentityHashCodeOnValueType>
-            get() = IdentityHashCodeOnValueType::class
-
-        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi
