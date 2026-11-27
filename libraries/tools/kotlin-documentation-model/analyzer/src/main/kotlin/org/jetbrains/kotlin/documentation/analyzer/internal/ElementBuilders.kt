@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.documentation.analyzer.internal
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.links.parent
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.DocTag
 import org.jetbrains.dokka.model.doc.Since
@@ -16,6 +15,9 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.doc.Throws
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.kotlin.documentation.*
+import org.jetbrains.kotlin.documentation.analyzer.ids.ownerDeclarationIdOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.unescapeName
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.AnnotationTarget as DokkaAnnotationTarget
 import org.jetbrains.dokka.model.doc.Deprecated as DeprecatedTag
 
@@ -40,11 +42,10 @@ internal val DClasslike.extra: PropertyContainer<DClasslike>
 // region Since / deprecation
 
 private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.annotationIn(
-    packageName: String,
-    className: String,
+    classLikeId: KdElementId,
     sourceSet: DokkaSourceSet,
 ): Annotations.Annotation? = this[Annotations]?.directAnnotations?.get(sourceSet)?.firstOrNull {
-    it.dri.packageName == packageName && it.dri.classNames == className
+    it.classLikeId == classLikeId
 }
 
 private fun Annotations.Annotation.stringArgument(name: String): String? =
@@ -53,8 +54,8 @@ private fun Annotations.Annotation.stringArgument(name: String): String? =
 private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.sinceIn(
     documentable: Documentable,
     sourceSet: DokkaSourceSet,
-): String? = annotationIn("kotlin", "SinceKotlin", sourceSet)?.stringArgument("version")
-    ?: annotationIn("kotlin", "IntroducedAt", sourceSet)?.stringArgument("version")
+): String? = annotationIn(KdElementId("kotlin/SinceKotlin"), sourceSet)?.stringArgument("version")
+    ?: annotationIn(KdElementId("kotlin/IntroducedAt"), sourceSet)?.stringArgument("version")
     ?: documentable.documentation[sourceSet]?.children?.filterIsInstance<Since>()?.firstOrNull()
         ?.root?.plainText()?.trim()?.takeIf { it.isNotEmpty() }
 
@@ -67,17 +68,17 @@ private fun <C : DokkaAnnotationTarget> PropertyContainer<C>.deprecatedIn(
     documentable: Documentable,
     sourceSet: DokkaSourceSet,
 ): KdDeprecated? {
-    val kotlin = annotationIn("kotlin", "Deprecated", sourceSet)
-    val java = annotationIn("java.lang", "Deprecated", sourceSet)
+    val kotlin = annotationIn(KdElementId("kotlin/Deprecated"), sourceSet)
+    val java = annotationIn(KdElementId("java.lang/Deprecated"), sourceSet)
     val tag = documentable.documentation[sourceSet]?.children?.any { it is DeprecatedTag } == true
     if (kotlin == null && java == null && !tag) return null
 
     val level = when ((kotlin?.params?.get("level") as? EnumValue)?.enumName?.substringAfterLast('.')) {
         "ERROR" -> KdDeprecationLevel.ERROR
-        "HIDDEN" -> error("Hidden declaration should have been filtered out: ${documentable.dri}")
+        "HIDDEN" -> error("Hidden declaration should have been filtered out: ${documentable.declarationId}")
         else -> KdDeprecationLevel.WARNING
     }
-    val sinceKotlin = annotationIn("kotlin", "DeprecatedSinceKotlin", sourceSet)
+    val sinceKotlin = annotationIn(KdElementId("kotlin/DeprecatedSinceKotlin"), sourceSet)
     val replacement = (kotlin?.params?.get("replaceWith") as? AnnotationValue)?.annotation
     return KdDeprecated(
         since = java?.stringArgument("since")
@@ -103,13 +104,13 @@ internal fun <C> PropertyContainer<C>.throwsIn(
     sourceSet: DokkaSourceSet,
 ): List<KdThrows> where C : Documentable, C : DokkaAnnotationTarget {
     val declared = this[CheckedExceptions]?.exceptions?.get(sourceSet).orEmpty()
-    val annotation = annotationIn("kotlin", "Throws", sourceSet) ?: annotationIn("kotlin.jvm", "Throws", sourceSet)
+    val annotation = annotationIn(KdElementId("kotlin/Throws"), sourceSet) ?: annotationIn(KdElementId("kotlin.jvm/Throws"), sourceSet)
     val annotated = (annotation?.params?.get("exceptionClasses") as? ArrayValue)?.value.orEmpty()
-        .filterIsInstance<ClassValue>().map { it.classDRI }
+        .filterIsInstance<ClassValue>().map { it.classLikeId }
     val documented = documentable.documentation[sourceSet]?.children.orEmpty().filterIsInstance<Throws>()
         .mapNotNull { it.exceptionAddress }
     // Documentation is a placeholder until KdDocumentation can represent tag contents.
-    return (declared + annotated + documented).map { it.toKdElementId() }.distinct().map { KdThrows(it) }
+    return (declared + annotated + documented).distinct().map { KdThrows(it) }
 }
 
 internal fun buildFunctionElement(function: DFunction, sourceSet: DokkaConfiguration.DokkaSourceSet): KdFunction {
@@ -129,7 +130,7 @@ internal fun buildFunctionElement(function: DFunction, sourceSet: DokkaConfigura
         valueParameters = function.parameters.map { it.toKdValueParameter(sourceSet) },
         extensionReceiverParameter = function.receiver?.toKdExtensionReceiverParameter(sourceSet),
         contextParameters = function.contextParameters.map { it.toKdContextParameter(sourceSet) },
-        overridens = function.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().map { it.toKdElementId() }.distinct(),
+        overridens = function.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().distinct(),
         visibility = function.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
         modality = function.modifier[sourceSet]?.toKdModality() ?: KdModality.FINAL,
         since = function.extra.sinceIn(function, sourceSet),
@@ -202,7 +203,7 @@ internal fun buildPropertyElement(
         typeParameters = property.generics.map { it.toKdTypeParameter(sourceSet) },
         extensionReceiverParameter = property.receiver?.toKdExtensionReceiverParameter(sourceSet),
         contextParameters = property.contextParameters.map { it.toKdContextParameter(sourceSet) },
-        overridens = property.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().map { it.toKdElementId() }.distinct(),
+        overridens = property.extra[OverriddenMembers]?.members?.get(sourceSet).orEmpty().distinct(),
         visibility = property.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
         modality = property.modifier[sourceSet]?.toKdModality() ?: KdModality.FINAL,
         since = property.extra.sinceIn(property, sourceSet),
@@ -217,7 +218,7 @@ internal fun buildTypealiasElement(typeAlias: DTypeAlias, sourceSet: DokkaConfig
     KdTypealias(
         name = typeAlias.name,
         typeParameters = typeAlias.generics.map { it.toKdTypeParameter(sourceSet) },
-        underlyingType = requireNotNull(typeAlias.underlyingType[sourceSet]) { "Missing underlying type for ${typeAlias.dri} in $sourceSet" }.toKdType(sourceSet),
+        underlyingType = requireNotNull(typeAlias.underlyingType[sourceSet]) { "Missing underlying type for ${typeAlias.declarationId} in $sourceSet" }.toKdType(sourceSet),
         declarations = emptyList(), // TODO KT-91717 on Dokka's side
         visibility = typeAlias.visibility[sourceSet]?.toKdVisibility() ?: KdVisibility.PUBLIC,
         since = typeAlias.extra.sinceIn(typeAlias, sourceSet),
@@ -241,8 +242,15 @@ internal fun buildEnumEntryElement(enumEntry: DEnumEntry, sourceSet: DokkaConfig
         setter = null,
         mappedTo = null, // TODO KT-90419
         type = KdClassLikeType(
-            qualifiers = listOf(KdClassTypeQualifier(enumEntry.dri.parent.classNames.orEmpty().substringAfterLast('.'), emptyList())),
-            classLikeId = enumEntry.dri.parent.toKdElementId(),
+            // The enum class an entry belongs to is the owner part of the entry's ID, e.g. `kotlin.text/Regex`
+            // for `kotlin.text/Regex#VALID_OPTIONS#<hash>`.
+            qualifiers = listOf(
+                KdClassTypeQualifier(
+                    ownerDeclarationIdOf(enumEntry.declarationId).value.substringAfterLast('.').let(::unescapeName),
+                    emptyList(),
+                )
+            ),
+            classLikeId = ownerDeclarationIdOf(enumEntry.declarationId),
             isMarkedNullable = false,
             annotations = emptyList(),
         ),

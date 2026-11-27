@@ -39,7 +39,8 @@ internal fun KdBundle.checkElementIds() {
     fun checkId(id: KdElementId, fragmentName: KdFragmentName, path: String) {
         // TODO KT-91717 kotlin.any is not supertype in Documentable model,
         // but Throwable.toString overrides Any.toString
-        if (id.value.startsWith("kotlin/Any/") || id.value.startsWith("java.lang/Object/")) return
+        // Type conversion references the classifier IDs of built-ins that are not emitted as elements.
+        if (id.value == "kotlin/Any" || id.value == "java.lang/Object" || id.value == "kotlin/Unit") return
 
         val fragment = fragmentsByName[fragmentName]
         if (fragment == null || (id !in fragment.elements && id !in fragment.embeddedElements)) {

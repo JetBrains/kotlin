@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.documentation.analyzer.internal
 
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.kotlin.documentation.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
 import org.jetbrains.kotlin.documentation.KdAnnotationArgumentValue.*
 
 // region Annotations
@@ -21,7 +21,7 @@ internal fun List<Annotations.Annotation>.toKdAnnotations(): List<KdAnnotation> 
 
 private fun Annotations.Annotation.toKdAnnotation(): KdAnnotation =
     KdAnnotation(
-        classLikeId = dri.toKdElementId(),
+        classLikeId = classLikeId,
         arguments = params.mapValues { it.value.toKdAnnotationArgumentValue() },
     )
 
@@ -29,8 +29,8 @@ private fun Annotations.Annotation.toKdAnnotation(): KdAnnotation =
 private fun AnnotationParameterValue.toKdAnnotationArgumentValue(): KdAnnotationArgumentValue = when (this) {
     is AnnotationValue -> Annotation(annotation.toKdAnnotation())
     is ArrayValue -> Array(value.map { it.toKdAnnotationArgumentValue() })
-    is EnumValue -> EnumEntry(enumDri.toKdElementId())
-    is ClassValue -> Classlike(classDRI.toKdElementId())
+    is EnumValue -> EnumEntry(enumEntryId)
+    is ClassValue -> Classlike(classLikeId)
     is IntValue -> Const(KdConstExpression(KdConstValue.Int(value), expression = null))
     is LongValue -> Const(KdConstExpression(KdConstValue.Long(value), expression = null))
     is FloatValue -> Const(KdConstExpression(KdConstValue.Float(value), expression = null))
@@ -62,11 +62,11 @@ internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
     is DefinitelyNonNullable -> KdDefinitelyNotNullType(inner.toKdType(sourceSet))
     is TypeParameter -> KdTypeParameterType(
         name = name,
-        containerElementId = dri.copy(target = PointingToDeclaration).toKdElementId(),
+        containerElementId = containerDeclarationId,
         isMarkedNullable = false,
         annotations = extra.annotationsIn(sourceSet),
     )
-    is GenericTypeConstructor -> toClassLikeType(dri, projections, extra.annotationsIn(sourceSet), sourceSet)
+    is GenericTypeConstructor -> toClassLikeType(declarationId, projections, extra.annotationsIn(sourceSet), sourceSet)
     is FunctionalTypeConstructor -> toFunctionalType(sourceSet)
     is PrimitiveJavaType -> KdClassLikeType(
         qualifiers = listOf(KdClassTypeQualifier(name, emptyList())),
@@ -76,7 +76,7 @@ internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
     )
     is JavaObject -> KdClassLikeType(
         qualifiers = listOf(KdClassTypeQualifier("Object", emptyList())),
-        classLikeId = DRI("java.lang", "Object").toKdElementId(),
+        classLikeId = KdElementId("java.lang/Object"),
         isMarkedNullable = false,
         annotations = extra.annotationsIn(sourceSet),
     ).let { lowerBound ->
@@ -85,7 +85,7 @@ internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
     // TODO KT-90413
     is UnresolvedBound -> KdClassLikeType(
         qualifiers = listOf(KdClassTypeQualifier(name, emptyList())),
-        classLikeId = DRI(packageName = null, classNames = name).toKdElementId(),
+        classLikeId = KdElementId("/$name"),
         isMarkedNullable = false,
         annotations = extra.annotationsIn(sourceSet),
     )
@@ -94,7 +94,7 @@ internal fun Bound.toKdType(sourceSet: DokkaSourceSet): KdType = when (this) {
     // Java's `void` has no direct KDM equivalent; `Unit` is the closest match for a return type.
     is Void -> KdClassLikeType(
         qualifiers = listOf(KdClassTypeQualifier("Unit", emptyList())),
-        classLikeId = DRI("kotlin", "Unit").toKdElementId(),
+        classLikeId = KdElementId("kotlin/Unit"),
         isMarkedNullable = false,
         annotations = emptyList(),
     )
@@ -107,7 +107,7 @@ private fun FunctionalTypeConstructor.toFunctionalType(sourceSet: DokkaSourceSet
     val valueParametersStart = receiverIndex + if (isExtensionFunction) 1 else 0
     return KdFunctionalType(
         returnType = arguments.lastOrNull()
-            ?: error("Functional type $dri has no type arguments; expected at least the return type"),
+            ?: error("Functional type $declarationId has no type arguments; expected at least the return type"),
         receiverType = if (isExtensionFunction) arguments[receiverIndex] else null,
         valueParameterTypes = arguments.subList(valueParametersStart, arguments.lastIndex),
         contextParameterTypes = arguments.take(contextParametersCount),
@@ -118,19 +118,20 @@ private fun FunctionalTypeConstructor.toFunctionalType(sourceSet: DokkaSourceSet
 }
 
 private fun toClassLikeType(
-    dri: DRI,
+    declarationId: KdElementId,
     projections: List<Projection>,
     annotations: List<KdAnnotation>,
     sourceSet: DokkaSourceSet,
 ): KdClassLikeType {
-    val simpleName = dri.classNames?.substringAfterLast('.') ?: dri.classNames.orEmpty()
+    val simpleName = declarationIdToClassNames(declarationId)?.substringAfterLast('.')
+        ?: declarationId.value.substringAfterLast('/')
     return KdClassLikeType(
         qualifiers = listOf(
             KdClassTypeQualifier(
                 simpleName,
                 projections.map { it.toKdTypeProjection(sourceSet) })
         ), // TODO KT-91717 type qualifiers for "nested" declarations in Documentable model
-        classLikeId = dri.toKdElementId(),
+        classLikeId = declarationId,
         isMarkedNullable = false,
         annotations = annotations,
     )
@@ -182,7 +183,7 @@ private fun primitiveJavaTypeKotlinId(javaPrimitiveName: String): KdElementId {
         "void" -> "Unit"
         else -> javaPrimitiveName.replaceFirstChar { it.uppercase() }
     }
-    return DRI("kotlin", kotlinName).toKdElementId()
+    return KdElementId("kotlin/$kotlinName")
 }
 
 // endregion
