@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.utils.declaredScope
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
@@ -241,7 +242,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         // `irClass` is a source class and definitely is not a lazy class
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun generateBodies(functions: List<IrSimpleFunction>) {
-            val propertyParametersCount = irClass.primaryConstructor?.parameters?.size ?: 0
+            val propertyParametersCount = klass.primaryConstructorIfAny(session)?.valueParameterSymbols?.count { it.correspondingProperty != null } ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
             val constructorParameters = irClass.primaryConstructor!!.parameters.filter { it.kind == IrParameterKind.Regular }
 
@@ -275,6 +276,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             return when {
                 this.isNothingOrNullableNothing -> StandardTypes.Any
                 this is ConeDynamicType -> StandardTypes.Any
+                this is ConeUnionType -> StandardTypes.Any
                 else -> this
             }
         }

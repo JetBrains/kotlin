@@ -1076,6 +1076,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.NON_FINAL_RICH_ERROR_CLASS to PsiElement::class.java,
     FirErrors.ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR to PsiElement::class.java,
     FirErrors.TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER to PsiElement::class.java,
+    FirErrors.DYNAMIC_IN_UNION_TYPE to PsiElement::class.java,
     FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER to PsiElement::class.java,
     FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS to KtElement::class.java,
     FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM to PsiElement::class.java,

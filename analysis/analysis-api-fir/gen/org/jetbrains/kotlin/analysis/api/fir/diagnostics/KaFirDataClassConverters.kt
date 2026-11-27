@@ -7822,6 +7822,12 @@ private fun KaDiagnosticConverterBuilder.addConversions157() {
             token,
         )
     }
+    add(FirErrors.DYNAMIC_IN_UNION_TYPE) { firDiagnostic ->
+        DynamicInUnionTypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.OVERLOADS_ABSTRACT) { firDiagnostic ->
         OverloadsAbstractImpl(
             firDiagnostic as KtDiagnosticWithSource,

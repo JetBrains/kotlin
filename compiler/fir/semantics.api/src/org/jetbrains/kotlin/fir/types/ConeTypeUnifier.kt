@@ -49,7 +49,13 @@ object ConeTypeUnifier {
         require(richErrorTypes.isNotEmpty()) { "Empty list of rich error types" }
 
         if (primaryType is ConeUnionType) {
-            return unify(primaryType.primaryType, primaryType.richErrorTypes + richErrorTypes, attributes, typeContext)
+            val primaryAttributes = primaryType.attributes
+            return unify(
+                primaryType.primaryType.withAttributes(primaryAttributes),
+                primaryType.richErrorTypes.map { it.withAttributes(primaryAttributes) } + richErrorTypes,
+                attributes,
+                typeContext
+            )
         }
 
         if (primaryType.isMarkedNullable) {
@@ -95,7 +101,7 @@ object ConeTypeUnifier {
                 }
                 return [ConeErrorType(diagnostic, delegatedType = this)]
             }
-            richErrorTypes.flatMap { it.flattenRecursively() }
+            richErrorTypes.flatMap { it.withAttributes(attributes).flattenRecursively() }
         } else {
             [this]
         }

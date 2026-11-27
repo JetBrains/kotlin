@@ -6223,6 +6223,11 @@ internal class TypealiasToUnionTypeAsQualifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasToUnionTypeAsQualifier
 
+internal class DynamicInUnionTypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DynamicInUnionType
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

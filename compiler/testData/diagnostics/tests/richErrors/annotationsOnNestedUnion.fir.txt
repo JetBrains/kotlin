@@ -1,0 +1,38 @@
+FILE: annotationsOnNestedUnion.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(i: R|kotlin/Int|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+    }
+    public final error class E1 : R|kotlin/RichError| {
+        public constructor(): R|E1| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E2 : R|kotlin/RichError| {
+        public constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E3 : R|kotlin/RichError| {
+        public constructor(): R|E3| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final typealias TA = R|union(errors=E1 | E3)|
+    public final fun nested(): R|union(primary=kotlin/String, errors=@R|Anno|(i = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)])  E1 | @R|Anno|(i = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)])  E2)| {
+        ^nested String()
+    }
+    public final fun nested2(): R|union(primary=@R|Anno|(i = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)])  kotlin/String, errors=@R|Anno|(i = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)])  E1 | E2)| {
+        ^nested2 String()
+    }
+    public final fun aliased(): R|union(errors={@R|Anno|(i = Int(2).R|kotlin/Int.plus|(Int(2)) [evaluated = Int(4)])  TA=} @R|Anno|(i = Int(2).R|kotlin/Int.plus|(Int(2)) [evaluated = Int(4)])  E1 | {@R|Anno|(i = Int(2).R|kotlin/Int.plus|(Int(2)) [evaluated = Int(4)])  TA=} @R|Anno|(i = Int(2).R|kotlin/Int.plus|(Int(2)) [evaluated = Int(4)])  E3 | E2)| {
+        ^aliased R|/E2.E2|()
+    }
