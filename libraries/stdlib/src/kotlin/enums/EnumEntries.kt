@@ -39,20 +39,20 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
  * println(east.ordinal) // 2
  *
  * // The lookup fails if a string does not correspond to any of the enum entries
- * Direction.entries.valueOf("UP") // fails with NoSuchElementException
- * Direction.entries.valueOf("") // fails with NoSuchElementException
+ * Direction.entries.valueOf("UP") // fails with IllegalArgumentException
+ * Direction.entries.valueOf("") // fails with IllegalArgumentException
  *
  * // The lookup is case-sensitive and fails if the name doesn't match any constant
- * Direction.entries.valueOf("east") // fails with NoSuchElementException
+ * Direction.entries.valueOf("east") // fails with IllegalArgumentException
  * ```
  *
- * @throws NoSuchElementException if no enum constant with the specified [name] exists in [E].
+ * @throws IllegalArgumentException if no enum constant with the specified [name] exists in [E].
  */
 // @sample samples.misc.Enums.enumEntriesValueOfSample - not runnable due to enum declarations
 @SinceKotlin("2.5")
 @ExperimentalStdlibApi
 public fun <E : Enum<E>> EnumEntries<E>.valueOf(name: String): E =
-    first { it.name == name }
+    firstOrNull { it.name == name } ?: throw IllegalArgumentException("No enum constant '$name'")
 
 /**
  * Returns the enum entry of the enum type [E] with the specified [name] or null if no such entry exists.

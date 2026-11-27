@@ -56,11 +56,11 @@ class Enums {
         assertPrints(east.ordinal, "2")
 
         // The lookup fails if a string does not correspond to any of the enum entries
-        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("UP") }
-        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("") }
+        assertFailsWith<IllegalArgumentException> { Direction.entries.valueOf("UP") }
+        assertFailsWith<IllegalArgumentException> { Direction.entries.valueOf("") }
 
         // The lookup is case-sensitive and fails if the name doesn't match any constant
-        assertFailsWith<NoSuchElementException> { Direction.entries.valueOf("east") }
+        assertFailsWith<IllegalArgumentException> { Direction.entries.valueOf("east") }
     }
 
     /** Must be kept in-sync with the inline sample in [valueOfOrNull] */

@@ -102,7 +102,7 @@ class EnumEntriesListTest {
             if (expected != null) {
                 assertEquals(expected, valueOf(name))
             } else {
-                assertFailsWith<NoSuchElementException> { valueOf(name) }
+                assertFailsWith<IllegalArgumentException> { valueOf(name) }
             }
         }
 
