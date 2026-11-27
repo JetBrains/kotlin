@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrSimpleFunctionBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -17,26 +17,33 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 class MethodsFromAnyGeneratorForLowerings(val context: LoweringContext, val irClass: IrClass, val origin: IrDeclarationOrigin) {
-    private fun IrClass.addSyntheticFunction(name: String, returnType: IrType) =
-        addFunction(name, returnType, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+    private fun IrClass.addSyntheticFunction(name: String, returnType: IrType, builder: IrSimpleFunctionBuilder.() -> Unit = {}) =
+        irFunction {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            this.name = Name.identifier(name)
+            this.returnType = returnType
+            builder()
+        }
 
     fun createToStringMethodDeclaration(): IrSimpleFunction =
-        irClass.addSyntheticFunction("toString", context.irBuiltIns.stringType).apply {
+        irClass.addSyntheticFunction("toString", context.irBuiltIns.stringType) {
             overriddenSymbols = irClass.collectOverridenSymbols { it.isToString() }
         }
 
     fun createHashCodeMethodDeclaration(): IrSimpleFunction =
-        irClass.addSyntheticFunction("hashCode", context.irBuiltIns.intType).apply {
+        irClass.addSyntheticFunction("hashCode", context.irBuiltIns.intType) {
             overriddenSymbols = irClass.collectOverridenSymbols { it.isHashCode() }
         }
 
     fun createEqualsMethodDeclaration(): IrSimpleFunction =
-        irClass.addSyntheticFunction("equals", context.irBuiltIns.booleanType).apply {
+        irClass.addSyntheticFunction("equals", context.irBuiltIns.booleanType) {
             overriddenSymbols = irClass.collectOverridenSymbols { it.isEquals() }
-            addValueParameter("other", context.irBuiltIns.anyNType)
+            valueParameter("other", context.irBuiltIns.anyNType)
         }
 
     companion object {

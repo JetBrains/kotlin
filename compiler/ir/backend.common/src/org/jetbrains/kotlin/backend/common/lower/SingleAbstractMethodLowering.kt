@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.v2.IrConstructorBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irClass
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -34,7 +39,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
@@ -78,7 +82,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     protected open fun getSuspendFunctionWithoutContinuation(function: IrSimpleFunction): IrSimpleFunction =
         function
 
-    protected open fun IrFunctionBuilder.setConstructorSourceRange(createFor: IrElement) {
+    protected open fun IrConstructorBuilder.setConstructorSourceRange(createFor: IrElement) {
         setSourceRange(createFor)
     }
 
@@ -183,18 +187,17 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                 context.irBuiltIns.functionN(superMethod.nonDispatchParameters.size)
         val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
-        val subclass = context.irFactory.buildClass {
+        val subclass = context.irFactory.irClass {
             name = wrapperName
             origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             visibility = wrapperVisibility
             setSourceRange(createFor)
-        }.apply {
-            createThisReceiverParameter()
             superTypes = listOf(superType) memoryOptimizedPlus getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
+            thisReceiver()
         }
 
-        val field = subclass.addField {
+        val field = subclass.irField {
             name = Name.identifier(FUNCTION_FIELD_NAME)
             type = wrappedFunctionType
             origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
@@ -203,26 +206,26 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             setSourceRange(createFor)
         }
 
-        subclass.addConstructor {
+        val parameter: IrValueParameterSymbol
+        subclass.irConstructor {
             origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             isPrimary = true
             visibility = wrapperVisibility
             setConstructorSourceRange(createFor)
-        }.apply {
-            val parameter = addValueParameter {
+            parameter = valueParameter {
                 name = field.name
                 type = field.type
                 origin = subclass.origin
             }
-
+        }.apply {
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                +irSetField(irGet(subclass.thisReceiver!!), field, irGet(parameter))
+                +irSetField(irGet(subclass.thisReceiver!!), field, irGet(parameter.owner))
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, subclass.symbol, context.irBuiltIns.unitType)
             }
         }
 
-        subclass.addFunction {
+        subclass.irFunction {
             name = superMethod.name
             returnType = superMethod.returnType
             visibility = superMethod.visibility
@@ -230,15 +233,19 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             isSuspend = superMethod.isSuspend
             setSourceRange(createFor)
-        }.apply {
             val overriddenMethodOfAny = superMethod.findOverriddenMethodOfAny()
             overriddenSymbols = if (overriddenMethodOfAny == null)
                 listOf(superMethod.symbol)
             else subclass.superTypes.mapNotNull { superType ->
                 superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
             }
-            parameters = (listOf(subclass.thisReceiver!!) + superMethod.nonDispatchParameters)
-                .memoryOptimizedMap { it.copyTo(this) }
+            for (from in superMethod.nonDispatchParameters) {
+                parameter {
+                    kind = from.kind
+                    copyFrom(from)
+                }
+            }
+        }.apply {
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(
@@ -307,8 +314,11 @@ class SamEqualsHashCodeMethodsGenerator(
     }
 
     private fun generateGetFunctionDelegate() {
-        klass.addFunction(getFunctionDelegate.name.asString(), getFunctionDelegate.returnType).apply {
+        klass.irFunction {
+            name = getFunctionDelegate.name
+            returnType = getFunctionDelegate.returnType
             overriddenSymbols = listOf(getFunctionDelegate.symbol)
+        }.apply {
             body = context.createIrBuilder(symbol).run {
                 irBlockBody {
                     +irReturn(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.andand
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -302,29 +302,29 @@ private class Transformer(
         // for compareTo() may have side effects dependent on which expressions are the receiver and argument
         // (see evaluationOrderForComparableRange.kt test).
         val lowerClause = if (useCompareTo) {
-            irCall(lowerCompFun).apply {
+            irCall(lowerCompFun) {
                 arguments[0] = irInt(0)
-                arguments[1] = irCall(compareToFun).apply {
+                arguments[1] = irCall(compareToFun.symbol) {
                     arguments[0] = argExpression.shallowCopy()
                     arguments[1] = lowerExpression
                 }
             }
         } else {
-            irCall(lowerCompFun).apply {
+            irCall(lowerCompFun) {
                 arguments[0] = lowerExpression
                 arguments[1] = argExpression.shallowCopy()
             }
         }
         val upperClause = if (useCompareTo) {
-            irCall(upperCompFun).apply {
-                arguments[0] = irCall(compareToFun).apply {
+            irCall(upperCompFun) {
+                arguments[0] = irCall(compareToFun.symbol) {
                     arguments[0] = argExpression.shallowCopy()
                     arguments[1] = upperExpression
                 }
                 arguments[1] = irInt(0)
             }
         } else {
-            irCall(upperCompFun).apply {
+            irCall(upperCompFun) {
                 arguments[0] = argExpression.shallowCopy()
                 arguments[1] = upperExpression
             }
