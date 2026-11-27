@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.util.ProcessRunResult
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -54,6 +55,7 @@ import kotlin.test.assertTrue
 @DisplayName("Tests for the Swift package integration of the export DSL")
 @SwiftExportGradlePluginTests
 @OptIn(ExperimentalSwiftExportDsl::class)
+@MustRunOnChangesInSwiftExport // smoke tests
 class SwiftPackageExportIT : KGPBaseTest() {
 
     @DisplayName("A dependency with a different public API per target is exported for every destination")
