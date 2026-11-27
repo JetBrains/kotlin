@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testbase.findTasksByPattern
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
@@ -41,6 +42,7 @@ import kotlin.test.assertNotEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @GradleTest
