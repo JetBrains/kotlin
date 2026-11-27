@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -33,6 +34,7 @@ internal fun FirScope.getCallableSymbols(
     }
 }
 
+context(analysisSession: KaFirSession)
 internal fun FirScope.getCallableSignatures(
     callableNames: Collection<Name>,
     builder: KaSymbolByFirBuilder

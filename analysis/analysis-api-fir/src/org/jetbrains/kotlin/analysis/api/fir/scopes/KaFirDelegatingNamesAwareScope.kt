@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.name.Name
 
@@ -19,17 +19,17 @@ internal open class KaFirDelegatingNamesAwareScope(
         getPossibleCallableNames() + getPossibleClassifierNames()
     }
 
-    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
+    override fun getAllPossibleNames(): Set<Name> = entryPointImplementation { allNamesCached }
 
-    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleCallableNames(): Set<Name> = entryPointImplementation {
         firScope.getCallableNames()
     }
 
-    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+    override fun getPossibleClassifierNames(): Set<Name> = entryPointImplementation {
         firScope.getClassifierNames()
     }
 
-    override fun mayContainName(name: Name): Boolean = withValidityAssertion {
+    override fun mayContainName(name: Name): Boolean = entryPointImplementation {
         name in getAllPossibleNames()
     }
 }

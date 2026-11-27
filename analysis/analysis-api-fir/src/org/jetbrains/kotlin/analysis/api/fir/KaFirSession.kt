@@ -167,7 +167,7 @@ private constructor(
         KaFirDataFlowProvider(analysisSessionProvider)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
-        KaSymbolByFirBuilder(project, this, token)
+        KaSymbolByFirBuilder(project, this)
     }
 
     @Suppress("AnalysisApiMissingLifetimeCheck")

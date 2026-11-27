@@ -147,9 +147,10 @@ internal class KaFirValueParameterSymbol private constructor(
         )
     }
 
+    context(analysisSession: KaFirSession)
     private val index: Int
         get() {
-            val ownerSymbol = context(analysisSession) { containingDeclaration }
+            val ownerSymbol = containingDeclaration
                 ?: error("Containing function is expected for a value parameter symbol")
             requireIsInstance<KaFunctionSymbol>(ownerSymbol)
 

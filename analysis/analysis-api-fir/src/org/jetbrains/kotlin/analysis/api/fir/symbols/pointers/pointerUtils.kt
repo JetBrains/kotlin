@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -89,9 +88,9 @@ internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableS
     return null
 }
 
-context(sessionOwner: KaFirSymbol<*>)
+context(analysisSession: KaFirSession)
 internal inline fun <reified T : KaSymbol> KaSymbol.createOwnerPointer(): KaSymbolPointer<T> {
-    val containingSymbol = context(sessionOwner.analysisSession) { this.containingDeclaration }
+    val containingSymbol = this.containingDeclaration
         ?: errorWithAttachment("Non-null containingDeclaration is expected for a member declaration for `${this@createOwnerPointer::class}`, expecting `${T::class}` type of owner") {
             withSymbolAttachment("child", this@createOwnerPointer)
         }
@@ -108,7 +107,7 @@ internal inline fun <reified T : KaSymbol> KaSymbol.createOwnerPointer(): KaSymb
  * @see KaFirClassLikeSymbolPointer
  * @see KaFirNestedInLocalClassSymbolPointer
  */
-context(sessionOwner: KaFirSymbol<*>)
+context(analysisSession: KaFirSession)
 internal fun <T> T.createNestedClassLikeSymbolPointer(expectedClass: KClass<T>): KaSymbolPointer<T>
         where T : KaClassLikeSymbol, T : KaNamedSymbol {
     val classId = classId ?: return KaFirNestedInLocalClassSymbolPointer(

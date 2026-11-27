@@ -71,9 +71,8 @@ import kotlin.contracts.contract
  */
 internal class KaSymbolByFirBuilder(
     private val project: Project,
-    val analysisSession: KaFirSession,
-    val token: KaLifetimeToken,
-) {
+    override val analysisSession: KaFirSession,
+) : KaFirSessionBoundOwner {
     private val resolutionFacade: LLResolutionFacade get() = analysisSession.resolutionFacade
     private val firProvider: FirSymbolProvider get() = rootSession.symbolProvider
     val rootSession: LLFirSession get() = resolutionFacade.useSiteFirSession
@@ -204,11 +203,12 @@ internal class KaSymbolByFirBuilder(
             else -> throwUnexpectedElementError(firSymbol)
         }
 
+        context(analysisSession: KaFirSession)
         fun buildFunctionSignature(fir: FirFunctionSymbol<*>): KaFunctionSignature<KaFunctionSymbol> {
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
                 return buildNamedFunctionSignature(fir)
 
-            return context(analysisSession) { buildFunctionSymbol(fir).asSignature() }
+            return buildFunctionSymbol(fir).asSignature()
         }
 
         fun buildNamedFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KaNamedFunctionSymbol {
@@ -283,12 +283,13 @@ internal class KaSymbolByFirBuilder(
             is FirDelegateFieldSymbol -> throwUnexpectedElementError(firSymbol)
         }
 
+        context(analysisSession: KaFirSession)
         fun buildVariableLikeSignature(firSymbol: FirVariableSymbol<*>): KaVariableSignature<KaVariableSymbol> {
             if (firSymbol is FirRegularPropertySymbol && firSymbol !is FirSyntheticPropertySymbol) {
                 return buildPropertySignature(firSymbol)
             }
 
-            return context(analysisSession) { buildVariableSymbol(firSymbol).asSignature() }
+            return buildVariableSymbol(firSymbol).asSignature()
         }
 
         fun buildPropertySymbol(firSymbol: FirPropertySymbol): KaVariableSymbol {
@@ -443,8 +444,9 @@ internal class KaSymbolByFirBuilder(
             else -> throwUnexpectedElementError(firSymbol)
         }
 
+        context(analysisSession: KaFirSession)
         fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KaCallableSignature<KaCallableSymbol> = when (firSymbol) {
-            is FirPropertyAccessorSymbol -> context(analysisSession) { functionBuilder.buildPropertyAccessorSymbol(firSymbol).asSignature() }
+            is FirPropertyAccessorSymbol -> functionBuilder.buildPropertyAccessorSymbol(firSymbol).asSignature()
             is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSignature(firSymbol)
             is FirVariableSymbol<*> -> variableBuilder.buildVariableLikeSignature(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)

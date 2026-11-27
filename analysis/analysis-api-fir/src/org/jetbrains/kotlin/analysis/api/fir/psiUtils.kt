@@ -76,12 +76,13 @@ private fun isAllowedFakeElementKind(kind: KtFakeSourceElementKind): Boolean =
 internal fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
 
+context(analysisSession: KaFirSession)
 internal fun KaFirSymbol<*>.findPsi(): PsiElement? {
     if (this is KaFirPsiSymbol<*, *>) {
         backingPsi?.let { return it }
     }
 
-    return firSymbol.findPsi(context(analysisSession) { analysisScope })
+    return firSymbol.findPsi(analysisScope)
 }
 
 /**

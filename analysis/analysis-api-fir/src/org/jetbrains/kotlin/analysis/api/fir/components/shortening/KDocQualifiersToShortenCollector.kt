@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -23,12 +24,12 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 
 internal class KDocQualifiersToShortenCollector(
-    private val analysisSession: KaFirSession,
+    override val analysisSession: KaFirSession,
     private val selection: TextRange,
     private val additionalImports: ShorteningAdditionalImports,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
-) : KtVisitorVoid() {
+) : KtVisitorVoid(), KaFirSessionBoundOwner {
     val kDocQualifiersToShorten: MutableList<ShortenKDocQualifier> = mutableListOf()
     override fun visitElement(element: PsiElement) {
         if (!element.textRange.intersects(selection)) return
@@ -45,6 +46,7 @@ internal class KDocQualifiersToShortenCollector(
             additionalImports,
             classShortenStrategy = { classShortenStrategy(it) },
             callableShortenStrategy = { callableShortenStrategy(it) },
+            analysisSession = analysisSession,
         )
         if (shouldShortenKDocQualifier) {
             addKDocQualifierToShorten(element)
@@ -57,6 +59,7 @@ internal class KDocQualifiersToShortenCollector(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun shouldShortenKDocQualifier(
         kDocName: KDocName,
         additionalImports: ShorteningAdditionalImports,
@@ -68,46 +71,44 @@ internal class KDocQualifiersToShortenCollector(
         // KDocs are only shortened if they are available without imports, so `additionalImports` contain all the imports to add
         if (fqName.isInNewImports(additionalImports)) return true
 
-        context(analysisSession) {
-            val shortFqName = FqName.topLevel(fqName.shortName())
-            val owner = kDocName.getContainingDoc().owner
+        val shortFqName = FqName.topLevel(fqName.shortName())
+        val owner = kDocName.getContainingDoc().owner
 
-            val contextElement = owner ?: kDocName.containingKtFile
-            // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
+        val contextElement = owner ?: kDocName.containingKtFile
+        // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
 
-            val containedTagSectionIfSubject = kDocName.getTagIfSubject()?.knownTag
+        val containedTagSectionIfSubject = kDocName.getTagIfSubject()?.knownTag
 
-            val resolvedSymbolsByShortName =
-                KDocReferenceResolver.resolveKdocFqName(
-                    selectedFqName = shortFqName,
-                    fullFqName = shortFqName,
-                    contextElement,
-                    containedTagSectionIfSubject
-                )
-            val resolvedSymbolsByFQN =
-                KDocReferenceResolver.resolveKdocFqName(
-                    selectedFqName = fqName,
-                    fullFqName = fqName,
-                    contextElement,
-                    containedTagSectionIfSubject
-                )
+        val resolvedSymbolsByShortName =
+            KDocReferenceResolver.resolveKdocFqName(
+                selectedFqName = shortFqName,
+                fullFqName = shortFqName,
+                contextElement,
+                containedTagSectionIfSubject
+            )
+        val resolvedSymbolsByFQN =
+            KDocReferenceResolver.resolveKdocFqName(
+                selectedFqName = fqName,
+                fullFqName = fqName,
+                contextElement,
+                containedTagSectionIfSubject
+            )
 
-            if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) {
-                // Shortening led to another set of symbols being available, so we cannot shorten the KDoc
-                return false
-            }
-
-            val shortenStrategies = resolvedSymbolsByFQN.map { symbol ->
-                when (symbol) {
-                    is KaCallableSymbol -> callableShortenStrategy(symbol.firSymbol)
-                    is KaClassLikeSymbol -> classShortenStrategy(symbol.firSymbol)
-                    else -> ShortenStrategy.DO_NOT_SHORTEN
-                }
-            }
-
-            val singleStrategy = shortenStrategies.distinct().singleOrNull() ?: return false
-            return singleStrategy != ShortenStrategy.DO_NOT_SHORTEN
+        if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) {
+            // Shortening led to another set of symbols being available, so we cannot shorten the KDoc
+            return false
         }
+
+        val shortenStrategies = resolvedSymbolsByFQN.map { symbol ->
+            when (symbol) {
+                is KaCallableSymbol -> callableShortenStrategy(symbol.firSymbol)
+                is KaClassLikeSymbol -> classShortenStrategy(symbol.firSymbol)
+                else -> ShortenStrategy.DO_NOT_SHORTEN
+            }
+        }
+
+        val singleStrategy = shortenStrategies.distinct().singleOrNull() ?: return false
+        return singleStrategy != ShortenStrategy.DO_NOT_SHORTEN
     }
 
     private fun FqName.isInNewImports(additionalImports: ShorteningAdditionalImports): Boolean =

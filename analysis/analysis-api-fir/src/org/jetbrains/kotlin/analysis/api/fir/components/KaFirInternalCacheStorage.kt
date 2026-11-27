@@ -10,6 +10,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * In addition, this storage provides entry points like [softCachedValueWithPsiKey] to unify the UX.
  */
-internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSession) {
+internal class KaFirInternalCacheStorage(override val analysisSession: KaFirSession) : KaFirSessionBoundOwner {
     @KaCachedService
     private val statisticsService by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLStatisticsService.getInstance(project)

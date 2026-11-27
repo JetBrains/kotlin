@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.shortening
 
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.fir.FirSession
@@ -83,7 +84,7 @@ internal data class ShorteningAvailableSymbol<out T>(
     val importKind: ShorteningImportKind,
 )
 
-internal class FirShorteningContext(val analysisSession: KaFirSession) {
+internal class FirShorteningContext(override val analysisSession: KaFirSession) : KaFirSessionBoundOwner {
     private val resolutionFacade = analysisSession.resolutionFacade
 
     private val firSession: FirSession
