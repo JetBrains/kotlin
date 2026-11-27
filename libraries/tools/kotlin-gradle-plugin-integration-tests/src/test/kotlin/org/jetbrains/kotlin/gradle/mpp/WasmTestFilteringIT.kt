@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Tests for Kotlin/Wasm test filtering")
+@MustRunOnChangesInGradle
 class WasmTestFilteringIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
