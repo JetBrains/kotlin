@@ -207,8 +207,17 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 
 internal object VirtualTablesLookup {
     private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
-        val interfaceTableSize = load(llvm.int32Type, structGep(runtime.typeInfoType, typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(llvm.pointerType, structGep(runtime.typeInfoType, typeInfo, 10 /* interfaceTable_ */))
+        val interfaceTableSize: LLVMValueRef
+        val interfaceTable: LLVMValueRef
+        if (context.hierarchyWillBeLaidOutByFinalLink) {
+            val table = load(llvm.pointerType, structGep(runtime.typeInfoType, typeInfo, 11 /* interfaceTable_ */))
+            interfaceTableSize = load(llvm.int32Type, structGep(runtime.interfaceTableType, table, 0 /* size_ */))
+            // The records follow the header in the same global, so there is nothing to load here.
+            interfaceTable = structGep(runtime.interfaceTableType, table, 1 /* records_ */)
+        } else {
+            interfaceTableSize = load(llvm.int32Type, structGep(runtime.typeInfoType, typeInfo, 9 /* interfaceTableSize_ */))
+            interfaceTable = load(llvm.pointerType, structGep(runtime.typeInfoType, typeInfo, 10 /* interfaceTableRecords_ */))
+        }
 
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.

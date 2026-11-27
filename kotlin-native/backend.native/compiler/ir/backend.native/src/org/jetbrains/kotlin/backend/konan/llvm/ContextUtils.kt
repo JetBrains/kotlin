@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal sealed class SlotType {
@@ -685,3 +686,8 @@ internal fun UByte.toLlvmConstUInt8(): ConstUInt8 =
 context(llvm: CodegenLlvmHelpers)
 internal fun String?.toCStringLiteral(): ConstPointer =
         if (this != null) llvm.staticData.cStringLiteral(this) else llvm.nullPointer
+
+internal val NativeBackendContext.hierarchyWillBeLaidOutByFinalLink: Boolean
+    get() = shouldOptimize() && with(config.cachedLibraries) {
+        config.produce.isCache || hasStaticCaches || hasDynamicCaches
+    }
