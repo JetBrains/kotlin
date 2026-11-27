@@ -11,12 +11,14 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.readLines
 import kotlin.test.assertEquals
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @NativeGradlePluginTests
+@MustRunOnChangesInCompilerPlugins
 class ParcelizeNativeDependencyResolutionIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
