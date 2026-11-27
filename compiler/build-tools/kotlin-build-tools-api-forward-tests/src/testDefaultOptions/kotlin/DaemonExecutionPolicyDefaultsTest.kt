@@ -18,9 +18,11 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.parallel.Isolated
 import java.nio.file.Path
 import kotlin.io.path.Path
 
+@Isolated("Modifies JVM-wide system properties (`user.home`, the custom daemon run files path)")
 class DaemonExecutionPolicyDefaultsTest {
     @Test
     fun testDefaultOptions() {
