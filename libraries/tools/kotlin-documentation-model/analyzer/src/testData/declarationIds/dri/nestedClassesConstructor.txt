@@ -1,0 +1,7 @@
+sample
+sample/Parent
+sample/Parent.Nested
+sample/Parent.Nested.DoubleNested
+sample/Parent.Nested.DoubleNested##kind=function;
+sample/Parent.Nested##kind=function;
+sample/Parent##kind=function;

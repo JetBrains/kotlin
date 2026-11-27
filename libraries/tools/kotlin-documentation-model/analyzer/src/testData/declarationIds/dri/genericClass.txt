@@ -1,0 +1,3 @@
+example
+example/Sample
+example/Sample##kind=function; typeParameters=[<T0_0>: ]; parameters=[<T0_0>];

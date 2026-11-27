@@ -1,0 +1,2 @@
+toplevel
+toplevel#doSomething#kind=function; typeParameters=[<T0_0>: kotlin/Comparable<<T0_0>>]; receiver=kotlin/Array<<T0_0>>; parameters=[<T0_0>?];

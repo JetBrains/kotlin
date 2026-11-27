@@ -1,0 +1,2 @@
+toplevel
+toplevel#mySortBy#kind=function; typeParameters=[<T0_0>: , <T0_1>: kotlin/Comparable<<T0_1>>]; receiver=kotlin/Array<out <T0_0>>; parameters=[(<T0_0>) -> <T0_1>?];
