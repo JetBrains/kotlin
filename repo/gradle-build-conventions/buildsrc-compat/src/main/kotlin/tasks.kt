@@ -77,7 +77,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-util-klib-metadata",
     ":libraries:tools:abi-validation:abi-tools-api",
     ":libraries:tools:abi-validation:abi-tools",
-    ":kotlin-metadata-jvm",
+    ":prepare:kotlin-metadata-jvm",
     ":gradle:kotlin-gradle-ecosystem-plugin",
     ":kotlin-klib-abi-reader",
     ":js:typescript-export-standalone-embeddable",

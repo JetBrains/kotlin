@@ -22,7 +22,12 @@ dependencies {
     api(project(":libraries:tools:abi-validation:abi-tools-api"))
     api(kotlinStdlib())
 
-    implementation(project(":kotlin-metadata-jvm"))
+    // The runtime provider must be the self-contained fat artifact (as it was before the prepare/
+    // split): abi-tools' runtime classpath is packed into abi-tools-embeddable, and a thin closure
+    // there makes the linkage depend on duplicate-class exclusion order (KTI-3695)
+    compileOnly(project(":kotlin-metadata-jvm"))
+    runtimeOnly(project(":prepare:kotlin-metadata-jvm"))
+
     implementation(project(":kotlin-klib-abi-reader"))
 
     compileOnly(libs.intellij.asm)

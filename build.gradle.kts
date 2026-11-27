@@ -122,7 +122,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib-jdk8",
     ":kotlin-test",
     ":kotlin-reflect",
-    ":kotlin-metadata-jvm",
+    ":prepare:kotlin-metadata-jvm",
 )
 extra["coreLibProjects"] = coreLibProjects
 val mppProjects = listOf(
@@ -240,7 +240,7 @@ tasks {
     }
 
     val coreLibsPublishable = coreLibProjects + listOf(":kotlin-stdlib-common")
-    val coreLibsBuildable = coreLibProjects + listOf(":kotlin-stdlib-jvm-minimal-for-test", ":kotlin-stdlib-js-ir-minimal-for-test")
+    val coreLibsBuildable = coreLibProjects + listOf(":kotlin-metadata-jvm", ":kotlin-stdlib-jvm-minimal-for-test", ":kotlin-stdlib-js-ir-minimal-for-test")
 
     register("coreLibsClean") {
         dependsOnAll(
