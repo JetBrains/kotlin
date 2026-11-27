@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -17,6 +18,7 @@ import java.nio.file.Path
 @DisplayName("Configuration cache tests that can be run on MacOS")
 @NativeGradlePluginTests
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
+@MustRunOnChangesInGradle
 class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @TestMetadata("native-configuration-cache")
