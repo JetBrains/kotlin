@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.String
@@ -43,6 +44,7 @@ import kotlin.test.assertNotEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
 
     @GradleTest
