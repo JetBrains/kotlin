@@ -17,6 +17,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -78,4 +79,17 @@ abstract class IrTypeParametersContainerBuilder internal constructor() : IrDecla
             this.superTypes = [upperBound]
             this.variance = variance
         }
+
+    /**
+     * Copies the type parameters of [source] with their annotations, then applies [adjust] to each copy. The supertypes are set after
+     * all the copies are created, substituted with them, so they may reference each other. [outer] substitutes the type parameters
+     * copied before, e.g. the ones of the class when its member becomes a top-level function.
+     * Returns [outer] together with the source type parameters substituted by the copies.
+     */
+    fun copyTypeParametersFrom(
+        source: IrTypeParametersContainer,
+        outer: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+        adjust: IrTypeParameterBuilder.(from: IrTypeParameter) -> Unit = {},
+    ): Map<IrTypeParameterSymbol, IrType> =
+        buildTypeParameterCopies(this, source.typeParameters, outer, adjust)
 }

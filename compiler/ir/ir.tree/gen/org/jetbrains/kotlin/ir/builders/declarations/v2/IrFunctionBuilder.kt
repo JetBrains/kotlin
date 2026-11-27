@@ -16,7 +16,9 @@ import kotlin.contracts.contract
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -98,4 +100,21 @@ abstract class IrFunctionBuilder internal constructor() : IrTypeParametersContai
 
     fun valueParameter(name: String, type: IrType): IrValueParameterSymbol =
         valueParameter(Name.identifier(name), type)
+
+    /**
+     * Copies [source] parameters with their kinds and annotations, the types substituted with [substitution], then applies [adjust]
+     * to each copy. Default values aren't copied. Returns the source parameters mapped to the copies.
+     */
+    fun copyParameters(
+        source: List<IrValueParameter>,
+        substitution: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+        adjust: IrValueParameterBuilder.(from: IrValueParameter) -> Unit = {},
+    ): Map<IrValueParameterSymbol, IrValueParameterSymbol> =
+        buildParameterCopies(this, source, substitution, adjust)
+
+    /**
+     * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParametersFrom] and [copyParameters].
+     */
+    fun copySignatureFrom(source: IrFunction): IrSignatureMapping =
+        buildSignatureCopy(this, source)
 }

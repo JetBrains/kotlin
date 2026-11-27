@@ -47,6 +47,10 @@ object DeclarationBuilderConfigurator {
     private val irElement = importable(irPackage, "IrElement")
     private val irTypeParameterSymbol = importable(Packages.symbols, "IrTypeParameterSymbol")
     private val irValueParameterSymbol = importable(Packages.symbols, "IrValueParameterSymbol")
+    private val irValueParameter = importable(Packages.declarations, "IrValueParameter")
+    private val irTypeParameter = importable(Packages.declarations, "IrTypeParameter")
+    private val irTypeParametersContainer = importable(Packages.declarations, "IrTypeParametersContainer")
+    private val irFunction = importable(Packages.declarations, "IrFunction")
     private val irType = importable(Packages.types, "IrType")
     private val variance = importable("org.jetbrains.kotlin.types", "Variance")
     private val irDeclarationOrigin = importable(Packages.declarations, "IrDeclarationOrigin")
@@ -118,8 +122,21 @@ object DeclarationBuilderConfigurator {
                         this.superTypes = [upperBound]
                         this.variance = variance
                     }
+
+                /**
+                 * Copies the type parameters of [source] with their annotations, then applies [adjust] to each copy. The supertypes are set after
+                 * all the copies are created, substituted with them, so they may reference each other. [outer] substitutes the type parameters
+                 * copied before, e.g. the ones of the class when its member becomes a top-level function.
+                 * Returns [outer] together with the source type parameters substituted by the copies.
+                 */
+                fun copyTypeParametersFrom(
+                    source: IrTypeParametersContainer,
+                    outer: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+                    adjust: IrTypeParameterBuilder.(from: IrTypeParameter) -> Unit = {},
+                ): Map<IrTypeParameterSymbol, IrType> =
+                    buildTypeParameterCopies(this, source.typeParameters, outer, adjust)
                 """.trimIndent(),
-                listOf(irType, variance, irTypeParameterSymbol, nameType),
+                listOf(irType, variance, irTypeParameterSymbol, nameType, irTypeParametersContainer, irTypeParameter),
             )
         }
 
@@ -172,8 +189,25 @@ object DeclarationBuilderConfigurator {
 
                 fun valueParameter(name: String, type: IrType): IrValueParameterSymbol =
                     valueParameter(Name.identifier(name), type)
+
+                /**
+                 * Copies [source] parameters with their kinds and annotations, the types substituted with [substitution], then applies [adjust]
+                 * to each copy. Default values aren't copied. Returns the source parameters mapped to the copies.
+                 */
+                fun copyParameters(
+                    source: List<IrValueParameter>,
+                    substitution: Map<IrTypeParameterSymbol, IrType> = emptyMap(),
+                    adjust: IrValueParameterBuilder.(from: IrValueParameter) -> Unit = {},
+                ): Map<IrValueParameterSymbol, IrValueParameterSymbol> =
+                    buildParameterCopies(this, source, substitution, adjust)
+
+                /**
+                 * Copies the type parameters, the parameters and the return type of [source], see [copyTypeParametersFrom] and [copyParameters].
+                 */
+                fun copySignatureFrom(source: IrFunction): IrSignatureMapping =
+                    buildSignatureCopy(this, source)
                 """.trimIndent(),
-                listOf(nameType, irType, irValueParameterSymbol),
+                listOf(nameType, irType, irValueParameterSymbol, irValueParameter, irTypeParameterSymbol, irFunction),
             )
         }
 
