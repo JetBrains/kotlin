@@ -61,10 +61,9 @@ internal class NightlyTestAssertPostDiscoveryFilter(
             throw InsufficientNightlyFilteringException(
                 """
                 The nightly test "${descriptor.uniqueId}" execution without explicit include "$nightlyTagKey" tag.
-                * Create a separate task in the selected module
-                * Exclude non-nightly tags: `useJUnitPlatform { excludeTags("!$nightlyTagKey") }`
+                * Create a dedicated nightly task which excludes non-nightly tags: `useJUnitPlatform { excludeTags("!$nightlyTagKey") }`
                 * Exclude the `nightly` tag from other test tasks: `useJUnitPlatform { excludeTags("$nightlyTagKey") }`
-                Created task should be then registered to `testLifecycleTask`.
+                The nightly task should be added as dependency to `testLifecycleTask`.
                 """.trimIndent()
             )
         }
