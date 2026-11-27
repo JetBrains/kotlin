@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -25,6 +26,7 @@ import kotlin.io.path.writeText
 
 @DisplayName("KotlinNativeLink task tests")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 internal class KotlinNativeLinkIT : KGPBaseTest() {
 
     @TestMetadata("native-link-simple")
