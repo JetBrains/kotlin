@@ -87,7 +87,9 @@ internal class KaFirTypeInformationProvider(
         }
     }
 
-    override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = KaFirBuiltinFunctionTypeFamilies
+    override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = entryPointImplementation {
+        KaFirBuiltinFunctionTypeFamilies
+    }
 
     override fun classId(type: KaType): ClassId? = entryPointImplementation {
         when (type) {

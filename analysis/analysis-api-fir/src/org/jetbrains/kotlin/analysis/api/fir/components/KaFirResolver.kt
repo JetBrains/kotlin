@@ -267,14 +267,15 @@ internal class KaFirResolver(
     override fun resolveSuccessfulCall(forExpression: KtForExpression): KaForLoopCall? = forExpression.resolveCallSafe()
     override fun resolveSuccessfulCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall? = propertyDelegate.resolveCallSafe()
 
-    override fun tryResolveCall(forExpression: KtForExpression): KaForLoopCallResolutionAttempt? = context(analysisSession) {
+    override fun tryResolveCall(forExpression: KtForExpression): KaForLoopCallResolutionAttempt? = entryPointImplementation(forExpression) {
         forExpression.tryResolveCallImpl() as? KaForLoopCallResolutionAttempt
     }
 
-    override fun tryResolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCallResolutionAttempt? =
-        context(analysisSession) {
-            propertyDelegate.tryResolveCallImpl() as? KaDelegatedPropertyCallResolutionAttempt
-        }
+    override fun tryResolveCall(
+        propertyDelegate: KtPropertyDelegate,
+    ): KaDelegatedPropertyCallResolutionAttempt? = entryPointImplementation(propertyDelegate) {
+        propertyDelegate.tryResolveCallImpl() as? KaDelegatedPropertyCallResolutionAttempt
+    }
 
     override fun resolveSuccessfulCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>? =
         constructorCalleeExpression.resolveSimpleCallSafe()

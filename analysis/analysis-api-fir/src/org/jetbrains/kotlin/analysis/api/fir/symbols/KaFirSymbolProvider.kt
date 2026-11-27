@@ -198,7 +198,7 @@ internal class KaFirSymbolProvider(
         firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(symbol)
     }
 
-    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? = context(analysisSession) {
+    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? = entryPointImplementation {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(symbol)
     }

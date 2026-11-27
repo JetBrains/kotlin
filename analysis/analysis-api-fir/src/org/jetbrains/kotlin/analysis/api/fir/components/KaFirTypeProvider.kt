@@ -51,7 +51,7 @@ internal class KaFirTypeProvider(
         KaFirBuiltInTypes(analysisSession.resolutionFacade.useSiteFirSession.builtinTypes, analysisSession)
     }
 
-    override fun builtinTypes(): KaBuiltinTypes = cachedBuiltinTypes
+    override fun builtinTypes(): KaBuiltinTypes = entryPointImplementation { cachedBuiltinTypes }
 
     override fun varargArrayType(symbol: KaValueParameterSymbol): KaType? = entryPointImplementation {
         if (!symbol.isVararg) {
