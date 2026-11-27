@@ -1,13 +1,21 @@
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension {
+	public abstract fun getJs ()Lorg/jetbrains/kotlin/gradle/ecosystem/targets/KotlinJsSettingsDsl;
+	public abstract fun getWasmJs ()Lorg/jetbrains/kotlin/gradle/ecosystem/targets/KotlinWasmJsSettingsDsl;
+	public abstract fun js (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun js (Lorg/gradle/api/Action;)V
 	public abstract fun native (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun native (Lorg/gradle/api/Action;)V
 	public abstract fun toolchainManagement (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainManagement (Lorg/gradle/api/Action;)V
+	public abstract fun wasmJs (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun wasmJs (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension$DefaultImpls {
+	public static fun js (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 	public static fun native (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 	public static fun toolchainManagement (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
+	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugin : org/gradle/api/Plugin {
@@ -28,5 +36,78 @@ public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManageme
 	public static fun nodeJs (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 	public static fun wasiAdapter (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 	public static fun wasmTools (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/JsNpmDependencyManagementDsl : org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl {
+	public fun getLockFile ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/JsNpmDependencyManagementDsl$LockFileDsl;
+	public synthetic fun getLockFile ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl;
+	public final fun lockFile (Lkotlin/jvm/functions/Function1;)V
+	public final fun lockFile (Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/JsNpmDependencyManagementDsl$LockFileDsl : org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl {
+	public abstract fun getDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl {
+	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
+	public abstract fun getLockFile ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl;
+	public abstract fun getNodeJsVersionForDependencyResolution ()Lorg/gradle/api/provider/Property;
+	public final fun getOverrides ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$OverridesDsl;
+	public abstract fun getSharedNpmDependenciesMode ()Lorg/gradle/api/provider/Property;
+	public final fun overrides (Lkotlin/jvm/functions/Function1;)V
+	public final fun overrides (Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl {
+	public abstract fun getAutoReplace ()Lorg/gradle/api/provider/Property;
+	public abstract fun getDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getMismatchReport ()Lorg/gradle/api/provider/Property;
+	public abstract fun getReportNewLockFile ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$OverridesDsl {
+	public final fun add (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun add (Ljava/lang/String;Lorg/gradle/api/provider/Provider;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport : java/lang/Enum {
+	public static final field FAIL Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport;
+	public static final field NONE Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport;
+	public static final field WARNING Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmLockFileMismatchReport;
+}
+
+public final class org/jetbrains/kotlin/gradle/ecosystem/npm/SharedNpmDependenciesMode : java/lang/Enum {
+	public static final field DISABLED Lorg/jetbrains/kotlin/gradle/ecosystem/npm/SharedNpmDependenciesMode;
+	public static final field SHARED_IN_ROOT_PROJECT Lorg/jetbrains/kotlin/gradle/ecosystem/npm/SharedNpmDependenciesMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/ecosystem/npm/SharedNpmDependenciesMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/ecosystem/npm/SharedNpmDependenciesMode;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/WasmJsNpmDependencyManagementDsl : org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl {
+	public synthetic fun getLockFile ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl;
+	public fun getLockFile ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/WasmJsNpmDependencyManagementDsl$LockFileDsl;
+	public final fun lockFile (Lkotlin/jvm/functions/Function1;)V
+	public final fun lockFile (Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/npm/WasmJsNpmDependencyManagementDsl$LockFileDsl : org/jetbrains/kotlin/gradle/ecosystem/npm/NpmDependencyManagementDsl$LockFileDsl {
+	public abstract fun getDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/targets/KotlinJsSettingsDsl {
+	public final fun getNpmDependencyManagement ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/JsNpmDependencyManagementDsl;
+	public final fun npmDependencyManagement (Lkotlin/jvm/functions/Function1;)V
+	public final fun npmDependencyManagement (Lorg/gradle/api/Action;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/targets/KotlinWasmJsSettingsDsl {
+	public final fun getNpmDependencyManagement ()Lorg/jetbrains/kotlin/gradle/ecosystem/npm/WasmJsNpmDependencyManagementDsl;
+	public final fun npmDependencyManagement (Lkotlin/jvm/functions/Function1;)V
+	public final fun npmDependencyManagement (Lorg/gradle/api/Action;)V
 }
 
