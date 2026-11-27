@@ -9,7 +9,8 @@ import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
@@ -21,7 +22,7 @@ internal abstract class XcodeDefaultTestDevicesValueSource : ValueSource<Map<Fam
     abstract val execOperations: ExecOperations
 
     override fun obtain(): Map<Family, String> {
-        if (!HostManager.hostIsMac) {
+        if (!KotlinNativeHost.current().isSupportedMacOs) {
             return emptyMap()
         }
 

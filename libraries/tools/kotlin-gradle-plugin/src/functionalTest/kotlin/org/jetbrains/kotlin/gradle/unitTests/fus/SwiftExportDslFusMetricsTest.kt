@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.gradle.unitTests.fus
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.exportExtension
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.junit.jupiter.api.Assumptions
@@ -23,7 +24,7 @@ class SwiftExportDslFusMetricsTest {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
     }
 
     @Test

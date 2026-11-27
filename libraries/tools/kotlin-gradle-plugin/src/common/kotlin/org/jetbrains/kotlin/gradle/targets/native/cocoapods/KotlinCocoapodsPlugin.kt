@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -346,7 +347,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 val cinterops = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops
                 cinterops.create(pod.moduleName) { interop ->
                     project.tasks.configureByName<CInteropProcess>(interop.interopProcessingTaskName) { interopTask ->
-                        interopTask.onlyIf { HostManager.hostIsMac }
+                        interopTask.onlyIf { KotlinNativeHost.current().isSupportedMacOs }
 
                         with(interop) {
                             @Suppress("DEPRECATION_ERROR") // deprecated property is used intentionally during deprecation period
@@ -606,7 +607,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun configureLinkingOptions(project: Project, cocoapodsExtension: CocoapodsExtension, nativeBinary: NativeBinary) {
         cocoapodsExtension.pods.all { pod ->
             nativeBinary.linkTaskProvider.configure { task ->
-                task.onlyIf { HostManager.hostIsMac }
+                task.onlyIf { KotlinNativeHost.current().isSupportedMacOs }
 
                 val binary = task.binary
 
@@ -830,7 +831,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested())
             }
 
-            if (!HostManager.hostIsMac) {
+            if (!KotlinNativeHost.current().isSupportedMacOs) {
                 reportDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs())
             }
             reportDeprecatedPropertiesUsage(project)

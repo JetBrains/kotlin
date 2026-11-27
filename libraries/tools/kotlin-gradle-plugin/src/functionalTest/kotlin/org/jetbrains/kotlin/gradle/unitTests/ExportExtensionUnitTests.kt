@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
@@ -52,7 +54,6 @@ import org.jetbrains.kotlin.gradle.util.exportExtension
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.legacySwiftExportExtension
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.Assumptions
@@ -478,7 +479,7 @@ class ExportExtensionXcodeIntegrationTests {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
     }
 
     @Test
@@ -930,7 +931,7 @@ class LegacySwiftExportDslDetectionTests {
 class ExportExtensionSwiftExportTests {
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
     }
 
     @Test
@@ -2448,7 +2449,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
     }
 
     private fun Project.assertSwiftPackageTasksRegistered(registered: Boolean) {
