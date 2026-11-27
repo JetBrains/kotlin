@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -18,6 +19,7 @@ import kotlin.io.path.appendText
  */
 @DisplayName("Toolchain management configured in a Groovy settings file")
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class ToolchainManagementGroovySettingsIT : KGPBaseTest() {
 
     @DisplayName("Closures and Actions in toolchainManagement are resolved with the matching DSL as delegate")
