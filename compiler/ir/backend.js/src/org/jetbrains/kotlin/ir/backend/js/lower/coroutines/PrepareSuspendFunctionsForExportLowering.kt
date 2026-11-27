@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctio
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -312,8 +313,8 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                 bridgeFunction
             )
 
-            val isFunctionImplementedOnKotlinSide = irCall(jsIsFunction).apply {
-                arguments[0] = irCall(jsMethodReference).apply {
+            val isFunctionImplementedOnKotlinSide = irCall(jsIsFunction) {
+                arguments[0] = irCall(jsMethodReference) {
                     arguments[0] = irGet(dispatchReceiverParameter)
                     arguments[1] = JsIrBuilder.buildRawReference(implementationBridge.symbol, dynamicType)
                 }
@@ -324,7 +325,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     bridgeFunction.returnType,
                     isFunctionImplementedOnKotlinSide,
                     irCallWithParametersOf(implementationBridge, bridgeFunction),
-                    irCall(awaitFunctionSymbol).apply {
+                    irCall(awaitFunctionSymbol) {
                         arguments[0] = irCallWithParametersOf(promisifiedWrapperFunction, bridgeFunction)
                     }
                 )
@@ -360,11 +361,11 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     bridgeFunction
                 )
 
-            val isExportedFunctionOverridden = irCall(jsEqeqeqFunctionSymbol).apply {
+            val isExportedFunctionOverridden = irCall(jsEqeqeqFunctionSymbol) {
                 arguments[0] = JsIrBuilder.buildDynamicMemberExpression(irGet(dispatchReceiverParameter), originalName, dynamicType)
                 arguments[1] = JsIrBuilder.buildDynamicMemberExpression(
-                    irCall(jsPrototypeFunctionSymbol).apply {
-                        arguments[0] = irCall(jsClassFunctionSymbol).apply {
+                    irCall(jsPrototypeFunctionSymbol) {
+                        arguments[0] = irCall(jsClassFunctionSymbol) {
                             typeArguments[0] = dispatchReceiverParameter.type
                         }
                     },
@@ -378,7 +379,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     bridgeFunction.returnType,
                     isExportedFunctionOverridden,
                     irCallWithParametersOf(originalFunc, bridgeFunction),
-                    irCall(awaitFunctionSymbol).apply {
+                    irCall(awaitFunctionSymbol) {
                         arguments[0] = irCallWithParametersOf(promisifiedWrapperFunction, bridgeFunction)
                     }
                 )
@@ -490,7 +491,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     }
 
                     +irReturn(
-                        irCall(promisifyFunctionSymbol).apply {
+                        irCall(promisifyFunctionSymbol) {
                             arguments[0] = JsIrBuilder.buildFunctionExpression(
                                 suspendFunctionClassSymbol.typeWith(call.type),
                                 promisifiedSuspendLambda,

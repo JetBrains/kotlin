@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -311,14 +310,12 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
     }
 
     private fun createEnumEntryInstanceVariable(irClass: IrClass, enumEntry: IrEnumEntry): IrField {
-        val result = context.irFactory.buildField {
+        val result = context.irFactory.irField {
             name = Name.identifier("${enumEntry.name}$${ObjectDeclarationLowering.INSTANCE_FIELD_NAME}")
             type = enumEntry.getType(irClass).makeNullable()
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
             isStatic = true
-        }.apply {
             parent = irClass
-            initializer = null
         }
 
         enumEntry.correspondingField = result
@@ -375,11 +372,10 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
         irClass: IrClass, enumEntry: IrEnumEntry,
     ): IrSimpleFunction =
         enumEntry::getInstanceFun.getOrSetIfNull {
-            context.irFactory.buildFun {
+            context.irFactory.irFunction {
                 name = Name.identifier(createEntryAccessorName(enumEntry))
                 returnType = enumEntry.getType(irClass)
                 origin = JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
-            }.apply {
                 parent = irClass
             }
         }.also {
@@ -447,7 +443,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
     }
 
     private fun IrClass.buildEntriesField(): IrField = with(context) {
-        addField {
+        irField {
             name = ENTRIES_FIELD_NAME
             type = context.symbols.enumEntries.defaultType
             visibility = PRIVATE

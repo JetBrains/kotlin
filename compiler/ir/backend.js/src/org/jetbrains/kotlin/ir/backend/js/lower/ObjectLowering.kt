@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irField
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -137,14 +137,13 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
 
 private fun getOrCreateInstanceField(obj: IrClass): IrField =
     obj::objectInstanceField.getOrSetIfNull {
-        obj.factory.buildField {
+        // No initializer: initialized with 'undefined'.
+        obj.factory.irField {
             name = ObjectDeclarationLowering.INSTANCE_FIELD_NAME
             type = obj.defaultType.makeNullable()
             isStatic = true
             origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-        }.apply {
             parent = obj
-            initializer = null  // Initialized with 'undefined'
         }
     }
 
@@ -154,12 +153,11 @@ private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
         // There is need to initialize _instance field together with _getInstance, so the outer restrictTo call would properly assign
         // signature and tags for JS namer. It prevents name clashes during the JS namer phase.
         getOrCreateInstanceField(obj)
-        obj.factory.buildFun {
+        obj.factory.irFunction {
             name = ObjectDeclarationLowering.GET_INSTANCE_METHOD_NAME
             returnType = obj.defaultType
             origin = JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
             visibility = obj.visibility
-        }.apply {
             parent = obj
         }
     }

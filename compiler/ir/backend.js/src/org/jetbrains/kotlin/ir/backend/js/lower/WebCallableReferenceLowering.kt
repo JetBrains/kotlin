@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.addGetter
-import org.jetbrains.kotlin.ir.builders.declarations.addProperty
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irProperty
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.functionReferenceReflectedName
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -123,19 +123,23 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
                 superProperty
             )
 
-        val nameProperty = clazz.addProperty {
+        val getterSymbol: IrSimpleFunctionSymbol
+        clazz.irProperty {
             visibility = superProperty.visibility
             name = superProperty.name
             origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+            overriddenSymbols = listOf(superProperty.symbol)
+            getterSymbol = getter {
+                returnType = stringType
+                overriddenSymbols = listOf(supperGetter.symbol)
+                // Not the implicit copy of `thisReceiver`: its origin is `INSTANCE_RECEIVER`.
+                dispatchReceiver {
+                    origin = clazz.origin
+                    type = clazz.defaultType
+                }
+            }
         }
-
-        nameProperty.overriddenSymbols = listOf(superProperty.symbol)
-
-        val getter = nameProperty.addGetter {
-            returnType = stringType
-        }
-        getter.overriddenSymbols = listOf(supperGetter.symbol)
-        getter.parameters += getter.createDispatchReceiverParameterWithClassParent()
+        val getter = getterSymbol.owner
 
         // TODO: What name should be in case of constructor? <init> or class name?
         val functionReferenceReflectedName = reflectionTargetSymbol.owner.name.asString()
