@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.isExternalDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirSecondaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeAliasedConstructorMemberPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -52,15 +52,15 @@ internal class KaFirConstructorSymbol private constructor(
         analysisSession = session,
     )
 
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType(builder) }
 
     override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaValueParameters() ?: firSymbol.createKtValueParameters(builder)
         }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 true
             } else {
@@ -69,7 +69,7 @@ internal class KaFirConstructorSymbol private constructor(
         }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion { computeCompilerVisibility().asKaSymbolVisibility }
+        get() = entryPointImplementation { computeCompilerVisibility().asKaSymbolVisibility }
 
     private fun computeCompilerVisibility(): Visibility {
         val backingPsi = backingPsi
@@ -90,19 +90,19 @@ internal class KaFirConstructorSymbol private constructor(
     }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             psiOrSymbolAnnotationList()
         }
 
     override val containingClassId: ClassId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.getContainingClassOrObject()?.getClassId()
                 ?: firSymbol.typeAliasConstructorInfo?.typeAliasSymbol?.takeUnless { it.isLocal }?.classId
                 ?: firSymbol.getContainingClassSymbol()?.takeUnless { it.isLocal }?.classId
         }
 
     override val isPrimary: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 backingPsi is KtPrimaryConstructor
             } else {
@@ -111,25 +111,23 @@ internal class KaFirConstructorSymbol private constructor(
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
+        get() = entryPointImplementation { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
+        get() = entryPointImplementation { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // a constructor is external if its containing class is external (it can't be external by itself)
             backingPsi?.containingClassOrObject?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion {
-            context(analysisSession) {
-                backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters(builder)
-            }
+        get() = entryPointImplementation {
+            backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters(builder)
         }
 
-    override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaConstructorSymbol>()?.let { return it }
 
         when {

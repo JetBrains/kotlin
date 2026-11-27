@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -59,20 +59,20 @@ internal class KaFirPsiJavaClassSymbol private constructor(
         JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(backingPsi)
     )
 
-    override val name: Name get() = withValidityAssertion { javaClass.name }
+    override val name: Name get() = entryPointImplementation { javaClass.name }
 
     override val classId: ClassId
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi.classId ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
         }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (javaClass.isFromSource) KaSymbolOrigin.JAVA_SOURCE else KaSymbolOrigin.JAVA_LIBRARY
         }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 classId.outerClassId != null -> KaSymbolLocation.CLASS
                 else -> KaSymbolLocation.TOP_LEVEL
@@ -80,22 +80,22 @@ internal class KaFirPsiJavaClassSymbol private constructor(
         }
 
     override val classKind: KaClassKind
-        get() = withValidityAssertion { javaClass.classKind.toKtClassKind(isCompanionObject = false) }
+        get() = entryPointImplementation { javaClass.classKind.toKtClassKind(isCompanionObject = false) }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion { javaClass.modality.asKaSymbolModality }
+        get() = entryPointImplementation { javaClass.modality.asKaSymbolModality }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion { javaClass.visibility.asKaSymbolVisibility }
+        get() = entryPointImplementation { javaClass.visibility.asKaSymbolVisibility }
 
     override val isInner: Boolean
-        get() = withValidityAssertion { classId.outerClassId != null && !javaClass.isStatic }
+        get() = entryPointImplementation { classId.outerClassId != null && !javaClass.isStatic }
 
     val outerClass: KaFirPsiJavaClassSymbol?
-        get() = withValidityAssertion { backingPsi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) } }
+        get() = entryPointImplementation { backingPsi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) } }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type
             // parameters aren't relevant.
             backingPsi.typeParameters.mapIndexed { index, psiTypeParameter ->
@@ -111,7 +111,7 @@ internal class KaFirPsiJavaClassSymbol private constructor(
         }
 
     val annotationSimpleNames: List<String?>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val simpleNames = backingPsi.annotations.map { it.nameReferenceElement?.referenceName }
             // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
             // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
@@ -123,34 +123,34 @@ internal class KaFirPsiJavaClassSymbol private constructor(
         }
 
     val hasAnnotations: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
             // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
             backingPsi.annotations.isNotEmpty() || javaClass.isDeprecatedInJavaDoc
         }
 
-    override val isData: Boolean get() = withValidityAssertion { false }
-    override val isInline: Boolean get() = withValidityAssertion { false }
-    override val isValue: Boolean get() = withValidityAssertion { false }
-    override val isExternal: Boolean get() = withValidityAssertion { false }
-    override val isActual: Boolean get() = withValidityAssertion { false }
-    override val isExpect: Boolean get() = withValidityAssertion { false }
+    override val isData: Boolean get() = entryPointImplementation { false }
+    override val isInline: Boolean get() = entryPointImplementation { false }
+    override val isValue: Boolean get() = entryPointImplementation { false }
+    override val isExternal: Boolean get() = entryPointImplementation { false }
+    override val isActual: Boolean get() = entryPointImplementation { false }
+    override val isExpect: Boolean get() = entryPointImplementation { false }
 
-    override val companionObject: KaNamedClassSymbol? get() = withValidityAssertion { null }
+    override val companionObject: KaNamedClassSymbol? get() = entryPointImplementation { null }
 
-    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    override val contextReceivers: List<KaContextReceiver> get() = entryPointImplementation { emptyList() }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-            else KaFirEmptyAnnotationList(token)
+            else KaFirEmptyAnnotationList(this.token)
         }
 
     override val superTypes: List<KaType>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             firSymbol.superTypesList(builder)
         }
 }

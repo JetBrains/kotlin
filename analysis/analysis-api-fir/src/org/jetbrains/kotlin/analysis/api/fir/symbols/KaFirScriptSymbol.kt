@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingFile
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -36,25 +36,23 @@ internal class KaFirScriptSymbol private constructor(
     )
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val name: Name
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.containingKtFile?.name?.let {
                 Name.special("<script-$it>")
             } ?: firSymbol.fir.name
         }
 
-    override fun createPointer(): KaSymbolPointer<KaScriptSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaScriptSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaScriptSymbol>()?.let { return it }
 
-        context(analysisSession) {
-            val file = containingFile ?: errorWithAttachment("Containing file is not found") {
-                withFirSymbolEntry("firScript", firSymbol)
-            }
-
-            KaFirScriptSymbolPointer(file.createPointer(), this@KaFirScriptSymbol)
+        val file = containingFile ?: errorWithAttachment("Containing file is not found") {
+            withFirSymbolEntry("firScript", firSymbol)
         }
+
+        KaFirScriptSymbolPointer(file.createPointer(), this@KaFirScriptSymbol)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

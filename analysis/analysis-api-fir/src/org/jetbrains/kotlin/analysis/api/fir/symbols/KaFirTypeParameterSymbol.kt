@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.location
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -35,19 +35,19 @@ internal class KaFirTypeParameterSymbol private constructor(
     )
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val variance: Variance
-        get() = withValidityAssertion { backingPsi?.variance ?: firSymbol.variance }
+        get() = entryPointImplementation { backingPsi?.variance ?: firSymbol.variance }
 
     override val isReified: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.REIFIED_KEYWORD) ?: firSymbol.isReified }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.REIFIED_KEYWORD) ?: firSymbol.isReified }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi != null -> backingPsi.location
                 firSymbol.containingDeclarationSymbol is FirClassSymbol<*> -> KaSymbolLocation.CLASS

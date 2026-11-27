@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -56,32 +56,32 @@ internal class KaFirDanglingTypeParameterSymbol private constructor(
     )
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
+        get() = entryPointImplementation { KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
     override val realPsi: PsiElement?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val anchorPsi: PsiElement?
-        get() = withValidityAssertion { backingPsi ?: firSymbol.source.psi }
+        get() = entryPointImplementation { backingPsi ?: firSymbol.source.psi }
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.getReferencedNameAsName() ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.getReferencedNameAsName() ?: firSymbol.name }
 
     /**
      * There is no declaration, so there are no annotations. Annotations in `where` clauses are not annotations of the type parameter:
      * FIR keeps them apart, in [constraintAnnotations][org.jetbrains.kotlin.fir.declarations.FirTypeParameter.constraintAnnotations].
      */
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaFirEmptyAnnotationList(token) }
+        get() = entryPointImplementation { KaFirEmptyAnnotationList(this.token) }
 
     override val variance: Variance
-        get() = withValidityAssertion { Variance.INVARIANT }
+        get() = entryPointImplementation { Variance.INVARIANT }
 
     override val isReified: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val isClassTypeParameter = if (backingPsi != null) {
                 backingPsi.typeParameterListOwner() is KtClassOrObject
             } else {

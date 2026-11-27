@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -28,22 +28,22 @@ internal class KaFirJavaFieldSymbol(
 ) : KaJavaFieldSymbol(), KaFirSymbol<FirFieldSymbol> {
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    override val isVal: Boolean get() = withValidityAssertion { firSymbol.fir.isVal }
-    override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val isVal: Boolean get() = entryPointImplementation { firSymbol.fir.isVal }
+    override val name: Name get() = entryPointImplementation { firSymbol.name }
+    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType(builder) }
 
-    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
+    override val callableId: CallableId? get() = entryPointImplementation { firSymbol.getCallableId() }
 
-    override val visibility: KaSymbolVisibility get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }
+    override val visibility: KaSymbolVisibility get() = entryPointImplementation { firSymbol.visibility.asKaSymbolVisibility }
 
-    override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
-    override val isCompanion: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+    override val isStatic: Boolean get() = entryPointImplementation { firSymbol.isStatic }
+    override val isCompanion: Boolean get() = entryPointImplementation { firSymbol.isStatic }
 
-    override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaJavaFieldSymbol> = entryPointImplementation {
         KaFirJavaFieldSymbolPointer(createOwnerPointer(), name, firSymbol.isStatic, this)
     }
 

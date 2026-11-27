@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -34,7 +34,7 @@ internal class KaFirDestructuringDeclarationSymbol private constructor(
     )
 
     override val psi: KtDestructuringDeclaration
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi ?: when (val psi = firSymbol.fir.psi) {
                 is KtDestructuringDeclaration -> psi
                 is KtParameter -> psi.destructuringDeclaration
@@ -50,18 +50,16 @@ internal class KaFirDestructuringDeclarationSymbol private constructor(
         }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val entries: List<KaVariableSymbol>
-        get() = withValidityAssertion {
-            context(analysisSession) {
-                psi.entries.map { entry ->
-                    entry.symbol
-                }
+        get() = entryPointImplementation {
+            psi.entries.map { entry ->
+                entry.symbol
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaDestructuringDeclarationSymbol>()
             ?: throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())
     }

@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.entryName
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -50,22 +50,22 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
     )
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = entryPointImplementation { psiOrSymbolAnnotationList() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = entryPointImplementation { emptyList() }
 
     override val returnType: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = entryPointImplementation { createReturnType() }
 
     override val isLateInit: Boolean
         // Note that for loop parameters having the `lateinit` keyword, the NON-PSI version returns `false`.
         // This happens because `lateinit` is not propagated to the FIR status of the loop parameter symbol.
         // See changes in KT-76578
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.LATEINIT_KEYWORD) ?: firSymbol.isLateInit }
 
     override val isDelegated: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 (backingPsi as? KtProperty)?.hasDelegate() == true
             } else {
@@ -73,7 +73,7 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }
 
         if (firSymbol.fir.source?.kind is KtFakeSourceElementKind.ScriptParameter) {
@@ -107,7 +107,7 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     }
 
     override val name: Name
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when (val backingPsi = backingPsi) {
                 null -> firSymbol.name
                 is KtProperty -> backingPsi.nameAsSafeName
@@ -119,7 +119,7 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
         }
 
     override val isVal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when (backingPsi) {
                 null -> firSymbol.isVal
                 is KtProperty -> !backingPsi.isVar
@@ -135,15 +135,15 @@ internal class KaFirErrorVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     constructor(symbol: FirErrorPropertySymbol, session: KaFirSession) : super(symbol, session)
 
     override val name: Name
-        get() = withValidityAssertion { FirErrorPropertySymbol.NAME }
+        get() = entryPointImplementation { FirErrorPropertySymbol.NAME }
 
     /**
      * Technically, the error PSI may have `var` modifier, but FIR doesn't propagate this information
      * and all [org.jetbrains.kotlin.fir.declarations.FirErrorProperty] has `val` modifier.
      */
     override val isVal: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     override val realPsi: PsiElement?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 }

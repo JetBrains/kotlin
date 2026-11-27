@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirContextParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -60,7 +60,7 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
     )
 
     override val name: Name
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // Currently, library elements are representing both context receiver and context parameters,
             // so there is no way to distinguish between them.
             // And by default they should be unnamed
@@ -70,15 +70,15 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType(builder) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaFirEmptyAnnotationList(token) }
+        get() = entryPointImplementation { KaFirEmptyAnnotationList(this.token) }
 
-    override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaContextParameterSymbol>()?.let { return it }
 
-        val ownerSymbol = context(analysisSession) { containingDeclaration }
+        val ownerSymbol = containingDeclaration
             ?: error("Containing declaration is expected for a context parameter symbol")
 
         val parameters = ownerSymbol.firSymbol.fir.contextParameters

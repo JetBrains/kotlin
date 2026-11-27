@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterFromDefaultSetterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -40,46 +40,46 @@ internal class KaFirDefaultSetterValueParameter(
         get() = owningKaSetter.analysisSession
 
     override val hasDefaultValue: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val hasDeclaredDefaultValue: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isVararg: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isCrossinline: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isNoinline: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isImplicitLambdaParameter: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val returnType: KaType
-        get() = withValidityAssertion { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType(builder) }
+        get() = entryPointImplementation { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType(builder) }
 
     override val psi: PsiElement?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override val name: Name
-        get() = withValidityAssertion { StandardNames.DEFAULT_VALUE_PARAMETER }
+        get() = entryPointImplementation { StandardNames.DEFAULT_VALUE_PARAMETER }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (owningKaSetter.owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) == false)
-                KaFirEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(this.token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = entryPointImplementation {
         KaFirValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), this)
     }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { owningKaSetter.origin }
+        get() = entryPointImplementation { owningKaSetter.origin }
 
     override fun equals(other: Any?): Boolean = other === this ||
             other is KaFirDefaultSetterValueParameter &&

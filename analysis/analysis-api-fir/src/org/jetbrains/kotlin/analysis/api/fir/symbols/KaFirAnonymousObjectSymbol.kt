@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -38,7 +38,7 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
     )
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             /**
              * For object literals, [backingPsi] is [KtObjectDeclaration].
              * However, annotations are placed on the enclosing [KtObjectLiteralExpression], i.e.,
@@ -55,9 +55,9 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
         }
 
     override val superTypes: List<KaType>
-        get() = withValidityAssertion { createSuperTypes() }
+        get() = entryPointImplementation { createSuperTypes() }
 
-    override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>()?.let { return it }
 
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)

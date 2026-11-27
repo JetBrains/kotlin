@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
@@ -36,11 +36,11 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaFirSessi
 
     val builder: KaSymbolByFirBuilder get() = analysisSession.firSymbolBuilder
 
-    override val origin: KaSymbolOrigin get() = withValidityAssertion { symbolOrigin() }
-    override val psi: PsiElement? get() = withValidityAssertion { findPsi() }
+    override val origin: KaSymbolOrigin get() = entryPointImplementation { symbolOrigin() }
+    override val psi: PsiElement? get() = entryPointImplementation { findPsi() }
 
     override val realPsi: PsiElement?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi ?: when (origin) {
                 KaSymbolOrigin.SOURCE,
                 KaSymbolOrigin.LIBRARY,
@@ -53,7 +53,7 @@ internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaFirSessi
         }
 
     override val anchorPsi: PsiElement?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             realPsi ?: firSymbol.source?.psi
         }
 }

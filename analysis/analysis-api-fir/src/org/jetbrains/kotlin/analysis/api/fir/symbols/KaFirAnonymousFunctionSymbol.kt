@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -51,7 +51,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
     )
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             /**
              * If this anonymous function is a function literal, [backingPsi] is [KtFunctionLiteral].
              * However, annotations are placed on the enclosing [KtLambdaExpression], i.e.,
@@ -68,29 +68,27 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
             psiOrSymbolAnnotationList(adjustedPsi ?: backingPsi)
         }
 
-    override val returnType: KaType get() = withValidityAssertion { createReturnType() }
+    override val returnType: KaType get() = entryPointImplementation { createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion {
-            context(analysisSession) {
-                KaFirReceiverParameterSymbol.create(
-                    // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
-                    backingPsi?.takeIf { it is KtNamedFunction },
-                    this,
-                )
-            }
+        get() = entryPointImplementation {
+            KaFirReceiverParameterSymbol.create(
+                // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
+                backingPsi?.takeIf { it is KtNamedFunction },
+                this,
+            )
         }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { createContextReceivers() }
+        get() = entryPointImplementation { createContextReceivers() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
         }
 
     override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // lambda may have an implicit argument, so we cannot check it by PSI
             if (backingPsi is KtNamedFunction || backingPsi is KtFunctionLiteral && backingPsi.arrow != null) {
                 createKaValueParameters()?.let { return it }
@@ -100,9 +98,9 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
         }
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
+        get() = entryPointImplementation { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
 
-    override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaAnonymousFunctionSymbol>()
             ?: throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }

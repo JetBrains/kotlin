@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -35,60 +35,60 @@ internal class KaFirSyntheticPropertySetterSymbol(
         get() = owningKaProperty.analysisSession
 
     override val isNotDefault: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isInline: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isOverride: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             firSymbol.isOverride || firSymbol.fir.propertySymbol.isOverride
         }
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { firSymbol.isExtension }
+        get() = entryPointImplementation { firSymbol.isExtension }
 
     @Deprecated("Use `isNotDefault` instead", replaceWith = ReplaceWith("isNotDefault"))
     override val hasBody: Boolean
-        get() = withValidityAssertion { firSymbol.fir.hasBody }
+        get() = entryPointImplementation { firSymbol.fir.hasBody }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion { firSymbol.kaSymbolModality }
+        get() = entryPointImplementation { firSymbol.kaSymbolModality }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }
+        get() = entryPointImplementation { firSymbol.visibility.asKaSymbolVisibility }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType(builder) }
 
     override val receiverParameter: KaReceiverParameterSymbol?
-        get() = withValidityAssertion { KaFirReceiverParameterSymbol.create(null, this, analysisSession = analysisSession) }
+        get() = entryPointImplementation { KaFirReceiverParameterSymbol.create(null, this, analysisSession = analysisSession) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override val callableId: CallableId?
-        get() = withValidityAssertion { firSymbol.delegateFunctionSymbol.callableId }
+        get() = entryPointImplementation { firSymbol.delegateFunctionSymbol.callableId }
 
     override val parameter: KaValueParameterSymbol
-        get() = withValidityAssertion { firSymbol.createKtValueParameters(builder).single() }
+        get() = entryPointImplementation { firSymbol.createKtValueParameters(builder).single() }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
+        get() = entryPointImplementation { firSymbol.fir.hasStableParameterNames }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
+        get() = entryPointImplementation { firSymbol.isEffectivelyExternal(analysisSession.firSession) }
 
-    override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = entryPointImplementation {
         KaFirPropertySetterSymbolPointer(propertySymbolPointer = createOwnerPointer(), this)
     }
 

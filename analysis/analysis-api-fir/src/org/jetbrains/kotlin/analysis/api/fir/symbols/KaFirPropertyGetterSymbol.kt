@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasRegularGetter
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPropertyGetterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -38,10 +38,10 @@ internal class KaFirPropertyGetterSymbol(
         get() = isExpectImpl
 
     override val isExtension: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val isNotDefault: Boolean
-        get() = withValidityAssertion { true }
+        get() = entryPointImplementation { true }
 
     @Deprecated("Use `!isNotDefault` instead", replaceWith = ReplaceWith("!isNotDefault"))
     override val isDefault: Boolean
@@ -78,7 +78,7 @@ internal class KaFirPropertyGetterSymbol(
     override val isExternal: Boolean
         get() = isExternalImpl
 
-    override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = entryPointImplementation {
         psiBasedSymbolPointerOfTypeIfSource<KaPropertyGetterSymbol>()
             ?: KaFirPropertyGetterSymbolPointer(propertySymbolPointer = owningKaProperty.createPointer(), originalSymbol = this)
     }

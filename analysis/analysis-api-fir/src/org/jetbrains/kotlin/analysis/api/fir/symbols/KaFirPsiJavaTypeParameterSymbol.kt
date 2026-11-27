@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -34,29 +34,29 @@ internal class KaFirPsiJavaTypeParameterSymbol(
     private val backingOrigin: KaSymbolOrigin = origin
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi.annotations.isEmpty())
-                KaFirEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(this.token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override val name: Name
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
         }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { backingOrigin }
+        get() = entryPointImplementation { backingOrigin }
 
     override val variance: Variance
-        get() = withValidityAssertion { Variance.INVARIANT }
+        get() = entryPointImplementation { Variance.INVARIANT }
 
     override val isReified: Boolean
-        get() = withValidityAssertion { false }
+        get() = entryPointImplementation { false }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi.owner is PsiClass) {
                 KaSymbolLocation.CLASS
             } else {

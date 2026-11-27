@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.isInlineClass
@@ -54,13 +54,13 @@ internal class KaFirNamedClassSymbol private constructor(
     )
 
     override val name: Name
-        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+        get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val superTypes: List<KaType>
-        get() = withValidityAssertion { createSuperTypes() }
+        get() = entryPointImplementation { createSuperTypes() }
 
     override val classId: ClassId?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 backingPsi.getClassId()
             } else {
@@ -69,26 +69,26 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.kaSymbolModality ?: firSymbol.modality.asKaSymbolModality
         }
 
     override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion { (backingPsi?.visibility ?: firSymbol.visibility).asKaSymbolVisibility }
+        get() = entryPointImplementation { (backingPsi?.visibility ?: firSymbol.visibility).asKaSymbolVisibility }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             psiOrSymbolAnnotationList()
         }
 
     override val isInner: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INNER_KEYWORD) ?: firSymbol.isInner }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.INNER_KEYWORD) ?: firSymbol.isInner }
 
     override val isData: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.DATA_KEYWORD) ?: firSymbol.isData }
+        get() = entryPointImplementation { backingPsi?.hasModifier(KtTokens.DATA_KEYWORD) ?: firSymbol.isData }
 
     override val isInline: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when {
                 backingPsi == null -> firSymbol.isInlineClass
                 backingPsi.hasModifier(KtTokens.INLINE_KEYWORD) -> true
@@ -98,7 +98,7 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val isValue: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) || backingPsi.hasModifier(KtTokens.INLINE_KEYWORD)
             } else {
@@ -107,18 +107,18 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingPsi?.isExternalDeclaration ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
+        get() = entryPointImplementation { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
-        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
+        get() = entryPointImplementation { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null && backingPsi.modifierList?.contextParameterList == null)
                 emptyList()
             else
@@ -126,7 +126,7 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val companionObject: KaNamedClassSymbol?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             if (backingPsi != null) {
                 backingPsi.companionObjects.firstOrNull()?.let {
                     return KaFirNamedClassSymbol(it, analysisSession)
@@ -144,12 +144,12 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters(builder)
         }
 
     override val classKind: KaClassKind
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when (backingPsi) {
                 null -> firSymbol.classKind.toKtClassKind(isCompanionObject = firSymbol.isCompanion)
                 is KtObjectDeclaration -> if (backingPsi.isCompanion()) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
@@ -165,5 +165,5 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion { backingPsi?.location ?: getSymbolKind() }
+        get() = entryPointImplementation { backingPsi?.location ?: getSymbolKind() }
 }
