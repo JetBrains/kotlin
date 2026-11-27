@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtConstantExpression at (42,11-15)
+    NULL_FOR_NONNULL_TYPE      text ranges: [(102,106)]
+      PSI: KtConstantExpression at (42,11-15)

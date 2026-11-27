@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
@@ -36,11 +32,11 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
  * @param classpathFinder Finds the file declaring a class anywhere on the classpath, to tell which module owns the class.
  */
 class CliJavaModuleResolver(
-    private val moduleGraph: JavaModuleGraph,
+    moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
-    private val systemModules: List<JavaModule.Explicit>,
+    systemModules: List<JavaModule.Explicit>,
     private val classpathFinder: CliVirtualFileFinder,
-) : JavaModuleResolver {
+) : AbstractJavaModuleResolver(moduleGraph, systemModules) {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
@@ -68,56 +64,19 @@ class CliJavaModuleResolver(
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
-    private fun findJavaModule(file: VirtualFile): JavaModule? {
-        if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig") {
-            return systemModules.firstOrNull { module -> file in module }
-        }
+    override fun findSourceModule(file: VirtualFile): JavaModule? = sourceModule
 
-        return when (file.fileType) {
-            KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
-            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
-            else -> null
-        }
-    }
-
-    private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-        moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
+    override fun findBinaryModule(file: VirtualFile): JavaModule? = userModules.firstOrNull { module -> file in module }
 
     /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
-        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
+        userModules.firstOrNull { module -> rootId in module } ?: findSystemModule(rootId)
 
     private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
         moduleRoots.any { root -> root.isBinary && root.id == rootId }
 
     override fun checkAccessibility(
-        fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
-    ): JavaModuleResolver.AccessError? =
-        checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedFile), referencedPackage)
-
-    override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedClassFile: BinaryClassFileHandle, referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? =
         checkAccessibility(fileFromOurModule?.let(this::findJavaModule), findJavaModule(referencedClassFile.rootId), referencedPackage)
-
-    private fun checkAccessibility(
-        ourModule: JavaModule?, theirModule: JavaModule?, referencedPackage: FqName?,
-    ): JavaModuleResolver.AccessError? {
-        if (ourModule?.name == theirModule?.name) return null
-
-        if (theirModule == null) {
-            return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
-        }
-
-        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name)) {
-            return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
-        }
-
-        val fqName = referencedPackage ?: return null
-        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
-            return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
-        }
-
-        return null
-    }
 }
