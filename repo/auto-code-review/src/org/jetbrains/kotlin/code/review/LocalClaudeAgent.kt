@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.code.review
 
+import org.jetbrains.kotlin.code.review.Agent.AuthMethod
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.schema.generator.json.serialization.SerializationClassJsonSchemaGenerator
@@ -24,32 +25,19 @@ import kotlin.reflect.KProperty
 
 class LocalClaudeAgent private constructor(
     private val project: LocalProject,
-    private val authMethod: AuthMethod,
+    private val configuration: AgentConfiguration,
     private val command: List<String>,
 ) : Agent {
-    sealed class AuthMethod {
-        /**
-         * Use the authentication configured for Claude Code in `~/.claude/settings.json` or environment variables.
-         */
-        object LocalConfiguration : AuthMethod()
-
-        /**
-         * Run Claude Code with `central run`, which provides the authentication.
-         * See https://www.jetbrains.com/help/central-cli/cli-agents.html.
-         */
-        class JetBrainsCentralRun(val binary: String) : AuthMethod()
-    }
-
     companion object {
-        suspend fun create(project: LocalProject, authMethod: AuthMethod): LocalClaudeAgent =
-            LocalClaudeAgent(project, authMethod, createCommand(authMethod))
+        suspend fun create(project: LocalProject, configuration: AgentConfiguration): LocalClaudeAgent =
+            LocalClaudeAgent(project, configuration, createCommand(configuration))
 
         private val json = Json {
             ignoreUnknownKeys = true
         }
 
         /**
-         * The value for `--model` when calling `claude`.
+         * The default value for `--model` when calling `claude`.
          *
          * The current mid-tier model. Per Anthropic's model documentation, Sonnet is
          * "the best combination of speed and intelligence" — the stronger tiers are
@@ -57,10 +45,10 @@ class LocalClaudeAgent private constructor(
          * high-volume, latency-sensitive tasks. See
          * https://platform.claude.com/docs/en/models/overview
          */
-        private const val MODEL = "claude-sonnet-5-5"
+        private const val DEFAULT_MODEL = "claude-sonnet-5-5"
 
         /**
-         * The value for `--effort` in when calling `claude`.
+         * The default value for `--effort` when calling `claude`.
          *
          * `medium` is the effort level recommended for this model for well-specified
          * agentic coding and multistep tool use, and a per-rule review invocation is
@@ -71,9 +59,15 @@ class LocalClaudeAgent private constructor(
          * Coincidentally, `medium` is the default effort level in Claude Code for this model at the moment of writing.
          * But it may change with CLI updates or account/organization configuration. Pin the level to keep it deterministic.
          */
-        private const val EFFORT = "medium"
+        private const val DEFAULT_EFFORT = "medium"
 
-        private suspend fun createCommand(authMethod: AuthMethod): List<String> = buildList {
+        private val AgentConfiguration.effectiveModel: String
+            get() = model ?: DEFAULT_MODEL
+
+        private val AgentConfiguration.effectiveEffort: String
+            get() = effort ?: DEFAULT_EFFORT
+
+        private suspend fun createCommand(configuration: AgentConfiguration): List<String> = buildList {
             val prompt = """
                 The input contains a code rule and the path to a file with a git diff of files subject to the rule.
                 Your task is to check whether this diff meets this rule, and report any violations.
@@ -100,7 +94,7 @@ class LocalClaudeAgent private constructor(
 
             val jsonSchemaString = Json.encodeToString(jsonSchema)
 
-            when (authMethod) {
+            when (configuration.authMethod) {
                 AuthMethod.LocalConfiguration -> {
                     add("claude")
 
@@ -109,7 +103,7 @@ class LocalClaudeAgent private constructor(
                 }
                 is AuthMethod.JetBrainsCentralRun -> {
                     // `central run` provides the authentication to Claude Code through environment variables.
-                    add(authMethod.binary)
+                    add(configuration.authMethod.binary)
                     add("run")
                     add("claude")
                     add("--")
@@ -126,9 +120,9 @@ class LocalClaudeAgent private constructor(
             add(jsonSchemaString)
 
             add("--model")
-            add(MODEL)
+            add(configuration.effectiveModel)
             add("--effort")
-            add(EFFORT)
+            add(configuration.effectiveEffort)
 
             // `dontAsk` means "allow only pre-approved tools, **don't ask** for more".
             add("--permission-mode")
@@ -173,7 +167,11 @@ class LocalClaudeAgent private constructor(
         private const val ANTHROPIC_AUTH_TOKEN = "ANTHROPIC_AUTH_TOKEN"
     }
 
-    override val info = AgentInfo("Claude Code", MODEL, EFFORT)
+    override val info = AgentInfo(
+        "Claude Code",
+        configuration.effectiveModel,
+        configuration.effectiveEffort,
+    )
 
     @Serializable
     private class AuthSettings(
@@ -232,7 +230,7 @@ class LocalClaudeAgent private constructor(
                 @OptIn(ExperimentalPathApi::class)
                 runDir.deleteRecursively()
             }
-            val claudeStdout = when (authMethod) {
+            val claudeStdout = when (configuration.authMethod) {
                 AuthMethod.LocalConfiguration -> executionResult.stdout
                 is AuthMethod.JetBrainsCentralRun -> {
                     // `central run` prints a message to stdout before running Claude Code.

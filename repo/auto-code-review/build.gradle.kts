@@ -83,10 +83,17 @@ tasks.register<CodeReviewTask>("reviewCode") {
         ) + listOfNotNull(base.getOrNull())
     }
 
-    val jetbrainsCentralProperty = "kotlin.autoCodeReview.useJetBrainsCentralCLI"
-    val jetbrainsCentralBinary = kotlinBuildProperties.stringProperty(jetbrainsCentralProperty)
+    val propagatedProperties = listOf(
+        "kotlin.autoCodeReview.useJetBrainsCentralCLI",
+        "kotlin.autoCodeReview.model",
+        "kotlin.autoCodeReview.effort",
+    ).map { name ->
+        kotlinBuildProperties.stringProperty(name)
+            .map { "-D$name=$it" }
+    }
+
     jvmArgumentProviders.add {
-        listOfNotNull(jetbrainsCentralBinary.orNull?.let { "-D$jetbrainsCentralProperty=$it" })
+        propagatedProperties.mapNotNull { it.orNull }
     }
 }
 
