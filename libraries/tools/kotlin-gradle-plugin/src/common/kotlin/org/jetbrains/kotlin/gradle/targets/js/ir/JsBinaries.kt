@@ -15,6 +15,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTa
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -381,6 +384,16 @@ internal class ExecutableWasmWasi(
         WasmComponentizeTask.register(compilation, componentTaskName()) {
             inputFile.set(wasmFileFromJsFileByMode())
             outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
+            wasiAdapterRequest.convention(
+                if (compilation.isMain()) {
+                    project.requestDefaultWasiAdapter()
+                } else {
+                    project.requestDefaultWasiAdapter(flavor = WasiAdapterFlavor.REACTOR)
+                }
+            )
+            if (compilation.isTest()) {
+                syntheticWitProjects.put("kotlin-test", TEST_WIT_WORLD)
+            }
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
@@ -389,6 +402,19 @@ internal class ExecutableWasmWasi(
 
     private fun componentTaskName(): String =
         "${linkTaskName}Componentize"
+
+    private companion object {
+        /**
+         * WIT world exporting the function which runs unit tests of the test compilation.
+         */
+        private val TEST_WIT_WORLD = """
+            package kotlin:test;
+
+            world test-world {
+                export startunittests: func();
+            }
+        """.trimIndent()
+    }
 }
 
 open class Library(

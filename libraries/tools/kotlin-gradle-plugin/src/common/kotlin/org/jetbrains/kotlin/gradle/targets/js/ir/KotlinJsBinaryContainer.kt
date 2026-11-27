@@ -68,11 +68,7 @@ constructor(
             when (compilation.wasmTarget) {
                 null -> Executable(jsCompilation, name, mode)
                 WasmTarget.JS -> ExecutableWasm(jsCompilation, name, mode)
-                WasmTarget.WASI -> if (compilation.isMain()) {
-                    ExecutableWasmWasi(jsCompilation, name, mode)
-                } else {
-                    ExecutableWasm(jsCompilation, name, mode)
-                }
+                WasmTarget.WASI -> ExecutableWasmWasi(jsCompilation, name, mode)
             }
         }
     )
