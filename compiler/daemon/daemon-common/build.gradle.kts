@@ -3,6 +3,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration") // via daemon-client
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -14,6 +15,7 @@ dependencies {
     api(project(":kotlin-build-common"))
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     api(kotlin("stdlib", coreDepsVersion))
+    compileOnly(libs.kotlinx.serialization.protobuf)
 }
 
 sourceSets {

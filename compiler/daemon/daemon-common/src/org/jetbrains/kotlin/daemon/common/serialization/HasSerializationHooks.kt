@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.serializability
+package org.jetbrains.kotlin.daemon.common.serialization
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
 
 /**
  * Marker interface for classes that can be serialized and deserialized for communication between BTA and the Daemon.
@@ -17,8 +20,8 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
  * For example, in [beforeSerialization] any in-process callbacks can be removed and their presence recorded. Then, in the daemon process,
  * these callbacks can be reconstructed based on the recorded information, and using a mechanism for sending remote [Message]s.
  */
-public interface BtaSerializable {
-    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+interface HasSerializationHooks {
+    fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
         return emptyList()
     }
 
@@ -29,5 +32,11 @@ public interface BtaSerializable {
      * The new mechanism using [messageReporter] should be preferred for new callbacks. The [compilerFacade] is provided as a fallback for
      * operations that cannot be performed using the new mechanism at this time, such as JPS incremental caches passing.
      */
-    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+    fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+}
+
+@OptIn(ExperimentalBuildToolsApi::class)
+interface SupportsNewDaemonMode<T> : BuildOperation<T>, HasSerializationHooks {
+    fun deserializeResult(serializedData: SerializedDataContainer): T
+    fun serializeResult(result: T): SerializedDataContainer
 }
