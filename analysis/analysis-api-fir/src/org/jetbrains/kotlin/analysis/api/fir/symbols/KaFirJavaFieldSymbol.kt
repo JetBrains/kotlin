@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -29,12 +28,12 @@ internal class KaFirJavaFieldSymbol(
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override val isVal: Boolean get() = entryPointImplementation { firSymbol.fir.isVal }
     override val name: Name get() = entryPointImplementation { firSymbol.name }
-    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType() }
 
     override val callableId: CallableId? get() = entryPointImplementation { firSymbol.getCallableId() }
 

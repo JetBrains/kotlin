@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.utils.ValidityAwareCachedValue
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 @Suppress("DEPRECATION")
 internal class KaFirBuiltInTypes(
     builtinTypes: BuiltinTypes,
-    private val builder: KaSymbolByFirBuilder,
-    override val token: KaLifetimeToken,
-) : KaBuiltinTypes() {
+    override val analysisSession: KaFirSession,
+) : KaBuiltinTypes(), KaFirSessionBoundOwner {
 
     override val int: KaType by cachedBuiltin(builtinTypes.intType)
     override val long: KaType by cachedBuiltin(builtinTypes.longType)
@@ -44,6 +43,6 @@ internal class KaFirBuiltInTypes(
     override val annotationType: KaType by cachedBuiltin(builtinTypes.annotationType)
 
     private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KaType> = cached {
-        builder.typeBuilder.buildKtType(builtinTypeRef)
+        analysisSession.firSymbolBuilder.typeBuilder.buildKtType(builtinTypeRef)
     }
 }

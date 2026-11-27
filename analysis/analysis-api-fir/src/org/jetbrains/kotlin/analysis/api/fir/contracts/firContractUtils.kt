@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.contracts
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.KaContractConstantType
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContractReturnsContractEffectDeclarations.KaFirContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContractReturnsContractEffectDeclarations.KaFirContractReturnsSpecificValueEffectDeclaration
@@ -26,16 +27,16 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+context(analysisSession: KaFirSession)
 internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
-    builder: KaSymbolByFirBuilder,
     firFunctionSymbol: KaFirNamedFunctionSymbol
 ): KaContractEffectDeclaration =
-    accept(ConeContractDescriptionElementToAnalysisApi(builder, firFunctionSymbol), Unit) as KaContractEffectDeclaration
+    accept(ConeContractDescriptionElementToAnalysisApi(analysisSession, firFunctionSymbol), Unit) as KaContractEffectDeclaration
 
 private class ConeContractDescriptionElementToAnalysisApi(
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
     private val firFunctionSymbol: KaFirNamedFunctionSymbol
-) : KtContractDescriptionVisitor<Any, Unit, ConeKotlinType, ConeDiagnostic>() {
+) : KtContractDescriptionVisitor<Any, Unit, ConeKotlinType, ConeDiagnostic>(), KaFirSessionBoundOwner {
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
@@ -51,9 +52,9 @@ private class ConeContractDescriptionElementToAnalysisApi(
     ): KaContractReturnsContractEffectDeclaration =
         when (val value = returnsEffect.value) {
             ConeContractConstantValues.NULL ->
-                KaFirContractReturnsSpecificValueEffectDeclaration(KaFirContractConstantValue(KaContractConstantType.NULL, builder.token))
-            ConeContractConstantValues.NOT_NULL -> KaFirContractReturnsNotNullEffectDeclaration(builder.token)
-            ConeContractConstantValues.WILDCARD -> KaFirContractReturnsSuccessfullyEffectDeclaration(builder.token)
+                KaFirContractReturnsSpecificValueEffectDeclaration(KaFirContractConstantValue(KaContractConstantType.NULL, token))
+            ConeContractConstantValues.NOT_NULL -> KaFirContractReturnsNotNullEffectDeclaration(token)
+            ConeContractConstantValues.WILDCARD -> KaFirContractReturnsSuccessfullyEffectDeclaration(token)
             is KtBooleanConstantReference -> KaFirContractReturnsSpecificValueEffectDeclaration(
                 KaFirContractConstantValue(
                     when (value) {
@@ -63,7 +64,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
                             withEntry("value", value) { value.toString() }
                         }
                     },
-                    builder.token
+                    token
                 )
             )
             else -> errorWithAttachment("Can't convert ${returnsEffect::class} to the Analysis API")  {
@@ -111,7 +112,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Unit): KaContractIsInstancePredicateExpression =
         KaFirContractIsInstancePredicateExpression(
             isInstancePredicate.arg.accept(),
-            builder.typeBuilder.buildKtType(isInstancePredicate.type),
+            analysisSession.firSymbolBuilder.typeBuilder.buildKtType(isInstancePredicate.type),
             isInstancePredicate.isNegated
         )
 
@@ -123,8 +124,8 @@ private class ConeContractDescriptionElementToAnalysisApi(
         data: Unit
     ): KaContractBooleanConstantExpression =
         when (booleanConstantDescriptor) {
-            ConeContractConstantValues.TRUE -> KaFirContractBooleanConstantExpression(true, builder.token)
-            ConeContractConstantValues.FALSE -> KaFirContractBooleanConstantExpression(false, builder.token)
+            ConeContractConstantValues.TRUE -> KaFirContractBooleanConstantExpression(true, token)
+            ConeContractConstantValues.FALSE -> KaFirContractBooleanConstantExpression(false, token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 
@@ -160,7 +161,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
     private fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference): KaContractParameterValue {
         val parameterSymbol = when (val index = valueParameterReference.parameterIndex) {
             -1 -> firFunctionSymbol.receiverParameter
-                ?: context(firFunctionSymbol.analysisSession) {
+                ?: context(analysisSession) {
                     val containingClass = firFunctionSymbol.containingDeclaration
                     requireWithAttachment(containingClass is KaClassSymbol, { "Unexpected containing class" }) {
                         if (containingClass != null) {

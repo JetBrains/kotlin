@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
@@ -26,7 +27,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
         get() = entryPointImplementation {
             firSymbol.resolvedBounds.mapNotNull { type ->
                 if (type.isNullableAny) return@mapNotNull null
-                builder.typeBuilder.buildKtType(type)
+                firSymbolBuilder.typeBuilder.buildKtType(type)
             }
         }
 

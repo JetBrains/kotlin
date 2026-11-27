@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.*
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -37,14 +39,13 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object FirAnnotationValueConverter {
-    context(session: KaSession)
+    context(analysisSession: KaFirSession)
     fun toNamedConstantValue(
         argumentMapping: Map<Name, FirExpression>,
-        builder: KaSymbolByFirBuilder,
     ): List<KaNamedAnnotationValue> = argumentMapping.map { [name, expression] ->
         KaFirNamedAnnotationValue(
             name,
-            expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(session.token),
+            expression.convertConstantExpression() ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
         )
     }
 
@@ -76,12 +77,12 @@ internal object FirAnnotationValueConverter {
         return constantValue?.let { KaConstantAnnotationValueImpl(it, session.token) }
     }
 
+    context(analysisSession: KaFirSession)
     private fun Collection<FirExpression>.convertVarargsExpression(
-        builder: KaSymbolByFirBuilder,
     ): Collection<KaAnnotationValue> {
         val flattenedVarargs = buildList {
             for (expr in this@convertVarargsExpression) {
-                val converted = expr.convertConstantExpression(builder) ?: continue
+                val converted = expr.convertConstantExpression() ?: continue
                 add(converted)
             }
         }
@@ -90,24 +91,25 @@ internal object FirAnnotationValueConverter {
     }
 
 
+    context(analysisSession: KaFirSession)
     fun toConstantValue(
         firExpression: FirExpression,
-        builder: KaSymbolByFirBuilder,
-    ): KaAnnotationValue? = firExpression.convertConstantExpression(builder)
+    ): KaAnnotationValue? = firExpression.convertConstantExpression()
 
-    private fun FirExpression.convertConstantExpression(builder: KaSymbolByFirBuilder): KaAnnotationValue? {
-        val session = builder.rootSession
-        val token = builder.analysisSession.token
+    context(analysisSession: KaFirSession)
+    private fun FirExpression.convertConstantExpression(): KaAnnotationValue? {
+        val session = analysisSession.firSession
+        val token = analysisSession.token
         val sourcePsi = psi as? KtElement
 
         return when (this) {
-            is FirLiteralExpression -> convertConstantExpression(session = builder.analysisSession)
+            is FirLiteralExpression -> convertConstantExpression()
             is FirNamedArgumentExpression -> {
-                expression.convertConstantExpression(builder)
+                expression.convertConstantExpression()
             }
 
             is FirSpreadArgumentExpression -> {
-                expression.convertConstantExpression(builder)
+                expression.convertConstantExpression()
             }
 
             is FirVarargArgumentsExpression -> {
@@ -116,13 +118,13 @@ internal object FirAnnotationValueConverter {
                 // In this case, unwrap it.
                 val representativePsi = (sourcePsi as? KtValueArgument)?.getArgumentExpression() ?: sourcePsi
 
-                val annotationValues = arguments.convertVarargsExpression(builder)
+                val annotationValues = arguments.convertVarargsExpression()
                 KaArrayAnnotationValueImpl(annotationValues, representativePsi, token)
             }
 
             is FirCollectionLiteral -> {
                 // Desugared collection literals.
-                KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(builder), sourcePsi, token)
+                KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(), sourcePsi, token)
             }
 
             is FirFunctionCall -> {
@@ -136,13 +138,13 @@ internal object FirAnnotationValueConverter {
                             }
                         }
 
-                        createNestedAnnotation(builder, psi, annotationSymbol, argumentMapping)
+                        createNestedAnnotation(psi, annotationSymbol, argumentMapping)
                     }
 
                     is FirNamedFunctionSymbol -> {
                         // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
-                            argumentList.arguments.singleOrNull()?.convertConstantExpression(builder)
+                            argumentList.arguments.singleOrNull()?.convertConstantExpression()
                                 ?: KaArrayAnnotationValueImpl(emptyList(), sourcePsi, token)
                         else null
                     }
@@ -157,7 +159,7 @@ internal object FirAnnotationValueConverter {
 
             is FirAnnotation -> {
                 val annotationSymbol = annotationTypeRef.toRegularClassSymbol(session) ?: return null
-                createNestedAnnotation(builder, psi, annotationSymbol, argumentMapping.mapping)
+                createNestedAnnotation(psi, annotationSymbol, argumentMapping.mapping)
             }
 
             is FirPropertyAccessExpression -> {
@@ -180,38 +182,38 @@ internal object FirAnnotationValueConverter {
 
                 if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
                     val classId = coneType.lookupTag.classId
-                    val type = builder.typeBuilder.buildKtType(coneType)
+                    val type = firSymbolBuilder.typeBuilder.buildKtType(coneType)
                     KaClassLiteralAnnotationValueImpl(type, classId, sourcePsi, token)
                 } else {
                     val classId = computeErrorCallClassId(this)
                     val diagnostic = classId?.let(::ConeUnresolvedSymbolError) ?: ConeSimpleDiagnostic("Unresolved class reference")
-                    val errorType = builder.typeBuilder.buildKtType(ConeErrorType(diagnostic))
+                    val errorType = firSymbolBuilder.typeBuilder.buildKtType(ConeErrorType(diagnostic))
                     KaClassLiteralAnnotationValueImpl(errorType, classId, sourcePsi, token)
                 }
             }
 
             else -> null
-        } ?: FirCompileTimeConstantEvaluator.evaluate(this, builder.rootSession)
-            ?.let { it.convertConstantExpression(session = builder.analysisSession) }
+        } ?: FirCompileTimeConstantEvaluator.evaluate(this, analysisSession.firSession)
+            ?.convertConstantExpression()
     }
 
+    context(analysisSession: KaFirSession)
     private fun createNestedAnnotation(
-        builder: KaSymbolByFirBuilder,
         psi: PsiElement?,
         annotationSymbol: FirRegularClassSymbol,
         argumentMapping: Map<Name, FirExpression>
     ): KaAnnotationValue? {
-        val primaryConstructor = annotationSymbol.findAnnotationConstructor(session = builder.rootSession) ?: return null
-        val token = builder.analysisSession.token
+        val primaryConstructor = annotationSymbol.findAnnotationConstructor(session = analysisSession.firSession) ?: return null
+        val token = analysisSession.token
         return KaNestedAnnotationAnnotationValueImpl(
             KaAnnotationImpl(
                 classId = annotationSymbol.classId,
                 psi = psi.asKtCallElement(),
                 lazyArguments = if (argumentMapping.isNotEmpty())
-                    lazy { toNamedConstantValue(argumentMapping, builder, session = builder.analysisSession) }
+                    lazy { toNamedConstantValue(argumentMapping) }
                 else
                     lazyOf(emptyList()),
-                constructorSymbol = builder.functionBuilder.buildConstructorSymbol(primaryConstructor),
+                constructorSymbol = firSymbolBuilder.functionBuilder.buildConstructorSymbol(primaryConstructor),
                 token = token
             ),
             token,

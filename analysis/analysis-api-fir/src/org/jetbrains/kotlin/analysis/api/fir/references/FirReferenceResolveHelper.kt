@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -45,18 +46,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 
 internal object FirReferenceResolveHelper {
-    fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KaSymbolByFirBuilder): KaSymbol? {
+    context(analysisSession: KaFirSession)
+    fun FirResolvedTypeRef.toTargetSymbol(session: FirSession): KaSymbol? {
         // When you call a method from Java with type arguments, in FIR they are currently represented as flexible types.
         // TODO Consider handling other non-ConeLookupTagBasedType types here (see KT-66418)
         val type = getDeclaredType()?.lowerBoundIfFlexible() as? ConeLookupTagBasedType
 
-        return type?.toTargetSymbol(session, symbolBuilder) ?: run {
+        return type?.toTargetSymbol(session) ?: run {
             val diagnostic = (this as? FirErrorTypeRef)?.diagnostic
-            (diagnostic as? ConeUnmatchedTypeArgumentsError)?.symbol?.fir?.buildSymbol(symbolBuilder)
+            (diagnostic as? ConeUnmatchedTypeArgumentsError)?.symbol?.fir?.buildSymbol()
         }
     }
 
-    private fun ConeKotlinType.toTargetSymbol(session: FirSession, symbolBuilder: KaSymbolByFirBuilder): KaSymbol? {
+    context(analysisSession: KaFirSession)
+    private fun ConeKotlinType.toTargetSymbol(session: FirSession): KaSymbol? {
         val type = abbreviatedTypeOrSelf as? ConeLookupTagBasedType
         val resolvedSymbol = type?.lookupTag?.toSymbol(session) as? FirBasedSymbol<*>
 
@@ -65,16 +68,16 @@ internal object FirReferenceResolveHelper {
             (diagnostic as? ConeUnmatchedTypeArgumentsError)?.symbol
         }
 
-        return symbol?.fir?.buildSymbol(symbolBuilder)
+        return symbol?.fir?.buildSymbol()
     }
 
     private fun FirResolvedTypeRef.getDeclaredType() =
         if (this.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter) coneType.arrayElementType()
         else coneType
 
+    context(analysisSession: KaFirSession)
     private fun ClassId.toTargetPsi(
         session: FirSession,
-        symbolBuilder: KaSymbolByFirBuilder,
         calleeReference: FirReference? = null,
     ): KaSymbol? {
         val classLikeDeclaration = this.toSymbol(session)?.fir
@@ -83,18 +86,18 @@ internal object FirReferenceResolveHelper {
                 val callee = calleeReference.resolvedSymbol.fir as? FirCallableDeclaration
                 // TODO: check callee owner directly?
                 if (callee !is FirConstructor && callee?.isStatic != true) {
-                    classLikeDeclaration.companionObjectSymbol?.let { return it.fir.buildSymbol(symbolBuilder) }
+                    classLikeDeclaration.companionObjectSymbol?.let { return it.fir.buildSymbol() }
                 }
             }
         }
-        return classLikeDeclaration?.buildSymbol(symbolBuilder)
+        return classLikeDeclaration?.buildSymbol()
     }
 
+    context(analysisSession: KaFirSession)
     private fun getPackageSymbolFor(
         expression: KtSimpleNameExpression,
-        symbolBuilder: KaSymbolByFirBuilder,
     ): KaPackageSymbol? {
-        return symbolBuilder.createPackageSymbolIfOneExists(getQualifierSelected(expression, forQualifiedType = true))
+        return firSymbolBuilder.createPackageSymbolIfOneExists(getQualifierSelected(expression, forQualifiedType = true))
     }
 
     fun getQualifierSelected(expression: KtSimpleNameExpression, forQualifiedType: Boolean): FqName {
@@ -157,9 +160,9 @@ internal object FirReferenceResolveHelper {
      *
      * [getSymbolsByResolvedImport] only covers simple imports, but not star imports.
      */
+    context(analysisSession: KaFirSession)
     fun getSymbolsByResolvedImport(
         expression: KtSimpleNameExpression,
-        builder: KaSymbolByFirBuilder,
         fir: FirResolvedImport,
         session: FirSession,
     ): List<KaSymbol> {
@@ -168,7 +171,7 @@ internal object FirReferenceResolveHelper {
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
         val packageFqName = fir.packageFqName
         if (packageFqName.startsWith(selectedFqName)) {
-            return listOf(builder.createPackageSymbol(selectedFqName))
+            return listOf(firSymbolBuilder.createPackageSymbol(selectedFqName))
         }
 
         val fullFqName = fir.importedFqName
@@ -198,26 +201,26 @@ internal object FirReferenceResolveHelper {
         return buildList {
             if (selectedFqName == fullFqName) {
                 // callables cannot be used as receiver expressions in imports
-                scope.processFunctionsByName(selectedName) { add(it.fir.buildSymbol(builder)) }
-                scope.processPropertiesByName(selectedName) { add(it.fir.buildSymbol(builder)) }
+                scope.processFunctionsByName(selectedName) { add(it.fir.buildSymbol()) }
+                scope.processPropertiesByName(selectedName) { add(it.fir.buildSymbol()) }
             }
-            scope.processClassifiersByName(selectedName) { addIfNotNull(it.fir.buildSymbol(builder)) }
+            scope.processClassifiersByName(selectedName) { addIfNotNull(it.fir.buildSymbol()) }
         }
     }
 
+    context(analysisSession: KaFirSession)
     fun getSymbolsForResolvedTypeRef(
         fir: FirResolvedTypeRef,
         expression: KtSimpleNameExpression,
         session: FirSession,
-        symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
         if (!expression.isPartOfUserTypeRefQualifier()) {
-            return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
+            return listOfNotNull(fir.toTargetSymbol(session))
         }
 
         if (fir is FirErrorTypeRef) {
-            tryGettingSymbolFromPartiallyResolvedType(fir, expression, session, symbolBuilder).ifNotEmpty { return this }
-            return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder))
+            tryGettingSymbolFromPartiallyResolvedType(fir, expression, session).ifNotEmpty { return this }
+            return listOfNotNull(getPackageSymbolFor(expression))
         }
 
         fun unwrapType(type: PsiElement?): KtTypeElement = when (type) {
@@ -239,15 +242,15 @@ internal object FirReferenceResolveHelper {
         }
 
         val firClassSymbol = classifier
-            ?: return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder))
-        return listOf(symbolBuilder.classifierBuilder.buildClassifierSymbol(firClassSymbol))
+            ?: return listOfNotNull(getPackageSymbolFor(expression))
+        return listOf(firSymbolBuilder.classifierBuilder.buildClassifierSymbol(firClassSymbol))
     }
 
+    context(analysisSession: KaFirSession)
     private tailrec fun tryGettingSymbolFromPartiallyResolvedType(
         typeRef: FirTypeRef?,
         expression: KtSimpleNameExpression,
         session: FirSession,
-        symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
         return when (typeRef) {
             null -> emptyList()
@@ -256,11 +259,10 @@ internal object FirReferenceResolveHelper {
                     typeRef.partiallyResolvedTypeRef,
                     expression,
                     session,
-                    symbolBuilder,
                 )
             }
             is FirResolvedTypeRef -> {
-                getSymbolsForResolvedTypeRef(typeRef, expression, session, symbolBuilder)
+                getSymbolsForResolvedTypeRef(typeRef, expression, session)
             }
             else -> throwUnexpectedFirElementError(
                 typeRef,
@@ -271,11 +273,11 @@ internal object FirReferenceResolveHelper {
         }
     }
 
+    context(analysisSession: KaFirSession)
     fun getSymbolsForResolvedQualifier(
         fir: FirResolvedQualifier,
         expression: KtSimpleNameExpression,
         session: FirSession,
-        symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
         val referencedSymbol = when (val symbol = fir.qualifierSymbol) {
             // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
@@ -291,10 +293,10 @@ internal object FirReferenceResolveHelper {
                     parent.receiverExpression -> listOf(expression.getReferencedName())
                     else -> return emptyList()
                 }
-            return listOfNotNull(symbolBuilder.createPackageSymbolIfOneExists(FqName.fromSegments(fqNameSegments)))
+            return listOfNotNull(firSymbolBuilder.createPackageSymbolIfOneExists(FqName.fromSegments(fqNameSegments)))
         }
         val referencedClass = referencedSymbol.fir
-        val referencedSymbolsByFir = listOfNotNull(symbolBuilder.buildSymbol(referencedSymbol))
+        val referencedSymbolsByFir = listOfNotNull(firSymbolBuilder.buildSymbol(referencedSymbol))
         val fullQualifiedAccess = when (val psi = fir.source.psi) {
             // for cases like `Foo.Bar()`, where `Foo.Bar` is an object, and `Foo.Bar()` is a call to `invoke` operator
             is KtSimpleNameExpression -> psi.getQualifiedElement()
@@ -361,7 +363,7 @@ internal object FirReferenceResolveHelper {
             // Handle nested classes.
             while (classId != null) {
                 if (expression === qualifiedAccess.selectorExpression?.referenceExpression()) {
-                    return listOfNotNull(classId.toTargetPsi(session, symbolBuilder))
+                    return listOfNotNull(classId.toTargetPsi(session))
                 }
                 val outerClassId = classId.outerClassId
                 val receiverExpression = qualifiedAccess.receiverExpression
@@ -371,9 +373,9 @@ internal object FirReferenceResolveHelper {
                     // `outerClassId`.
                     if (receiverExpression == expression) {
                         // If there is still an outer class, then return symbol of that class
-                        outerClassId?.let { return listOfNotNull(it.toTargetPsi(session, symbolBuilder)) }
+                        outerClassId?.let { return listOfNotNull(it.toTargetPsi(session)) }
                         // Otherwise, it should be a package, so we return that
-                        return listOfNotNull(symbolBuilder.createPackageSymbolIfOneExists(classId.packageFqName))
+                        return listOfNotNull(firSymbolBuilder.createPackageSymbolIfOneExists(classId.packageFqName))
                     } else {
                         // This is unexpected. The code probably contains some weird structures. In this case, we just fail the resolution
                         // with zero results.
@@ -389,7 +391,7 @@ internal object FirReferenceResolveHelper {
 
             while (!packageFqName.isRoot) {
                 if (expression === qualifiedAccess.selectorExpression) {
-                    return listOfNotNull(symbolBuilder.createPackageSymbolIfOneExists(packageFqName))
+                    return listOfNotNull(firSymbolBuilder.createPackageSymbolIfOneExists(packageFqName))
                 }
                 val parentPackageFqName = packageFqName.parent()
                 val receiverExpression = qualifiedAccess.receiverExpression
@@ -397,7 +399,7 @@ internal object FirReferenceResolveHelper {
                     // If the receiver is not a KtDotQualifiedExpression, it means we are hitting the end of nested receivers. In other
                     // words, this receiver expression should be pointing at a top-level package now.
                     if (receiverExpression == expression) {
-                        return listOfNotNull(symbolBuilder.createPackageSymbolIfOneExists(parentPackageFqName))
+                        return listOfNotNull(firSymbolBuilder.createPackageSymbolIfOneExists(parentPackageFqName))
                     } else {
                         // This is unexpected. The code probably contains some weird structures. In this case, we just fail the resolution
                         // with zero results.

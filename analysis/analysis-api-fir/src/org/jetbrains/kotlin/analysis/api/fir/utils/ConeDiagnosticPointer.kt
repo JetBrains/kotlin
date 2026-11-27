@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
@@ -17,20 +16,20 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 
 internal interface ConeDiagnosticPointer {
     companion object {
-        fun create(
-            coneDiagnostic: ConeDiagnostic,
-            builder: KaSymbolByFirBuilder,
-            guard: ConeTypeRecursionGuard,
-        ): ConeDiagnosticPointer {
+        context(analysisSession: KaFirSession)
+        fun create(coneDiagnostic: ConeDiagnostic, guard: ConeTypeRecursionGuard): ConeDiagnosticPointer {
             return when (coneDiagnostic) {
-                is ConeTypeVariableTypeIsNotInferred -> ConeTypeVariableTypeIsNotInferredDiagnosticPointer(coneDiagnostic, builder, guard)
-                is ConeCannotInferTypeParameterType -> ConeCannotInferTypeParameterTypeDiagnosticPointer(coneDiagnostic, builder)
+                is ConeTypeVariableTypeIsNotInferred ->
+                    ConeTypeVariableTypeIsNotInferredDiagnosticPointer(coneDiagnostic, analysisSession, guard)
+                is ConeCannotInferTypeParameterType -> ConeCannotInferTypeParameterTypeDiagnosticPointer(coneDiagnostic, analysisSession)
                 is ConeUnresolvedReferenceError -> ConeUnresolvedReferenceErrorDiagnosticPointer(coneDiagnostic)
                 is ConeUnresolvedSymbolError -> ConeUnresolvedSymbolErrorDiagnosticPointer(coneDiagnostic)
                 is ConeUnresolvedNameError -> ConeUnresolvedNameErrorDiagnosticPointer(coneDiagnostic)
-                is ConeUnresolvedTypeQualifierError -> ConeUnresolvedTypeQualifierErrorDiagnosticPointer(coneDiagnostic, builder, guard)
-                is ConeNoTypeArgumentsOnRhsError -> ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(coneDiagnostic, builder)
-                is ConeWrongNumberOfTypeArgumentsError -> ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(coneDiagnostic, builder)
+                is ConeUnresolvedTypeQualifierError ->
+                    ConeUnresolvedTypeQualifierErrorDiagnosticPointer(coneDiagnostic, analysisSession, guard)
+                is ConeNoTypeArgumentsOnRhsError -> ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(coneDiagnostic, analysisSession)
+                is ConeWrongNumberOfTypeArgumentsError ->
+                    ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(coneDiagnostic, analysisSession)
                 else -> ConeGenericDiagnosticPointer(coneDiagnostic)
             }
         }
@@ -42,9 +41,11 @@ internal interface ConeDiagnosticPointer {
 
 private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
     coneDiagnostic: ConeCannotInferTypeParameterType,
-    builder: KaSymbolByFirBuilder
+    analysisSession: KaFirSession
 ) : ConeDiagnosticPointer {
-    private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneDiagnostic.typeParameter).createPointer()
+    private val typeParameterPointer = analysisSession.firSymbolBuilder.classifierBuilder
+        .buildTypeParameterSymbol(coneDiagnostic.typeParameter)
+        .createPointer()
     private val reason = coneDiagnostic.reason
 
     context(analysisSession: KaFirSession)
@@ -56,10 +57,10 @@ private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
 
 private class ConeTypeVariableTypeIsNotInferredDiagnosticPointer(
     coneDiagnostic: ConeTypeVariableTypeIsNotInferred,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
     guard: ConeTypeRecursionGuard,
 ) : ConeDiagnosticPointer {
-    private val typePointer = coneDiagnostic.typeVariableType.createPointer(builder, guard)
+    private val typePointer = coneDiagnostic.typeVariableType.createPointer(guard, analysisSession = analysisSession)
     private val reason = coneDiagnostic.reason
 
     context(analysisSession: KaFirSession)
@@ -89,10 +90,10 @@ private class ConeUnresolvedSymbolErrorDiagnosticPointer(coneDiagnostic: ConeUnr
 
 private class ConeUnresolvedTypeQualifierErrorDiagnosticPointer(
     coneDiagnostic: ConeUnresolvedTypeQualifierError,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
     guard: ConeTypeRecursionGuard,
 ) : ConeDiagnosticPointer {
-    private val qualifierPointers = coneDiagnostic.qualifiers.map { FirQualifierPartPointer(it, builder, guard) }
+    private val qualifierPointers = coneDiagnostic.qualifiers.map { FirQualifierPartPointer(it, analysisSession, guard) }
 
     context(analysisSession: KaFirSession)
     override fun restore(guard: ConeTypeRecursionGuard): ConeDiagnostic? {
@@ -119,10 +120,12 @@ private class ConeUnresolvedNameErrorDiagnosticPointer(coneDiagnostic: ConeUnres
 
 private class ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(
     coneDiagnostic: ConeNoTypeArgumentsOnRhsError,
-    builder: KaSymbolByFirBuilder
+    analysisSession: KaFirSession
 ) : ConeDiagnosticPointer {
     private val desiredCount = coneDiagnostic.desiredCount
-    private val symbolPointer = builder.classifierBuilder.buildClassLikeSymbol(coneDiagnostic.symbol).createPointer()
+    private val symbolPointer = analysisSession.firSymbolBuilder.classifierBuilder
+        .buildClassLikeSymbol(coneDiagnostic.symbol)
+        .createPointer()
 
     context(analysisSession: KaFirSession)
     override fun restore(guard: ConeTypeRecursionGuard): ConeDiagnostic? {
@@ -133,10 +136,12 @@ private class ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(
 
 private class ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(
     coneDiagnostic: ConeWrongNumberOfTypeArgumentsError,
-    builder: KaSymbolByFirBuilder
+    analysisSession: KaFirSession
 ) : ConeDiagnosticPointer {
     private val desiredCount = coneDiagnostic.desiredCount
-    private val symbolPointer = builder.classifierBuilder.buildClassLikeSymbol(coneDiagnostic.symbol).createPointer()
+    private val symbolPointer = analysisSession.firSymbolBuilder.classifierBuilder
+        .buildClassLikeSymbol(coneDiagnostic.symbol)
+        .createPointer()
     private val sourcePointer = coneDiagnostic.source.createPointer()
     private val forDeprecation = coneDiagnostic.isDeprecationErrorForCallableReferenceLhs
 

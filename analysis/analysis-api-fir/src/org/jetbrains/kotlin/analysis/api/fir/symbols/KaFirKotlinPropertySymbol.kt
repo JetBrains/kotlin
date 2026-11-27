@@ -79,7 +79,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = entryPointImplementation {
-            createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createKtTypeParameters()
         }
 
     open val compilerVisibilityByPsi: Visibility?
@@ -251,7 +251,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     override val contextParameters: List<KaContextParameterSymbol>
         get() = entryPointImplementation {
-            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+            createKaContextParameters() ?: firSymbol.createKaContextParameters()
         }
 
     override val isVal: Boolean
@@ -359,7 +359,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                 return null
             }
 
-            firSymbol.getKtConstantInitializer(builder)
+            firSymbol.getKtConstantInitializer()
         }
 
     @Deprecated(
@@ -523,7 +523,7 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val initializer: KaInitializerValue?
         get() = entryPointImplementation {
             backingPsi?.takeIf { it.containingClassOrObject?.isAnnotation() != true }
-                ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
+                ?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer()
         }
 
     @Deprecated(
@@ -656,7 +656,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
      */
     override val initializer: KaInitializerValue?
         get() = entryPointImplementation {
-            backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer(builder)
+            backingPsi?.let(::KaNonConstantInitializerValue) ?: firSymbol.getKtConstantInitializer()
         }
 
     @Deprecated(

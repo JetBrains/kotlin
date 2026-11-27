@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -65,11 +64,12 @@ fun isSubclassOf(
 /**
  * @see org.jetbrains.kotlin.analysis.api.types.KaType.abbreviation
  */
-internal fun KaSymbolByFirBuilder.buildAbbreviatedType(coneType: ConeClassLikeType): KaUsualClassType? {
+context(analysisSession: KaFirSession)
+internal fun buildAbbreviatedType(coneType: ConeClassLikeType): KaUsualClassType? {
     return coneType.abbreviatedType?.let { abbreviatedConeType ->
         // If the resulting type is an error type, the abbreviated type couldn't be resolved. As per the contract of
         // `KaType.abbreviatedType`, we should return `null` in such cases. The user can then fall back to the expanded type.
-        typeBuilder.buildKtType(abbreviatedConeType) as? KaUsualClassType
+        abbreviatedConeType.asKaType() as? KaUsualClassType
     }
 }
 
@@ -245,24 +245,24 @@ private fun <T : ConeKotlinType> T.adjustSupertypeNullability(
     return withNullability(isMarkedNullable || subType.isMarkedNullable, typeContext)
 }
 
+context(analysisSession: KaFirSession)
 internal fun <C : ConeKotlinType, T : KaType> createTypePointer(
     coneType: C,
-    builder: KaSymbolByFirBuilder,
-    typeFactory: (C, KaSymbolByFirBuilder) -> T?,
+    typeFactory: (C, KaFirSession) -> T?,
 ): KaTypePointer<T> {
-    val coneTypePointer = coneType.createPointer(builder, ConeTypeRecursionGuard())
+    val coneTypePointer = coneType.createPointer(ConeTypeRecursionGuard())
     return KaGenericTypePointer(coneTypePointer, typeFactory)
 }
 
 private class KaGenericTypePointer<C : ConeKotlinType, T : KaType>(
     private val coneTypePointer: ConeTypePointer<C>,
-    private val typeFactory: (C, KaSymbolByFirBuilder) -> T?,
+    private val typeFactory: (C, KaFirSession) -> T?,
 ) : KaTypePointer<T> {
     override fun restore(session: KaSession): T? {
         requireIsInstance<KaFirSession>(session)
 
         val coneType = coneTypePointer.restore(analysisSession = session, guard = ConeTypeRecursionGuard()) ?: return null
-        return typeFactory(coneType, session.firSymbolBuilder)
+        return typeFactory(coneType, session)
     }
 }
 

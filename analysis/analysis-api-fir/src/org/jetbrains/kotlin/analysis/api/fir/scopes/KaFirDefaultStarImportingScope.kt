@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirDefaultStarImportingScope(
     firScope: FirDefaultStarImportingScope,
     analysisSession: KaFirSession,
-) : KaFirBasedScope<FirDefaultStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
+) : KaFirBasedScope<FirDefaultStarImportingScope>(firScope, analysisSession) {
 
     private val firstWrappedScope = KaFirStarImportingScope(firScope.first, analysisSession)
     private val secondWrappedScope = KaFirStarImportingScope(firScope.second, analysisSession)

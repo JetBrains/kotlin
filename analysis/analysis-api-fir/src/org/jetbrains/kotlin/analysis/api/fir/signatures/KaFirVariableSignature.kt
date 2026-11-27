@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.signatures
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
@@ -73,59 +73,57 @@ internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVaria
 }
 
 internal class KaFirVariableDummySignature<out S : KaVariableSymbol>(
-    override val token: KaLifetimeToken,
     override val firSymbol: FirVariableSymbol<*>,
-    override val firSymbolBuilder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaFirVariableSignature<S>() {
     @Suppress("UNCHECKED_CAST")
-    override val symbol: S get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
-    override val returnType: KaType get() = withValidityAssertion { symbol.returnType }
-    override val receiverType: KaType? get() = withValidityAssertion { symbol.receiverType }
+    override val symbol: S get() = entryPointImplementation { firSymbol.buildSymbol() as S }
+    override val returnType: KaType get() = entryPointImplementation { symbol.returnType }
+    override val receiverType: KaType? get() = entryPointImplementation { symbol.receiverType }
     override val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> by cached {
-        firSymbol.fir.contextParameters.map { KaFirVariableDummySignature(token, it.symbol, firSymbolBuilder) }
+        firSymbol.fir.contextParameters.map { KaFirVariableDummySignature(it.symbol, analysisSession) }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+    override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = entryPointImplementation {
+        if (substitutor is KaSubstitutor.Empty) return@entryPointImplementation this
         require(substitutor is AbstractKaFirSubstitutor<*>)
 
-        KaFirVariableSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, substitutor.substitutor)
+        KaFirVariableSubstitutorBasedSignature(firSymbol, analysisSession, substitutor.substitutor)
     }
 }
 
 internal class KaFirVariableSubstitutorBasedSignature<out S : KaVariableSymbol>(
-    override val token: KaLifetimeToken,
     override val firSymbol: FirVariableSymbol<*>,
-    override val firSymbolBuilder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
     override val coneSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty,
 ) : KaFirVariableSignature<S>(), SubstitutorBasedSignature {
     @Suppress("UNCHECKED_CAST")
-    override val symbol: S get() = withValidityAssertion { firSymbol.buildSymbol(firSymbolBuilder) as S }
+    override val symbol: S get() = entryPointImplementation { firSymbol.buildSymbol() as S }
     override val returnType: KaType by cached {
         val isVarargValueParameter = (firSymbol as? FirValueParameterSymbol)?.isVararg == true
         val coneType = firSymbol.resolvedReturnType.applyIf(isVarargValueParameter) { arrayElementType() ?: this }
 
-        firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(coneType))
+        analysisSession.firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(coneType))
     }
 
     override val receiverType: KaType? by cached {
         firSymbol.resolvedReceiverType?.let { type ->
-            firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(type))
+            analysisSession.firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(type))
         }
     }
 
     override val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> by cached {
         firSymbol.fir.contextParameters.map {
-            KaFirVariableSubstitutorBasedSignature(token, it.symbol, firSymbolBuilder, coneSubstitutor)
+            KaFirVariableSubstitutorBasedSignature(it.symbol, analysisSession, coneSubstitutor)
         }
     }
 
-    override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = withValidityAssertion {
-        if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
+    override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = entryPointImplementation {
+        if (substitutor is KaSubstitutor.Empty) return@entryPointImplementation this
         require(substitutor is AbstractKaFirSubstitutor<*>)
         val chainedSubstitutor = ChainedSubstitutor(coneSubstitutor, substitutor.substitutor)
 
-        KaFirVariableSubstitutorBasedSignature(token, firSymbol, firSymbolBuilder, chainedSubstitutor)
+        KaFirVariableSubstitutorBasedSignature(firSymbol, analysisSession, chainedSubstitutor)
     }
 
     override fun equals(other: Any?): Boolean =

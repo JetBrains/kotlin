@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
@@ -21,24 +21,23 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KaFirDefinitelyNotNullType(
     override val coneType: ConeDefinitelyNotNullType,
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaDefinitelyNotNullType(), KaFirType {
-    override val token: KaLifetimeToken get() = builder.token
-    override val original: KaType = withValidityAssertion { builder.typeBuilder.buildKtType(this.coneType.original) }
+    override val original: KaType = entryPointImplementation { firSymbolBuilder.typeBuilder.buildKtType(this.coneType.original) }
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForType.create(coneType, builder)
+        get() = entryPointImplementation {
+            KaFirAnnotationListForType.create(coneType)
         }
 
     override val abbreviation: KaUsualClassType?
-        get() = withValidityAssertion { null }
+        get() = entryPointImplementation { null }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
     override fun toString() = coneType.renderForDebugging()
 
     @KaExperimentalApi
-    override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType> = withValidityAssertion {
-        return createTypePointer(coneType, builder, ::KaFirDefinitelyNotNullType)
+    override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType> = entryPointImplementation {
+        return createTypePointer(coneType, ::KaFirDefinitelyNotNullType)
     }
 }

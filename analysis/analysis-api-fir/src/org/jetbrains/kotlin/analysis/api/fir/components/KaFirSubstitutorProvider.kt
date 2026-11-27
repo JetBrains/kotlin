@@ -101,8 +101,8 @@ internal class KaFirSubstitutorProvider(
         }
 
         return when (val coneSubstitutor = substitutorByMap(substitution, analysisSession.firSession)) {
-            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
-            else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession)
+            else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession)
         }
     }
 

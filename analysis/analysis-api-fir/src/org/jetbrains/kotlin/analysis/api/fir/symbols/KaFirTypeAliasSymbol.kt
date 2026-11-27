@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
@@ -58,11 +59,11 @@ internal class KaFirTypeAliasSymbol private constructor(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = entryPointImplementation {
-            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters()
         }
 
     override val expandedType: KaType
-        get() = entryPointImplementation { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
+        get() = entryPointImplementation { firSymbolBuilder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation { psiOrSymbolAnnotationList() }

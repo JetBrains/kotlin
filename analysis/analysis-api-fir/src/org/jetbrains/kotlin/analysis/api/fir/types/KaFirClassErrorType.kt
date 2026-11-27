@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.ErrorClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeDiagnosticPointer
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypePointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeRecursionGuard
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
@@ -40,44 +40,43 @@ import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 internal class KaFirClassErrorType(
     override val coneType: ConeClassLikeType,
     private val coneDiagnostic: ConeDiagnostic,
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaClassErrorType(), KaFirType {
-    override val token: KaLifetimeToken get() = builder.token
 
     override val qualifiers: List<KaClassTypeQualifier>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             when (coneDiagnostic) {
                 is ConeUnresolvedError ->
-                    ErrorClassTypeQualifierBuilder.createQualifiersForUnresolvedType(coneDiagnostic, builder)
+                    ErrorClassTypeQualifierBuilder.createQualifiersForUnresolvedType(coneDiagnostic)
                 is ConeUnmatchedTypeArgumentsError ->
-                    ErrorClassTypeQualifierBuilder.createQualifiersForUnmatchedTypeArgumentsType(coneDiagnostic, builder)
+                    ErrorClassTypeQualifierBuilder.createQualifiersForUnmatchedTypeArgumentsType(coneDiagnostic)
                 else -> error("Unsupported ${coneDiagnostic::class}")
             }
         }
 
     @KaNonPublicApi
     override val presentableText: String?
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             qualifiers.joinToString(separator = ".") { it.name.asString() }
         }
 
     @KaNonPublicApi
-    override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
+    override val errorMessage: String get() = entryPointImplementation { coneDiagnostic.reason }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForType.create(coneType, builder)
+        get() = entryPointImplementation {
+            KaFirAnnotationListForType.create(coneType)
         }
 
     override val candidateSymbols: Collection<KaClassLikeSymbol>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
-            symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
+            symbols.map { firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(it) }
         }
 
     override val abbreviation: KaUsualClassType?
-        get() = withValidityAssertion {
-            builder.buildAbbreviatedType(coneType)
+        get() = entryPointImplementation {
+            buildAbbreviatedType(coneType)
         }
 
     override fun equals(other: Any?) = typeEquals(other)
@@ -85,21 +84,21 @@ internal class KaFirClassErrorType(
     override fun toString() = coneType.renderForDebugging()
 
     @KaExperimentalApi
-    override fun createPointer(): KaTypePointer<KaClassErrorType> = withValidityAssertion {
-        return KaFirClassErrorTypePointer(coneType, coneDiagnostic, builder, ConeTypeRecursionGuard())
+    override fun createPointer(): KaTypePointer<KaClassErrorType> = entryPointImplementation {
+        return KaFirClassErrorTypePointer(coneType, coneDiagnostic, analysisSession, ConeTypeRecursionGuard())
     }
 }
 
 private class KaFirClassErrorTypePointer(
     coneType: ConeClassLikeType,
     coneDiagnostic: ConeDiagnostic,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
     guard: ConeTypeRecursionGuard,
 ) : KaTypePointer<KaClassErrorType> {
     private val coneTypePointer: ConeTypePointer<*> = if (coneType !is ConeErrorType) {
-        val classLikeSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+        val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
         if (classLikeSymbol != null) {
-            coneType.createPointer(builder, guard)
+            coneType.createPointer(guard, analysisSession = analysisSession)
         } else {
             val coneErrorType = ConeErrorType(
                 ConeUnresolvedSymbolError(coneType.lookupTag.classId),
@@ -109,13 +108,13 @@ private class KaFirClassErrorTypePointer(
                 attributes = coneType.attributes,
                 nullable = coneType.isMarkedNullable,
             )
-            coneErrorType.createPointer(builder, guard)
+            coneErrorType.createPointer(guard, analysisSession = analysisSession)
         }
     } else {
-        coneType.createPointer(builder, guard)
+        coneType.createPointer(guard, analysisSession = analysisSession)
     }
 
-    val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneDiagnostic, builder, guard)
+    val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneDiagnostic, guard, analysisSession = analysisSession)
 
     @KaImplementationDetail
     override fun restore(session: KaSession): KaClassErrorType? = session.withValidityAssertion {
@@ -125,6 +124,6 @@ private class KaFirClassErrorTypePointer(
         val coneType = guard.restorePointer(coneTypePointer, analysisSession = session) as? ConeClassLikeType ?: return null
         val coneDiagnostic = coneDiagnosticPointer.restore(analysisSession = session, guard = guard) ?: return null
 
-        return KaFirClassErrorType(coneType, coneDiagnostic, session.firSymbolBuilder)
+        return KaFirClassErrorType(coneType, coneDiagnostic, session)
     }
 }

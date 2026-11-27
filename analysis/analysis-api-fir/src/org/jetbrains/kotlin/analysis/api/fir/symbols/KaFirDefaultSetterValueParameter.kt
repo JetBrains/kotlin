@@ -58,7 +58,7 @@ internal class KaFirDefaultSetterValueParameter(
         get() = entryPointImplementation { false }
 
     override val returnType: KaType
-        get() = entryPointImplementation { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType(builder) }
+        get() = entryPointImplementation { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType() }
 
     override val psi: PsiElement?
         get() = entryPointImplementation { null }
@@ -71,7 +71,7 @@ internal class KaFirDefaultSetterValueParameter(
             if (owningKaSetter.owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) == false)
                 KaFirEmptyAnnotationList(this.token)
             else
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+                KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = entryPointImplementation {

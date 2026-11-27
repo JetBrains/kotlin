@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
@@ -21,13 +22,13 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal object UsualClassTypeQualifierBuilder {
+    context(analysisSession: KaFirSession)
     fun buildQualifiers(
-        coneType: ConeClassLikeTypeImpl,
-        builder: KaSymbolByFirBuilder
+        coneType: ConeClassLikeTypeImpl
     ): List<KaResolvedClassTypeQualifier> {
-        val coneTypeClassSymbol = coneType.lookupTag.toSymbol(builder.rootSession)
+        val coneTypeClassSymbol = coneType.lookupTag.toSymbol(analysisSession.firSession)
             ?: errorWithFirSpecificEntries("ConeClassLikeTypeImpl is not resolved to symbol for on-error type", coneType = coneType) {
-                withEntry("useSiteSession", builder.rootSession) { it.toString() }
+                withEntry("useSiteSession", analysisSession.firSession) { it.toString() }
             }
 
         val designation = coneTypeClassSymbol.fir.let {
@@ -86,12 +87,12 @@ internal object UsualClassTypeQualifierBuilder {
             if (count == 0 || restTypeArguments.isEmpty()) return emptyList()
             val taken = restTypeArguments.takeLast(count)
             restTypeArguments = restTypeArguments.dropLast(count)
-            return taken.map { builder.typeBuilder.buildTypeProjection(it) }
+            return taken.map { firSymbolBuilder.typeBuilder.buildTypeProjection(it) }
         }
 
         return designation.mapIndexed { index, currentClass ->
             KaFirResolvedClassTypeQualifier(
-                builder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),
+                firSymbolBuilder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),
                 takeTypeArguments(ownTypeParametersCountsByDesignation[index]),
             )
         }

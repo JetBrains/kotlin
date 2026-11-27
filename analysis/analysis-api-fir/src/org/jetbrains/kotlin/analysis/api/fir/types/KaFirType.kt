@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-internal interface KaFirType : KaLifetimeOwner {
+internal interface KaFirType : KaFirSessionBoundOwner {
     val coneType: ConeKotlinType
 }
 

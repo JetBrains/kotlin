@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -42,14 +42,14 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
     return annotation.argumentMapping.mapping.mapKeys { [name, _] -> name }
 }
 
+context(analysisSession: KaFirSession)
 internal fun annotationsByClassId(
     firSymbol: FirBasedSymbol<*>,
     classId: ClassId,
-    builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> {
-    val session = builder.rootSession
-    if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, builder.rootSession)) {
+    val session = analysisSession.firSession
+    if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, session)) {
         // This is safe to iterate over the collection without indices since all annotations after 582b640b commit
         // declared as `MutableOrEmptyList<FirAnnotation>`, so:
         // - `replaceAnnotations` replaces the entire collection without modifications
@@ -60,7 +60,7 @@ internal fun annotationsByClassId(
                 return@mapNotNull null
             }
 
-            annotation.toKaAnnotation(builder)
+            annotation.toKaAnnotation()
         }
     }
 
@@ -69,36 +69,32 @@ internal fun annotationsByClassId(
             return@mapNotNull null
         }
 
-        annotation.toKaAnnotation(builder)
+        annotation.toKaAnnotation()
     }
 }
 
-internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
+context(analysisSession: KaFirSession)
+internal fun computeAnnotationArguments(annotation: FirAnnotation): List<KaNamedAnnotationValue> {
     if (annotation is FirAnnotationCall) {
         if (annotation.arguments.isEmpty()) return emptyList()
 
         val symbol = annotation.containingDeclarationSymbol
         if (symbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
-            when (annotation.toAnnotationClassId(builder.rootSession)) {
-                StandardClassIds.Annotations.Target -> return computeKotlinTargetAnnotationArguments(annotation, builder)
-                JvmStandardClassIds.Annotations.Java.Target -> return computeJavaTargetAnnotationArguments(annotation, builder)
+            when (annotation.toAnnotationClassId(analysisSession.firSession)) {
+                StandardClassIds.Annotations.Target -> return computeKotlinTargetAnnotationArguments(annotation)
+                JvmStandardClassIds.Annotations.Java.Target -> return computeJavaTargetAnnotationArguments(annotation)
             }
         }
 
         symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
     }
 
-    return context(builder.analysisSession) {
-        FirAnnotationValueConverter.toNamedConstantValue(
-            mapAnnotationParameters(annotation),
-            builder,
-        )
-    }
+    return FirAnnotationValueConverter.toNamedConstantValue(mapAnnotationParameters(annotation))
 }
 
+context(analysisSession: KaFirSession)
 private fun computeTargetAnnotationArguments(
     annotation: FirAnnotation,
-    builder: KaSymbolByFirBuilder,
     expectedEnumClassId: ClassId,
     annotationParameterName: Name,
     nameMapper: (String) -> String?,
@@ -106,7 +102,7 @@ private fun computeTargetAnnotationArguments(
     val rawValues = annotation.findFromArgumentMapping(expectedEnumClass = expectedEnumClassId, nameMapper)
 
     if (rawValues.isNotEmpty()) {
-        val token = builder.token
+        val token = analysisSession.token
 
         val value = KaFirNamedAnnotationValue(
             annotationParameterName,
@@ -129,16 +125,18 @@ private fun computeTargetAnnotationArguments(
     return emptyList()
 }
 
-private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
+context(analysisSession: KaFirSession)
+private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation): List<KaNamedAnnotationValue> {
     val enumClassId = StandardClassIds.AnnotationTarget
     val parameterName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets
-    return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) { KotlinTarget.valueOrNull(it)?.name }
+    return computeTargetAnnotationArguments(annotation, enumClassId, parameterName) { KotlinTarget.valueOrNull(it)?.name }
 }
 
-private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
+context(analysisSession: KaFirSession)
+private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation): List<KaNamedAnnotationValue> {
     val enumClassId = JvmStandardClassIds.Annotations.Java.ElementType
     val parameterName = StandardClassIds.Annotations.ParameterNames.value
-    return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) {
+    return computeTargetAnnotationArguments(annotation, enumClassId, parameterName) {
         ElementType.entries.firstOrNull { enumValue -> enumValue.name == it }?.name
     }
 }
@@ -157,12 +155,12 @@ private fun <T> FirAnnotation.findFromArgumentMapping(expectedEnumClass: ClassId
     }
 }
 
+context(analysisSession: KaFirSession)
 internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
-    builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).map { annotation ->
-    annotation.toKaAnnotation(builder)
+    annotation.toKaAnnotation()
 }
 
 internal fun annotationClassIds(

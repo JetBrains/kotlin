@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -16,19 +16,19 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.name.Name
 
 
+context(analysisSession: KaFirSession)
 internal fun FirScope.getCallableSymbols(
-    callableNames: Collection<Name>,
-    builder: KaSymbolByFirBuilder
+    callableNames: Collection<Name>
 ): Sequence<KaCallableSymbol> = sequence {
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionBuilder.buildNamedFunctionSymbol(firSymbol))
+                add(firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firSymbol))
             }
         }
         yieldList {
             processPropertiesByName(name) { firSymbol ->
-                add(builder.callableBuilder.buildCallableSymbol(firSymbol))
+                add(firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol))
             }
         }
     }
@@ -36,39 +36,40 @@ internal fun FirScope.getCallableSymbols(
 
 context(analysisSession: KaFirSession)
 internal fun FirScope.getCallableSignatures(
-    callableNames: Collection<Name>,
-    builder: KaSymbolByFirBuilder
+    callableNames: Collection<Name>
 ): Sequence<KaCallableSignature<*>> = sequence {
     callableNames.forEach { name ->
         yieldList {
             processFunctionsByName(name) { firSymbol ->
-                add(builder.functionBuilder.buildFunctionSignature(firSymbol))
+                add(firSymbolBuilder.functionBuilder.buildFunctionSignature(firSymbol))
             }
         }
         yieldList {
             processPropertiesByName(name) { firSymbol ->
-                add(builder.variableBuilder.buildVariableLikeSignature(firSymbol))
+                add(firSymbolBuilder.variableBuilder.buildVariableLikeSignature(firSymbol))
             }
         }
     }
 }
 
-internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, builder: KaSymbolByFirBuilder): Sequence<KaClassifierSymbol> =
+context(analysisSession: KaFirSession)
+internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>): Sequence<KaClassifierSymbol> =
     sequence {
         classLikeNames.forEach { name ->
             yieldList {
                 processClassifiersByName(name) { firSymbol ->
-                    add(builder.classifierBuilder.buildClassifierSymbol(firSymbol))
+                    add(firSymbolBuilder.classifierBuilder.buildClassifierSymbol(firSymbol))
                 }
             }
         }
     }
 
-internal fun FirScope.getConstructors(builder: KaSymbolByFirBuilder): Sequence<KaConstructorSymbol> =
+context(analysisSession: KaFirSession)
+internal fun FirScope.getConstructors(): Sequence<KaConstructorSymbol> =
     sequence {
         yieldList {
             processDeclaredConstructors { firSymbol ->
-                add(builder.functionBuilder.buildConstructorSymbol(firSymbol))
+                add(firSymbolBuilder.functionBuilder.buildConstructorSymbol(firSymbol))
             }
         }
     }

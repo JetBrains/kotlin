@@ -38,7 +38,7 @@ internal class KaFirPsiJavaTypeParameterSymbol(
             if (backingPsi.annotations.isEmpty())
                 KaFirEmptyAnnotationList(this.token)
             else
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+                KaFirAnnotationListForDeclaration.create(firSymbol)
         }
 
     override val name: Name

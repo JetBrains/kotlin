@@ -52,11 +52,11 @@ internal class KaFirConstructorSymbol private constructor(
         analysisSession = session,
     )
 
-    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = entryPointImplementation { firSymbol.returnType() }
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = entryPointImplementation {
-            createKaValueParameters() ?: firSymbol.createKtValueParameters(builder)
+            createKaValueParameters() ?: firSymbol.createKtValueParameters()
         }
 
     override val hasStableParameterNames: Boolean
@@ -124,7 +124,7 @@ internal class KaFirConstructorSymbol private constructor(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = entryPointImplementation {
-            backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters(builder)
+            backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters()
         }
 
     override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = entryPointImplementation {

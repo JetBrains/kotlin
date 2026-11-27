@@ -43,7 +43,7 @@ internal class KaFirContextParameterSymbol private constructor(
         get() = entryPointImplementation { backingPsi?.parameterName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = entryPointImplementation { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType() }
 
     override val annotations: KaAnnotationList
         get() = entryPointImplementation { psiOrSymbolAnnotationList() }

@@ -147,7 +147,7 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
             ) {
                 KaFirEmptyAnnotationList(this.token)
             } else {
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+                KaFirAnnotationListForDeclaration.create(firSymbol)
             }
         }
 
@@ -183,6 +183,6 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
     val parameterImpl: KaValueParameterSymbol
         get() = entryPointImplementation {
             backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
-                ?: firSymbol.createKtValueParameters(builder).single()
+                ?: firSymbol.createKtValueParameters().single()
         }
 }

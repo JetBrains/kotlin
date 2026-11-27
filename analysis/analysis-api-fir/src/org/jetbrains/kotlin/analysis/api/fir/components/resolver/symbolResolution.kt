@@ -223,7 +223,7 @@ private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolRe
         return toKaSymbolResolutionError()
     }
 
-    val symbol = when (val symbol = firSymbolToBuild?.buildSymbol(firSymbolBuilder)) {
+    val symbol = when (val symbol = firSymbolToBuild?.buildSymbol()) {
         is KaConstructorSymbol if (psi is KtNameReferenceExpression || psi is KtEnumEntrySuperclassReferenceExpression) -> {
             // Callee reference for a constructor call is supposed to refer to the class
             // while the entire call refers to the constructor.
@@ -259,7 +259,6 @@ private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(psi: KtSimpleNameEx
         fir = this,
         expression = psi,
         session = analysisSession.firSession,
-        symbolBuilder = firSymbolBuilder,
     ).ifNotEmpty(::KaFirSimpleSymbolResolutionSuccess)
 }
 
@@ -283,7 +282,6 @@ context(analysisSession: KaFirSession)
 private fun FirResolvedImport.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
     return getSymbolsByResolvedImport(
         expression = psi,
-        builder = firSymbolBuilder,
         fir = this,
         session = analysisSession.firSession,
     ).ifNotEmpty(::KaFirSimpleSymbolResolutionSuccess)
@@ -291,7 +289,7 @@ private fun FirResolvedImport.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpre
 
 context(analysisSession: KaFirSession)
 private fun FirResolvedTypeRef.toKaSymbolResolutionAttemptForFunctionType(): KaSymbolResolutionAttempt? {
-    val symbol = toTargetSymbol(analysisSession.firSession, firSymbolBuilder) ?: return null
+    val symbol = toTargetSymbol(analysisSession.firSession) ?: return null
     return KaFirSimpleSymbolResolutionSuccess(backingSymbol = symbol)
 }
 
@@ -301,7 +299,6 @@ private fun FirResolvedTypeRef.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpr
         expression = psi,
         fir = this,
         session = analysisSession.firSession,
-        symbolBuilder = firSymbolBuilder,
     )
 
     val resolutionError = (this as? FirDiagnosticHolder)?.toKaSymbolResolutionError()?.let { resolutionError ->
@@ -351,7 +348,7 @@ private fun FirReturnExpression.toKaSymbolResolutionAttempt(): KaSymbolResolutio
         }
 
         else -> {
-            val kaSymbol = firFunctionSymbol.buildSymbol(firSymbolBuilder)
+            val kaSymbol = firFunctionSymbol.buildSymbol()
             KaFirSimpleSymbolResolutionSuccess(kaSymbol)
         }
     }

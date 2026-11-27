@@ -54,9 +54,9 @@ internal class KaFirDefaultBackingFieldSymbol(
     override val annotations: KaAnnotationList
         get() = entryPointImplementation {
             if (backingOwningProperty.mayHaveBackingFieldAnnotation()) {
-                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+                KaFirAnnotationListForDeclaration.create(firSymbol)
             } else {
-                KaFirEmptyAnnotationList(builder.token)
+                KaFirEmptyAnnotationList(analysisSession.token)
             }
         }
 

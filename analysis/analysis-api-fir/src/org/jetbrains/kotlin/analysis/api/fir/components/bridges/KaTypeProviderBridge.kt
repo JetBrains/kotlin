@@ -123,7 +123,7 @@ internal class KaTypeProviderBridge(
                     check(firSymbol is FirCallableSymbol<*>) {
                         "Fir declaration should be FirCallableDeclaration; instead it was ${firSymbol::class}"
                     }
-                    return firSymbol.dispatchReceiverType(analysisSession.firSymbolBuilder)
+                    return firSymbol.dispatchReceiverType(analysisSession = analysisSession)
                 }
             }
         }

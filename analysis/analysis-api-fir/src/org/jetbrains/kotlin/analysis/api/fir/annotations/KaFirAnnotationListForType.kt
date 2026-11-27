@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -20,54 +20,52 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
-    private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotation>(), KaAnnotationList {
+    override val analysisSession: KaFirSession,
+) : AbstractList<KaAnnotation>(), KaAnnotationList, KaFirSessionBoundOwner {
     private val backingAnnotations: List<KaAnnotation> by lazy {
         coneType.typeAnnotations.map { firAnnotation ->
             // Resolve annotation types. Probably this call is redundant as we may have resolved types only after the TYPES phase
             (firAnnotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-            firAnnotation.toKaAnnotation(builder)
+            firAnnotation.toKaAnnotation(analysisSession = analysisSession)
         }
     }
 
-    override val token: KaLifetimeToken
-        get() = builder.token
-
-    override fun isEmpty(): Boolean = withValidityAssertion {
+    override fun isEmpty(): Boolean = entryPointImplementation {
         coneType.typeAnnotations.isEmpty()
     }
 
     override val size: Int
-        get() = withValidityAssertion { coneType.typeAnnotations.size }
+        get() = entryPointImplementation { coneType.typeAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = entryPointImplementation {
         backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotation = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = entryPointImplementation {
         backingAnnotations[index]
     }
 
-    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = entryPointImplementation {
         backingAnnotations.any { it.classId == classId }
     }
 
-    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId): List<KaAnnotation> = entryPointImplementation {
         backingAnnotations.filter { it.classId == classId }
     }
 
     override val classIds: Collection<ClassId>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingAnnotations.mapNotNull { it.classId }
         }
 
     companion object {
-        fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationList {
+        context(analysisSession: KaFirSession)
+        fun create(coneType: ConeKotlinType): KaAnnotationList {
             return if (coneType.typeAnnotations.isEmpty()) {
-                KaFirEmptyAnnotationList(builder.token)
+                KaFirEmptyAnnotationList(analysisSession.token)
             } else {
-                KaFirAnnotationListForType(coneType, builder)
+                KaFirAnnotationListForType(coneType, analysisSession)
             }
         }
     }

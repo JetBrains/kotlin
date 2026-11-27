@@ -12,15 +12,14 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeRecursionGuard
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -32,104 +31,104 @@ import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal class KaFirFunctionType(
     override val coneType: ConeClassLikeTypeImpl,
-    private val builder: KaSymbolByFirBuilder,
+    override val analysisSession: KaFirSession,
 ) : KaFunctionType(), KaFirType {
-    override val token: KaLifetimeToken get() = builder.token
 
-    override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
+    override val classId: ClassId get() = entryPointImplementation { coneType.lookupTag.classId }
 
     override val symbol: KaClassLikeSymbol
-        get() = withValidityAssertion {
-            builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+        get() = entryPointImplementation {
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
                 ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
         }
 
-    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
+    override val typeArguments: List<KaTypeProjection> get() = entryPointImplementation { qualifiers.last().typeArguments }
 
     override val qualifiers: List<KaResolvedClassTypeQualifier>
-        get() = withValidityAssertion {
-            UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
+        get() = entryPointImplementation {
+            UsualClassTypeQualifierBuilder.buildQualifiers(coneType)
         }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForType.create(coneType, builder)
+        get() = entryPointImplementation {
+            KaFirAnnotationListForType.create(coneType)
         }
 
     override val abbreviation: KaUsualClassType?
-        get() = withValidityAssertion {
-            builder.buildAbbreviatedType(coneType)
+        get() = entryPointImplementation {
+            buildAbbreviatedType(coneType)
         }
 
-    override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendOrKSuspendFunctionType(builder.rootSession) }
+    override val isSuspend: Boolean
+        get() = entryPointImplementation { coneType.isSuspendOrKSuspendFunctionType(analysisSession.firSession) }
 
     override val isReflectType: Boolean
-        get() = withValidityAssertion { coneType.functionTypeKind(builder.rootSession)?.isReflectType == true }
+        get() = entryPointImplementation { coneType.functionTypeKind(analysisSession.firSession)?.isReflectType == true }
 
     @Deprecated("Use `parameters.size` instead. See KT-80545", replaceWith = ReplaceWith("parameters.size"))
-    override val arity: Int get() = withValidityAssertion { parameterTypes.size }
+    override val arity: Int get() = entryPointImplementation { parameterTypes.size }
 
     override val contextParameterTypes: List<KaType>
-        get() = withValidityAssertion {
-            coneType.contextParameterTypes(builder.rootSession).map { it.buildKtType() }
+        get() = entryPointImplementation {
+            coneType.contextParameterTypes(analysisSession.firSession).map { it.buildKtType() }
         }
 
     @Deprecated("Context receivers in function types are deprecated. Use `contextParameterTypes` instead.")
     @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             // Context receivers in function types may not have labels, hence the `null` label.
-            contextParameterTypes.map { KaFirContextReceiver(it, label = null, token) }
+            contextParameterTypes.map { KaFirContextReceiver(it, label = null, this.token) }
         }
 
     override val receiverType: KaType?
-        get() = withValidityAssertion {
-            coneType.receiverType(builder.rootSession)?.buildKtType()
+        get() = entryPointImplementation {
+            coneType.receiverType(analysisSession.firSession)?.buildKtType()
         }
 
-    override val hasReceiver: Boolean get() = withValidityAssertion { receiverType != null }
+    override val hasReceiver: Boolean get() = entryPointImplementation { receiverType != null }
 
     override val parameterTypes: List<KaType>
-        get() = withValidityAssertion {
-            coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
+        get() = entryPointImplementation {
+            coneType.valueParameterTypesWithoutReceivers(analysisSession.firSession).map { it.buildKtType() }
         }
 
     override val parameters: List<KaFunctionValueParameter>
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             parameterTypes.map { parameterType ->
                 val parameterConeType = (parameterType as? KaFirType)?.coneType
 
                 // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
                 // as parameter names can be explicitly provided via @ParameterName annotations.
-                parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
-                val name = parameterConeType?.valueParameterName(builder.rootSession)
+                parameterConeType.ensureResolvedTypeDeclaration(analysisSession.firSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
+                val name = parameterConeType?.valueParameterName(analysisSession.firSession)
                 KaFirFunctionValueParameter(name, parameterType)
 
             }
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion {
-            coneType.returnType(builder.rootSession).buildKtType()
+        get() = entryPointImplementation {
+            coneType.returnType(analysisSession.firSession).buildKtType()
         }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
     override fun toString() = coneType.renderForDebugging()
 
-    private fun ConeKotlinType.buildKtType(): KaType = builder.typeBuilder.buildKtType(this)
+    private fun ConeKotlinType.buildKtType(): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
     @KaExperimentalApi
-    override fun createPointer(): KaTypePointer<KaFunctionType> = withValidityAssertion {
-        return KaFirFunctionalClassTypePointer(coneType, builder)
+    override fun createPointer(): KaTypePointer<KaFunctionType> = entryPointImplementation {
+        return KaFirFunctionalClassTypePointer(coneType, analysisSession)
     }
 }
 
 private class KaFirFunctionalClassTypePointer(
     coneType: ConeClassLikeTypeImpl,
-    builder: KaSymbolByFirBuilder,
+    analysisSession: KaFirSession,
 ) : KaTypePointer<KaFunctionType> {
-    private val coneTypePointer = coneType.createPointer(builder, ConeTypeRecursionGuard())
+    private val coneTypePointer = coneType.createPointer(ConeTypeRecursionGuard(), analysisSession = analysisSession)
 
     @KaImplementationDetail
     override fun restore(session: KaSession): KaFunctionType? {
@@ -140,6 +139,6 @@ private class KaFirFunctionalClassTypePointer(
             return null
         }
 
-        return KaFirFunctionType(coneType, session.firSymbolBuilder)
+        return KaFirFunctionType(coneType, session)
     }
 }

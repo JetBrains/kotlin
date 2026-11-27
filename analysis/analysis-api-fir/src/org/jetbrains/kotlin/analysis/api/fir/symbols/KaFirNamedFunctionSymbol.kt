@@ -75,7 +75,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
             } else {
                 firSymbol.resolvedContractDescription?.effects
                     ?.map(FirEffectDeclaration::effect)
-                    ?.map { it.coneEffectDeclarationToAnalysisApi(builder, this) }
+                    ?.map { it.coneEffectDeclarationToAnalysisApi(this) }
                     .orEmpty()
             }
         }
@@ -93,17 +93,17 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val contextParameters: List<KaContextParameterSymbol>
         get() = entryPointImplementation {
-            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+            createKaContextParameters() ?: firSymbol.createKaContextParameters()
         }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = entryPointImplementation {
-            createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createKtTypeParameters()
         }
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = entryPointImplementation {
-            createKaValueParameters() ?: firSymbol.createKtValueParameters(builder)
+            createKaValueParameters() ?: firSymbol.createKtValueParameters()
         }
 
     override val hasStableParameterNames: Boolean

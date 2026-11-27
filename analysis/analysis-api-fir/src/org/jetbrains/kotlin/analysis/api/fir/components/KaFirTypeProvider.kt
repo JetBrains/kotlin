@@ -48,7 +48,7 @@ internal class KaFirTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsTypeProvider {
     private val cachedBuiltinTypes: KaBuiltinTypes by lazy {
-        KaFirBuiltInTypes(analysisSession.resolutionFacade.useSiteFirSession.builtinTypes, analysisSession.firSymbolBuilder, token)
+        KaFirBuiltInTypes(analysisSession.resolutionFacade.useSiteFirSession.builtinTypes, analysisSession)
     }
 
     override fun builtinTypes(): KaBuiltinTypes = cachedBuiltinTypes
@@ -206,7 +206,7 @@ internal class KaFirTypeProvider(
             )
         )
 
-        return KaFirErrorType(coneErrorType, firSymbolBuilder)
+        return KaFirErrorType(coneErrorType, analysisSession)
     }
 
     override fun receiverType(expression: KtDoubleColonExpression): KaType? = entryPointImplementation(expression) {

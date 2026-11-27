@@ -61,7 +61,7 @@ internal class KaFirEnumEntrySymbol private constructor(
         get() = entryPointImplementation { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = entryPointImplementation { firSymbol.returnType(builder) }
+        get() = entryPointImplementation { firSymbol.returnType() }
 
     override val callableId: CallableId?
         get() = entryPointImplementation {

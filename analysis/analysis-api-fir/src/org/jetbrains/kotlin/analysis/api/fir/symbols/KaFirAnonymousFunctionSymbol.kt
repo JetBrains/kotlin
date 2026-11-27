@@ -84,7 +84,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val contextParameters: List<KaContextParameterSymbol>
         get() = entryPointImplementation {
-            createKaContextParameters() ?: firSymbol.createKaContextParameters(builder)
+            createKaContextParameters() ?: firSymbol.createKaContextParameters()
         }
 
     override val valueParameters: List<KaValueParameterSymbol>
@@ -94,7 +94,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
                 createKaValueParameters()?.let { return it }
             }
 
-            firSymbol.createKtValueParameters(builder)
+            firSymbol.createKtValueParameters()
         }
 
     override val isExtension: Boolean
