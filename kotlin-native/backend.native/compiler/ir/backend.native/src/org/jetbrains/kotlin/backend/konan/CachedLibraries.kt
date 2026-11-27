@@ -62,7 +62,7 @@ class CachedLibraries(
         val serializedInlineFunctionBodies by lazy { computeSerializedInlineFunctionBodies() }
         val serializedClassFields by lazy { computeSerializedClassFields() }
         val serializedEagerInitializedFiles by lazy { computeSerializedEagerInitializedFiles() }
-        val serializedTrivialGetters by lazy { computeSerializedTrivialGetters() }
+        val serializedRawValGetters by lazy { computeSerializedRawValGetters() }
         val serializedObjCAdapters by lazy { computeSerializedObjCAdapters() }
 
         protected abstract fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency>
@@ -70,7 +70,7 @@ class CachedLibraries(
         protected abstract fun computeSerializedInlineFunctionBodies(): List<SerializedInlineFunctionReference>
         protected abstract fun computeSerializedClassFields(): List<SerializedClassFields>
         protected abstract fun computeSerializedEagerInitializedFiles(): List<SerializedEagerInitializedFile>
-        protected abstract fun computeSerializedTrivialGetters(): List<SerializedTrivialGetter>
+        protected abstract fun computeSerializedRawValGetters(): List<SerializedRawValGetter>
         protected abstract fun computeSerializedObjCAdapters(): List<SerializedObjCAdapter>
 
         protected fun Kind.toCompilerOutputKind(): CompilerOutputKind = when (this) {
@@ -135,10 +135,10 @@ class CachedLibraries(
                 EagerInitializedPropertySerializer.deserializeTo(data, it)
             }
 
-            override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
+            override fun computeSerializedRawValGetters() = mutableListOf<SerializedRawValGetter>().also {
                 val directory = Path(path).absolute().parent.parent
-                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
-                TrivialGettersSerializer.deserializeTo(data, it)
+                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(RAW_VAL_GETTERS_FILE_NAME).readBytes()
+                RawValGettersSerializer.deserializeTo(data, it)
             }
 
             override fun computeSerializedObjCAdapters() = mutableListOf<SerializedObjCAdapter>().also {
@@ -200,10 +200,10 @@ class CachedLibraries(
                 }
             }
 
-            override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
+            override fun computeSerializedRawValGetters() = mutableListOf<SerializedRawValGetter>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
-                    TrivialGettersSerializer.deserializeTo(data, it)
+                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(RAW_VAL_GETTERS_FILE_NAME).readBytes()
+                    RawValGettersSerializer.deserializeTo(data, it)
                 }
             }
 
@@ -349,7 +349,7 @@ class CachedLibraries(
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
-        const val TRIVIAL_GETTERS_FILE_NAME = "trivial_getters"
+        const val RAW_VAL_GETTERS_FILE_NAME = "raw_val_getters"
         const val OBJC_ADAPTERS_FILE_NAME = "objc_adapters"
         const val PARTIAL_LINKAGE_ISSUES_FILE_NAME = "pl_issues"
     }

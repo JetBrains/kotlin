@@ -98,24 +98,33 @@ internal class NativeBackendContext(
         }
     }
 
-    private val trivialGettersDeserializers = mutableMapOf<KonanPartialModuleDeserializer, TrivialGettersDeserializer>()
+    private val rawValGetterDeserializers = mutableMapOf<KonanPartialModuleDeserializer, RawValGetterDeserializer>()
 
     /**
-     * Cache-aware version of [isTrivialGetter] specialized for `val` properties.
+     * Returns `true` if this is a `val` getter that was defined to be a raw read of the backing field.
      *
-     * For getters declared in the current module we just delegate to [isTrivialGetter].
-     * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
-     * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialGetterSerializer`).
+     * * for getters declared in a cached dependency, returns `isRawValGetter` that was computed before
+     *   all the lowerings took place in that cache (see [RawValGettersSerializer])
+     * * for getters declared in the current module, delegates to [IrSimpleFunction.isTrivialGetter]
+     *
+     *  When this returns `true` it does not mean, that the getter will only issue a read; it only means that it was originally defined that
+     *  way. In the final version it may, for example, include a call to static initializers.
+     *
+     *  **NOTE**: only use as an optimization hint: when used in the current module, care must be taken: the result of
+     *           [IrSimpleFunction.isTrivialGetter] may change after some lowerings, making this return `false` (e.g. after static initializers),
+     *           while the similar getters from cache will continue returning `true`.
      */
-    fun isTrivialGetter(function: IrSimpleFunction): Boolean {
+    fun isRawValGetter(function: IrSimpleFunction): Boolean {
+        if (function.correspondingPropertySymbol?.owner?.isVar != false)
+            return false
         val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
                 ?: return function.isTrivialGetter // Function from current module.
 
         val signature = function.symbol.signature ?: return false
-        val trivialGettersDeserializer = trivialGettersDeserializers.getOrPut(deserializer) {
-            TrivialGettersDeserializer(config.cachedLibraries, deserializer)
+        val rawValGetterDeserializer = rawValGetterDeserializers.getOrPut(deserializer) {
+            RawValGetterDeserializer(config.cachedLibraries, deserializer)
         }
-        return signature in trivialGettersDeserializer.trivialGetterSignatures
+        return signature in rawValGetterDeserializer.rawValGetterSignatures
     }
 
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
