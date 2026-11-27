@@ -93,9 +93,11 @@ class JvmSymbols(
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.FINAL,
         classIsValue: Boolean = false,
+        classOrigin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
         block: (IrClass) -> Unit = {},
     ): IrClassSymbol =
         irFactory.buildClass {
+            origin = classOrigin
             name = fqName.shortName()
             kind = classKind
             modality = classModality
@@ -120,6 +122,12 @@ class JvmSymbols(
             createThisReceiverParameter()
             block(this)
         }.symbol
+
+    val javaLangClass: IrClassSymbol =
+        createClass(FqName("java.lang.Class")) { klass ->
+            klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
+            klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
+        }
 
     private val intrinsicsClass: IrClassSymbol = createClass(
         JvmClassName.byInternalName(INTRINSICS_CLASS_NAME).fqNameForTopLevelClassMaybeWithDollars
@@ -159,6 +167,10 @@ class JvmSymbols(
             addValueParameter("object", irBuiltIns.anyNType)
             addValueParameter("message", irBuiltIns.stringType)
         }
+        klass.addFunction("checkNotNullInCast", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("object", irBuiltIns.anyNType)
+            addValueParameter("desc", javaLangClass.starProjectedType)
+        }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
 
         klass.declarations.add(irFactory.buildClass {
@@ -194,6 +206,11 @@ class JvmSymbols(
     val checkNotNullWithMessage: IrSimpleFunctionSymbol =
         intrinsicsClass.owner.functions.single {
             it.name.asString() == "checkNotNull" && it.hasShape(regularParameters = 2)
+        }.symbol
+
+    val checkNotNullInCast: IrSimpleFunctionSymbol =
+        intrinsicsClass.owner.functions.single {
+            it.name.asString() == "checkNotNullInCast" && it.hasShape(regularParameters = 2)
         }.symbol
 
     val throwNpe: IrSimpleFunctionSymbol =
@@ -294,12 +311,6 @@ class JvmSymbols(
 
     private val kDeclarationContainer: IrClassSymbol =
         createClass(StandardNames.FqNames.kDeclarationContainer.toSafe(), ClassKind.INTERFACE, Modality.ABSTRACT)
-
-    val javaLangClass: IrClassSymbol =
-        createClass(FqName("java.lang.Class")) { klass ->
-            klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
-            klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
-        }
 
     val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
         createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
@@ -854,7 +865,7 @@ class JvmSymbols(
         irFactory.buildProperty {
             name = Name.identifier("java")
         }.apply {
-            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt")).owner
+            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt"), classOrigin = IrDeclarationOrigin.FILE_CLASS).owner
             addGetter().apply {
                 annotations = listOf(
                     IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
@@ -868,6 +879,25 @@ class JvmSymbols(
 
     val kClassJavaPropertyGetter: IrSimpleFunction =
         kClassJava.owner.getter!!
+
+    val kClassJavaObjectType: IrPropertySymbol =
+        irFactory.buildProperty {
+            name = Name.identifier("javaObjectType")
+        }.apply {
+            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt"), classOrigin = IrDeclarationOrigin.FILE_CLASS).owner
+            addGetter().apply {
+                annotations = listOf(
+                    IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
+                        arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "getJavaObjectType")
+                    }
+                )
+                parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+                returnType = javaLangClass.starProjectedType
+            }
+        }.symbol
+
+    val kClassJavaObjectTypeGetter: IrSimpleFunction =
+        kClassJavaObjectType.owner.getter!!
 
     val spreadBuilder: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.SpreadBuilder")) { klass ->
         klass.addConstructor().apply {

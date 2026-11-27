@@ -572,6 +572,7 @@ enum class LanguageFeature(
 
     // 2.6
 
+    JvmOptimizedNullCastMessages(KOTLIN_2_6, sinceApiVersion = ApiVersion.KOTLIN_2_6, issue = "KT-22259"),
     CallableReferencesWithBoundCompanionDontWinOverDefaultImports(sinceVersion = KOTLIN_2_6, "KT-86000"),
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
     ForbidSamConstructorCallsWithMissingDependencySupertype(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-81075"),
@@ -596,6 +597,10 @@ enum class LanguageFeature(
     ReportMissingErrorsOnForLoopOperatorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-432"),
     ProhibitVarInJsModuleFile(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-88343"),
     ProhibitJsQualifierOnMembersAndNonExternals(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-90277"),
+
+    // 2.7
+
+    JvmOptimizedNullCastMessagesInInlineFunctions(KOTLIN_2_7, "KT-22259", ApiVersion.KOTLIN_2_6),
 
     // End of 2.* language features --------------------------------------------------
 

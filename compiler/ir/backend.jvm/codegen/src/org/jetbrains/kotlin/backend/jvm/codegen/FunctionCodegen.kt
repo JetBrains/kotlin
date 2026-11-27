@@ -168,7 +168,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         )
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
-            IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent),
+            IrInlineIntrinsicsSupport(classCodegen, irFunction, irFunction.fileParent, irFunction),
             context.typeSystem,
             context.irBuiltIns,
         )
