@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -22,6 +23,7 @@ import kotlin.io.path.*
 
 @DisplayName("SwiftPM import Persistent Package.resolved integration tests")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
 
     /**
