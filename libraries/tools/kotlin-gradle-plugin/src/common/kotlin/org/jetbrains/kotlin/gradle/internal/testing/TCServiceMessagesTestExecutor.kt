@@ -43,9 +43,7 @@ private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.tes
 
 class TCServiceMessagesTestExecutor(
     val description: String,
-    val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
-    val ignoreRunFailures: Boolean,
     private val execOps: ExecOperations,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
 
@@ -170,17 +168,9 @@ class TCServiceMessagesTestExecutor(
             } catch (e: Throwable) {
                 spec.showSuppressedOutput()
 
-                val wrappedError = client.ensureNodesClosed(null, e, false) ?: if (e is Error) e else Error(e)
+                client.ensureNodesClosed(null, e, false)
 
-                runListeners.forEach {
-                    it.runningFailure(wrappedError)
-                }
-
-                if (ignoreRunFailures) {
-                    log.error(wrappedError.message)
-                } else {
-                    throw e
-                }
+                throw e
             } finally {
                 // When Gradle times out a task, it interrupts the task thread rather than
                 // calling stopNow(). With ProcessBuilder (unlike ExecAsyncHandle), thread

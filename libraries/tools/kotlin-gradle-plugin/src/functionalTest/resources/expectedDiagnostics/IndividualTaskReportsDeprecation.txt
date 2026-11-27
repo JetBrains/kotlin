@@ -1,0 +1,4 @@
+[DeprecatedWarningGradleProperties | WARNING] Deprecated Gradle Property 'kotlin.tests.individualTaskReports' Used
+The `kotlin.tests.individualTaskReports` deprecated property is used in your build.
+It is unsupported, please stop using it.
+Individual test tasks always fail the build on their own failures, and aggregated test tasks are report-only, so this property no longer has any effect. See https://kotl.in/KT-91779 for details.

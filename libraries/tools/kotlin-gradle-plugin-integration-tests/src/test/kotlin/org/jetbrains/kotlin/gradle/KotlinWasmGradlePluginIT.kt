@@ -951,7 +951,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     ) // The CI can't run the test, so, ignore it until we add headless Chrome browser to our CI
     fun testBrowserNullPrint(gradleVersion: GradleVersion) {
         project("kt-63230", gradleVersion) {
-            build("check", "-Pkotlin.tests.individualTaskReports=true") {
+            build("check") {
                 assertTestResults(
                     projectPath.resolve(
                         if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-wasm.xml" else "Gradle93-TEST-wasm.xml"
@@ -1223,7 +1223,17 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             }
 
             build("wasmJsTest") {
-                assertTasksExecuted(":wasmJsTest")
+                // The test run executes no tests (no kotlin-test dependency),
+                // so the aggregate report task has no binary results and
+                // generates no report. Gradle < 9.0 reports such a no-output
+                // execution of a TestReport task as UP-TO-DATE, Gradle 9.0+
+                // as executed - both mean the aggregation does not break the
+                // build (see KT-91779)
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)) {
+                    assertTasksUpToDate(":wasmJsTest")
+                } else {
+                    assertTasksExecuted(":wasmJsTest")
+                }
             }
         }
     }
