@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPM
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.writeText
@@ -27,6 +28,7 @@ import kotlin.io.path.writeText
 )
 @DisplayName("SwiftPM import does not fail IDE sync when the pipeline fails (KT-85468)")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportLenientSyncIT : KGPBaseTest() {
 
     private val ideaSyncBuildOptions
