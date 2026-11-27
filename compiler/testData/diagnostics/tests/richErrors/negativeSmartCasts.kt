@@ -7,6 +7,21 @@ fun isNotSingleError(x: String | E1) {
     x.length
 }
 
+fun isNotRichError1(x: String | E1) {
+    if (x is RichError) return
+    x.length
+}
+
+fun isNotRichError1(x: String | E1 | O1) {
+    if (x is RichError) return
+    x.length
+}
+
+fun <T : E1 | O1> typeParameterIsNotSingleError(x: String | T) {
+    if (x is (E1 | O1)) return
+    x<!UNSAFE_CALL!>.<!>length // TODO KT-89099
+}
+
 fun notEqualsSingleObject(x: String | O1) {
     if (x == O1) return
     x.length
