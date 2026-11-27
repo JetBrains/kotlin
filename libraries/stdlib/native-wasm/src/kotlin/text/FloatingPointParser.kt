@@ -75,7 +75,16 @@ internal object FloatingPointParser {
      * @return the Double number closest to the real number
      * @exception NumberFormatException if the String doesn't represent a number of type Double
      */
-    fun parseDouble(string: String): Double =
+    fun parseDouble(string: String): Double {
+        val plain = kotlin.internal.dtoa.parsePlainDoubleOrNaN(string)
+        return if (plain.isNaN()) parseDoubleGeneral(string) else plain
+    }
+
+    /**
+     * Parses the string with the general parser, bypassing the fast path for plain decimals.
+     * The result must be the same as of [parseDouble].
+     */
+    internal fun parseDoubleGeneral(string: String): Double =
         parse(
             string, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN,
             0.0, DOUBLE_MAX_EXP, DOUBLE_MIN_EXP, ::parseDoubleImpl, HexStringParser::parseDouble
@@ -88,7 +97,16 @@ internal object FloatingPointParser {
      * @return the Float number closest to the real number
      * @exception NumberFormatException if the String doesn't represent a number of type Float
      */
-    fun parseFloat(string: String): Float =
+    fun parseFloat(string: String): Float {
+        val plain = kotlin.internal.dtoa.parsePlainFloatOrNaN(string)
+        return if (plain.isNaN()) parseFloatGeneral(string) else plain
+    }
+
+    /**
+     * Parses the string with the general parser, bypassing the fast path for plain decimals.
+     * The result must be the same as of [parseFloat].
+     */
+    internal fun parseFloatGeneral(string: String): Float =
         parse(
             string, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NaN,
             0.0f, FLOAT_MAX_EXP, FLOAT_MIN_EXP, ::parseFloatImpl, HexStringParser::parseFloat
