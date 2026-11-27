@@ -43,4 +43,35 @@ class KaptConfigurationIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-87760: kapt { showProcessorStats } prints annotation processor statistics to the kaptKotlin output")
+    @GradleTest
+    @TestMetadata("kapt/simple")
+    fun showProcessorStatsIsPrintedToBuildOutput(gradleVersion: GradleVersion) {
+        project("kapt/simple", gradleVersion) {
+            buildGradle.append(
+                """
+                kapt {
+                    showProcessorStats = true
+                }
+                """
+            )
+            build(":kaptKotlin") {
+                assertOutputContains("[WARN] Annotation processor stats:")
+                assertOutputContains("[WARN] Generated files report:")
+                assertOutputContains(
+                    "\\[WARN] example\\.ExampleAnnotationProcessor: total: \\d+ ms, init: \\d+ ms, 3 round\\(s\\): \\d+ ms, \\d+ ms, \\d+ ms".toRegex()
+                )
+                assertOutputContains(
+                    "\\[WARN] example\\.KotlinFilerGeneratingProcessor: total: \\d+ ms, init: \\d+ ms, 0 round\\(s\\): ".toRegex()
+                )
+                assertOutputContains(
+                    "\\[WARN] example\\.ExampleAnnotationProcessor: total sources: \\d+, sources per round: \\d+, \\d+, \\d+".toRegex()
+                )
+                assertOutputContains(
+                    "\\[WARN] example\\.KotlinFilerGeneratingProcessor: total sources: \\d+, sources per round: ".toRegex()
+                )
+            }
+        }
+    }
 }
