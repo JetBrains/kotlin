@@ -130,9 +130,9 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>src/assembly/jar-with-dependencies.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>
