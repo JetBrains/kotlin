@@ -101,7 +101,7 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
                 }
             }
             val copied = copiedProperties(builder)
-            if (copied.isNotEmpty()) {
+            if (builder.parent == null || copied.isNotEmpty()) {
                 members += { printCopyFrom(builder, copied) }
             }
             for (child in builder.children) {
@@ -124,15 +124,42 @@ internal class DeclarationBuilderPrinter(private val printer: ImportCollectingPr
         println("}")
     }
 
+    /**
+     * `copyFrom` is virtual, with the declaration to copy from checked at runtime, like the `updateFrom` of the old builders:
+     * the static type of the source is often more general (e.g. `IrFunction` copied into a simple function),
+     * and overloads would silently skip the fields of the more specific node.
+     */
     private fun ImportCollectingPrinter.printCopyFrom(builder: DeclarationBuilder, properties: List<HeaderProperty>) {
-        printKDoc("Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.")
-        println("fun copyFrom(from: ", builder.element.render(), ") {")
+        val root = generateSequence(builder) { it.parent }.last()
+        val parameterType = root.element.render()
+        if (builder.parent == null) {
+            printKDoc(
+                """
+                Copies the header of [from] as is: the fields that [from] has in common with the declaration built by this builder.
+                Relations to other declarations, metadata, annotations and children aren't copied.
+                """.trimIndent()
+            )
+            println("open fun copyFrom(from: ", parameterType, ") {")
+        } else {
+            println("override fun copyFrom(from: ", parameterType, ") {")
+        }
         withIndent {
-            for (property in properties) {
-                println(property.field.name, " = from.", property.field.name)
+            if (builder.parent == null) {
+                printAssignments(properties)
+            } else {
+                println("super.copyFrom(from)")
+                println("if (from is ", builder.element.render(), ") {")
+                withIndent { printAssignments(properties) }
+                println("}")
             }
         }
         println("}")
+    }
+
+    private fun ImportCollectingPrinter.printAssignments(properties: List<HeaderProperty>) {
+        for (property in properties) {
+            println(property.field.name, " = from.", property.field.name)
+        }
     }
 
     private fun ImportCollectingPrinter.printExpr(expr: Expr) {

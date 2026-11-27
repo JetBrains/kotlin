@@ -18,10 +18,7 @@ import kotlin.contracts.contract
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -57,24 +54,20 @@ class IrPropertyBuilder @PublishedApi internal constructor() : IrDeclarationWith
     internal var getter: IrSimpleFunctionBuilder? = null
     internal var setter: IrSimpleFunctionBuilder? = null
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrProperty) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        isExternal = from.isExternal
-        visibility = from.visibility
-        modality = from.modality
-        isFakeOverride = from.isFakeOverride
-        containerSource = from.containerSource
-        isVar = from.isVar
-        isConst = from.isConst
-        isLateinit = from.isLateinit
-        isDelegated = from.isDelegated
-        isExpect = from.isExpect
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrProperty) {
+            isExternal = from.isExternal
+            visibility = from.visibility
+            modality = from.modality
+            isFakeOverride = from.isFakeOverride
+            containerSource = from.containerSource
+            isVar = from.isVar
+            isConst = from.isConst
+            isLateinit = from.isLateinit
+            isDelegated = from.isDelegated
+            isExpect = from.isExpect
+        }
     }
 
     /**

@@ -11,6 +11,7 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations.v2
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -39,20 +40,16 @@ abstract class IrParameterBuilder internal constructor() : IrDeclarationWithName
     internal val isTypeInitialized: Boolean
         get() = ::type.isInitialized
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrValueParameter) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        type = from.type
-        isAssignable = from.isAssignable
-        varargElementType = from.varargElementType
-        isCrossinline = from.isCrossinline
-        isNoinline = from.isNoinline
-        isHidden = from.isHidden
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrValueParameter) {
+            type = from.type
+            isAssignable = from.isAssignable
+            varargElementType = from.varargElementType
+            isCrossinline = from.isCrossinline
+            isNoinline = from.isNoinline
+            isHidden = from.isHidden
+        }
     }
 }
 

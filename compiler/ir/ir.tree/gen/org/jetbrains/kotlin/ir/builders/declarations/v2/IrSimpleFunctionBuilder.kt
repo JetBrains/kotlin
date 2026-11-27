@@ -16,10 +16,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -43,26 +40,16 @@ class IrSimpleFunctionBuilder @PublishedApi internal constructor() : IrFunctionB
 
     internal val symbol: IrSimpleFunctionSymbol = IrSimpleFunctionSymbolImpl()
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrSimpleFunction) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        isExternal = from.isExternal
-        visibility = from.visibility
-        containerSource = from.containerSource
-        isInline = from.isInline
-        isExpect = from.isExpect
-        returnType = from.returnType
-        modality = from.modality
-        isFakeOverride = from.isFakeOverride
-        isTailrec = from.isTailrec
-        isSuspend = from.isSuspend
-        isOperator = from.isOperator
-        isInfix = from.isInfix
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrSimpleFunction) {
+            modality = from.modality
+            isFakeOverride = from.isFakeOverride
+            isTailrec = from.isTailrec
+            isSuspend = from.isSuspend
+            isOperator = from.isOperator
+            isInfix = from.isInfix
+        }
     }
 }
 

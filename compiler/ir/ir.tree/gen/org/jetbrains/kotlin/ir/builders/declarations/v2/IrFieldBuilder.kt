@@ -37,19 +37,15 @@ class IrFieldBuilder @PublishedApi internal constructor() : IrDeclarationWithNam
 
     internal val symbol: IrFieldSymbol = IrFieldSymbolImpl()
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrField) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        isExternal = from.isExternal
-        visibility = from.visibility
-        type = from.type
-        isFinal = from.isFinal
-        isStatic = from.isStatic
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrField) {
+            isExternal = from.isExternal
+            visibility = from.visibility
+            type = from.type
+            isFinal = from.isFinal
+            isStatic = from.isStatic
+        }
     }
 }
 

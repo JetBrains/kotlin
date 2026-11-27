@@ -404,16 +404,14 @@ object DeclarationBuilderConfigurator {
     }
 
     /**
-     * The properties `copyFrom` of [builder] copies: all header properties of its node, except the abstract ones (fixed by the builder type,
-     * e.g. the kind of a parameter), child elements (e.g. the initializer of a variable) and the [notCopiedFields].
-     * Empty if [builder] adds nothing to the `copyFrom` of its parent.
+     * The properties of [builder] (not of its parents) that `copyFrom` copies: the header properties, except the abstract ones
+     * (fixed by the builder type, e.g. the kind of a parameter), child elements (e.g. the initializer of a variable) and the [notCopiedFields].
      */
     fun copiedProperties(builder: DeclarationBuilder): List<HeaderProperty> {
         val notCopied = (builder.ancestors + builder).flatMapTo(notCopiedFields.toMutableSet()) { it.notCopiedFields }
-        fun isCopied(property: HeaderProperty) =
+        return headerProperties(builder).filter { property ->
             !property.isAbstract && !property.field.holdsChildElement() && property.field.name !in notCopied
-        if (headerProperties(builder).none(::isCopied)) return emptyList()
-        return headerPropertiesOfNode(builder).filter(::isCopied)
+        }
     }
 
     /** The default of a builder property derived from the field, `null` if it has none (the property is `lateinit`). */

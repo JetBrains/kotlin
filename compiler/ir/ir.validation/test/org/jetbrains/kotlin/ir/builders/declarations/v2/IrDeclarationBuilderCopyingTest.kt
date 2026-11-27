@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.ir.builders.declarations.v2
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.TestIrBuiltins
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.expressions.v2.buildAnnotation
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -111,6 +113,25 @@ class IrDeclarationBuilderCopyingTest {
         val defaultValue = x.defaultValue!!.expression
         assertNotSame(source.parameters[1].defaultValue!!.expression, defaultValue)
         assertEquals(0, (defaultValue as IrConst).value)
+    }
+
+    @Test
+    fun copyHeaderOfDeclarationWithMoreGeneralStaticType() {
+        val source: IrFunction = factory.irFunction {
+            name = Name.identifier("f")
+            returnType = builtIns.unitType
+            modality = Modality.OPEN
+            isSuspend = true
+        }
+        val copy = factory.irFunction { copyFrom(source) }
+        assertEquals(Modality.OPEN, copy.modality)
+        assertEquals(true, copy.isSuspend)
+
+        // The fields of a simple function keep their defaults when copying from a constructor.
+        val constructor = annotationClass.constructors.single()
+        val fromConstructor = factory.irFunction { copyFrom(constructor) }
+        assertEquals(constructor.returnType, fromConstructor.returnType)
+        assertEquals(Modality.FINAL, fromConstructor.modality)
     }
 
     @Test

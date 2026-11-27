@@ -15,6 +15,7 @@ package org.jetbrains.kotlin.ir.builders.declarations.v2
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
@@ -33,16 +34,12 @@ class IrTypeParameterBuilder internal constructor() : IrDeclarationWithNameBuild
 
     internal val symbol: IrTypeParameterSymbol = IrTypeParameterSymbolImpl()
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrTypeParameter) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        variance = from.variance
-        isReified = from.isReified
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrTypeParameter) {
+            variance = from.variance
+            isReified = from.isReified
+        }
     }
 }
 

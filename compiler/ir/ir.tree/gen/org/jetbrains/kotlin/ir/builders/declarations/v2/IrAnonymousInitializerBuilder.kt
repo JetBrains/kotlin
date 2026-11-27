@@ -17,20 +17,18 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 
 class IrAnonymousInitializerBuilder @PublishedApi internal constructor() : IrDeclarationBuilder() {
     var isStatic: Boolean = false
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrAnonymousInitializer) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        isStatic = from.isStatic
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrAnonymousInitializer) {
+            isStatic = from.isStatic
+        }
     }
 }
 

@@ -17,6 +17,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.name.SpecialNames
@@ -28,21 +29,11 @@ class IrConstructorBuilder @PublishedApi internal constructor() : IrFunctionBuil
         name = SpecialNames.INIT
     }
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrConstructor) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        isExternal = from.isExternal
-        visibility = from.visibility
-        containerSource = from.containerSource
-        isInline = from.isInline
-        isExpect = from.isExpect
-        returnType = from.returnType
-        isPrimary = from.isPrimary
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrConstructor) {
+            isPrimary = from.isPrimary
+        }
     }
 }
 

@@ -16,6 +16,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
@@ -40,18 +41,14 @@ class IrVariableBuilder @PublishedApi internal constructor() : IrDeclarationWith
     internal val isTypeInitialized: Boolean
         get() = ::type.isInitialized
 
-    /**
-     * Copies the header of [from] as is, without relations to other declarations, metadata, annotations and children.
-     */
-    fun copyFrom(from: IrVariable) {
-        startOffset = from.startOffset
-        endOffset = from.endOffset
-        origin = from.origin
-        name = from.name
-        type = from.type
-        isVar = from.isVar
-        isConst = from.isConst
-        isLateinit = from.isLateinit
+    override fun copyFrom(from: IrDeclaration) {
+        super.copyFrom(from)
+        if (from is IrVariable) {
+            type = from.type
+            isVar = from.isVar
+            isConst = from.isConst
+            isLateinit = from.isLateinit
+        }
     }
 }
 
