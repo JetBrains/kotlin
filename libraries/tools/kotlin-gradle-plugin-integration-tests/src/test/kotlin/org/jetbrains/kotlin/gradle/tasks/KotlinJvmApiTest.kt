@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -15,6 +17,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
 @DisplayName("JVM API validation")
+@MustRunOnChangesInGradle
 class KotlinJvmApiTest : KGPBaseTest() {
     @TestMetadata("kotlinJavaProject")
     @DisplayName("Kotlin compilation can be set up using APIs")
@@ -103,6 +106,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
     @TestMetadata("kotlinJavaProject")
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
+    @MustRunOnChangesInCompilerPlugins
     @GradleTest
     internal fun kaptShouldRunIfSetUpWithApi(gradleVersion: GradleVersion) {
         project(
