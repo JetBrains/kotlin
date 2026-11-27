@@ -608,3 +608,5 @@ final object org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds { // org.jetbrains
     final const val WHILE_KEYWORD // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHILE_KEYWORD|{}WHILE_KEYWORD[0]
         final fun <get-WHILE_KEYWORD>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxTokenIds.WHILE_KEYWORD.<get-WHILE_KEYWORD>|<get-WHILE_KEYWORD>(){}[0]
 }
+
+final fun (kotlin/Int).org.jetbrains.kotlin.syntax/isExpression(): kotlin/Boolean // org.jetbrains.kotlin.syntax/isExpression|isExpression@kotlin.Int(){}[0]

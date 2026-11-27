@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.diagnostics.getChildrenArray
+import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.diagnostics.userType
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword

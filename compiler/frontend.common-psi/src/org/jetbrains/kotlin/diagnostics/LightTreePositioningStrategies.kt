@@ -11,7 +11,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
@@ -1609,10 +1608,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: Lighte
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
-
-fun LighterASTNode.isExpression(): Boolean {
-    return isExpression()
-}
 
 /**
  * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for diagnostics

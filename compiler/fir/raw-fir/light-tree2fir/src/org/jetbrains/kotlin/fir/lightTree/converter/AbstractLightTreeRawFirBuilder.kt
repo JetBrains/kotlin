@@ -11,7 +11,7 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
+import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.lexer.KtTokens.*

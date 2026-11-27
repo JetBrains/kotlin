@@ -15,7 +15,15 @@ import org.jetbrains.kotlin.KtNodeTypes.PREFIX_EXPRESSION
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
+import org.jetbrains.kotlin.syntax.isExpression
+import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.util.getChildren
+
+/**
+ * Whether the node represents [org.jetbrains.kotlin.psi.KtExpression]. See [org.jetbrains.kotlin.syntax.isExpression].
+ */
+@OptIn(KtImplementationDetail::class)
+fun LighterASTNode.isExpression(): Boolean = tokenType.syntaxId().isExpression()
 
 /**
  * Returns the first direct child of [node] with the given [type], or `null` if there is none.

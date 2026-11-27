@@ -3,12 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis
+package org.jetbrains.kotlin.syntax
 
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.SyntaxId
-
-fun SyntaxId.isExpression(): Boolean = when (this) {
+/**
+ * Whether the node type with this ID represents an expression, i.e., its PSI element is `KtExpression`.
+ * It's `false` for tokens and for the IDs that aren't Kotlin node types.
+ *
+ * It's the single source of truth for all parse trees.
+ * Must be updated once a new non-expression node type is added to the parser.
+ */
+public fun SyntaxId.isExpression(): Boolean = when (this) {
     // Stub-based element types that are not `KtExpression`
     KotlinSyntaxNodeTypeIds.CLASS_BODY,
     KotlinSyntaxNodeTypeIds.COMPANION_BLOCK,

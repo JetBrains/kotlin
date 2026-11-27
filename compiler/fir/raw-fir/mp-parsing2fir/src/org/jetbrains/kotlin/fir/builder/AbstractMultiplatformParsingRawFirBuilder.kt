@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.isExpression
 
 @Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
