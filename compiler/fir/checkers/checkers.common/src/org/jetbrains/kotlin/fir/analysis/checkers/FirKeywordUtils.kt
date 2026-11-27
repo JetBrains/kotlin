@@ -72,3 +72,9 @@ internal val KtSourceElement?.valOrVarKeyword: ValOrVarKeyword?
         KotlinSyntaxTokenIds.VAR_KEYWORD -> ValOrVarKeyword.VAR
         else -> null
     }
+
+/**
+ * Returns whether the element (e.g., a parameter) has the `val` or `var` keyword among its direct children.
+ */
+context(syntax: FirSyntaxComponent<*>)
+fun KtSourceElement.hasValOrVar(): Boolean = valOrVarKeyword != null

@@ -1569,12 +1569,6 @@ object LightTreePositioningStrategies : PositioningStrategyRegistry<LightTreePos
     }.registerAs(PositioningStrategyKinds.DEPRECATION)
 }
 
-fun KtSourceElement.hasValOrVar(): Boolean =
-    treeStructure.valOrVarKeyword(lighterASTNode) != null
-
-fun KtSourceElement.hasVar(): Boolean =
-    treeStructure.findChildByType(lighterASTNode, VAR_KEYWORD) != null
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.companionKeyword(node: LighterASTNode): LighterASTNode? =
     modifierList(node)?.let { findChildByType(it, COMPANION_KEYWORD) }
 
