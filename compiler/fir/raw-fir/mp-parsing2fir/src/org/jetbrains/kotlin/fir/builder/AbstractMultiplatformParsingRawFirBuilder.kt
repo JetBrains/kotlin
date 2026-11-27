@@ -44,8 +44,10 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return BasicElementTypes.getElementTypeId(this)
     }
 
-    override fun KtSourceElement.isChildInParentheses(): Boolean =
-        (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        require(this is KtLightSourceElement)
+        return (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
+    }
 
     override fun LightNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
         val startOffset = tree.getStartOffset(this)

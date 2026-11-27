@@ -150,6 +150,10 @@ open class PsiRawFirBuilder(
         }
     }
 
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        return (this as KtPsiSourceElement).psi.parent is KtParenthesizedExpression
+    }
+
     /**
      * See [UNWRAPPABLE_TOKEN_TYPES][org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES]
      */

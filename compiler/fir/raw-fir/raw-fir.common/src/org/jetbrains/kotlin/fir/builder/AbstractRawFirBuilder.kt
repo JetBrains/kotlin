@@ -830,8 +830,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return sourceElement.isChildInParentheses()
     }
 
-    open fun KtSourceElement.isChildInParentheses(): Boolean =
-        treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
+    /**
+     * Returns whether the parent of the element is a parenthesized expression.
+     */
+    abstract fun KtSourceElement.isChildInParentheses(): Boolean
 
     /**
      * given:

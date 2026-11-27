@@ -36,6 +36,11 @@ abstract class AbstractLightTreeRawFirBuilder(
         return (this as KtLightSourceElement).lighterASTNode
     }
 
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        require(this is KtLightSourceElement)
+        return treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
+    }
+
     override val LighterASTNode.elementType: IElementType
         get() = this.tokenType
 
