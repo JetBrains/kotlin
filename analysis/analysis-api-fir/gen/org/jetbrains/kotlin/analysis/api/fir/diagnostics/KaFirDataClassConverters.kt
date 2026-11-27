@@ -7544,13 +7544,6 @@ private fun KaDiagnosticConverterBuilder.addConversions149() {
             token,
         )
     }
-    add(FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE) { firDiagnostic ->
-        IdentityHashCodeOnValueTypeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions150() {

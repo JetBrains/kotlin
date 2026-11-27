@@ -7488,12 +7488,6 @@ internal class NativeSpecificAtomicImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KaFirDiagnostic.NativeSpecificAtomic
 
-internal class IdentityHashCodeOnValueTypeImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentityHashCodeOnValueType
-
 internal class VariadicFunctionPointersAreNotSupportedImpl(
     override val function: KaSymbol,
     firDiagnostic: KtDiagnosticWithSource,

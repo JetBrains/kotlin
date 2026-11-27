@@ -10619,15 +10619,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface IdentityHashCodeOnValueType : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<IdentityHashCodeOnValueType>
-            get() = IdentityHashCodeOnValueType::class
-
-        public val type: KaType
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface VariadicFunctionPointersAreNotSupported : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<VariadicFunctionPointersAreNotSupported>
             get() = VariadicFunctionPointersAreNotSupported::class

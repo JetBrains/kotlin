@@ -1364,7 +1364,6 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirNativeErrors.CONFLICTING_OBJC_OVERLOADS to PsiElement::class.java,
     FirNativeErrors.INAPPLICABLE_OBJC_OVERRIDE to PsiElement::class.java,
     FirNativeErrors.NATIVE_SPECIFIC_ATOMIC to KtTypeReference::class.java,
-    FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE to KtElement::class.java,
     FirNativeErrors.VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED to KtElement::class.java,
     FirNativeErrors.OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED to KtElement::class.java,
     FirNativeErrors.CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED to KtElement::class.java,
