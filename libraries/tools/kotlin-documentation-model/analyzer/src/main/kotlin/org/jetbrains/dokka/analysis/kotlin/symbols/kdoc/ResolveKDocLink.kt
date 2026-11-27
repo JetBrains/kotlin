@@ -5,9 +5,13 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
+import org.jetbrains.kotlin.documentation.analyzer.ids.contextParameterDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.generateDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.receiverDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.typeParameterDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.valueParameterDeclarationId
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -17,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.documentation.analyzer.ids.UNRESOLVED_DECLARATION_ID
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -24,26 +29,27 @@ import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 /**
- * Resolves a KDoc link, logging a warning in case of unresolved links.
+ * Resolves a KDoc link to the target's declaration ID (see `generateDeclarationId`), logging a warning in
+ * case of unresolved links.
  *
- * For the resolution logic, see [resolveKDocLinkToDRI]
+ * For the resolution logic, see [resolveKDocLinkToDeclarationId]
  */
 internal fun resolveKDocLink(
     link: KDocLink,
     logger: DokkaLogger,
     sourceSet: DokkaConfiguration.DokkaSourceSet
-): DRI? {
-    val dri = resolveKDocLinkToDRI(link)
-    if (dri == null) {
+): KdElementId? {
+    val declarationId = resolveKDocLinkToDeclarationId(link)
+    if (declarationId == null) {
         logUnresolvedLink(link.getLinkText(),  getLocation(link), logger, sourceSet)
     }
-    return dri
+    return declarationId
 }
 
 /**
  * Resolves a KDoc link from text representation, logging a warning in case of unresolved links.
  *
- * For the resolution logic, see [resolveKDocTextLinkToDRI]
+ * For the resolution logic, see [resolveKDocTextLinkToDeclarationId]
  */
 context(_: KaSession)
 internal fun resolveKDocTextLink(
@@ -52,12 +58,12 @@ internal fun resolveKDocTextLink(
     location: String?,
     logger: DokkaLogger,
     sourceSet: DokkaConfiguration.DokkaSourceSet
-): DRI? {
-    val dri = resolveKDocTextLinkToDRI(link, contextPackageFQN)
-    if (dri == null) {
+): KdElementId? {
+    val declarationId = resolveKDocTextLinkToDeclarationId(link, contextPackageFQN)
+    if (declarationId == null) {
         logUnresolvedLink(link, location, logger, sourceSet)
     }
-    return dri
+    return declarationId
 }
 
 /**
@@ -79,12 +85,12 @@ private fun logUnresolvedLink(
  * it returns deterministically any declaration.
  *
  * @param contextPackageFQN FQN of a context package
- * @return [DRI] or null if the [link] is unresolved
+ * @return the target's declaration ID or null if the [link] is unresolved
  */
 context(_: KaSession)
-internal fun resolveKDocTextLinkToDRI(link: String, contextPackageFQN: String? = null): DRI? {
+internal fun resolveKDocTextLinkToDeclarationId(link: String, contextPackageFQN: String? = null): KdElementId? {
     val kDocLink = createKDocLink(link, contextPackageFQN)
-    return kDocLink?.let { resolveKDocLinkToDRI(it) }
+    return kDocLink?.let { resolveKDocLinkToDeclarationId(it) }
 }
 
 /**
@@ -149,9 +155,9 @@ private fun createKDocLink(link: String, contextPackageFQN: String?): KDocLink? 
  * If the [kDocLink] is ambiguous, i.e. leads to more than one declaration,
  * it returns deterministically any declaration.
  *
- * @return [DRI] or null if the [kDocLink] is unresolved
+ * @return the target's declaration ID or null if the [kDocLink] is unresolved
  */
-private fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
+private fun resolveKDocLinkToDeclarationId(kDocLink: KDocLink): KdElementId? {
     /**
      * [kDocLink] can belong to [a dangling module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
      * or [a source module][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
@@ -162,8 +168,70 @@ private fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
     analyze(kDocLink) {
         val linkedSymbol = resolveToSymbol(kDocLink)
         return if (linkedSymbol == null) null
-        else getDRIFromSymbol(linkedSymbol)
+        else declarationIdFrom(linkedSymbol)
     }
+}
+
+/**
+ * The declaration ID of [symbol] as a KDoc link target. The owning declaration is determined first and
+ * gets its ID from [generateDeclarationId]; non-declaration symbols (value/context parameters, type
+ * parameters, receivers) append their owner-relative part to the owner's ID with the ID helpers, e.g.
+ * [valueParameterDeclarationId]. Local and unsupported symbols resolve to [UNRESOLVED_DECLARATION_ID].
+ */
+context(session: KaSession)
+private fun declarationIdFrom(symbol: KaSymbol): KdElementId {
+    val owner = ownerSymbolOf(symbol) ?: return UNRESOLVED_DECLARATION_ID
+    val ownerId = generateDeclarationIdOrNull(owner) ?: return UNRESOLVED_DECLARATION_ID
+    return when {
+        symbol === owner -> ownerId
+        symbol is KaValueParameterSymbol -> valueParameterDeclarationId(
+            ownerId,
+            (owner as? KaFunctionSymbol)?.valueParameters?.indexOf(symbol)
+                ?: error("Value parameter `$symbol` is not owned by a function: $owner"),
+        )
+        symbol is KaContextParameterSymbol -> contextParameterDeclarationId(
+            ownerId,
+            (owner as? KaCallableSymbol)?.contextParameters?.indexOf(symbol)
+                ?: error("Context parameter `$symbol` is not owned by a callable: $owner"),
+        )
+        symbol is KaTypeParameterSymbol -> typeParameterDeclarationId(
+            ownerId,
+            (owner as? KaDeclarationSymbol)?.typeParameters?.indexOf(symbol)
+                ?: error("Type parameter `$symbol` is not owned by a declaration: $owner"),
+        )
+        symbol is KaReceiverParameterSymbol -> receiverDeclarationId(ownerId)
+        else -> ownerId
+    }
+}
+
+/**
+ * The nearest declaration owning [symbol] in a KDoc link target: parameters and receivers walk up
+ * through their containing symbols until a classlike, callable, or package symbol is reached.
+ */
+context(_: KaSession)
+private fun ownerSymbolOf(symbol: KaSymbol): KaSymbol? {
+    var current: KaSymbol = symbol
+    while (true) {
+        current = when (current) {
+            // Value/context parameters are KaCallableSymbols but have no ID of their own,
+            // so they must be walked up before the callable branch below.
+            is KaValueParameterSymbol, is KaContextParameterSymbol, is KaTypeParameterSymbol,
+            is KaReceiverParameterSymbol -> current.containingSymbol ?: return null
+            is KaClassLikeSymbol, is KaCallableSymbol, is KaPackageSymbol -> return current
+            is KaDeclarationSymbol -> current.containingSymbol ?: return null
+            else -> return null
+        }
+    }
+}
+
+/** [generateDeclarationId] that yields `null` for local and unsupported symbols instead of throwing. */
+context(session: KaSession)
+private fun generateDeclarationIdOrNull(symbol: KaSymbol): KdElementId? = try {
+    generateDeclarationId(symbol)
+} catch (_: IllegalStateException) {
+    null
+} catch (_: IllegalArgumentException) {
+    null
 }
 
 context(_: KaSession)

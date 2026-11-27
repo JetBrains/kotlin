@@ -110,15 +110,16 @@ internal fun generateOwnerDeclarationId(symbol: KaSymbol): KdElementId = when (s
 }
 
 /**
- * The declaration ID of the enum entry [entryName] of [enumClassId]. Enum entries have a constant signature
- * (`kind=enum-entry; ` — no type or value parameters), so the entry's ID can be reconstructed from the
- * class ID and the entry name alone, without the symbol.
+ * The declaration ID of the enum entry [entryName] of [enumClassId]. Enum entries have a constant
+ * signature (`kind=enum-entry; companion; ` — no type or value parameters; `companion; ` is always
+ * present because [KaEnumEntrySymbol.isCompanion] is unconditionally true), so the entry's ID can
+ * be reconstructed from the class ID and the entry name alone, without the symbol.
  *
  * For example, the Analysis API does not resolve annotations to symbols.
  * Sometimes their symbols are unavailable due to transitive runtime dependencies.
  */
 internal fun enumEntryDeclarationId(enumClassId: ClassId, entryName: String): KdElementId = KdElementId(
-    "${enumClassId.escape()}#${entryName.escapeName()}#${("kind=" + CallableKind.ENUM_ENTRY.id + "; ").shortHash()}"
+    "${enumClassId.escape()}#${entryName.escapeName()}#${("kind=" + CallableKind.ENUM_ENTRY.id + "; companion; ").shortHash()}"
 )
 
 context(session: KaSession)
