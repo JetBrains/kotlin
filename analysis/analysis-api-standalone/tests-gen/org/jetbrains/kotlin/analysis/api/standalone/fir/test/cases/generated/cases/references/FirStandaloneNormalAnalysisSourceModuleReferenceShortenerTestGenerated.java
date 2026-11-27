@@ -1096,6 +1096,42 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("danglingContextInDeclaration.kt")
+    public void testDanglingContextInDeclaration() {
+      run("danglingContextInDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInDeclarationFunctionTypeParameter.kt")
+    public void testDanglingContextInDeclarationFunctionTypeParameter() {
+      run("danglingContextInDeclarationFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInDeclarationInClass.kt")
+    public void testDanglingContextInDeclarationInClass() {
+      run("danglingContextInDeclarationInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInDeclarationNamed.kt")
+    public void testDanglingContextInDeclarationNamed() {
+      run("danglingContextInDeclarationNamed.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInDeclarationNullable.kt")
+    public void testDanglingContextInDeclarationNullable() {
+      run("danglingContextInDeclarationNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInDeclarationSeveral.kt")
+    public void testDanglingContextInDeclarationSeveral() {
+      run("danglingContextInDeclarationSeveral.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextInFunctionType.kt")
     public void testDanglingContextInFunctionType() {
       run("danglingContextInFunctionType.kt");
