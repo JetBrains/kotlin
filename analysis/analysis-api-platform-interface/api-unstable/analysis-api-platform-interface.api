@@ -54,6 +54,25 @@ public final class org/jetbrains/kotlin/analysis/api/platform/KotlinDeserialized
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/KotlinDeserializedDeclarationsOrigin;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$Companion;
+	public abstract fun afterCleanup (JJZ)V
+	public abstract fun afterWaitingForCleanup (JLorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$Companion {
+	public final fun getTOPIC ()Lcom/intellij/util/messages/Topic;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome : java/lang/Enum {
+	public static final field CANCELED Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;
+	public static final field CLEANUP_COMPLETED Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;
+	public static final field DEADLOCK_SUSPECTED Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/platform/KotlinLowMemoryCacheCleanupListener$WaitOutcome;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinMessageBusProvider$Companion;
 	public abstract fun getMessageBus ()Lcom/intellij/util/messages/MessageBus;

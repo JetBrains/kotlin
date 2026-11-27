@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.fir.test
+package org.jetbrains.kotlin.analysis.api.fir.test.listeners
 
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
-class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/sessionListener") {
+class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/listeners/session") {
     override val configurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
