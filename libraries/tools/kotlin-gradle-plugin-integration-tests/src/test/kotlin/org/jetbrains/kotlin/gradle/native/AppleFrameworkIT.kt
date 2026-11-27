@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -24,6 +25,7 @@ import kotlin.test.assertEquals
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with Apple Framework")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class AppleFrameworkIT : KGPBaseTest() {
 
     @TestMetadata("sharedAppleFramework")
