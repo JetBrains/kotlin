@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -27,27 +28,27 @@ class AndroidIrBuilder internal constructor(
     }
 
     fun parcelReadParcelable(receiver: IrExpression, loader: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelReadParcelable).apply {
+        return irCall(androidSymbols.parcelReadParcelable) {
             arguments[0] = receiver
             arguments[1] = loader
         }
     }
 
     fun parcelReadString(receiver: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelReadString).apply {
+        return irCall(androidSymbols.parcelReadString) {
             arguments[0] = receiver
         }
     }
 
     fun parcelWriteInt(receiver: IrExpression, value: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelWriteInt).apply {
+        return irCall(androidSymbols.parcelWriteInt) {
             arguments[0] = receiver
             arguments[1] = value
         }
     }
 
     fun parcelWriteParcelable(receiver: IrExpression, p: IrExpression, parcelableFlags: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelWriteParcelable).apply {
+        return irCall(androidSymbols.parcelWriteParcelable) {
             arguments[0] = receiver
             arguments[1] = p
             arguments[2] = parcelableFlags
@@ -55,14 +56,14 @@ class AndroidIrBuilder internal constructor(
     }
 
     fun parcelWriteString(receiver: IrExpression, value: IrExpression): IrExpression {
-        return irCall(androidSymbols.parcelWriteString).apply {
+        return irCall(androidSymbols.parcelWriteString) {
             arguments[0] = receiver
             arguments[1] = value
         }
     }
 
     fun textUtilsWriteToParcel(cs: IrExpression, p: IrExpression, parcelableFlags: IrExpression): IrExpression {
-        return irCall(androidSymbols.textUtilsWriteToParcel).apply {
+        return irCall(androidSymbols.textUtilsWriteToParcel) {
             arguments[0] = cs
             arguments[1] = p
             arguments[2] = parcelableFlags
@@ -70,7 +71,7 @@ class AndroidIrBuilder internal constructor(
     }
 
     fun classGetClassLoader(receiver: IrExpression): IrExpression {
-        return irCall(androidSymbols.classGetClassLoader).apply {
+        return irCall(androidSymbols.classGetClassLoader) {
             arguments[0] = receiver
         }
     }
