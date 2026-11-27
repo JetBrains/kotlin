@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.nightly
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.test.sharding.TestShardingPostDiscoveryFilter
 import org.jetbrains.kotlin.test.sharding.testFixtureTag
 import org.jetbrains.kotlin.testFederation.NightlyTest
@@ -14,6 +17,9 @@ import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
+import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.EngineFilter.includeEngines
@@ -24,7 +30,9 @@ import org.junit.platform.launcher.TagFilter.includeTags
 import org.junit.platform.launcher.core.LauncherConfig
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
-import java.util.ServiceLoader
+import java.util.*
+import java.util.concurrent.CyclicBarrier
+import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -82,6 +90,14 @@ class NightlyTestPostDiscoveryFilterTest {
         @Test
         fun normal() = Unit
     }
+
+    @Tag(testFixtureTag)
+    class NightlyParameterizedOnly {
+        @NightlyTest
+        @ParameterizedTest
+        @ValueSource(ints = [1, 2])
+        fun nightlyParameterized(@Suppress("unused") value: Int) = Unit
+    }
     ///
 
     @Test
@@ -92,6 +108,7 @@ class NightlyTestPostDiscoveryFilterTest {
                 "NightlyClass.b_nightly",
                 "NightlyMethods.nightly",
                 "NightlyMethods.nightlyFactory",
+                "NightlyParameterizedOnly.nightlyParameterized",
                 "ComposedNightlyClass.a_nightly",
                 "OtherTests.nightly",
             ),
@@ -107,6 +124,7 @@ class NightlyTestPostDiscoveryFilterTest {
                 "NightlyClass.b_nightly",
                 "NightlyMethods.nightly",
                 "NightlyMethods.nightlyFactory",
+                "NightlyParameterizedOnly.nightlyParameterized",
                 "ComposedNightlyClass.a_nightly",
                 "OtherTests.nightly"
             ),
@@ -140,6 +158,7 @@ class NightlyTestPostDiscoveryFilterTest {
                 "NightlyMethods.regular",
                 "NightlyMethods.nightly",
                 "NightlyMethods.nightlyFactory",
+                "NightlyParameterizedOnly.nightlyParameterized",
                 "OtherTests.nightly",
                 "OtherTests.normal",
                 "RegularClass.normal"
@@ -168,6 +187,56 @@ class NightlyTestPostDiscoveryFilterTest {
     }
 
     @Test
+    fun `parallel discoveries are checked against their own requests`() {
+        // The test reacts if there's no thread local used in the NightlyTestAssertPostDiscoveryFilter.kt
+        runBlocking {
+            /* Both discoveries register their requests before any of them applies the post-discovery filters */
+            val barrier = CyclicBarrier(2)
+            val awaitOtherDiscovery = object : LauncherDiscoveryListener {
+                override fun engineDiscoveryStarted(engineId: UniqueId) {
+                    barrier.await(10, TimeUnit.SECONDS)
+                }
+            }
+
+            launch(Dispatchers.IO) {
+                assertEquals(
+                    sortedSetOf("NightlyClass.a_nightly", "NightlyClass.b_nightly"),
+                    discover(
+                        listOf(excludeTags("!$nightlyTagKey")),
+                        listOf(NightlyClass::class.java),
+                        true,
+                        listOf(awaitOtherDiscovery),
+                    ),
+                )
+            }
+            launch(Dispatchers.IO) {
+                assertFailsWith<InsufficientNightlyFilteringException> {
+                    discover(noFilters, listOf(NightlyClass::class.java), true, listOf(awaitOtherDiscovery))
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `nested discovery does not affect the request of the outer discovery`() {
+        /* Emulates the JUnit Platform Suite Engine, which discovers the suite tests during the engine discovery */
+        var nestedTests: Set<String>? = null
+        val nestedDiscovery = object : LauncherDiscoveryListener {
+            override fun engineDiscoveryStarted(engineId: UniqueId) {
+                if (nestedTests == null) {
+                    nestedTests = discover(noFilters, listOf(RegularClass::class.java), isTeamCity = true)
+                }
+            }
+        }
+
+        assertEquals(
+            sortedSetOf("NightlyClass.a_nightly", "NightlyClass.b_nightly"),
+            discover(listOf(excludeTags("!$nightlyTagKey")), listOf(NightlyClass::class.java), true, listOf(nestedDiscovery)),
+        )
+        assertEquals(sortedSetOf("RegularClass.normal"), nestedTests)
+    }
+
+    @Test
     fun `filter and listener are registered by the service loader`() {
         val filtersOfThisModule = ServiceLoader.load(PostDiscoveryFilter::class.java)
             .map { filter -> filter::class }
@@ -192,6 +261,7 @@ class NightlyTestPostDiscoveryFilterTest {
             ComposedNightlyClass::class.java,
             RegularClass::class.java,
             OtherTests::class.java,
+            NightlyParameterizedOnly::class.java
         )
 
         private val noFilters = emptyList<PostDiscoveryFilter>()
@@ -205,13 +275,14 @@ class NightlyTestPostDiscoveryFilterTest {
             requestFilters: List<PostDiscoveryFilter>,
             testClasses: List<Class<*>>,
             isTeamCity: Boolean,
+            additionalListeners: List<LauncherDiscoveryListener> = emptyList(),
         ): Set<String> {
             val launcher = LauncherFactory.create(
                 LauncherConfig.builder()
                     .enablePostDiscoveryFilterAutoRegistration(false)
                     .enableLauncherDiscoveryListenerAutoRegistration(false)
                     .addPostDiscoveryFilters(NightlyTestAssertPostDiscoveryFilter(isCheckEnabled = isTeamCity))
-                    .addLauncherDiscoveryListeners(NightlyTestDiscoveryListener())
+                    .addLauncherDiscoveryListeners(NightlyTestDiscoveryListener(), *additionalListeners.toTypedArray())
                     .build()
             )
             val request = LauncherDiscoveryRequestBuilder.request()

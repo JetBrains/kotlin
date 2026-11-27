@@ -41,6 +41,7 @@ internal class NightlyTestAssertPostDiscoveryFilter(
 
         val isTestMethod = descriptor.type == TestDescriptor.Type.TEST || descriptor.mayRegisterTests()
         if (!isTestMethod) {
+            // It's more important to check tests than containers, skip the check for them
             return included("Containers are checked by their tests")
         }
 
