@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileSource
 import org.jetbrains.kotlin.gradle.testbase.plugins
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
@@ -32,6 +32,7 @@ import kotlin.test.assertEquals
 )
 @OptIn(EnvironmentalVariablesOverride::class, ExperimentalKotlinGradlePluginApi::class)
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInNative // Smoke test for the whole SPMImport pipeline
 class SwiftPMImportCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
