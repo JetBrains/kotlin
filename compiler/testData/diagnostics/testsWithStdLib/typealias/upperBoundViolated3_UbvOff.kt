@@ -1,6 +1,5 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: CODEGEN
-// LANGUAGE: +ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables
+// LANGUAGE: -ReportUpperBoundViolatedWithSamTypealiasedConstructors
 // FIR_DUMP
 // FILE: A.kt
 package a
@@ -29,7 +28,7 @@ typealias SamAlias<K> = SamBox<K>
 
 val a = Alias<Any>()
 // TODO(KT-92053): currently, resolves to a.SamAlias
-val sa = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>SamAlias<Any> { }<!>
+val sa = SamAlias<Any> { }
 
 /* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
 typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */
