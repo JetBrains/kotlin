@@ -118,10 +118,6 @@ abstract class BasicIrModuleDeserializer(
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
 
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
-        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module ${moduleFragment.name}")
-    }
-
     private fun deserializeIrFile(
         fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,
         fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean, deserializeTypeAliases: Boolean,

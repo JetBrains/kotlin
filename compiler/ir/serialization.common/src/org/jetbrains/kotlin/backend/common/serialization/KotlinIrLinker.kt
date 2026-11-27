@@ -199,7 +199,7 @@ abstract class KotlinIrLinker(
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
         // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
         // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
-        val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
+        val symbol: IrSymbol? = actualModuleDeserializer?.findAndEnqueueSymbolOrNull(idSignature and symbolKind)
 
         return if (symbol != null) {
             moduleDependencyTracker.trackDependency(
@@ -298,42 +298,17 @@ abstract class KotlinIrLinker(
         } while (unbound != prevUnbound)
     }
 
-    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
-        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
-
-        val signature = symbol.signature ?: return false
-        val moduleDeserializer = resolveModuleDeserializer(signature)
-            ?: return false
-        moduleDeserializer.declareIrSymbol(symbol)
-
-        deserializeAllReachableTopLevels()
-
-        return symbol.isBound
-    }
-
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         state.checkInitializationCompleted()
-        return deserializeOrResolveDeclaration(symbol)
-    }
 
-    private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isBound) {
-            try {
-                if (!findDeserializedDeclarationForSymbol(symbol)) return null
-            } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e).raiseIssue(errorCallback)
-            }
+        if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
+            findAndEnqueueSymbolOrNull(symbol.signatureAndKindOrNull ?: return null)
+            deserializeAllReachableTopLevels()
         }
 
-        if (!symbol.isBound) return null
-
-        //assert(symbol.isBound) {
-        //    "getDeclaration: symbol $symbol is unbound, descriptor = ${symbol.descriptor}, signature = ${symbol.signature}"
-        //}
-
-        return symbol.owner as IrDeclaration
+        return if (symbol.isBound) symbol.owner as IrDeclaration else null
     }
 
     /**

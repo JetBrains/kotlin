@@ -261,8 +261,6 @@ class KonanInteropModuleDeserializer(
         return false
     }
 
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
-
     override fun deserializeReachableDeclarations() {
         // Unless full deserialization is requested, declarations are deserialized on demand, in `tryDeserializeIrSymbol()`.
         if (!isFullDeserializationRequested) return
