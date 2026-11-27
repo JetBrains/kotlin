@@ -112,25 +112,6 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
             expression.transform(data.coerceToType)
         } else super.visitCall(expression, Data.NO_COERCION)
 
-    private fun IrCall.isPolymorphicCall(): Boolean {
-        // See JLS §15.12.3.
-        // > A method is _signature polymorphic_ if all of the following are true:
-        // >     * It is declared in the `java.lang.invoke.MethodHandle` class or the `java.lang.invoke.VarHandle` class.
-        // >     * It has a single variable arity parameter (§8.4.1) whose declared type is `Object[]`.
-        // >     * It is `native`.
-        val callee = symbol.owner
-        return callee.isExternal &&
-                callee.parameters.size == 2 &&
-                callee.parameters[0].let { dispatchReceiver ->
-                    dispatchReceiver.kind == IrParameterKind.DispatchReceiver && dispatchReceiver.type.classOrNull?.owner?.let {
-                        it.isClassWithFqName(JAVA_METHOD_HANDLE_FQ_NAME) || it.isClassWithFqName(JAVA_VAR_HANDLE_FQ_NAME)
-                    } == true
-                } &&
-                callee.parameters[1].let { parameter ->
-                    parameter.kind == IrParameterKind.Regular && parameter.varargElementType?.isNullableAny() == true
-                }
-    }
-
     private fun IrCall.transform(castReturnType: IrType?): IrCall {
         val function = symbol.owner
         val [regularParameters, nonRegularParameters] = function.parameters.partition { it.kind == IrParameterKind.Regular }
@@ -172,4 +153,23 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
             transformChildren(this@PolymorphicSignatureLowering, Data.NO_COERCION)
         }
     }
+}
+
+internal fun IrCall.isPolymorphicCall(): Boolean {
+    // See JLS §15.12.3.
+    // > A method is _signature polymorphic_ if all of the following are true:
+    // >     * It is declared in the `java.lang.invoke.MethodHandle` class or the `java.lang.invoke.VarHandle` class.
+    // >     * It has a single variable arity parameter (§8.4.1) whose declared type is `Object[]`.
+    // >     * It is `native`.
+    val callee = symbol.owner
+    return callee.isExternal &&
+            callee.parameters.size == 2 &&
+            callee.parameters[0].let { dispatchReceiver ->
+                dispatchReceiver.kind == IrParameterKind.DispatchReceiver && dispatchReceiver.type.classOrNull?.owner?.let {
+                    it.isClassWithFqName(JAVA_METHOD_HANDLE_FQ_NAME) || it.isClassWithFqName(JAVA_VAR_HANDLE_FQ_NAME)
+                } == true
+            } &&
+            callee.parameters[1].let { parameter ->
+                parameter.kind == IrParameterKind.Regular && parameter.varargElementType?.isNullableAny() == true
+            }
 }

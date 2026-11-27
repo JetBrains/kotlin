@@ -36,6 +36,7 @@ private val jvmFilePhases = createFilePhases(
     ::MainMethodGenerationLowering,
 
     ::AnnotationLowering,
+    ::CollectLoweringTriggers,
     ::JvmAnnotationImplementationLowering,
     ::PolymorphicSignatureLowering,
     ::VarargLowering,
@@ -139,7 +140,7 @@ private val jvmFilePhases = createFilePhases(
     ::SpecialAccessLowering,
 
     ::TypeSwitchLowering,
-)
+).gatedByLoweringTriggers()
 
 private val jvmModulePhases2 = createModulePhases(
     ::GenerateMultifileFacades,

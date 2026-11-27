@@ -72,7 +72,7 @@ private class ModuleLoweringPhase<Context : LoweringContext>(
 
 abstract class LoweringPhase<Context : LoweringContext, Input : IrElement, Pass : ModuleLoweringPass>(
     val loweringClass: Class<out Pass>,
-    protected val createLoweringPass: (Context) -> Pass,
+    val createLoweringPass: (Context) -> Pass,
 ) : NamedCompilerPhase<Context, Input, Input>(
     loweringClass.simpleName,
     preactions = DEFAULT_IR_ACTIONS,
