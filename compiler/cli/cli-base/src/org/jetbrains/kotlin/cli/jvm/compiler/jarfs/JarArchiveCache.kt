@@ -129,34 +129,65 @@ private class SegmentedLruMap<K : Any, V : Any>(
     private val probationalSize: Int,
     private val onDrop: (V) -> Unit,
 ) {
-    private val probationalQueue = object : LinkedHashMap<K, V>(probationalSize, 0.75f, true) {
-        override fun removeEldestEntry(eldest: Map.Entry<K, V>): Boolean {
-            if (size <= probationalSize) return false
-            onDrop(eldest.value)
-            return true
-        }
-    }
+    // Plain standard linked hashmaps are used. An attempt to use sublassed map with a custom implementation of the `removeEldestEntry`
+    // in place of the custom put methods below, led to noticeable performance degradation due to different JIT strategies, so the approach
+    // was rejected.
+    private val probationalQueue = LinkedHashMap<K, V>()
+    private val protectedQueue = LinkedHashMap<K, V>()
 
-    private val protectedQueue = object : LinkedHashMap<K, V>(protectedSize, 0.75f, true) {
-        override fun removeEldestEntry(eldest: Map.Entry<K, V>): Boolean {
-            if (size <= protectedSize) return false
-            probationalQueue[eldest.key] = eldest.value
-            return true
-        }
-    }
+    /** The latest entry of the [protectedQueue], if known: most of the requests are for the same key as the previous one. */
+    private var latestKey: K? = null
+    private var latestValue: V? = null
 
-    operator fun get(key: K): V? =
-        protectedQueue[key] ?: probationalQueue.remove(key)?.also { protectedQueue[key] = it }
+    operator fun get(key: K): V? {
+        if (key == latestKey) return latestValue
+        val value = protectedQueue.remove(key) ?: probationalQueue.remove(key) ?: return null
+        putToProtected(key, value)
+        return value
+    }
 
     fun put(key: K, value: V) {
+        forgetLatest(key)
         protectedQueue.remove(key)?.let(onDrop)
-        probationalQueue.put(key, value)?.let(onDrop)
+        probationalQueue.remove(key)?.let(onDrop)
+        putToProbational(key, value)
     }
 
     fun clear() {
+        latestKey = null
+        latestValue = null
         protectedQueue.values.forEach(onDrop)
         probationalQueue.values.forEach(onDrop)
         protectedQueue.clear()
         probationalQueue.clear()
+    }
+
+    private fun putToProtected(key: K, value: V) {
+        protectedQueue[key] = value
+        latestKey = key
+        latestValue = value
+        if (protectedQueue.size <= protectedSize) return
+        val eldest = protectedQueue.entries.iterator().next()
+        val eldestKey = eldest.key
+        val eldestValue = eldest.value
+        forgetLatest(eldestKey)
+        protectedQueue.remove(eldestKey)
+        putToProbational(eldestKey, eldestValue)
+    }
+
+    private fun putToProbational(key: K, value: V) {
+        probationalQueue[key] = value
+        if (probationalQueue.size <= probationalSize) return
+        val eldest = probationalQueue.entries.iterator().next()
+        val eldestValue = eldest.value
+        probationalQueue.remove(eldest.key)
+        onDrop(eldestValue)
+    }
+
+    private fun forgetLatest(key: K) {
+        if (key == latestKey) {
+            latestKey = null
+            latestValue = null
+        }
     }
 }
