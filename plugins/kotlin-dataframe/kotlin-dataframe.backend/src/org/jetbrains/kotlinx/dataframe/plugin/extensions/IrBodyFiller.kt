@@ -12,12 +12,22 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.builders.declarations.v2.irVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildBlock
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildCatch
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildGetValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildReturn
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildTry
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildTypeOperatorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irBlockBody
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irInstanceInitializerCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
@@ -94,11 +104,14 @@ private class DataFrameFileLowering(
 
         val returnType = getter.returnType
         val typeOp = generateColumnAccessCall(
-            receiver = IrGetValueImpl(-1, -1, getterExtensionReceiver.symbol), declaration, returnType, marker, data = getter
+            receiver = buildGetValue(getterExtensionReceiver.symbol), declaration, returnType, marker, data = getter
         )
-        val returnExpression = IrReturnImpl(-1, -1, context.irBuiltIns.nothingType, getter.symbol, typeOp)
-        getter.apply {
-            body = factory.createBlockBody(-1, -1, listOf(returnExpression))
+        getter.body = getter.factory.irBlockBody {
+            statements += buildReturn {
+                type = context.irBuiltIns.nothingType
+                returnTargetSymbol = getter.symbol
+                value = typeOp
+            }
         }
 
         return declaration
@@ -117,17 +130,16 @@ private class DataFrameFileLowering(
     ): IrBlock {
 
         // handleExtensionPropertyException(e, columnName)
-        val handleCall = IrCallImpl(
-            -1, -1, context.irBuiltIns.unitType, handleFn, 0
-        ).also {
-            it.arguments[0] = IrGetValueImpl(-1, -1, catchParameter.symbol)
-            it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columnName)
+        val handleCall = buildCall(handleFn) {
+            type = context.irBuiltIns.unitType
+            arguments[0] = buildGetValue(catchParameter.symbol)
+            arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columnName)
         }
 
-        return IrBlockImpl(
-            -1, -1, context.irBuiltIns.nothingType,
-            statements = listOf(handleCall),
-        )
+        return buildBlock {
+            type = context.irBuiltIns.nothingType
+            statements += handleCall
+        }
     }
 
     private fun generateColumnAccessCall(
@@ -168,14 +180,20 @@ private class DataFrameFileLowering(
             ?.getAnnotationArgumentValue<String>(Names.COLUMN_NAME_ANNOTATION.asSingleFqName(), Names.COLUMN_NAME_ARGUMENT.identifier)
             ?: property.name.identifier
 
-        val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0).also {
-            it.arguments[0] = receiver
-            it.arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columnName)
+        val call = buildCall(get) {
+            type = context.irBuiltIns.anyNType
+            arguments[0] = receiver
+            arguments[1] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columnName)
         }
 
         // cast expression
         // this["name"] as Type
-        val cast = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
+        val cast = buildTypeOperatorCall {
+            type = returnType
+            operator = IrTypeOperator.CAST
+            argument = call
+            typeOperand = returnType
+        }
 
         // try to find handleExtensionPropertyException
         // not found (for older KDF versions) -> just return cast expression;
@@ -187,28 +205,34 @@ private class DataFrameFileLowering(
         val exceptionClass = finder.findClass(ClassId(FqName("kotlin"), Name.identifier("Exception")))!!
 
         // e: Exception
-        val catchParameter = buildVariable(
-            parent = data,
-            startOffset = -1,
-            endOffset = -1,
-            origin = IrDeclarationOrigin.CATCH_PARAMETER,
-            name = Name.identifier("e"),
-            type = exceptionClass.defaultType,
-        )
+        val catchParameter = context.irFactory.irVariable {
+            parent = data
+            origin = IrDeclarationOrigin.CATCH_PARAMETER
+            name = Name.identifier("e")
+            type = exceptionClass.defaultType
+        }
 
         // exceptions handling inside catch { ... }
         val catchBlock = generateColumnAccessCatchBlock(context, catchParameter, columnName, handleFn)
 
         // cast block inside try { ... }
-        val tryCastBlock = IrBlockImpl(-1, -1, returnType, statements = listOf(cast))
+        val tryCastBlock = buildBlock {
+            type = returnType
+            statements += cast
+        }
 
         // single catch(e: Exception) { catchBlock }
-        val catchExpression = IrCatchImpl(-1, -1, catchParameter, result = catchBlock)
+        val catchExpression = buildCatch {
+            this.catchParameter = catchParameter
+            result = catchBlock
+        }
 
         // try { castBlock } catch(e: Exception) { catchBlock }
-        val tryExpression = IrTryImpl(-1, -1, returnType, tryCastBlock, listOf(catchExpression), null)
-
-        return tryExpression
+        return buildTry {
+            type = returnType
+            tryResult = tryCastBlock
+            catches += catchExpression
+        }
     }
 
     // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
@@ -288,9 +312,12 @@ private class DataFrameFileLowering(
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrType.scopeClassConstructorCall(): IrConstructorCallImpl {
+    private fun IrType.scopeClassConstructorCall(): IrConstructorCall {
         val constructor = getClass()!!.constructors.single()
-        return IrConstructorCallImpl(-1, -1, this, constructor.symbol, 0, 0)
+        val scopeType = this
+        return buildConstructorCall(constructor.symbol) {
+            type = scopeType
+        }
     }
     // endregion
 }
@@ -304,13 +331,10 @@ fun generateBodyForDefaultConstructor(context: IrPluginContext, declaration: IrC
     val type = declaration.returnType as? IrSimpleType ?: return null
     return context.irBuiltIns.createIrBuilder(declaration.symbol).run {
         irBlockBody {
-            +irDelegatingConstructorCall(symbol.owner).also { it.copyAttributes(declaration.parentAsClass) }
-            +IrInstanceInitializerCallImpl(
-                startOffset = -1,
-                endOffset = -1,
-                classSymbol = (declaration.parent as? IrClass)?.symbol ?: return null,
-                type = type
-            )
+            +irDelegatingConstructorCall(symbol).also { it.copyAttributes(declaration.parentAsClass) }
+            +irInstanceInitializerCall((declaration.parent as? IrClass)?.symbol ?: return null) {
+                this.type = type
+            }
         }
     }
 }

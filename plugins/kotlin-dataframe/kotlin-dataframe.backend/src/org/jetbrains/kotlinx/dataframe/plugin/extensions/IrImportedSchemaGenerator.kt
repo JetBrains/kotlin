@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.expressions.v2.buildGetValue
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irConstructorCall
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irReturn
+import org.jetbrains.kotlin.ir.builders.expressions.v2.irTypeOperatorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -48,7 +52,7 @@ class IrImportedSchemaGenerator(
                 Names.DEFAULT -> IrConstImpl.string(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, type = context.irBuiltIns.stringType, value = metadata.data
                 )
-                Names.READ -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.parameters[1].symbol)
+                Names.READ -> buildGetValue(declaration.parameters[1].symbol)
                 else -> return declaration
             }
 
@@ -70,19 +74,19 @@ class IrImportedSchemaGenerator(
 
             context.irBuiltIns.createIrBuilder(declaration.symbol).apply {
                 declaration.body = irBlockBody {
-                    val schemaReaderInstance = irCallConstructor(zeroArg, emptyList())
-                    val call = irCall(provide).also {
-                        it.arguments[0] = schemaReaderInstance
-                        it.arguments[1] = param
+                    val schemaReaderInstance = irConstructorCall(zeroArg)
+                    val call = irCall(provide) {
+                        arguments[0] = schemaReaderInstance
+                        arguments[1] = param
                     }
-                    val typeOp = typeOperator(
-                        resultType = call.type,
-                        argument = call,
-                        typeOperator = IrTypeOperator.CAST,
+                    val typeOp = irTypeOperatorCall {
+                        type = call.type
+                        operator = IrTypeOperator.CAST
+                        argument = call
                         typeOperand = declaration.returnType
-                    )
+                    }
 
-                    +irReturn(typeOp)
+                    +irReturn { value = typeOp }
                 }
             }
         }
@@ -103,11 +107,11 @@ class IrImportedSchemaGenerator(
         val schemaType = declaration.parentClassOrNull?.parentClassOrNull?.defaultType ?: return declaration
         if (declaration.origin.isFromDataSchemaSource() && declaration.name == Names.SCHEMA_KTYPE) {
             context.irBuiltIns.createIrBuilder(getter.symbol).apply {
-                val call = irCall(typeOf).also {
-                    it.typeArguments[0] = schemaType
+                val call = irCall(typeOf) {
+                    typeArguments[0] = schemaType
                 }
                 getter.body = irBlockBody {
-                    +irReturn(call)
+                    +irReturn { value = call }
                 }
             }
         }
