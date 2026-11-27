@@ -9,6 +9,7 @@ gradle-plugin-publish = "2.1.1"
 gradle-crypto-checksum = "1.4.0"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "1.0.0"
+gradle-tooling-api = "9.9.2"
 # guava and failureaccess should be aligned relatively
 guava = "33.3.1-jre"
 failureaccess = "1.0.2"
@@ -122,6 +123,7 @@ dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", ver
 dokka-multiModulePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "dokka" }
 downloadTask-gradlePlugin = { module = "de.undercouch:gradle-download-task", version.ref = "downloadTask" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
+gradle-toolingApi = { module = "org.gradle:gradle-tooling-api", version.ref = "gradle-tooling-api" }
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 develocity-gradlePluginAdapter = { module = "com.gradle:develocity-gradle-plugin-adapters", version.ref = "develocity-plugin-adapter" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }

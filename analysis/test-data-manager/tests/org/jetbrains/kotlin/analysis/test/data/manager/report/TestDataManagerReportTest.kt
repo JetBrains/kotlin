@@ -72,6 +72,7 @@ class TestDataManagerReportTest {
                     "failed": 0,
                     "skipped": 0
                   },
+                  "unmatchedTestDataPaths": [],
                   "problems": [],
                   "testErrors": [],
                   "fileActions": [],

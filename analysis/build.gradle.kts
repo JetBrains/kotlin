@@ -10,6 +10,7 @@ val analysisApiTestModules = listOf(
     ":analysis:analysis-test-framework",
     ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
     ":analysis:test-data-manager",
+    ":analysis:test-data-manager:test-data-manager-cli",
 )
 
 /**

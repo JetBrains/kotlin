@@ -722,6 +722,7 @@ include(
     ":analysis:analysis-internal-utils",
     ":analysis:analysis-test-framework",
     ":analysis:test-data-manager",
+    ":analysis:test-data-manager:test-data-manager-cli",
     ":analysis:stubs",
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",

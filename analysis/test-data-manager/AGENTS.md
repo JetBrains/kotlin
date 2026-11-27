@@ -12,8 +12,10 @@ This module provides infrastructure for:
 **Structure:**
 - `testFixtures/` — Runtime API for use by other modules
 - `tests/` — Module's own test suite
-- `test-data-manager.py` — the wrapper script aggregating the module reports; after changing it, run `python3 analysis/test-data-manager/test-data-manager-test.py`
-  (not part of the Gradle build)
+- `src/` — the rules the runner and the wrapper share: the option names, run ids, how a `testDataPath` entry resolves
+  and which tests it includes, the JSON of the reports
+- `test-data-manager-cli/` — the wrapper aggregating the module reports, started by the `test-data-manager` launcher;
+  its tests: `./gradlew :analysis:test-data-manager:test-data-manager-cli:test`
 
 For conceptual details (variant chains, conflicts, convergence), see [README.md](README.md).
 For running test data management tasks (checking/updating test data via Gradle), see [test-data-manager-convention](../../repo/gradle-build-conventions/test-data-manager-convention/README.md).

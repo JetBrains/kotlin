@@ -36,7 +36,7 @@ private fun endsAtNameBoundary(path: String, prefix: String): Boolean {
 /**
  * The `testDataPath` option resolved against the repository root.
  *
- * @property paths the paths for [TestMetadataFilter]
+ * @property paths the paths to filter the tests by, see [TestMetadataPath.includes]
  * @property errors one per path that can't be used; the run must not start if there are any
  */
 class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
@@ -54,14 +54,17 @@ sealed interface TestDataPathError {
     }
 
     /**
-     * @property suggestion the repository-relative form of [path] if it exists relative to the module directory
+     * @property suggestions the repository-relative forms of [path] where it exists relative to another directory,
+     *                       like the module directory
      */
-    data class Missing(override val path: String, val suggestion: TestMetadataPath?) : TestDataPathError {
+    data class Missing(override val path: String, val suggestions: List<TestMetadataPath>) : TestDataPathError {
         override fun render(repositoryRoot: Path): String = buildString {
             append("testDataPath '$path' does not exist; paths are relative to the repository root ")
             append(repositoryRoot.toAbsolutePath().normalize())
-            if (suggestion != null) {
-                append(". Did you mean '$suggestion'?")
+            if (suggestions.isNotEmpty()) {
+                append(". Did you mean ")
+                append(suggestions.joinToString(" or ") { "'$it'" })
+                append("?")
             }
         }
     }
@@ -81,11 +84,12 @@ fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
  *
  * An absolute path inside the repository is made relative to it. A path that doesn't exist, as a directory, a file,
  * or a file named without its extension (`dir/file` for `dir/file.kt`), is an error: such a filter silently matches
- * nothing. When the path exists relative to [projectDir] instead, the error suggests the repository-relative form.
+ * nothing. When the path exists relative to some of [suggestionBases] instead, like the module directory, the error
+ * suggests its repository-relative forms.
  *
  * A trailing `/` is kept: it limits the filter to the directory, without the files named like it (`dir.kt`).
  */
-fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?): ResolvedTestDataPaths {
+fun resolveTestDataPaths(option: String, repositoryRoot: Path, suggestionBases: List<Path>): ResolvedTestDataPaths {
     val root = repositoryRoot.toAbsolutePath().normalize()
     val paths = mutableListOf<TestMetadataPath>()
     val errors = mutableListOf<TestDataPathError>()
@@ -99,11 +103,12 @@ fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?
         }
 
         if (!absolutePath.existsAsTestDataPath()) {
-            val projectRelative = projectDir?.toAbsolutePath()?.resolve(path)?.normalize()
-            val suggestion = projectRelative
-                ?.takeIf { it.startsWith(root) && it.existsAsTestDataPath() }
-                ?.let { TestMetadataPath(root.relativize(it).invariantSeparatorsPathString) }
-            errors += TestDataPathError.Missing(rawPath, suggestion)
+            val suggestions = suggestionBases
+                .map { it.toAbsolutePath().resolve(path).normalize() }
+                .filter { it != root && it.startsWith(root) && it.existsAsTestDataPath() }
+                .map { TestMetadataPath(root.relativize(it).invariantSeparatorsPathString) }
+                .distinct()
+            errors += TestDataPathError.Missing(rawPath, suggestions)
             continue
         }
 

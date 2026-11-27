@@ -125,32 +125,34 @@ redundant ones; see the behavior matrix in [AGENTS.md](AGENTS.md).
 
 ## Usage
 
-### Wrapper script (recommended for agents and scripts)
+### Wrapper (recommended for agents and scripts)
 
-[`test-data-manager.py`](test-data-manager.py) is a thin wrapper: it runs `checkTestData` or `updateTestData` in the
-modules with managed test data in one Gradle call with a shared run id, passes the options to the runner as is, and
-aggregates the reports the modules print into one summary:
+[`test-data-manager`](test-data-manager) (`test-data-manager.bat` on Windows) runs the wrapper of
+[`test-data-manager-cli`](test-data-manager-cli): it runs `checkTestData` or `updateTestData` in the modules with
+managed test data in one Gradle build with a shared run id, passes the options to the runner as is, and aggregates the
+reports the modules print into one summary:
 
 ```bash
 # Check test data under a directory
-python3 analysis/test-data-manager/test-data-manager.py check --path compiler/psi/psi-impl/testData/psi/annotation
+analysis/test-data-manager/test-data-manager check --path compiler/psi/psi-impl/testData/psi/annotation
 
 # Update it; the summary lists the created, updated and deleted files
-python3 analysis/test-data-manager/test-data-manager.py update --path compiler/psi/psi-impl/testData/psi/annotation
+analysis/test-data-manager/test-data-manager update --path compiler/psi/psi-impl/testData/psi/annotation
 
 # Several paths go into one --path, separated by commas, as in the testDataPath option of the tasks
-python3 analysis/test-data-manager/test-data-manager.py check \
+analysis/test-data-manager/test-data-manager check \
     --path compiler/psi/psi-impl/testData/psi/annotation,compiler/psi/psi-impl/testData/psi/examples
 
 # Limit the modules, print the summary as JSON
-python3 analysis/test-data-manager/test-data-manager.py check --path analysis/analysis-api/testData/components \
+analysis/test-data-manager/test-data-manager check --path analysis/analysis-api/testData/components \
     --module :analysis:analysis-api-fir --json
 ```
 
-On top of the module reports, it fails when a module wrote no report for the run (the task didn't run, or its JVM
-crashed) and when no test in any module matches the filters. As a module finds its managed tests only in its
-`testDataManager { testPackages }`, the latter error names the build files of the modules that ran, up to three of them;
-for more, it points to the `buildFile` of each module in the summary. The Gradle output goes to
+`--help` lists the options; `--gradle-arg` passes an argument to both builds of a run, except those the Tooling API doesn't take, like
+`--no-daemon` or `--stop`, which fail the run. On top of the module reports, it fails when a module wrote no report for the run (the task
+didn't run, or its JVM crashed) and when no test in any module matches the filters. As a module finds its managed tests
+only in its `testDataManager { testPackages }`, the latter error names the build files of the modules that ran, up to
+three of them; for more, it points to the `buildFile` of each module in the summary. The Gradle output goes to
 `build/test-data-manager/<runId>.gradle.log` and the summary to `build/test-data-manager/<runId>.summary.json`. Both
 paths are printed to stderr, each on its own line, before Gradle starts, so a long run can be followed. The summary path
 is also the last line of the output (`--json` prints the file instead of the text). The summary is written at once
@@ -159,8 +161,8 @@ file: a killed wrapper writes none. The summary is an index: the status, the run
 counts of problems and changed files by kind, and the module reports, which hold the entries themselves. The text output
 lists at most 50 entries of each kind. The 5 most recent runs are kept. `--run-id` sets the id, and so the paths of the
 log, the summary and the module reports, in advance. When Gradle fails for another reason than a failing module report
-(a compilation error, a configuration failure, an unknown module), the summary lists its `* What went wrong:` sections
-and the compiler errors from the log (`gradleFailures` and `compilerErrors`).
+(a compilation error, a configuration failure, an unknown module), the summary lists its failures as the console shows
+them under `What went wrong`, and the compiler errors from the log (`gradleFailures` and `compilerErrors`).
 
 `--rerun <runId>` runs, instead of `--path`, the test data files of the tests that failed in that run with a problem or
 a test error, so `update --rerun <runId>` after a `check` updates just what failed. All the variants of these files run
@@ -173,27 +175,43 @@ Compared with calling Gradle directly, the command is much shorter, a mistyped o
 (Gradle silently ignores an unknown `-P` property, so a misspelled `testDataPath` would run every test), and the output
 is a few lines however many modules run.
 
-With `--path`, it runs only the modules whose generated tests may have test data under the paths, so the others aren't
-even built. It reads the `@TestMetadata` of the generated tests. The committed ones in `tests-gen` give the path of
-every test, matched as the runner matches them. For `generateTestsInBuildDirectory`, the ones in `build/tests-gen` may be
-older than the test data, so only the directories of their outermost classes count: a new file or directory of a suite
-is inside one. A module without generated tests always runs. Each path is a binary search, so thousands of files are
-fine. A path that doesn't exist fails the run before Gradle starts. A path no module has tests of fails it too, while
-the modules of the other paths still run: an output file (`foo.txt`; the error names its test data file `foo.kt`), an
-unmanaged file, or a new test data file before `./gradlew generateTests`.
+With `--path`, it runs only the modules whose declared test data (`projectTests { testData(...) }`) is in or under the
+paths, so the others aren't even built. The declarations are complete: a module with managed test data must apply
+`test-inputs-check`, which fails its tests on any test data they read without declaring it. A path that doesn't exist
+fails the run before the tests are built, and so does a path outside the test data of every module, while the modules
+of the other paths still run. A module runs for any path in its test data, even one none of its tests has, like an
+output file (`foo.txt`) or a new test data file before `./gradlew generateTests`. Each module reports the paths none of
+its tests is in (`unmatchedTestDataPaths`), and a path no module that ran has a test of fails the run, with a hint on both
+causes, while the other paths still run their tests.
 The summary lists the skipped modules. `--module` runs the given modules as is.
 It takes a project path, with or without the leading `:`, or the module directory (`analysis/stubs`).
 
 Exit codes: `0` passed, `1` test data problems or test errors, `2` the run itself failed (run errors of a module, a
-missing report, Gradle failing without a failing report), `130` interrupted with Ctrl+C. An interrupt stops Gradle,
-waiting for it to cancel the build (a second Ctrl+C kills it). The summary is still written, with `"interrupted": true`
-and the reports of the modules that finished.
+missing report, Gradle failing without a failing report), `130` interrupted with Ctrl+C. An interrupt asks Gradle to
+cancel the build and waits for it; a second Ctrl+C stops waiting, and the daemon cancels the build once the wrapper is
+gone. The summary is still written, with `"interrupted": true` and the reports of the modules that finished.
 
-Its tests use only the standard library and run in temporary git repositories, with a stub `gradlew`; they aren't part
-of the Gradle build, so run them after changing the script:
+#### How it runs
+
+The launcher builds the wrapper with Gradle (`:analysis:test-data-manager:test-data-manager-cli:installCli`) on the
+first run and whenever the sources of the test data manager or the versions of the dependencies change, and keeps each
+build in `build/test-data-manager/cli/<key>`, named by the git trees of `analysis/test-data-manager` and
+`gradle/libs.versions.toml`: switching branches back and forth doesn't rebuild it. With uncommitted changes there, each
+run asks Gradle whether to rebuild, a few seconds, and runs the wrapper from the build directory of the module. Otherwise, the start costs about 0.1 s.
+It needs Java 17 or newer from `JAVA_HOME` or the `PATH`, as `gradlew` does.
+
+Each run first asks Gradle for the modules with managed test data, their directories and their declared test data
+(`./gradlew -q testDataManagerModule`): about a second when the configuration cache has the build, a configuration of
+the build after a change of the build scripts. Then it runs the tests of the selected modules in a second build. It
+runs both through the Gradle Tooling API, with the Gradle of the wrapper and the daemons `./gradlew` uses: the failures of the tasks and of the build come as data instead of being
+read from the console, and the build is cancelled the same way on every platform. The rules it shares with the runner
+(the option names, the run ids, how a `testDataPath` entry resolves and which tests it includes) and the model of the
+module reports, which both write and read with kotlinx.serialization, are in the main source set of this module.
+
+Its tests run in temporary directories with a fake Gradle:
 
 ```bash
-python3 analysis/test-data-manager/test-data-manager-test.py
+./gradlew :analysis:test-data-manager:test-data-manager-cli:test -q
 ```
 
 ### Global Execution

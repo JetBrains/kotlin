@@ -59,6 +59,11 @@ data class ModuleReport(
     /** Errors that stopped the run itself: invalid options, variant chain conflicts, crashes of the runner. */
     val runErrors: List<String>,
     val tests: TestCounts,
+    /**
+     * The `testDataPath` entries, as given, that none of the tests of the module is in or under. A module runs for any path in
+     * the test data it declares, so an output file or a test data file the generated tests don't have yet runs it too.
+     */
+    val unmatchedTestDataPaths: List<String> = emptyList(),
     val problems: List<Problem>,
     val testErrors: List<TestError>,
     val fileActions: List<FileAction>,

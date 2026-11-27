@@ -214,6 +214,7 @@ internal object TestDataManagerRunner {
         testErrors += outcome.errors
         fileActions += outcome.fileActions
         recoveredTests += outcome.recoveredTests
+        unmatchedTestDataPaths += outcome.unmatchedTestDataPaths
     }
 
     /**
@@ -246,6 +247,8 @@ internal object TestDataManagerRunner {
         val testExecutions: Int,
         val runErrors: List<String> = emptyList(),
         val recoveredTests: List<RecoveredTest> = emptyList(),
+        /** The `testDataPath` entries, as given, that no discovered test is in or under. */
+        val unmatchedTestDataPaths: List<String> = emptyList(),
     ) {
         val failedTests: Int
             get() = totalTests - passedTests - skippedTests
@@ -254,8 +257,15 @@ internal object TestDataManagerRunner {
         val isSuccessful: Boolean
             get() = problems.isEmpty() && errors.isEmpty() && runErrors.isEmpty()
 
-        fun withRunErrors(runErrors: List<String>): RunOutcome =
-            RunOutcome(totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests)
+        fun withRunErrors(runErrors: List<String>): RunOutcome = RunOutcome(
+            totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests,
+            unmatchedTestDataPaths,
+        )
+
+        fun withUnmatchedTestDataPaths(unmatchedTestDataPaths: List<String>): RunOutcome = RunOutcome(
+            totalTests, passedTests, skippedTests, problems, errors, fileActions, testExecutions, runErrors, recoveredTests,
+            unmatchedTestDataPaths,
+        )
 
         companion object {
             val EMPTY = RunOutcome(0, 0, 0, emptySet(), emptySet(), emptyList(), 0)
@@ -300,7 +310,7 @@ internal object TestDataManagerRunner {
     ): RunOutcome {
         val testDataPaths = testDataPath?.let { option ->
             val root = rootDir ?: return@let unresolvedTestDataPaths(option)
-            val resolved = resolveTestDataPaths(option, root, projectDir)
+            val resolved = resolveTestDataPaths(option, root, listOfNotNull(projectDir))
             if (resolved.errors.isNotEmpty()) {
                 val messages = resolved.errors.map { it.render(root) }
                 messages.forEach { System.err.println("ERROR: $it") }
@@ -322,10 +332,12 @@ internal object TestDataManagerRunner {
 
         timingStats.discoveryTime = discoveryTime
         detail("Discovered ${discoveredTests.size} tests in $discoveryTime")
+        val entries = testDataPath?.let(::splitTestDataPaths).orEmpty()
+        val unmatched = testDataPaths?.let { unmatchedTestDataPaths(entries, it, discoveredTests) }.orEmpty()
 
         if (discoveredTests.isEmpty()) {
             println("No tests found matching criteria")
-            return RunOutcome.EMPTY
+            return RunOutcome.EMPTY.withUnmatchedTestDataPaths(unmatched)
         }
 
         // Phase 2: Group by variant chain depth
@@ -353,7 +365,20 @@ internal object TestDataManagerRunner {
 
         // Phase 4: Run each group with convergence, aggregate results
         return executeTestGroups(incremental, goldenOnly, groupingResult, launcher, timingStats, discoveredTests)
+            .withUnmatchedTestDataPaths(unmatched)
     }
+
+    /**
+     * The [entries] of the `testDataPath` option, as given, whose resolved [paths] none of [tests] is in or under: a module
+     * runs for any path in its test data, so only its runner can tell that an entry, like an output file, has no test.
+     */
+    internal fun unmatchedTestDataPaths(
+        entries: List<String>,
+        paths: List<TestMetadataPath>,
+        tests: List<DiscoveredTest>,
+    ): List<String> = entries.zip(paths)
+        .filter { [_, path] -> tests.none { test -> test.testDataPath?.let { path.includes(it.path) } == true } }
+        .map { [entry] -> entry }
 
     context(_: LauncherSession)
     private fun executeTestGroups(
