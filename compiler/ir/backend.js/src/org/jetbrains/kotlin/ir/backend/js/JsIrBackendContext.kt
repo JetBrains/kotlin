@@ -68,6 +68,9 @@ class JsIrBackendContext(
 
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
 
+    val isDebugBuild: Boolean
+        get() = configuration.artifactConfigurations.none { it.production }
+
     val callMain = configuration.callMain
     val platformArgumentsProviderJsExpression = configuration.definePlatformMainFunctionArguments
 
