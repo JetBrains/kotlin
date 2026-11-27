@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.fir.toKaImplementationState
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolRelationProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -44,23 +44,23 @@ import org.jetbrains.kotlin.analysis.api.fir.components.isSubClassOf as computeI
 internal class KaFirSymbolRelationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsSymbolRelationProvider {
-    override fun containingSymbol(symbol: KaSymbol): KaSymbol? = withValidityAssertion {
+    override fun containingSymbol(symbol: KaSymbol): KaSymbol? = entryPointImplementation {
         computeContainingSymbol(symbol)
     }
 
-    override fun containingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = withValidityAssertion {
+    override fun containingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = entryPointImplementation {
         computeContainingDeclaration(symbol)
     }
 
-    override fun containingFile(symbol: KaSymbol): KaFileSymbol? = withValidityAssertion {
+    override fun containingFile(symbol: KaSymbol): KaFileSymbol? = entryPointImplementation {
         computeContainingFile(symbol)
     }
 
-    override fun containingModule(symbol: KaSymbol): KaModule = withValidityAssertion {
+    override fun containingModule(symbol: KaSymbol): KaModule = entryPointImplementation {
         computeContainingModule(symbol)
     }
 
-    override fun samConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol? = withValidityAssertion {
+    override fun samConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol? = entryPointImplementation {
         val owner = symbol.firSymbol.fir
         val firSession = analysisSession.firSession
         val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
@@ -69,7 +69,7 @@ internal class KaFirSymbolRelationProvider(
         }
     }
 
-    override fun functionalInterfaceFunction(symbol: KaClassLikeSymbol): KaNamedFunctionSymbol? = withValidityAssertion {
+    override fun functionalInterfaceFunction(symbol: KaClassLikeSymbol): KaNamedFunctionSymbol? = entryPointImplementation {
         val firClassOrTypeAlias = symbol.firSymbol.fir
         val firSession = analysisSession.firSession
         val resolver = FirSamResolver(firSession, analysisSession.getScopeSessionFor(firSession))
@@ -77,7 +77,7 @@ internal class KaFirSymbolRelationProvider(
         return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(samFunction)
     }
 
-    override fun functionalInterface(symbol: KaSamConstructorSymbol): KaClassLikeSymbol = withValidityAssertion {
+    override fun functionalInterface(symbol: KaSamConstructorSymbol): KaClassLikeSymbol = entryPointImplementation {
         symbol.firSymbol.resolvedReturnType.classLikeLookupTagIfAny?.let {
             analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(it)
         } ?: errorWithAttachment("Cannot retrieve functional interface for KaSamConstructorSymbol") {
@@ -85,7 +85,7 @@ internal class KaFirSymbolRelationProvider(
         }
     }
 
-    override fun functionalInterfaceFunction(symbol: KaSamConstructorSymbol): KaNamedFunctionSymbol = withValidityAssertion {
+    override fun functionalInterfaceFunction(symbol: KaSamConstructorSymbol): KaNamedFunctionSymbol = entryPointImplementation {
         functionalInterfaceFunction(functionalInterface(symbol))
             ?: errorWithAttachment("SAM constructor should have a corresponding function in its functional interface") {
                 withSymbolAttachment("KaSamConstructorSymbol", symbol)
@@ -94,7 +94,7 @@ internal class KaFirSymbolRelationProvider(
     }
 
     @KaExperimentalApi
-    override fun originalConstructorIfTypeAliased(symbol: KaConstructorSymbol): KaConstructorSymbol? = withValidityAssertion {
+    override fun originalConstructorIfTypeAliased(symbol: KaConstructorSymbol): KaConstructorSymbol? = entryPointImplementation {
         require(symbol is KaFirConstructorSymbol)
 
         val originalConstructor = symbol.firSymbol.typeAliasConstructorInfo?.originalConstructor as? FirConstructor ?: return null
@@ -102,25 +102,25 @@ internal class KaFirSymbolRelationProvider(
         analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(originalConstructor.symbol)
     }
 
-    override fun allOverriddenSymbols(symbol: KaCallableSymbol): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun allOverriddenSymbols(symbol: KaCallableSymbol): Sequence<KaCallableSymbol> = entryPointImplementation {
         symbol.handleOverriddenSymbols(
             forAccessorSymbol = { getAllOverriddenAccessorSymbols(it) },
             fallback = { getAllOverriddenSymbols(it) },
         )
     }
 
-    override fun directlyOverriddenSymbols(symbol: KaCallableSymbol): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun directlyOverriddenSymbols(symbol: KaCallableSymbol): Sequence<KaCallableSymbol> = entryPointImplementation {
         symbol.handleOverriddenSymbols(
             forAccessorSymbol = { getDirectlyOverriddenAccessorSymbols(it) },
             fallback = { getDirectlyOverriddenSymbols(it) },
         )
     }
 
-    override fun isSubClassOf(symbol: KaClassSymbol, superClass: KaClassSymbol): Boolean = withValidityAssertion {
+    override fun isSubClassOf(symbol: KaClassSymbol, superClass: KaClassSymbol): Boolean = entryPointImplementation {
         return computeIsSubClassOf(symbol, superClass)
     }
 
-    override fun isDirectSubClassOf(symbol: KaClassSymbol, superClass: KaClassSymbol): Boolean = withValidityAssertion {
+    override fun isDirectSubClassOf(symbol: KaClassSymbol, superClass: KaClassSymbol): Boolean = entryPointImplementation {
         return computeIsDirectSubClassOf(symbol, superClass)
     }
 
@@ -134,7 +134,7 @@ internal class KaFirSymbolRelationProvider(
         else -> fallback(this)
     }
 
-    override fun intersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> = withValidityAssertion {
+    override fun intersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> = entryPointImplementation {
         symbol.handleOverriddenSymbols(
             forAccessorSymbol = { getIntersectionOverriddenAccessorSymbols(it).asSequence() },
             fallback = { getIntersectionOverriddenSymbols(it).asSequence() },
@@ -175,7 +175,7 @@ internal class KaFirSymbolRelationProvider(
     override fun implementationState(
         symbol: KaCallableSymbol,
         implementerClassSymbol: KaClassSymbol,
-    ): KaCallableImplementationState? = withValidityAssertion {
+    ): KaCallableImplementationState? = entryPointImplementation {
         require(symbol is KaFirSymbol<*>)
         require(implementerClassSymbol is KaFirSymbol<*>)
 
@@ -209,7 +209,7 @@ internal class KaFirSymbolRelationProvider(
         }
     }
 
-    override fun fakeOverrideOriginal(symbol: KaCallableSymbol): KaCallableSymbol = withValidityAssertion {
+    override fun fakeOverrideOriginal(symbol: KaCallableSymbol): KaCallableSymbol = entryPointImplementation {
         require(symbol is KaFirSymbol<*>)
         if (symbol is KaLocalVariableSymbol ||
             symbol is KaEnumEntrySymbol ||
@@ -257,26 +257,24 @@ internal class KaFirSymbolRelationProvider(
     }
 
 
-    override fun getExpectsForActual(symbol: KaDeclarationSymbol): List<KaDeclarationSymbol> = withValidityAssertion {
+    override fun getExpectsForActual(symbol: KaDeclarationSymbol): List<KaDeclarationSymbol> = entryPointImplementation {
         computeExpectsForActual(symbol)
     }
 
-    override fun sealedClassInheritors(symbol: KaNamedClassSymbol): List<KaNamedClassSymbol> = withValidityAssertion {
+    override fun sealedClassInheritors(symbol: KaNamedClassSymbol): List<KaNamedClassSymbol> = entryPointImplementation {
         require(symbol.modality == KaSymbolModality.SEALED)
         require(symbol is KaFirNamedClassSymbol)
 
         val inheritorClassIds = symbol.firSymbol.fir.getSealedClassInheritors(analysisSession.firSession)
 
-        return context(analysisSession) {
-            inheritorClassIds.mapNotNull { findClass(it) }
-        }
+        return inheritorClassIds.mapNotNull { findClass(it) }
     }
 
     override fun hasConflictingSignatureWith(
         symbol: KaFunctionSymbol,
         other: KaFunctionSymbol,
         targetPlatform: TargetPlatform,
-    ): Boolean = withValidityAssertion {
+    ): Boolean = entryPointImplementation {
         val thisFirSymbol = symbol.firSymbol
         val otherFirSymbol = other.firSymbol
 

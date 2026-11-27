@@ -9,10 +9,10 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.resolver.*
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsResolver {
-    override fun tryResolveSymbols(resolvable: KtResolvable): KaSymbolResolutionAttempt? = withValidityAssertion {
+    override fun tryResolveSymbols(resolvable: KtResolvable): KaSymbolResolutionAttempt? = entryPointImplementation {
         when (resolvable) {
             is KtOperationReferenceExpression -> resolvable.tryResolveSymbolsForOperationReference()
             is KtResolvableCall -> resolvable.tryResolveSymbolsForResolvableCall()
@@ -54,7 +54,7 @@ internal class KaFirResolver(
         }
     }
 
-    override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> = withPsiValidityAssertion(reference.element) {
+    override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> = entryPointImplementation(reference.element) {
         with(reference as? KaResolvableReferenceBridge) {
             if (this != null) {
                 analysisSession.resolveToSymbols()
@@ -71,6 +71,7 @@ internal class KaFirResolver(
      * In reality, the reuse of call resolution is actually a benefit because its result is cached and
      * effectively reused at all entry points into the resolver API
      */
+    context(analysisSession: KaFirSession)
     private fun KtResolvableCall.tryResolveSymbolsForResolvableCall(): KaSymbolResolutionAttempt? = when (this) {
         // Both reference kinds may stand in either type or call positions, and in some cases the symbol-based
         // result is more specific (e.g., it prefers classes to constructors).
@@ -111,16 +112,17 @@ internal class KaFirResolver(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun KtResolvable.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? {
         checkValidity()
         return performSymbolResolution(this)
     }
 
-    override fun resolveSuccessfulSymbols(resolvable: KtResolvable): Collection<KaSymbol> = withValidityAssertion {
+    override fun resolveSuccessfulSymbols(resolvable: KtResolvable): Collection<KaSymbol> = entryPointImplementation {
         tryResolveSymbols(resolvable)?.successfulSymbols ?: emptyList()
     }
 
-    override fun resolveSuccessfulSymbol(resolvable: KtResolvable): KaSymbol? = withValidityAssertion {
+    override fun resolveSuccessfulSymbol(resolvable: KtResolvable): KaSymbol? = entryPointImplementation {
         resolveSuccessfulSymbols(resolvable).singleOrNull()
     }
 
@@ -178,16 +180,17 @@ internal class KaFirResolver(
     override fun resolveSuccessfulSymbol(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry): KaClassifierSymbol? =
         delegatedSuperTypeEntry.resolveSymbolSafe()
 
-    override fun resolveToSymbol(reference: KtReference): KaSymbol? = withPsiValidityAssertion(reference.element) {
+    override fun resolveToSymbol(reference: KtReference): KaSymbol? = entryPointImplementation(reference.element) {
         return resolveToSymbols(reference).singleOrNull()
     }
 
+    context(analysisSession: KaFirSession)
     private fun KtElement.tryResolveCallImpl(): KaCallResolutionAttempt? {
         val unwrappedElement = unwrapResolvableCall()
-        return unwrappedElement?.let(::performCallResolution)
+        return unwrappedElement?.let { performCallResolution(it) }
     }
 
-    override fun tryResolveCall(resolvableCall: KtResolvableCall): KaCallResolutionAttempt? = withValidityAssertion {
+    override fun tryResolveCall(resolvableCall: KtResolvableCall): KaCallResolutionAttempt? = entryPointImplementation {
         resolvableCall.checkValidity()
         resolvableCall.tryResolveCallImpl()
     }
@@ -211,7 +214,7 @@ internal class KaFirResolver(
             { "Expected symbol of type ${S::class.simpleName}, got ${callableSymbol::class.simpleName}" },
         ) {
             withEntry("symbol", callableSymbol) {
-                context(analysisSession) { KaDebugRenderer(renderExtra = true).render(callableSymbol) }
+                KaDebugRenderer(renderExtra = true).render(callableSymbol, session = analysisSession)
             }
 
             withPsiEntry("psi", this@resolveSimpleCallSafe)
@@ -222,7 +225,7 @@ internal class KaFirResolver(
             { "Expected call of type ${R::class.simpleName}, got ${call::class.simpleName}" }
         ) {
             withEntry("symbol", callableSymbol) {
-                context(analysisSession) { KaDebugRenderer(renderExtra = true).render(callableSymbol) }
+                KaDebugRenderer(renderExtra = true).render(callableSymbol, session = analysisSession)
             }
 
             withPsiEntry("psi", this@resolveSimpleCallSafe)
@@ -264,11 +267,14 @@ internal class KaFirResolver(
     override fun resolveSuccessfulCall(forExpression: KtForExpression): KaForLoopCall? = forExpression.resolveCallSafe()
     override fun resolveSuccessfulCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall? = propertyDelegate.resolveCallSafe()
 
-    override fun tryResolveCall(forExpression: KtForExpression): KaForLoopCallResolutionAttempt? =
+    override fun tryResolveCall(forExpression: KtForExpression): KaForLoopCallResolutionAttempt? = context(analysisSession) {
         forExpression.tryResolveCallImpl() as? KaForLoopCallResolutionAttempt
+    }
 
     override fun tryResolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCallResolutionAttempt? =
-        propertyDelegate.tryResolveCallImpl() as? KaDelegatedPropertyCallResolutionAttempt
+        context(analysisSession) {
+            propertyDelegate.tryResolveCallImpl() as? KaDelegatedPropertyCallResolutionAttempt
+        }
 
     override fun resolveSuccessfulCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>? =
         constructorCalleeExpression.resolveSimpleCallSafe()
@@ -276,7 +282,7 @@ internal class KaFirResolver(
     override fun resolveSuccessfulCall(nameReferenceExpression: KtNameReferenceExpression): KaSimpleCall<*, *>? =
         nameReferenceExpression.resolveCallSafe()
 
-    override fun resolveToCall(element: KtElement): KaCallInfo? = element.withPsiValidityAssertion {
+    override fun resolveToCall(element: KtElement): KaCallInfo? = entryPointImplementation(element) {
         when (val attempt = element.tryResolveCallImpl()) {
             is KaSimpleCallResolutionError -> KaFirErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
             is KaSimpleCallResolutionSuccess -> KaFirSuccessCallInfo(attempt.call.asKaCall())
@@ -285,17 +291,18 @@ internal class KaFirResolver(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidate> {
         val unwrappedElement = unwrapResolvableCall()
-        return unwrappedElement?.let(::performCallCandidatesCollection).orEmpty()
+        return unwrappedElement?.let { performCallCandidatesCollection(it) }.orEmpty()
     }
 
-    override fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate> = withValidityAssertion {
+    override fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate> = entryPointImplementation {
         resolvableCall.checkValidity()
         resolvableCall.collectCallCandidatesImpl()
     }
 
-    override fun resolveToCallCandidates(element: KtElement): List<KaCallCandidateInfo> = element.withPsiValidityAssertion {
+    override fun resolveToCallCandidates(element: KtElement): List<KaCallCandidateInfo> = entryPointImplementation(element) {
         element.collectCallCandidatesImpl().map(KaCallCandidate::asKaCallCandidateInfo)
     }
 
@@ -372,7 +379,7 @@ internal class KaFirResolver(
         message = "Use `KtSimpleNameExpression` instead",
         replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion() == true"),
     )
-    override fun isImplicitReferenceToCompanion(reference: KtReference): Boolean = withPsiValidityAssertion(reference.element) {
+    override fun isImplicitReferenceToCompanion(reference: KtReference): Boolean = entryPointImplementation(reference.element) {
         (reference.element as? KtSimpleNameExpression)?.let { isImplicitReferenceToCompanion(it) } == true
     }
 
@@ -387,40 +394,42 @@ internal class KaFirResolver(
     }
 
     override fun isImplicitReferenceToCompanion(simpleNameExpression: KtSimpleNameExpression): Boolean =
-        simpleNameExpression.withPsiValidityAssertion {
+        entryPointImplementation(simpleNameExpression) {
             isImplicitReferenceToCompanionImpl(simpleNameExpression)
         }
 
     override fun contextSensitiveResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
-        simpleNameExpression.withPsiValidityAssertion {
+        entryPointImplementation(simpleNameExpression) {
             contextSensitiveResolutionStatusImpl(simpleNameExpression)
         }
 
+    context(analysisSession: KaFirSession)
     private fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
         when (psi) {
             // A user type redirects to its inner reference expression, which is cached on its own,
             // so we don't store a duplicate cache entry for the user type itself.
-            is KtUserType -> psi.referenceExpression?.let(::performSymbolResolution)
+            is KtUserType -> psi.referenceExpression?.let { performSymbolResolution(it) }
             // A nullable type strips the nullability marker and resolves through its inner type element.
-            is KtNullableType -> psi.innerType?.let(::performSymbolResolution)
+            is KtNullableType -> psi.innerType?.let { performSymbolResolution(it) }
             // A type reference delegates to the inner type element. Dynamic and intersection types
             // are not `KtResolvable`, so this redirect doesn't reach them — for those `typeElement`
             // values, `performSymbolResolution` falls through and returns `null`.
-            is KtTypeReference -> psi.typeElement?.let(::performSymbolResolution)
+            is KtTypeReference -> psi.typeElement?.let { performSymbolResolution(it) }
             // A class literal expression (`Foo::class`) resolves to the classifier on its left-hand side.
             // The receiver is a name reference or qualified expression, both of which are already cached.
-            is KtClassLiteralExpression -> psi.receiverExpression?.let(::performSymbolResolution)
+            is KtClassLiteralExpression -> psi.receiverExpression?.let { performSymbolResolution(it) }
             // A no-parens super-type entry (`class Foo : Bar`) resolves through its type reference.
-            is KtSuperTypeEntry -> psi.typeReference?.let(::performSymbolResolution)
+            is KtSuperTypeEntry -> psi.typeReference?.let { performSymbolResolution(it) }
             // A delegated super-type entry (`class Foo : Bar by baz`) resolves through its type reference;
             // the `by` delegate expression is intentionally not the resolution target.
-            is KtDelegatedSuperTypeEntry -> psi.typeReference?.let(::performSymbolResolution)
+            is KtDelegatedSuperTypeEntry -> psi.typeReference?.let { performSymbolResolution(it) }
             else -> analysisSession.cacheStorage.resolveSymbolCache.value.getOrPut(psi) {
                 resolveSymbol(psi)
             }
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun performCallResolution(psi: KtElement): KaCallResolutionAttempt? = wrapError(psi) {
         analysisSession.cacheStorage.resolveCallCache.value.getOrPut(psi) {
             val attempts = resolveCall(
@@ -451,6 +460,7 @@ internal class KaFirResolver(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidate> = wrapError(psi) {
         resolveCall(
             psi,
@@ -480,6 +490,7 @@ internal class KaFirResolver(
         result
     }
 
+    context(analysisSession: KaFirSession)
     private inline fun <T> resolveCall(
         psi: KtElement,
         onError: FirDiagnosticHolder.(psiToResolve: KtElement, resolveFragmentOfCall: Boolean) -> List<T>,
@@ -625,6 +636,7 @@ internal class KaFirResolver(
         return typeReference.parent as? KtConstructorCalleeExpression
     }
 
+    context(analysisSession: KaFirSession)
     private inline fun <R> wrapError(element: KtElement, action: () -> R): R = try {
         action()
     } catch (e: Exception) {
@@ -632,7 +644,7 @@ internal class KaFirResolver(
             "Error during resolving call ${element::class}",
             exception = e,
         ) {
-            withPsiEntry("psi", element) { context(analysisSession) { it.kaModule } }
+            withPsiEntry("psi", element) { it.kaModule }
             element.getOrBuildFir(resolutionFacade)?.let { withFirEntry("fir", it) }
         }
     }

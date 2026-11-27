@@ -10,11 +10,13 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -46,7 +48,7 @@ internal class KaFirVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,
         position: PsiElement,
-    ): KaUseSiteVisibilityChecker = withPsiValidityAssertion(receiverExpression, position) {
+    ): KaUseSiteVisibilityChecker = entryPointImplementation(receiverExpression, position) {
         require(useSiteFile is KaFirFileSymbol)
 
         val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade)
@@ -64,6 +66,7 @@ internal class KaFirVisibilityChecker(
         )
     }
 
+    context(analysisSession: KaFirSession)
     private fun collectContainingDeclarations(position: PsiElement): List<FirDeclaration> {
         val nonLocalLazilyResolvedContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
         val closestNonLocalElement = nonLocalLazilyResolvedContainers.lastOrNull()?.psi ?: return nonLocalLazilyResolvedContainers
@@ -75,7 +78,8 @@ internal class KaFirVisibilityChecker(
         return nonLocalLazilyResolvedContainers + localFullyResolvedContainers
     }
 
-    override fun isVisibleInClass(symbol: KaCallableSymbol, classSymbol: KaClassSymbol): Boolean = symbol.withValidityAssertion {
+    override fun isVisibleInClass(symbol: KaCallableSymbol, classSymbol: KaClassSymbol): Boolean = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         if (symbol is KaReceiverParameterSymbol) {
             // Receiver parameters are local
             return false
@@ -93,7 +97,7 @@ internal class KaFirVisibilityChecker(
         return memberFir.symbol.isVisibleInClass(parentClassFir.symbol, memberFir.symbol.resolvedStatus)
     }
 
-    override fun isPublicApi(symbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
+    override fun isPublicApi(symbol: KaDeclarationSymbol): Boolean = entryPointImplementation {
         if (symbol is KaReceiverParameterSymbol) {
             return isPublicApi(symbol.owningCallableSymbol)
         }

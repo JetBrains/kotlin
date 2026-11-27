@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.fir.KaErrorConstantValueImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsEvaluator
@@ -22,11 +23,11 @@ import org.jetbrains.kotlin.psi.KtExpression
 internal class KaFirEvaluator(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsEvaluator {
-    override fun evaluate(expression: KtExpression): KaConstantValue? = expression.withPsiValidityAssertion {
+    override fun evaluate(expression: KtExpression): KaConstantValue? = entryPointImplementation(expression) {
         return evaluateFir(expression.getOrBuildFir(resolutionFacade), expression)
     }
 
-    override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? = expression.withPsiValidityAssertion {
+    override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? = entryPointImplementation(expression) {
         return (expression.getOrBuildFir(resolutionFacade) as? FirExpression)?.let {
             FirAnnotationValueConverter.toConstantValue(it, analysisSession.firSymbolBuilder)
         }

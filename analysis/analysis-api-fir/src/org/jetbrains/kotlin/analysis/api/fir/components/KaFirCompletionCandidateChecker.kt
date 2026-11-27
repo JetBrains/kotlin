@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandida
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.createSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompletionCandidateChecker
@@ -50,7 +51,7 @@ internal class KaFirCompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KaCompletionExtensionCandidateChecker = withPsiValidityAssertion(originalFile, nameExpression, explicitReceiver) {
+    ): KaCompletionExtensionCandidateChecker = entryPointImplementation(originalFile, nameExpression, explicitReceiver) {
         KaLazyCompletionExtensionCandidateChecker(analysisSession.token) {
             KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
         }

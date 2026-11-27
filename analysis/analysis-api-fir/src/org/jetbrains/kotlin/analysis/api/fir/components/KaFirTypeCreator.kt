@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreator
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -31,45 +33,44 @@ internal class KaFirTypeCreator(
 ) : KaFirSessionComponent(), KaInternalsTypeCreator {
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaFirStarTypeProjection(token)
 
-    override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        context(analysisSession) {
-            val builder = KaFirArrayTypeBuilder.ByElementType(elementType, token).apply(init)
+    override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = entryPointImplementation {
+        val builder = KaFirArrayTypeBuilder.ByElementType(elementType, token).apply(init)
 
-            val builderElementType = builder.elementType
+        val builderElementType = builder.elementType
 
-            if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
-                val classId = builderElementType.classId
-                val primitiveArrayId =
-                    StandardClassIds.primitiveArrayTypeByElementType[classId]
-                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
-                if (primitiveArrayId != null) {
-                    return buildClassType(primitiveArrayId) {
-                        isMarkedNullable = builder.isMarkedNullable
-                    }
+        if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
+            val classId = builderElementType.classId
+            val primitiveArrayId =
+                StandardClassIds.primitiveArrayTypeByElementType[classId]
+                    ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+            if (primitiveArrayId != null) {
+                return buildClassType(primitiveArrayId) {
+                    isMarkedNullable = builder.isMarkedNullable
                 }
             }
+        }
 
-            return buildClassType(StandardClassIds.Array) {
-                isMarkedNullable = builder.isMarkedNullable
-                argument(builderElementType, builder.variance)
-            }
+        return buildClassType(StandardClassIds.Array) {
+            isMarkedNullable = builder.isMarkedNullable
+            argument(builderElementType, builder.variance)
         }
     }
 
-    override fun buildVarargArrayType(elementType: KaType): KaType = withValidityAssertion {
+    override fun buildVarargArrayType(elementType: KaType): KaType = entryPointImplementation {
         buildArrayType(elementType) {
             variance = Variance.OUT_VARIANCE
         }
     }
 
-    override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+    override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = entryPointImplementation {
         return buildClassType(KaFirClassTypeBuilder.ByClassId(classId, token).apply(init))
     }
 
-    override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+    override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = entryPointImplementation {
         return buildClassType(KaFirClassTypeBuilder.BySymbol(symbol, token).apply(init))
     }
 
+    context(analysisSession: KaFirSession)
     private fun buildClassType(builder: KaFirClassTypeBuilder): KaType {
         val lookupTag = when (builder) {
             is KaFirClassTypeBuilder.ByClassId -> {
@@ -94,7 +95,7 @@ internal class KaFirTypeCreator(
     }
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
-        withValidityAssertion {
+        entryPointImplementation {
             val builder = KaFirTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
             val symbol = builder.symbol
             val coneType = symbol.firSymbol.toConeType()

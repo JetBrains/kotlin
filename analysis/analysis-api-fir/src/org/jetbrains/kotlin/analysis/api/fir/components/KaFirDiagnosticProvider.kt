@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsDiagnosticProvider {
-    override fun diagnostics(element: KtElement): KaDiagnostics = element.withPsiValidityAssertion {
+    override fun diagnostics(element: KtElement): KaDiagnostics = entryPointImplementation(element) {
         KaFirDiagnostics(
             element = element,
             directOnly = false,
@@ -83,7 +85,7 @@ internal class KaFirDiagnosticProvider(
             }
         }
 
-        private fun compute(): Sequence<KaDiagnosticWithPsi<*>> = element.withPsiValidityAssertion {
+        private fun compute(): Sequence<KaDiagnosticWithPsi<*>> = entryPointImplementation(element) {
             val filter = checkerKinds.asLLFilter()
 
             element.diagnostics(resolutionFacade = resolutionFacade, filter = filter, isRecursive = !directOnly)

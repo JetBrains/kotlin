@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -48,28 +48,28 @@ internal class KaFirTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsTypeProvider {
     private val cachedBuiltinTypes: KaBuiltinTypes by lazy {
-        KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
+        KaFirBuiltInTypes(analysisSession.resolutionFacade.useSiteFirSession.builtinTypes, analysisSession.firSymbolBuilder, token)
     }
 
     override fun builtinTypes(): KaBuiltinTypes = cachedBuiltinTypes
 
-    override fun varargArrayType(symbol: KaValueParameterSymbol): KaType? = withValidityAssertion {
+    override fun varargArrayType(symbol: KaValueParameterSymbol): KaType? = entryPointImplementation {
         if (!symbol.isVararg) {
             return null
         }
 
-        return context(analysisSession) { typeCreator.varargArrayType(symbol.returnType) }
+        return typeCreator.varargArrayType(symbol.returnType)
     }
 
-    override fun defaultTypeWithStarProjections(symbol: KaClassifierSymbol): KaType = withValidityAssertion {
+    override fun defaultTypeWithStarProjections(symbol: KaClassifierSymbol): KaType = entryPointImplementation {
         return if (symbol is KaClassLikeSymbol) {
-            context(analysisSession) { typeCreator.classType(symbol) }
+            typeCreator.classType(symbol)
         } else {
             defaultType(symbol)
         }
     }
 
-    override fun approximateToDenotableSupertype(type: KaType, allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
+    override fun approximateToDenotableSupertype(type: KaType, allowLocalDenotableTypes: Boolean): KaType? = entryPointImplementation {
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateToDenotableSupertype(
             coneType,
@@ -81,7 +81,7 @@ internal class KaFirTypeProvider(
         return approximatedConeType?.asKaType()
     }
 
-    override fun approximateToDenotableSubtype(type: KaType): KaType? = withValidityAssertion {
+    override fun approximateToDenotableSubtype(type: KaType): KaType? = entryPointImplementation {
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateToDenotableSubtype(
             coneType,
@@ -91,7 +91,7 @@ internal class KaFirTypeProvider(
         return approximatedConeType?.asKaType()
     }
 
-    override fun approximateToDenotableSupertype(type: KaType, position: KtElement): KaType? = withPsiValidityAssertion(position) {
+    override fun approximateToDenotableSupertype(type: KaType, position: KtElement): KaType? = entryPointImplementation(position) {
         val firFile = position.containingKtFile.getOrBuildFirFile(resolutionFacade)
         val scopeContext = ContextCollector.process(resolutionFacade, firFile, position)
         val scopeClassifiers = scopeContext?.towerDataContext?.localScopes?.map { localScope ->
@@ -140,7 +140,7 @@ internal class KaFirTypeProvider(
         return approximatedConeType?.asKaType()
     }
 
-    override fun augmentedByWarningLevelAnnotations(type: KaType): KaType = withValidityAssertion {
+    override fun augmentedByWarningLevelAnnotations(type: KaType): KaType = entryPointImplementation {
         require(type is KaFirType)
         val coneType = type.coneType
         val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
@@ -149,22 +149,20 @@ internal class KaFirTypeProvider(
         return enhancedConeType?.asKaType() ?: type
     }
 
-    override fun defaultType(symbol: KaClassifierSymbol): KaType = withValidityAssertion {
-        context(analysisSession) {
-            val firSymbol = symbol.firSymbol
-            val defaultConeType = when (firSymbol) {
-                is FirTypeParameterSymbol -> firSymbol.defaultType
-                is FirClassLikeSymbol<*> -> firSymbol.defaultType()
-                else -> errorWithAttachment("Unexpected ${firSymbol::class.simpleName}") {
-                    withFirSymbolEntry("symbol", firSymbol)
-                }
+    override fun defaultType(symbol: KaClassifierSymbol): KaType = entryPointImplementation {
+        val firSymbol = symbol.firSymbol
+        val defaultConeType = when (firSymbol) {
+            is FirTypeParameterSymbol -> firSymbol.defaultType
+            is FirClassLikeSymbol<*> -> firSymbol.defaultType()
+            else -> errorWithAttachment("Unexpected ${firSymbol::class.simpleName}") {
+                withFirSymbolEntry("symbol", firSymbol)
             }
-
-            defaultConeType.asKaType()
         }
+
+        defaultConeType.asKaType()
     }
 
-    override fun commonSupertype(types: Iterable<KaType>): KaType = withValidityAssertion {
+    override fun commonSupertype(types: Iterable<KaType>): KaType = entryPointImplementation {
         val coneTypes = types.map { it.coneType }
         if (coneTypes.isEmpty()) {
             throw IllegalArgumentException("Got no types")
@@ -173,7 +171,7 @@ internal class KaFirTypeProvider(
         return analysisSession.firSession.typeContext.commonSuperTypeOrNull(coneTypes)!!.asKaType()
     }
 
-    override fun type(typeReference: KtTypeReference): KaType = withPsiValidityAssertion(typeReference) {
+    override fun type(typeReference: KtTypeReference): KaType = entryPointImplementation(typeReference) {
         with(typeReference) {
             when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirResolvedTypeRef -> fir.coneType.asKaType()
@@ -196,6 +194,7 @@ internal class KaFirTypeProvider(
      * Usually, this happens with incorrect code because it is hard to predict all possible ways
      * in which code can be broken in the source file.
      */
+    context(analysisSession: KaFirSession)
     private fun handleUnexpectedFirElementError(fir: FirElement?, element: KtElement): KaErrorType {
         val exception = InvalidFirElementTypeException(fir, element, emptyList())
         logger<KaFirTypeProvider>().error(exception)
@@ -210,7 +209,7 @@ internal class KaFirTypeProvider(
         return KaFirErrorType(coneErrorType, firSymbolBuilder)
     }
 
-    override fun receiverType(expression: KtDoubleColonExpression): KaType? = withPsiValidityAssertion(expression) {
+    override fun receiverType(expression: KtDoubleColonExpression): KaType? = entryPointImplementation(expression) {
         with(expression) {
             when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirGetClassCall -> {
@@ -250,19 +249,19 @@ internal class KaFirTypeProvider(
         return typeArguments.firstOrNull()?.type
     }
 
-    override fun withNullability(type: KaType, isMarkedNullable: Boolean): KaType = withValidityAssertion {
+    override fun withNullability(type: KaType, isMarkedNullable: Boolean): KaType = entryPointImplementation {
         require(type is KaFirType)
         return type.coneType.withNullability(isMarkedNullable, rootModuleSession.typeContext).asKaType()
     }
 
-    override fun hasCommonSubtypeWith(type: KaType, that: KaType): Boolean = withValidityAssertion {
+    override fun hasCommonSubtypeWith(type: KaType, that: KaType): Boolean = entryPointImplementation {
         return analysisSession.firSession.typeContext.isCompatible(
             type.coneType,
             that.coneType
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
     }
 
-    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = withPsiValidityAssertion(position) {
+    override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> = entryPointImplementation(position) {
         val ktFile = position.containingKtFile
         val firFile = ktFile.getOrBuildFirFile(resolutionFacade)
 
@@ -274,7 +273,7 @@ internal class KaFirTypeProvider(
         return context.towerDataContext.implicitValueStorage.implicitReceivers.map { it.type.asKaType() }
     }
 
-    override fun directSupertypes(type: KaType, shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
+    override fun directSupertypes(type: KaType, shouldApproximate: Boolean): Sequence<KaType> = entryPointImplementation {
         require(type is KaFirType)
 
         val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
@@ -285,7 +284,7 @@ internal class KaFirTypeProvider(
         }
     }
 
-    override fun allSupertypes(type: KaType, shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
+    override fun allSupertypes(type: KaType, shouldApproximate: Boolean): Sequence<KaType> = entryPointImplementation {
         require(type is KaFirType)
 
         val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
@@ -296,7 +295,7 @@ internal class KaFirTypeProvider(
         }
     }
 
-    override fun arrayElementType(type: KaType): KaType? = withValidityAssertion {
+    override fun arrayElementType(type: KaType): KaType? = entryPointImplementation {
         require(type is KaFirType)
         return type.coneType.arrayElementType()?.asKaType()
     }

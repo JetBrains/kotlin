@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSubstitutorProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -35,7 +36,7 @@ internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsSubstitutorProvider {
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
-        withValidityAssertion {
+        entryPointImplementation {
             if (subClass == superClass) {
                 return emptySubstitutor()
             }
@@ -56,6 +57,7 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun collectInheritancePath(
         baseSymbol: FirClassSymbol<*>,
         superSymbol: FirClassSymbol<*>,
@@ -85,7 +87,7 @@ internal class KaFirSubstitutorProvider(
         return result?.reversed()
     }
 
-    override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor = withValidityAssertion {
+    override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor = entryPointImplementation {
         if (mappings.isEmpty()) {
             return emptySubstitutor()
         }
@@ -104,18 +106,18 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
-    override fun emptySubstitutor(): KaSubstitutor.Empty = withValidityAssertion {
+    override fun emptySubstitutor(): KaSubstitutor.Empty = entryPointImplementation {
         return KaFirEmptySubstitutor(token)
     }
 
-    override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = withValidityAssertion {
+    override fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor = entryPointImplementation {
         createSubstitutor(KaFirSubstitutorBuilder(token).apply(build).mappings)
     }
 
     override fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean,
-    ): KaSubstitutor? = withValidityAssertion {
+    ): KaSubstitutor? = entryPointImplementation {
         createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
             (leftTypeParameters + rightTypeParameters).filterToSetOrEmpty(isFreeTypeParameter)
         }
@@ -125,14 +127,14 @@ internal class KaFirSubstitutorProvider(
         leftType: KaType,
         rightType: KaType,
         constructionPolicy: KaUnificationSubstitutorPolicy,
-    ): KaSubstitutor? = withValidityAssertion {
+    ): KaSubstitutor? = entryPointImplementation {
         createSubtypingUnificationSubstitutor(listOf(leftType to rightType), constructionPolicy)
     }
 
     override fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         constructionPolicy: KaUnificationSubstitutorPolicy
-    ): KaSubstitutor? = withValidityAssertion {
+    ): KaSubstitutor? = entryPointImplementation {
         createSubtypingUnificationSubstitutor(leftTypesToRightTypes) { leftTypeParameters, rightTypeParameters ->
             when (constructionPolicy) {
                 KaUnificationSubstitutorPolicy.ASSIGN_LEFT -> leftTypeParameters - rightTypeParameters
@@ -142,6 +144,7 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
+    context(analysisSession: KaFirSession)
     private fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         freeTypeParametersProvider: (
@@ -149,114 +152,112 @@ internal class KaFirSubstitutorProvider(
             rightTypeParameters: Set<KaTypeParameterSymbol>,
         ) -> Collection<KaTypeParameterSymbol>,
     ): KaSubstitutor? {
-        context(analysisSession) {
-            if (leftTypesToRightTypes.isEmpty()) {
-                return emptySubstitutor()
-            }
+        if (leftTypesToRightTypes.isEmpty()) {
+            return emptySubstitutor()
+        }
 
-            val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            val rightTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+        val leftTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+        val rightTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+        leftTypesToRightTypes.forEach { [leftType, rightType] ->
+            leftTypeParameters.addAll(leftType.collectAllTypeArgumentDependencies())
+            rightTypeParameters.addAll(rightType.collectAllTypeArgumentDependencies())
+        }
+
+        /**
+         * If types in all the pairs do not depend on any type parameters,
+         * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
+         */
+        if (rightTypeParameters.isEmpty() && leftTypeParameters.isEmpty()) {
+            return emptySubstitutor().takeIf {
+                leftTypesToRightTypes.all { [leftType, rightType] ->
+                    leftType.isSubtypeOf(rightType)
+                }
+            }
+        }
+
+        /**
+         * Contains all free type parameters. Free type parameters are parameters for which the constraint system will try
+         * to find a mapping to satisfy the constraints.
+         */
+        val freeTypeParameters = freeTypeParametersProvider(leftTypeParameters, rightTypeParameters)
+
+        val constraintSystem = ConeSimpleConstraintSystemImpl(analysisSession.firSession.inferenceComponents.createConstraintSystem(), analysisSession.firSession)
+        val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
+
+        val registeredConstraints =
+            mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+
+        with(constraintSystem.context) {
             leftTypesToRightTypes.forEach { [leftType, rightType] ->
-                leftTypeParameters.addAll(leftType.collectAllTypeArgumentDependencies())
-                rightTypeParameters.addAll(rightType.collectAllTypeArgumentDependencies())
-            }
-
-            /**
-             * If types in all the pairs do not depend on any type parameters,
-             * a regular [org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf] is called.
-             */
-            if (rightTypeParameters.isEmpty() && leftTypeParameters.isEmpty()) {
-                return emptySubstitutor().takeIf {
-                    leftTypesToRightTypes.all { [leftType, rightType] ->
-                        leftType.isSubtypeOf(rightType)
-                    }
+                val preparedLeftType = AbstractTypeChecker.prepareType(
+                    constraintSystem.context,
+                    typeSubstitutor.safeSubstitute(leftType.coneType)
+                ).let {
+                    /**
+                     * Here it's important to use [org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.captureFromExpression] whenever possible.
+                     * It sets the capture status to [org.jetbrains.kotlin.types.model.CaptureStatus.FROM_EXPRESSION] for captured types
+                     * instead of [org.jetbrains.kotlin.types.model.CaptureStatus.FOR_SUBTYPING],
+                     * which helps to avoid approximation of captured types during the constraint calculation.
+                     *
+                     * Otherwise, it can produce unwanted constraints like UPPER(Nothing) and LOWER(Any?) (from CapturedType(*) <:> TypeVariable(E))
+                     * in the type inference context due to the approximation of captured types.
+                     *
+                     * @see org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.addNewIncorporatedConstraint
+                     */
+                    constraintSystem.context.captureFromExpression(it) ?: it
                 }
+
+                val substitutedRightType = typeSubstitutor.safeSubstitute(rightType.coneType)
+
+                registeredConstraints += preparedLeftType.asCone() to substitutedRightType.asCone()
+                constraintSystem.addSubtypeConstraint(preparedLeftType, substitutedRightType)
             }
+        }
 
-            /**
-             * Contains all free type parameters. Free type parameters are parameters for which the constraint system will try
-             * to find a mapping to satisfy the constraints.
-             */
-            val freeTypeParameters = freeTypeParametersProvider(leftTypeParameters, rightTypeParameters)
+        if (constraintSystem.hasContradiction()) {
+            return null
+        }
 
-            val constraintSystem = ConeSimpleConstraintSystemImpl(analysisSession.firSession.inferenceComponents.createConstraintSystem(), analysisSession.firSession)
-            val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
+        val fixedKaSubstitutorByMap = constraintSystem.fixTypeVariablesAndGetSubstitutor()
 
-            val registeredConstraints =
-                mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
-
-            with(constraintSystem.context) {
-                leftTypesToRightTypes.forEach { [leftType, rightType] ->
-                    val preparedLeftType = AbstractTypeChecker.prepareType(
-                        constraintSystem.context,
-                        typeSubstitutor.safeSubstitute(leftType.coneType)
-                    ).let {
-                        /**
-                         * Here it's important to use [org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext.captureFromExpression] whenever possible.
-                         * It sets the capture status to [org.jetbrains.kotlin.types.model.CaptureStatus.FROM_EXPRESSION] for captured types
-                         * instead of [org.jetbrains.kotlin.types.model.CaptureStatus.FOR_SUBTYPING],
-                         * which helps to avoid approximation of captured types during the constraint calculation.
-                         *
-                         * Otherwise, it can produce unwanted constraints like UPPER(Nothing) and LOWER(Any?) (from CapturedType(*) <:> TypeVariable(E))
-                         * in the type inference context due to the approximation of captured types.
-                         *
-                         * @see org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.addNewIncorporatedConstraint
-                         */
-                        constraintSystem.context.captureFromExpression(it) ?: it
-                    }
-
-                    val substitutedRightType = typeSubstitutor.safeSubstitute(rightType.coneType)
-
-                    registeredConstraints += preparedLeftType.asCone() to substitutedRightType.asCone()
-                    constraintSystem.addSubtypeConstraint(preparedLeftType, substitutedRightType)
-                }
-            }
-
+        return fixedKaSubstitutorByMap.takeIf {
             if (constraintSystem.hasContradiction()) {
-                return null
+                // Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
+                return@takeIf false
             }
 
-            val fixedKaSubstitutorByMap = constraintSystem.fixTypeVariablesAndGetSubstitutor()
-
-            return fixedKaSubstitutorByMap.takeIf {
-                if (constraintSystem.hasContradiction()) {
-                    // Some errors in the system can occur during the variable fixation, so they need to be additionally checked.
-                    return@takeIf false
-                }
-
-                if (constraintSystem.system.errors.any { error -> error is InferredEmptyIntersection }) {
-                    // `constraintSystem.hasContradiction` only checks ERROR-level errors in the system.
-                    // InferredEmptyIntersection might be reported with WARNING-level depending on the language settings,
-                    // so it should be checked explicitly
-                    return@takeIf false
-                }
-
-                val currentRawSubstitutor = constraintSystem.system.buildCurrentSubstitutor().asCone()
-
-                /**
-                 * This sanity check ensures that substituted left types are subtypes of the substituted right types.
-                 * It's run on the raw substitutor from the constraint system and with prepared types that were registered as constraints.
-                 *
-                 * Prepared types are needed for the proper handling of captured types and star projections.
-                 * E.g., with
-                 * leftType = A<*>
-                 * rightType = A<T>
-                 * the produced substitutor is
-                 * T -> CapturedType(*).
-                 * A<*> is not a subtype of A<CapturedType(*)> as `*` is unknown and can represent anything.
-                 * However, the prepared left type is actually A<CapturedType(*)>,
-                 * and this captured projection is actually where this `T -> CapturedType(*)` mapping comes from.
-                 * So the type checker can easily verify that these two projections are the same.
-                 * Just recapturing star projections is unsafe because recaptures of the same star projection are not considered equal.
-                 *
-                 * We operate with cone types and the cone substitutor here instead of using KaTypes and the KaSubstitutor because
-                 * type parameter types are turned into [org.jetbrains.kotlin.fir.types.ConeTypeVariableType]s when prepared:
-                 * T -> TypeVariable(T), A<T> -> A<TypeVariable(T)>
-                 * ConeTypeVariableTypes are not supported by the Analysis API
-                 * and are converted into [org.jetbrains.kotlin.analysis.api.types.KaErrorType]s in `asKaType`.
-                 */
-                currentRawSubstitutor.isUnificationCorrect(registeredConstraints)
+            if (constraintSystem.system.errors.any { error -> error is InferredEmptyIntersection }) {
+                // `constraintSystem.hasContradiction` only checks ERROR-level errors in the system.
+                // InferredEmptyIntersection might be reported with WARNING-level depending on the language settings,
+                // so it should be checked explicitly
+                return@takeIf false
             }
+
+            val currentRawSubstitutor = constraintSystem.system.buildCurrentSubstitutor().asCone()
+
+            /**
+             * This sanity check ensures that substituted left types are subtypes of the substituted right types.
+             * It's run on the raw substitutor from the constraint system and with prepared types that were registered as constraints.
+             *
+             * Prepared types are needed for the proper handling of captured types and star projections.
+             * E.g., with
+             * leftType = A<*>
+             * rightType = A<T>
+             * the produced substitutor is
+             * T -> CapturedType(*).
+             * A<*> is not a subtype of A<CapturedType(*)> as `*` is unknown and can represent anything.
+             * However, the prepared left type is actually A<CapturedType(*)>,
+             * and this captured projection is actually where this `T -> CapturedType(*)` mapping comes from.
+             * So the type checker can easily verify that these two projections are the same.
+             * Just recapturing star projections is unsafe because recaptures of the same star projection are not considered equal.
+             *
+             * We operate with cone types and the cone substitutor here instead of using KaTypes and the KaSubstitutor because
+             * type parameter types are turned into [org.jetbrains.kotlin.fir.types.ConeTypeVariableType]s when prepared:
+             * T -> TypeVariable(T), A<T> -> A<TypeVariable(T)>
+             * ConeTypeVariableTypes are not supported by the Analysis API
+             * and are converted into [org.jetbrains.kotlin.analysis.api.types.KaErrorType]s in `asKaType`.
+             */
+            currentRawSubstitutor.isUnificationCorrect(registeredConstraints)
         }
     }
 
@@ -320,9 +321,10 @@ internal class KaFirSubstitutorProvider(
     /**
      * Fixes variables in [this] and provides a substitutor from the stored constraints.
      */
+    context(analysisSession: KaFirSession)
     private fun ConeSimpleConstraintSystemImpl.fixTypeVariablesAndGetSubstitutor(): KaSubstitutor {
         with(system) {
-            val inferenceComponents = session.inferenceComponents
+            val inferenceComponents = this@fixTypeVariablesAndGetSubstitutor.session.inferenceComponents
 
             while (notFixedTypeVariables.isNotEmpty()) {
                 val variableForFixation =
@@ -331,7 +333,7 @@ internal class KaFirSubstitutorProvider(
                         postponedKtPrimitives = emptyList(),
                         completionMode = ConstraintSystemCompletionMode.FULL,
                         // Can be any type. Only affects the fixation with completionMode = ConstraintSystemCompletionMode.PARTIAL
-                        topLevelType = context(analysisSession) { builtinTypes.nullableAny.coneType },
+                        topLevelType = builtinTypes.nullableAny.coneType,
                     ) ?: break
 
                 val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)

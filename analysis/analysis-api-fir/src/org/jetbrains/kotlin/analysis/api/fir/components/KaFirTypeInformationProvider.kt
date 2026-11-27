@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -24,27 +26,33 @@ import org.jetbrains.kotlin.name.StandardClassIds
 internal class KaFirTypeInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsTypeInformationProvider {
-    override fun functionTypeFamily(type: KaType): KaFunctionTypeFamily? = type.withValidityAssertion {
+    override fun functionTypeFamily(type: KaType): KaFunctionTypeFamily? = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         computeFunctionTypeKind(type)?.let(::KaFirFunctionTypeFamily)
     }
 
-    override fun isFunctionType(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isFunctionType(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         functionTypeFamily(type) == builtinFunctionTypeFamilies().function
     }
 
-    override fun isKFunctionType(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isKFunctionType(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         functionTypeFamily(type) == builtinFunctionTypeFamilies().kFunction
     }
 
-    override fun isSuspendFunctionType(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isSuspendFunctionType(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         functionTypeFamily(type) == builtinFunctionTypeFamilies().suspendFunction
     }
 
-    override fun isKSuspendFunctionType(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isKSuspendFunctionType(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         functionTypeFamily(type) == builtinFunctionTypeFamilies().kSuspendFunction
     }
 
-    override fun expandedSymbol(type: KaType): KaClassSymbol? = type.withValidityAssertion {
+    override fun expandedSymbol(type: KaType): KaClassSymbol? = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         when (type) {
             is KaClassType -> when (val symbol = type.symbol) {
                 is KaClassSymbol -> symbol
@@ -54,7 +62,8 @@ internal class KaFirTypeInformationProvider(
         }
     }
 
-    override fun defaultInitializer(type: KaType): String? = type.withValidityAssertion {
+    override fun defaultInitializer(type: KaType): String? = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         when {
             isMarkedNullable(type) -> "null"
             else -> when (classId(type)) {
@@ -80,14 +89,15 @@ internal class KaFirTypeInformationProvider(
 
     override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = KaFirBuiltinFunctionTypeFamilies
 
-    override fun classId(type: KaType): ClassId? = withValidityAssertion {
+    override fun classId(type: KaType): ClassId? = entryPointImplementation {
         when (type) {
             is KaClassType -> type.classId
             else -> null
         }
     }
 
-    override fun isFunctionalInterface(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isFunctionalInterface(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         val coneType = (type as KaFirType).coneType
         val firSession = analysisSession.firSession
         val samResolver = FirSamResolver(
@@ -101,37 +111,42 @@ internal class KaFirTypeInformationProvider(
         return (type as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
     }
 
-    override fun isNullable(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isNullable(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         (type as KaFirType).coneType.canBeNull(analysisSession.firSession)
     }
 
-    override fun isMarkedNullable(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isMarkedNullable(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         (type as KaFirType).coneType.isMarkedNullable
     }
 
-    override fun hasFlexibleNullability(type: KaType): Boolean = type.withValidityAssertion {
+    override fun hasFlexibleNullability(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         val coneType = (type as KaFirType).coneType
         coneType.hasFlexibleMarkedNullability || coneType is ConeErrorType && coneType.nullable == null
     }
 
-    override fun isDenotable(type: KaType): Boolean = type.withValidityAssertion {
-        context(analysisSession) {
-            type.approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
-        }
+    override fun isDenotable(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
+        type.approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
     }
 
-    override fun isArrayOrPrimitiveArray(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isArrayOrPrimitiveArray(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         require(type is KaFirType)
         return type.coneType.isArrayOrPrimitiveArray
     }
 
-    override fun isNestedArray(type: KaType): Boolean = type.withValidityAssertion {
+    override fun isNestedArray(type: KaType): Boolean = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         if (!isArrayOrPrimitiveArray(type)) return false
         require(type is KaFirType)
         return type.coneType.arrayElementType()?.isArrayOrPrimitiveArray == true
     }
 
-    override fun fullyExpandedType(type: KaType): KaType = type.withValidityAssertion {
+    override fun fullyExpandedType(type: KaType): KaType = entryPointImplementation {
+        type.assertIsValidAndAccessible()
         (type as KaFirType).coneType.fullyExpandedType(analysisSession.firSession).asKaType()
     }
 }

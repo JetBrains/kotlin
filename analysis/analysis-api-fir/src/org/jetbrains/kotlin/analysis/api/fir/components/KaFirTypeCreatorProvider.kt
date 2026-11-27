@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.KaFirTypeCreator
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreatorProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilder
@@ -22,77 +22,74 @@ internal class KaFirTypeCreatorProvider(
     val backingTypeCreator by lazy { KaFirTypeCreator(analysisSession) }
 
     override val typeCreator: KaTypeCreator
-        get() = withValidityAssertion {
+        get() = entryPointImplementation {
             backingTypeCreator
         }
 
     @KaExperimentalApi
-    override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = withValidityAssertion {
-        context(analysisSession) {
-            val sourceSymbol = type.symbol
-            val sourceIsMarkedNullable = type.isMarkedNullable
-            val sourceAnnotationClassIds = type.annotations.classIds.toList()
+    override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = entryPointImplementation {
+        val sourceSymbol = type.symbol
+        val sourceIsMarkedNullable = type.isMarkedNullable
+        val sourceAnnotationClassIds = type.annotations.classIds.toList()
 
-            // `typeArguments` only contains the arguments of the last qualifier, while the builder expects the arguments of all
-            // qualifiers, ordered from the innermost class outwards
-            val sourceTypeArguments = type.qualifiers.asReversed().flatMap { it.typeArguments }
+        // `typeArguments` only contains the arguments of the last qualifier, while the builder expects the arguments of all
+        // qualifiers, ordered from the innermost class outwards
+        val sourceTypeArguments = type.qualifiers.asReversed().flatMap { it.typeArguments }
 
-            typeCreator.classType(sourceSymbol) {
-                isMarkedNullable = sourceIsMarkedNullable
-                typeArguments { sourceTypeArguments }
-                annotations(sourceAnnotationClassIds)
-                init()
-            } as KaClassType
-        }
+        typeCreator.classType(sourceSymbol) {
+            isMarkedNullable = sourceIsMarkedNullable
+            typeArguments { sourceTypeArguments }
+            annotations(sourceAnnotationClassIds)
+            init()
+        } as KaClassType
     }
 
     @KaExperimentalApi
-    override fun copy(type: KaUsualClassType, init: KaClassTypeBuilder.() -> Unit): KaUsualClassType = withValidityAssertion {
+    override fun copy(type: KaUsualClassType, init: KaClassTypeBuilder.() -> Unit): KaUsualClassType = entryPointImplementation {
         copy(type as KaClassType, init) as KaUsualClassType
     }
 
     @KaExperimentalApi
-    override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        context(analysisSession) {
-            val sourceIsMarkedNullable = type.isMarkedNullable
-            val sourceIsSuspend = type.isSuspend
-            val sourceIsReflectType = type.isReflectType
-            val sourceContextParameterTypes = type.contextParameterTypes
-            val sourceReceiverType = type.receiverType
-            val sourceParameters = type.parameters
-            val sourceReturnType = type.returnType
-            val sourceAnnotationClassIds = type.annotations.classIds.toList()
+    override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaType = entryPointImplementation {
+        val sourceIsMarkedNullable = type.isMarkedNullable
+        val sourceIsSuspend = type.isSuspend
+        val sourceIsReflectType = type.isReflectType
+        val sourceContextParameterTypes = type.contextParameterTypes
+        val sourceReceiverType = type.receiverType
+        val sourceParameters = type.parameters
+        val sourceReturnType = type.returnType
+        val sourceAnnotationClassIds = type.annotations.classIds.toList()
 
-            typeCreator.functionType {
-                isMarkedNullable = sourceIsMarkedNullable
-                isSuspend = sourceIsSuspend
-                isReflectType = sourceIsReflectType
-                for (contextParameterType in sourceContextParameterTypes) {
-                    contextParameter(contextParameterType)
-                }
-                receiverType = sourceReceiverType
-                for (parameter in sourceParameters) {
-                    valueParameter(parameter.name, parameter.type)
-                }
-                returnType = sourceReturnType
-                annotations(sourceAnnotationClassIds)
-                init()
+        typeCreator.functionType {
+            isMarkedNullable = sourceIsMarkedNullable
+            isSuspend = sourceIsSuspend
+            isReflectType = sourceIsReflectType
+            for (contextParameterType in sourceContextParameterTypes) {
+                contextParameter(contextParameterType)
             }
+            receiverType = sourceReceiverType
+            for (parameter in sourceParameters) {
+                valueParameter(parameter.name, parameter.type)
+            }
+            returnType = sourceReturnType
+            annotations(sourceAnnotationClassIds)
+            init()
         }
     }
 
     @KaExperimentalApi
-    override fun copy(type: KaTypeParameterType, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType = withValidityAssertion {
-        context(analysisSession) {
-            val sourceSymbol = type.symbol
-            val sourceIsMarkedNullable = type.isMarkedNullable
-            val sourceAnnotationClassIds = type.annotations.classIds.toList()
+    override fun copy(
+        type: KaTypeParameterType,
+        init: KaTypeParameterTypeBuilder.() -> Unit,
+    ): KaTypeParameterType = entryPointImplementation {
+        val sourceSymbol = type.symbol
+        val sourceIsMarkedNullable = type.isMarkedNullable
+        val sourceAnnotationClassIds = type.annotations.classIds.toList()
 
-            typeCreator.typeParameterType(sourceSymbol) {
-                isMarkedNullable = sourceIsMarkedNullable
-                annotations(sourceAnnotationClassIds)
-                init()
-            }
+        typeCreator.typeParameterType(sourceSymbol) {
+            isMarkedNullable = sourceIsMarkedNullable
+            annotations(sourceAnnotationClassIds)
+            init()
         }
     }
 }

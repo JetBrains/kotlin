@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
-import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
-import org.jetbrains.kotlin.analysis.api.fir.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -30,7 +28,7 @@ internal class KaFirSymbolProvider(
     override val analysisSessionProvider: () -> KaFirSession,
     private val firSymbolProvider: FirSymbolProvider,
 ) : KaFirSessionComponent(), KaInternalsSymbolProvider {
-    override fun symbol(declaration: KtDeclaration): KaDeclarationSymbol = withValidityAssertion {
+    override fun symbol(declaration: KtDeclaration): KaDeclarationSymbol = entryPointImplementation {
         when (declaration) {
             is KtParameter -> symbol(declaration)
             is KtNamedFunction -> symbol(declaration)
@@ -53,7 +51,7 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun symbol(parameter: KtParameter): KaVariableSymbol = withPsiValidityAssertion(parameter) {
+    override fun symbol(parameter: KtParameter): KaVariableSymbol = entryPointImplementation(parameter) {
         when {
             parameter.isFunctionTypeParameter -> errorWithFirSpecificEntries(
                 "Creating ${KaVariableSymbol::class.simpleName} for function type parameter is not possible. " +
@@ -67,15 +65,15 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun symbol(file: KtFile): KaFileSymbol = withPsiValidityAssertion(file) {
+    override fun symbol(file: KtFile): KaFileSymbol = entryPointImplementation(file) {
         KaFirFileSymbol(file, analysisSession)
     }
 
-    override fun symbol(script: KtScript): KaScriptSymbol = withPsiValidityAssertion(script) {
+    override fun symbol(script: KtScript): KaScriptSymbol = entryPointImplementation(script) {
         KaFirScriptSymbol(script, analysisSession)
     }
 
-    override fun symbol(namedFunction: KtNamedFunction): KaFunctionSymbol = withPsiValidityAssertion(namedFunction) {
+    override fun symbol(namedFunction: KtNamedFunction): KaFunctionSymbol = entryPointImplementation(namedFunction) {
         if (namedFunction.isAnonymous) {
             KaFirAnonymousFunctionSymbol(namedFunction, analysisSession)
         } else {
@@ -83,27 +81,27 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun symbol(constructor: KtConstructor<*>): KaConstructorSymbol = withPsiValidityAssertion(constructor) {
+    override fun symbol(constructor: KtConstructor<*>): KaConstructorSymbol = entryPointImplementation(constructor) {
         KaFirConstructorSymbol(constructor, analysisSession)
     }
 
-    override fun symbol(typeParameter: KtTypeParameter): KaTypeParameterSymbol = withPsiValidityAssertion(typeParameter) {
+    override fun symbol(typeParameter: KtTypeParameter): KaTypeParameterSymbol = entryPointImplementation(typeParameter) {
         KaFirTypeParameterSymbol(typeParameter, analysisSession)
     }
 
-    override fun symbol(typeAlias: KtTypeAlias): KaTypeAliasSymbol = withPsiValidityAssertion(typeAlias) {
+    override fun symbol(typeAlias: KtTypeAlias): KaTypeAliasSymbol = entryPointImplementation(typeAlias) {
         KaFirTypeAliasSymbol(typeAlias, analysisSession)
     }
 
-    override fun symbol(enumEntry: KtEnumEntry): KaEnumEntrySymbol = withPsiValidityAssertion(enumEntry) {
+    override fun symbol(enumEntry: KtEnumEntry): KaEnumEntrySymbol = entryPointImplementation(enumEntry) {
         KaFirEnumEntrySymbol(enumEntry, analysisSession)
     }
 
-    override fun symbol(functionLiteral: KtFunctionLiteral): KaAnonymousFunctionSymbol = withPsiValidityAssertion(functionLiteral) {
+    override fun symbol(functionLiteral: KtFunctionLiteral): KaAnonymousFunctionSymbol = entryPointImplementation(functionLiteral) {
         KaFirAnonymousFunctionSymbol(functionLiteral, analysisSession)
     }
 
-    override fun symbol(property: KtProperty): KaVariableSymbol = withPsiValidityAssertion(property) {
+    override fun symbol(property: KtProperty): KaVariableSymbol = entryPointImplementation(property) {
         if (property.isLocal) {
             KaFirLocalVariableSymbol(property, analysisSession)
         } else {
@@ -111,7 +109,7 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun symbol(backingField: KtBackingField): KaBackingFieldSymbol = withPsiValidityAssertion(backingField) {
+    override fun symbol(backingField: KtBackingField): KaBackingFieldSymbol = entryPointImplementation(backingField) {
         val owningProperty = backingField.parent as? KtProperty ?: errorWithAttachment("Orphaned backing field") {
             withPsiEntry("psi", backingField)
         }
@@ -124,11 +122,11 @@ internal class KaFirSymbolProvider(
     }
 
     override fun symbol(objectLiteralExpression: KtObjectLiteralExpression): KaAnonymousObjectSymbol =
-        withPsiValidityAssertion(objectLiteralExpression) {
+        entryPointImplementation(objectLiteralExpression) {
             KaFirAnonymousObjectSymbol(objectLiteralExpression.objectDeclaration, analysisSession)
         }
 
-    override fun symbol(objectDeclaration: KtObjectDeclaration): KaClassSymbol = withPsiValidityAssertion(objectDeclaration) {
+    override fun symbol(objectDeclaration: KtObjectDeclaration): KaClassSymbol = entryPointImplementation(objectDeclaration) {
         if (objectDeclaration.isObjectLiteral()) {
             KaFirAnonymousObjectSymbol(objectDeclaration, analysisSession)
         } else {
@@ -136,7 +134,7 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun classSymbol(classOrObject: KtClassOrObject): KaClassSymbol? = withPsiValidityAssertion(classOrObject) {
+    override fun classSymbol(classOrObject: KtClassOrObject): KaClassSymbol? = entryPointImplementation(classOrObject) {
         when (classOrObject) {
             is KtEnumEntry -> null
             is KtObjectDeclaration -> symbol(classOrObject)
@@ -144,7 +142,7 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun namedClassSymbol(classOrObject: KtClassOrObject): KaNamedClassSymbol? = withPsiValidityAssertion(classOrObject) {
+    override fun namedClassSymbol(classOrObject: KtClassOrObject): KaNamedClassSymbol? = entryPointImplementation(classOrObject) {
         if (classOrObject is KtEnumEntry || classOrObject.isObjectLiteral()) {
             return null
         }
@@ -152,7 +150,7 @@ internal class KaFirSymbolProvider(
         KaFirNamedClassSymbol(classOrObject, analysisSession)
     }
 
-    override fun symbol(propertyAccessor: KtPropertyAccessor): KaPropertyAccessorSymbol = withPsiValidityAssertion(propertyAccessor) {
+    override fun symbol(propertyAccessor: KtPropertyAccessor): KaPropertyAccessorSymbol = entryPointImplementation(propertyAccessor) {
         if (propertyAccessor.isGetter) {
             KaFirPropertyGetterSymbol.create(propertyAccessor, analysisSession = analysisSession)
         } else {
@@ -160,11 +158,11 @@ internal class KaFirSymbolProvider(
         }
     }
 
-    override fun symbol(classInitializer: KtClassInitializer): KaClassInitializerSymbol = withPsiValidityAssertion(classInitializer) {
+    override fun symbol(classInitializer: KtClassInitializer): KaClassInitializerSymbol = entryPointImplementation(classInitializer) {
         KaFirClassInitializerSymbol(classInitializer, analysisSession)
     }
 
-    override fun symbol(entry: KtDestructuringDeclarationEntry): KaVariableSymbol = withPsiValidityAssertion(entry) {
+    override fun symbol(entry: KtDestructuringDeclarationEntry): KaVariableSymbol = entryPointImplementation(entry) {
         when (val parent = entry.parent) {
             is KtDestructuringDeclaration -> {
                 if (parent.hasNonLocalEntries) {
@@ -181,43 +179,43 @@ internal class KaFirSymbolProvider(
     }
 
     override fun symbol(destructuringDeclaration: KtDestructuringDeclaration): KaDestructuringDeclarationSymbol =
-        withPsiValidityAssertion(destructuringDeclaration) {
+        entryPointImplementation(destructuringDeclaration) {
             KaFirDestructuringDeclarationSymbol(destructuringDeclaration, analysisSession)
         }
 
     override fun symbol(contextReceiver: KtContextReceiver): KaContextParameterSymbol =
-        withPsiValidityAssertion(contextReceiver) {
+        entryPointImplementation(contextReceiver) {
             KaFirContextReceiverBasedContextParameterSymbol(contextReceiver, analysisSession)
         }
 
-    override fun findClass(classId: ClassId): KaNamedClassSymbol? = withValidityAssertion {
+    override fun findClass(classId: ClassId): KaNamedClassSymbol? = entryPointImplementation {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
         firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(symbol)
     }
 
-    override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = withValidityAssertion {
+    override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? = entryPointImplementation {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
         firSymbolBuilder.classifierBuilder.buildTypeAliasSymbol(symbol)
     }
 
-    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
+    override fun findClassLike(classId: ClassId): KaClassLikeSymbol? = context(analysisSession) {
         val symbol = firSymbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(symbol)
     }
 
-    override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = withValidityAssertion {
+    override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> = entryPointImplementation {
         val firs = firSymbolProvider.getTopLevelCallableSymbols(packageFqName, name)
         firs.asSequence().map { firSymbol ->
             firSymbolBuilder.buildSymbol(firSymbol) as KaCallableSymbol
         }
     }
 
-    override fun findPackage(fqName: FqName): KaPackageSymbol? = withValidityAssertion {
+    override fun findPackage(fqName: FqName): KaPackageSymbol? = entryPointImplementation {
         firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
 
-    private val backingRootPackageSymbol by lazy { KaFirPackageSymbol(FqName.ROOT, resolutionFacade.project, token) }
+    private val backingRootPackageSymbol by lazy { KaFirPackageSymbol(FqName.ROOT, analysisSession.resolutionFacade.project, token) }
 
     override val rootPackageSymbol: KaPackageSymbol
-        get() = withValidityAssertion { backingRootPackageSymbol }
+        get() = entryPointImplementation { backingRootPackageSymbol }
 }

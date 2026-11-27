@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolInformationProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -44,17 +45,17 @@ internal class KaFirSymbolInformationProvider(
         private val OBSOLETE_SYMBOL_DEPRECATION = KaFirDeprecation(KaDeprecationLevel.HIDDEN, isPropagatedToOverrides = true)
     }
 
-    override fun isDeprecated(symbol: KaSymbol): Boolean = withValidityAssertion { deprecation(symbol) != null }
+    override fun isDeprecated(symbol: KaSymbol): Boolean = entryPointImplementation { deprecation(symbol) != null }
 
-    override fun isInline(symbol: KaKotlinPropertySymbol): Boolean = withValidityAssertion {
+    override fun isInline(symbol: KaKotlinPropertySymbol): Boolean = entryPointImplementation {
         symbol.getter?.isInline == true && (symbol.isVal || symbol.setter?.isInline == true)
     }
 
-    override fun applicableAnnotationTargets(symbol: KaClassSymbol): Set<KaAnnotationTarget>? = withValidityAssertion {
+    override fun applicableAnnotationTargets(symbol: KaClassSymbol): Set<KaAnnotationTarget>? = entryPointImplementation {
         computeAnnotationApplicableTargets(symbol)?.mapNotNullTo(mutableSetOf()) { it.toKaAnnotationTarget() }
     }
 
-    override fun deprecation(symbol: KaSymbol): KaDeprecation? = withValidityAssertion {
+    override fun deprecation(symbol: KaSymbol): KaDeprecation? = entryPointImplementation {
         if (symbol is KaFirPackageSymbol || symbol is KaReceiverParameterSymbol) return null
         require(symbol is KaFirSymbol<*>) { "${symbol::class}" }
 
@@ -101,7 +102,7 @@ internal class KaFirSymbolInformationProvider(
         }
     }
 
-    override fun canBeOperator(symbol: KaNamedFunctionSymbol): Boolean = withValidityAssertion {
+    override fun canBeOperator(symbol: KaNamedFunctionSymbol): Boolean = entryPointImplementation {
         val functionFir = symbol.firSymbol.fir as? FirNamedFunction ?: return false
         return OperatorFunctionChecks.isOperator(
             functionFir,
@@ -110,7 +111,7 @@ internal class KaFirSymbolInformationProvider(
         ).isSuccess
     }
 
-    override fun equalityBound(symbol: KaNamedFunctionSymbol): KaType? = withValidityAssertion {
+    override fun equalityBound(symbol: KaNamedFunctionSymbol): KaType? = entryPointImplementation {
         val firSymbol = symbol.firSymbol as? FirNamedFunctionSymbol ?: return null
         if (!firSymbol.isEquals(analysisSession.firSession)) return null
         return firSymbol.equalityBoundTypeOfParameter?.asKaType()
@@ -136,16 +137,14 @@ internal class KaFirSymbolInformationProvider(
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
     }
 
-    override fun importableFqName(symbol: KaSymbol): FqName? = withValidityAssertion {
+    override fun importableFqName(symbol: KaSymbol): FqName? = entryPointImplementation {
         when (symbol) {
             is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()
             is KaConstructorSymbol -> symbol.containingClassId?.takeIf {
-                context(analysisSession) {
-                    when (val containingDeclaration = symbol.containingDeclaration) {
-                        is KaNamedClassSymbol -> !containingDeclaration.isInner
-                        is KaTypeAliasSymbol -> true
-                        else -> false
-                    }
+                when (val containingDeclaration = symbol.containingDeclaration) {
+                    is KaNamedClassSymbol -> !containingDeclaration.isInner
+                    is KaTypeAliasSymbol -> true
+                    else -> false
                 }
             }?.asSingleFqName()
 
@@ -156,7 +155,7 @@ internal class KaFirSymbolInformationProvider(
                     return callableId.asSingleFqName()
                 }
 
-                val containingClass = context(analysisSession) { symbol.containingDeclaration as? KaNamedClassSymbol } ?: return null
+                val containingClass = symbol.containingDeclaration as? KaNamedClassSymbol ?: return null
                 val canBeImported = when (containingClass.classKind) {
                     KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> symbol.isCompanion
                     KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
@@ -173,14 +172,14 @@ internal class KaFirSymbolInformationProvider(
         }
     }
 
-    override fun defaultAnnotationTargets(symbol: KaSymbol): Set<KaAnnotationTarget>? = withValidityAssertion {
+    override fun defaultAnnotationTargets(symbol: KaSymbol): Set<KaAnnotationTarget>? = entryPointImplementation {
         val firSymbol = symbol.firSymbol.fir as? FirAnnotationContainer ?: return null
         return getActualTargetList(firSymbol, rootModuleSession)
             .defaultTargets
             .mapNotNullTo(mutableSetOf()) { it.toKaAnnotationTarget() }
     }
 
-    override fun returnValueStatus(symbol: KaNamedFunctionSymbol): KaReturnValueStatus = withValidityAssertion {
+    override fun returnValueStatus(symbol: KaNamedFunctionSymbol): KaReturnValueStatus = entryPointImplementation {
         when (symbol.firSymbol.resolvedStatus.returnValueStatus) {
             ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
             ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
@@ -188,12 +187,12 @@ internal class KaFirSymbolInformationProvider(
         }
     }
 
-    override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = withValidityAssertion {
+    override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = entryPointImplementation {
         if (!symbol.isTopLevel) {
             return KaFirEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
         }
 
-        val containingFile = context(analysisSession) { symbol.containingFile }
+        val containingFile = symbol.containingFile
         if (containingFile != null) {
             return containingFile.annotations
         }

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionDummySignature
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableDummySignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSignatureSubstitutor
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -27,40 +28,46 @@ internal class KaFirSignatureSubstitutor(
     override fun <S : KaFunctionSymbol> substitute(
         symbol: S,
         substitutor: KaSubstitutor,
-    ): KaFunctionSignature<S> = symbol.withValidityAssertion {
+    ): KaFunctionSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         asSignature(symbol).substitute(substitutor)
     }
 
     override fun <S : KaVariableSymbol> substitute(
         symbol: S,
         substitutor: KaSubstitutor,
-    ): KaVariableSignature<S> = symbol.withValidityAssertion {
+    ): KaVariableSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         asSignature(symbol).substitute(substitutor)
     }
 
     override fun <S : KaCallableSymbol> substitute(
         symbol: S,
         substitutor: KaSubstitutor,
-    ): KaCallableSignature<S> = symbol.withValidityAssertion {
+    ): KaCallableSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         when (symbol) {
             is KaFunctionSymbol -> substitute(symbol, substitutor)
             is KaVariableSymbol -> substitute(symbol, substitutor)
         }
     }
 
-    override fun <S : KaCallableSymbol> asSignature(symbol: S): KaCallableSignature<S> = symbol.withValidityAssertion {
+    override fun <S : KaCallableSymbol> asSignature(symbol: S): KaCallableSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         when (symbol) {
             is KaFunctionSymbol -> asSignature(symbol)
             is KaVariableSymbol -> asSignature(symbol)
         }
     }
 
-    override fun <S : KaFunctionSymbol> asSignature(symbol: S): KaFunctionSignature<S> = symbol.withValidityAssertion {
+    override fun <S : KaFunctionSymbol> asSignature(symbol: S): KaFunctionSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
         return KaFirFunctionDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }
 
-    override fun <S : KaVariableSymbol> asSignature(symbol: S): KaVariableSignature<S> = symbol.withValidityAssertion {
+    override fun <S : KaVariableSymbol> asSignature(symbol: S): KaVariableSignature<S> = entryPointImplementation {
+        symbol.assertIsValidAndAccessible()
         val firSymbol = (symbol as KaFirSymbol<*>).firSymbol as FirVariableSymbol<*>
         return KaFirVariableDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
     }

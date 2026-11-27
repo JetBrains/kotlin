@@ -10,6 +10,7 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
@@ -45,14 +46,14 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(relationProvider: KaFirSymbolRelationProvider, analysisSession: KaFirSession)
 internal fun computeContainingSymbol(symbol: KaSymbol): KaSymbol? = when (symbol) {
     is KaPackageSymbol -> null
     is KaFileSymbol -> analysisSession.firSymbolBuilder.createPackageSymbol(kotlinPackageFqn)
     else -> relationProvider.containingDeclaration(symbol) ?: relationProvider.containingFile(symbol)
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 internal fun computeContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol? {
     if (!hasParentSymbol(symbol)) {
         return null
@@ -118,7 +119,7 @@ internal fun computeContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol
     return getContainingDeclarationByPsi(symbol)
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun getContainingDeclarationsForLocalClass(firSymbol: FirBasedSymbol<*>, symbolFirSession: FirSession): KaDeclarationSymbol? {
     val fir = firSymbol.fir as? FirClassLikeDeclaration ?: return null
     val containerSymbol = fir.containingClassForLocalAttr?.toSymbol(symbolFirSession) ?: return null
@@ -172,10 +173,10 @@ private fun hasParentSymbol(symbol: KaSymbol): Boolean {
     }
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
     val containingDeclaration = getContainingPsi(symbol) ?: return null
-    val declarationSymbol = context(analysisSession) { containingDeclaration.symbol }
+    val declarationSymbol = containingDeclaration.symbol
 
     if (declarationSymbol is KaFirEnumEntrySymbol && symbol !is KaFirEnumEntryInitializerSymbol) {
         // From the FIR point of view, the real containing declaration of enum entry functions or implicit constructor
@@ -186,7 +187,7 @@ private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol
     return declarationSymbol
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): KaDeclarationSymbol? = when (symbol) {
     is KaReceiverParameterSymbol -> symbol.owningCallableSymbol
     is KaBackingFieldSymbol -> symbol.owningProperty
@@ -211,7 +212,7 @@ private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): K
     else -> null
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 internal fun computeContainingFile(symbol: KaSymbol): KaFileSymbol? {
     if (symbol is KaFileSymbol || symbol is KaPackageSymbol) {
         return null
@@ -233,7 +234,7 @@ internal fun computeContainingFile(symbol: KaSymbol): KaFileSymbol? {
     return firSymbolBuilder.buildFileSymbol(firFileSymbol)
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 internal fun computeContainingModule(symbol: KaSymbol): KaModule = when (symbol) {
     is KaFirSymbol<*> -> symbol.firSymbol.getContainingKtModule(resolutionFacade)
     is KaPackageSymbol -> analysisSession.useSiteModule
@@ -242,7 +243,7 @@ internal fun computeContainingModule(symbol: KaSymbol): KaModule = when (symbol)
     }
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
     val source = symbol.firSymbol.source
         ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGenerat
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.compilerPlugins.KaFirCompilerPluginGeneratedDeclarations
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider
@@ -31,7 +32,7 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsCompilerPluginGeneratedDeclarationsProvider {
     override fun compilerPluginGeneratedDeclarations(module: KaModule): KaCompilerPluginGeneratedDeclarations =
-        withValidityAssertion {
+        entryPointImplementation {
             val firSessionForModule = analysisSession.resolutionFacade.sessionProvider.getSession(module)
             val generatedDeclarationsSymbolProviderForModule = firSessionForModule.generatedDeclarationsSymbolProvider
                 ?: return KaFirCompilerPluginGeneratedDeclarations(KaFirEmptyScope(analysisSession.token))

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
-import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
-import org.jetbrains.kotlin.analysis.api.fir.components.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -30,7 +30,7 @@ private fun FirExpression.asFunctionOperatorCall(
     it.origin == FirFunctionCallOrigin.Operator && it.source?.kind == expectedSourceKind
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 internal fun resolveForLoopCall(firLoop: FirWhileLoop, psi: KtForExpression): KaCallResolutionAttempt? {
     val firHasNextCall = firLoop.condition.asFunctionOperatorCall(KtFakeSourceElementKind.DesugaredForLoop) ?: return null
 
@@ -59,7 +59,7 @@ internal fun resolveForLoopCall(firLoop: FirWhileLoop, psi: KtForExpression): Ka
     )
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 internal fun resolveDelegatedPropertyCall(firProperty: FirProperty, psi: KtPropertyDelegate): KaCallResolutionAttempt? {
     if (firProperty.delegate == null) return null
 
@@ -92,7 +92,7 @@ internal fun resolveDelegatedPropertyCall(firProperty: FirProperty, psi: KtPrope
  * Resolves a [FirFunctionCall] into a [KaSimpleCallResolutionAttempt].
  * If the call has an error, returns [KaSimpleCallResolutionError]; otherwise builds a [KaSimpleCallResolutionSuccess].
  */
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpleCallResolutionAttempt {
     findErrorCall(call, psi)?.let { return it }
 
@@ -110,7 +110,7 @@ private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpl
     }
 }
 
-context(resolver: KaFirResolver)
+context(resolver: KaFirResolver, analysisSession: KaFirSession)
 private fun buildNamedFunctionCall(firFunctionCall: FirFunctionCall): KaFunctionCall<KaNamedFunctionSymbol>? {
     val functionSymbol = (firFunctionCall.calleeReference as? FirResolvedNamedReference)
         ?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
@@ -118,10 +118,8 @@ private fun buildNamedFunctionCall(firFunctionCall: FirFunctionCall): KaFunction
     val firTypeArgumentsMapping = firFunctionCall.toFirTypeArgumentsMapping(functionSymbol)
     val typeArgumentsMapping = firTypeArgumentsMapping.asKaTypeParametersMapping()
 
-    val kaSignature = context(analysisSession) {
-        val substitutor = substitutorByMap(firTypeArgumentsMapping, analysisSession.firSession).toKaSubstitutor()
-        functionSymbol.toKaSignature().substitute(substitutor)
-    }
+    val substitutor = substitutorByMap(firTypeArgumentsMapping, analysisSession.firSession).toKaSubstitutor()
+    val kaSignature = functionSymbol.toKaSignature().substitute(substitutor)
 
     val partiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
         backingSignature = kaSignature,

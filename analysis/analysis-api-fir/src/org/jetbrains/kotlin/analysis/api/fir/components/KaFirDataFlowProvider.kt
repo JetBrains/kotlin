@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.dataflow.KaFirImplicitReceiverSmartCast
 import org.jetbrains.kotlin.analysis.api.fir.dataflow.KaFirSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDataFlowProvider
@@ -55,27 +57,25 @@ internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsDataFlowProvider {
     override fun smartCastInfo(expression: KtExpression): KaSmartCastInfo? =
-        expression.withPsiValidityAssertion {
-            context(analysisSession) {
-                val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
-                val originalType = firSmartCastExpression.originalExpression.resolvedType.asKaType()
-                val smartCastType = firSmartCastExpression.smartcastType.coneType.asKaType()
+        entryPointImplementation(expression) {
+            val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
+            val originalType = firSmartCastExpression.originalExpression.resolvedType.asKaType()
+            val smartCastType = firSmartCastExpression.smartcastType.coneType.asKaType()
 
-                if (originalType.semanticallyEquals(smartCastType)) {
-                    // Skip trivial smart casts
-                    return null
-                }
-
-                return KaFirSmartCastInfo(
-                    backingOriginalType = originalType,
-                    backingSmartCastType = smartCastType,
-                    backingIsStable = firSmartCastExpression.isStable
-                )
+            if (originalType.semanticallyEquals(smartCastType)) {
+                // Skip trivial smart casts
+                return null
             }
+
+            return KaFirSmartCastInfo(
+                backingOriginalType = originalType,
+                backingSmartCastType = smartCastType,
+                backingIsStable = firSmartCastExpression.isStable
+            )
         }
 
     override fun implicitReceiverSmartCasts(expression: KtExpression): Collection<KaImplicitReceiverSmartCast> =
-        expression.withPsiValidityAssertion {
+        entryPointImplementation(expression) {
             val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(expression) ?: return emptyList()
 
             listOfNotNull(
@@ -146,6 +146,7 @@ internal class KaFirDataFlowProvider(
     private val KtExpression.isImplicitSmartCastInfoTarget: Boolean
         get() = this is KtNameReferenceExpression || this is KtOperationReferenceExpression
 
+    context(analysisSession: KaFirSession)
     private fun createImplicitReceiverSmartCast(
         firExpression: FirQualifiedAccessExpression,
         kind: KaImplicitReceiverSmartCastKind,
@@ -164,7 +165,7 @@ internal class KaFirDataFlowProvider(
 
     override fun computeExitPointSnapshot(
         statements: List<KtExpression>,
-    ): KaDataFlowExitPointSnapshot = withPsiValidityAssertion(statements) {
+    ): KaDataFlowExitPointSnapshot = entryPointImplementation(statements) {
         val firStatements = computeStatements(statements)
 
         val collector = FirElementCollector()
@@ -203,6 +204,7 @@ internal class KaFirDataFlowProvider(
         )
     }
 
+    context(analysisSession: KaFirSession)
     private fun computeStatements(statements: List<KtExpression>): List<FirElement> {
         val firParent = computeCommonParent(statements)
 
@@ -225,6 +227,7 @@ internal class KaFirDataFlowProvider(
         return firLeaf
     }
 
+    context(analysisSession: KaFirSession)
     private fun computeCommonParent(statements: List<KtElement>): FirElement {
         require(statements.isNotEmpty())
 
@@ -245,6 +248,7 @@ internal class KaFirDataFlowProvider(
             .firstNotNullOf { it.getOrBuildFir(resolutionFacade) }
     }
 
+    context(analysisSession: KaFirSession)
     private fun computeDefaultExpression(
         defaultStatement: KtExpression,
         firDefaultStatement: FirElement,
@@ -296,6 +300,7 @@ internal class KaFirDataFlowProvider(
         return firDefaultStatement.resolvedType
     }
 
+    context(analysisSession: KaFirSession)
     private fun computeOperationDefaultType(defaultStatement: KtExpression): ConeKotlinType? {
         val binaryExpression = (defaultStatement as? KtOperationReferenceExpression)?.parent as? KtBinaryExpression ?: return null
         val expressionCall = binaryExpression.getOrBuildFirSafe<FirQualifiedAccessExpression>(resolutionFacade) ?: return null
@@ -348,6 +353,7 @@ internal class KaFirDataFlowProvider(
         return hasMultipleExitPoints(firTargets)
     }
 
+    context(analysisSession: KaFirSession)
     private fun getControlFlowGraph(anchor: KtElement, firStatements: List<FirElement>): ControlFlowGraph {
         return findControlFlowGraph(anchor, firStatements)
             ?: errorWithAttachment("Cannot find a control flow graph for element") {
@@ -357,6 +363,7 @@ internal class KaFirDataFlowProvider(
             }
     }
 
+    context(analysisSession: KaFirSession)
     private fun findControlFlowGraph(anchor: KtElement, firStatements: List<FirElement>): ControlFlowGraph? {
         /**
          * Not all expressions appear in the [ControlFlowGraph].

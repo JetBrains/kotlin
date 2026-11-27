@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilerFacilityModuleActualizer
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptions
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.project
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-context(component: KaFirSessionComponent)
+context(analysisSession: KaFirSession)
 internal fun runJvmIrCodeGen(
     chunk: CompilationChunk,
     fir2IrResult: Fir2IrActualizedResult,
@@ -134,7 +134,7 @@ internal fun runJvmIrCodeGen(
     )
 }
 
-context(component: KaFirSessionComponent)
+context(analysisSession: KaFirSession)
 internal fun getIrGenerationExtensions(module: KaModule): List<IrGenerationExtension> {
     val projectExtensions = project.extensionArea
         .getExtensionPoint<IrGenerationExtension>(IrGenerationExtension.name)
