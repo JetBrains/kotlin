@@ -345,7 +345,7 @@ internal class TestDataManagerRunnerIntegrationTest {
     fun `compact summary lists the first 50 changed files`() {
         System.setProperty(TEST_DATA_MANAGER_OPTIONS_ROOT_DIR, tempDir.toString())
         val fileActions = (0 until 120).map { index ->
-            FileAction(testDataDirectory.resolve("first.kt"), testDataDirectory.resolve("%03d.txt".format(index)), FileAction.Kind.UPDATED)
+            FileAction(testDataDirectory.resolve("first.kt"), testDataDirectory.resolve("%03d.txt".format(index)), FileActionKind.UPDATED)
         }
 
         val output = ByteArrayOutputStream()

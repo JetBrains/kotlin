@@ -89,7 +89,7 @@ internal data class TestDataProblem(
     val testName: String,
     val testDataPath: TestMetadataPath?,
     val variantChain: TestVariantChain,
-    val kind: TestDataAssertionError.Kind,
+    val kind: TestDataProblemKind,
     val file: Path,
     val comparedFile: Path?,
     val actual: String?,
@@ -101,28 +101,8 @@ internal data class TestDataProblem(
 internal data class FileAction(
     val testDataPath: Path,
     val file: Path,
-    val kind: Kind,
-) {
-    enum class Kind {
-        CREATED,
-        UPDATED,
-        DELETED,
-        ;
-
-        val existedBefore: Boolean get() = this != CREATED
-        val existsAfter: Boolean get() = this != DELETED
-
-        companion object {
-            /** The net effect on a file that [existedBefore] and [existsAfter], or `null` if there is none. */
-            fun of(existedBefore: Boolean, existsAfter: Boolean): Kind? = when {
-                !existedBefore && existsAfter -> CREATED
-                existedBefore && !existsAfter -> DELETED
-                existedBefore && existsAfter -> UPDATED
-                else -> null
-            }
-        }
-    }
-}
+    val kind: FileActionKind,
+)
 
 /**
  * The actions of this list followed by the [later] ones, one per file with the net effect of both.
@@ -131,7 +111,7 @@ internal fun List<FileAction>.mergedWith(later: List<FileAction>): List<FileActi
     val laterByFile = later.associateBy { it.file }
     val merged = mapNotNull { earlier ->
         val next = laterByFile[earlier.file] ?: return@mapNotNull earlier
-        val kind = FileAction.Kind.of(earlier.kind.existedBefore, next.kind.existsAfter) ?: return@mapNotNull null
+        val kind = FileActionKind.of(earlier.kind.existedBefore, next.kind.existsAfter) ?: return@mapNotNull null
         earlier.copy(kind = kind)
     }
 

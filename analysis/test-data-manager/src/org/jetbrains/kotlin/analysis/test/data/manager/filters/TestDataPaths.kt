@@ -10,12 +10,27 @@ import kotlin.io.path.*
 
 /**
  * A test data path in the form `@TestMetadata` uses: relative to the repository root, with `/` separators.
- * As a [TestMetadataFilter] path, a trailing `/` limits it to the directory; without a repository root to resolve the
+ * As a filter path ([includes]), a trailing `/` limits it to the directory; without a repository root to resolve the
  * option against (a direct launch, see [unresolvedTestDataPaths]), it is the option entry as given.
  */
 @JvmInline
-internal value class TestMetadataPath(val path: String) {
+value class TestMetadataPath(val path: String) {
+    /**
+     * Whether this filter path includes a test of [testDataPath], the path of its test data file or directory: whole
+     * name segments only, so a directory includes everything inside it, and a file path, with or without its extension,
+     * includes the tests of that file. A prefix that cuts a name in the middle (`dir/fi`) includes nothing.
+     */
+    fun includes(testDataPath: String): Boolean =
+        testDataPath.startsWith(path) && endsAtNameBoundary(testDataPath, path)
+
     override fun toString(): String = path
+}
+
+/** Whether [prefix] of [path] is followed by `/` (a directory), `.` (an extension) or nothing. */
+private fun endsAtNameBoundary(path: String, prefix: String): Boolean {
+    if (prefix.isEmpty() || prefix.endsWith('/') || path.length == prefix.length) return true
+    val next = path[prefix.length]
+    return next == '/' || next == '.'
 }
 
 /**
@@ -24,10 +39,10 @@ internal value class TestMetadataPath(val path: String) {
  * @property paths the paths for [TestMetadataFilter]
  * @property errors one per path that can't be used; the run must not start if there are any
  */
-internal class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
+class ResolvedTestDataPaths(val paths: List<TestMetadataPath>, val errors: List<TestDataPathError>)
 
 /** A `testDataPath` entry that can't be used, with [path] as given in the option. */
-internal sealed interface TestDataPathError {
+sealed interface TestDataPathError {
     val path: String
 
     /** The message for the console and the report, naming [repositoryRoot] the paths are relative to. */
@@ -53,11 +68,11 @@ internal sealed interface TestDataPathError {
 }
 
 /** Splits the comma-separated `testDataPath` option, dropping blank entries. */
-internal fun splitTestDataPaths(option: String): List<String> =
+fun splitTestDataPaths(option: String): List<String> =
     option.split(",").map(String::trim).filter(String::isNotEmpty)
 
 /** The entries of the `testDataPath` [option] as they are, without resolving them like [resolveTestDataPaths]. */
-internal fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
+fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
     splitTestDataPaths(option).map(::TestMetadataPath)
 
 /**
@@ -70,7 +85,7 @@ internal fun unresolvedTestDataPaths(option: String): List<TestMetadataPath> =
  *
  * A trailing `/` is kept: it limits the filter to the directory, without the files named like it (`dir.kt`).
  */
-internal fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?): ResolvedTestDataPaths {
+fun resolveTestDataPaths(option: String, repositoryRoot: Path, projectDir: Path?): ResolvedTestDataPaths {
     val root = repositoryRoot.toAbsolutePath().normalize()
     val paths = mutableListOf<TestMetadataPath>()
     val errors = mutableListOf<TestDataPathError>()

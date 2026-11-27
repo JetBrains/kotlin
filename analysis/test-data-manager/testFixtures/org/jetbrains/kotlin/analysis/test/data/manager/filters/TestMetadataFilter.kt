@@ -35,15 +35,6 @@ internal class TestMetadataFilter(private val includePaths: Collection<TestMetad
         }
     }
 
-    private fun matchesPath(testMetadataPath: TestMetadataPath): Boolean {
-        val path = testMetadataPath.path
-        return includePaths.any { includePath -> path.startsWith(includePath.path) && endsAtNameBoundary(path, includePath.path) }
-    }
-
-    /** Whether [prefix] of [path] is followed by `/` (a directory), `.` (an extension) or nothing. */
-    private fun endsAtNameBoundary(path: String, prefix: String): Boolean {
-        if (prefix.isEmpty() || prefix.endsWith('/') || path.length == prefix.length) return true
-        val next = path[prefix.length]
-        return next == '/' || next == '.'
-    }
+    private fun matchesPath(testMetadataPath: TestMetadataPath): Boolean =
+        includePaths.any { includePath -> includePath.includes(testMetadataPath.path) }
 }
