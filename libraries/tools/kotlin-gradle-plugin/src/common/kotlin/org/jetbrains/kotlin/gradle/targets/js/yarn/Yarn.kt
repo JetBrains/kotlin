@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
@@ -16,8 +18,10 @@ class Yarn internal constructor(
     execOps: ExecOperations,
     objects: ObjectFactory,
     mutexFile: File,
+    expectedLockFile: Provider<RegularFile>,
 ) : NpmApiExecution<YarnEnvironment> by YarnWorkspaces(
     execOps,
     objects,
     mutexFile,
+    expectedLockFile,
 )

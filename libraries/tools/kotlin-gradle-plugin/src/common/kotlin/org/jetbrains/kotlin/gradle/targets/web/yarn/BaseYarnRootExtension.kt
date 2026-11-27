@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
@@ -60,11 +61,18 @@ abstract class BaseYarnRootExtension internal constructor(
 
     private val yarnMutexFile = project.userKotlinPersistentDir.resolve("yarn/mutex")
 
+    /**
+     * Lock file which Yarn is expected to create during the installation.
+     * If it is set and does not exist after the installation, the installation fails.
+     */
+    internal val expectedLockFile: RegularFileProperty = objects.fileProperty()
+
     override val packageManager: Yarn by lazy {
         Yarn(
             objects = objects,
             execOps = execOps,
             mutexFile = yarnMutexFile,
+            expectedLockFile = expectedLockFile,
         )
     }
 

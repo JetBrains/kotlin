@@ -165,11 +165,9 @@ internal class YarnPluginApplier(
             )
         }
 
-        kotlinNpmInstall.configure { task ->
-            // Yarn is expected to create the lock file only if it is going to be stored.
-            // So it is still possible to use `--no-lockfile` with unset `inputFile` of the store task.
-            task.expectedLockFile.set(storeYarnLock.flatMap { it.inputFile })
-        }
+        // Yarn is expected to create the lock file only if it is going to be stored.
+        // So it is still possible to use `--no-lockfile` with unset `inputFile` of the store task.
+        yarnRootExtension.expectedLockFile.set(storeYarnLock.flatMap { it.inputFile })
 
         project.tasks.register(platformDisambiguate.extensionName(RESTORE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectoryProperty.file(yarnRootExtension.lockFileNameProperty)
