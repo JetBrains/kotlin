@@ -230,7 +230,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val kotlinSources = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
         val isIncremental = when (patchesWithSources.size) {
             0 -> true
-            1 -> kotlinSources.all { isInJavaModulePatchPaths(it, patchesWithSources.single()) }
+            1 -> kotlinSources.all(isInJavaModulePatchPaths(patchesWithSources.single()))
             else -> false
         }
         return BuildAttribute.JAVA_MODULE_PATCH_WITH_SOURCES_OUTSIDE.takeUnless { isIncremental }
@@ -249,7 +249,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         (args.javaSourceRoots.toList() + args.freeArgs.filter { it.endsWith(".java") || File(it).isDirectory }).map(::File)
 
     private fun patchesWithSources(patches: Map<String, List<File>>, sources: List<File>): Map<String, List<File>> =
-        patches.filterValues { paths -> sources.any { isInJavaModulePatchPaths(it, paths) } }
+        patches.filterValues { paths -> sources.any(isInJavaModulePatchPaths(paths)) }
 
     private fun hasClasses(patches: Map<String, List<File>>): Boolean =
         patches.values.flatten().any { path -> path.isFile || path.walk().any { it.extension == "class" } }
