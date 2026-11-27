@@ -300,3 +300,5 @@ ignore:
 
   # Ignore docs
   - "docs"
+
+  - ".idecli"
