@@ -1,0 +1,84 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:OptIn(ExperimentalContracts::class)
+
+package org.jetbrains.kotlin.ir.builders.declarations.v2
+
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+
+abstract class IrFunctionBuilder internal constructor() : IrTypeParametersContainerBuilder() {
+    var isExternal: Boolean = false
+
+    var visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
+
+    var containerSource: DeserializedContainerSource? = null
+
+    var metadata: MetadataSource? = null
+
+    var isInline: Boolean = false
+
+    var isExpect: Boolean = false
+
+    var returnType: IrType? = null
+
+    internal val parameters: MutableList<IrParameterBuilder> = []
+
+    fun dispatchReceiver(builder: IrDispatchReceiverBuilder.() -> Unit): IrValueParameterSymbol {
+        contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+        val child = IrDispatchReceiverBuilder().apply(builder)
+        parameters += child
+        return child.symbol
+    }
+
+    fun contextParameter(builder: IrContextParameterBuilder.() -> Unit): IrValueParameterSymbol {
+        contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+        val child = IrContextParameterBuilder().apply(builder)
+        parameters += child
+        return child.symbol
+    }
+
+    fun extensionReceiver(builder: IrExtensionReceiverBuilder.() -> Unit): IrValueParameterSymbol {
+        contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+        val child = IrExtensionReceiverBuilder().apply(builder)
+        parameters += child
+        return child.symbol
+    }
+
+    fun valueParameter(builder: IrRegularParameterBuilder.() -> Unit): IrValueParameterSymbol {
+        contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+        val child = IrRegularParameterBuilder().apply(builder)
+        parameters += child
+        return child.symbol
+    }
+
+    fun parameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameterSymbol {
+        contract { callsInPlace(builder, InvocationKind.EXACTLY_ONCE) }
+        val child = IrValueParameterBuilder().apply(builder)
+        parameters += child
+        return child.symbol
+    }
+
+    fun valueParameter(name: Name, type: IrType): IrValueParameterSymbol =
+        valueParameter {
+            this.name = name
+            this.type = type
+        }
+
+    fun valueParameter(name: String, type: IrType): IrValueParameterSymbol =
+        valueParameter(Name.identifier(name), type)
+}

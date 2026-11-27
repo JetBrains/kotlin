@@ -40,6 +40,7 @@ fun <GeneratedType, TypePrinter> printGeneratedTypesIntoSingleFile(
     packageName: String,
     fileNameWithoutExtension: String,
     fileSuppressions: List<String> = emptyList(),
+    fileAnnotations: List<String> = emptyList(),
     makeTypePrinter: (ImportCollectingPrinter) -> TypePrinter,
     printType: TypePrinter.(GeneratedType) -> Unit,
 ): GeneratedFile {
@@ -69,6 +70,10 @@ fun <GeneratedType, TypePrinter> printGeneratedTypesIntoSingleFile(
             appendLine(".")
             appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
             appendLine()
+            if (fileAnnotations.isNotEmpty()) {
+                fileAnnotations.forEach { appendLine("@file:$it") }
+                appendLine()
+            }
             if (fileSuppressions.isNotEmpty()) {
                 fileSuppressions.joinTo(this, prefix = "@file:Suppress(", postfix = ")\n\n") { "\"$it\"" }
             }
@@ -88,6 +93,7 @@ fun printGeneratedType(
     packageName: String,
     typeName: String,
     fileSuppressions: List<String> = emptyList(),
+    fileAnnotations: List<String> = emptyList(),
     body: ImportCollectingPrinter.() -> Unit,
 ): GeneratedFile =
     printGeneratedTypesIntoSingleFile(
@@ -97,6 +103,7 @@ fun printGeneratedType(
         packageName,
         typeName,
         fileSuppressions,
+        fileAnnotations,
         makeTypePrinter = { it },
         printType = { body() }
     )

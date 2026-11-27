@@ -825,7 +825,7 @@ fun IrWhileLoopImpl(
     origin = origin,
 )
 
-private fun IrFunctionSymbol.getRealOwner(): IrFunction {
+internal fun IrFunctionSymbol.getRealOwner(): IrFunction {
     var symbol = this
     if (this is IrFunctionFakeOverrideSymbol) {
         symbol = originalSymbol

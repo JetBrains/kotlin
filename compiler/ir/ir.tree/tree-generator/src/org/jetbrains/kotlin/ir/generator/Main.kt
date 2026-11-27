@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ir.generator
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.Model
 import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.ir.generator.model.DeclarationBuilder
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.ExpressionBuilder
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolField
 import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolImplementation
@@ -43,6 +45,8 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
     model.addPureAbstractElement(elementBaseType)
 
     printElements(model, ::ElementPrinter)
+    printDeclarationBuilders(generationPath)
+    printExpressionBuilders(model, generationPath)
     printElementImplementations(implementations, ::ImplementationPrinter)
     printVisitors(
         model,
@@ -60,6 +64,47 @@ private fun TreeGenerator.printIrTree(model: Model<Element>, generationPath: Fil
         )
     )
 }
+
+private fun TreeGenerator.printDeclarationBuilders(generationPath: File) {
+    val builders = DeclarationBuilderConfigurator.configure()
+    for ([fileName, buildersInFile] in builders.groupBy { it.fileName }) {
+        val hasTopLevelFunctions = buildersInFile.any { it.build != null || it.entryPoints.isNotEmpty() || it.creators.isNotEmpty() }
+        generatedFiles += printGeneratedTypesIntoSingleFile(
+            buildersInFile,
+            generationPath,
+            treeGeneratorReadme,
+            DeclarationBuilder.PACKAGE,
+            fileName,
+            fileAnnotations = buildList {
+                if (hasTopLevelFunctions) addAll(multifileFacade(DeclarationBuilder.JVM_FACADE_NAME))
+                if (buildersInFile.any { it.printsContracts }) add(CONTRACTS_OPT_IN)
+            },
+            makeTypePrinter = ::DeclarationBuilderPrinter,
+            printType = DeclarationBuilderPrinter::printBuilderWithFunctions,
+        )
+    }
+}
+
+private fun TreeGenerator.printExpressionBuilders(model: Model<Element>, generationPath: File) {
+    for (builder in ExpressionBuilderConfigurator.configure(model)) {
+        generatedFiles += printGeneratedTypesIntoSingleFile(
+            listOf(builder),
+            generationPath,
+            treeGeneratorReadme,
+            ExpressionBuilder.PACKAGE,
+            builder.typeName,
+            fileAnnotations = buildList {
+                if (!builder.isAbstract) addAll(multifileFacade(ExpressionBuilder.JVM_FACADE_NAME))
+                if (!builder.isAbstract && builder.entryPoints.isNotEmpty()) add(CONTRACTS_OPT_IN)
+            },
+            makeTypePrinter = ::ExpressionBuilderPrinter,
+            printType = ExpressionBuilderPrinter::printBuilderWithFunctions,
+        )
+    }
+}
+
+private fun multifileFacade(jvmName: String): List<String> =
+    listOf("JvmName(\"$jvmName\")", "JvmMultifileClass")
 
 private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<Element>) {
     val symbolModel = IrSymbolTree.build()
