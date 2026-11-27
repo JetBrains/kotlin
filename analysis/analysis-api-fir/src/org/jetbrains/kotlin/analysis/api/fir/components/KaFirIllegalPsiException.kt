@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
@@ -82,7 +81,7 @@ class KaFirIllegalPsiException private constructor(
 private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 
 /**
- * **Important**: this function has to be guarded by [withValidityAssertion]
+ * **Important**: this function has to be guarded by [entryPointImplementation][org.jetbrains.kotlin.analysis.api.fir.entryPointImplementation]
  */
 context(owner: KaFirSessionBoundOwner)
 internal fun PsiElement.checkValidity() {
@@ -98,41 +97,4 @@ internal fun PsiElement.checkValidity() {
     if (!canBeAnalyzed && Registry.`is`("kotlin.analysis.validate.psi.input", true) && !allowIllegalPsiAccess.get()) {
         throw KaFirIllegalPsiException.create(this, session = session)
     }
-}
-
-@JvmName("withPsiValidityAssertionAsReceiver")
-context(component: KaFirSessionComponent)
-internal inline fun <R> PsiElement?.withPsiValidityAssertion(builder: () -> R): R = component.withValidityAssertion {
-    this?.checkValidity()
-    builder()
-}
-
-context(component: KaFirSessionComponent)
-internal inline fun <R> withPsiValidityAssertion(
-    element: PsiElement?,
-    builder: () -> R,
-): R = element.withPsiValidityAssertion(builder)
-
-context(component: KaFirSessionComponent)
-internal inline fun <R> withPsiValidityAssertion(
-    vararg elements: PsiElement?,
-    builder: () -> R,
-): R = component.withValidityAssertion {
-    for (element in elements) {
-        element?.checkValidity()
-    }
-
-    builder()
-}
-
-context(component: KaFirSessionComponent)
-internal inline fun <R> withPsiValidityAssertion(
-    elements: Iterable<PsiElement?>,
-    builder: () -> R,
-): R = component.withValidityAssertion {
-    for (element in elements) {
-        element?.checkValidity()
-    }
-
-    builder()
 }

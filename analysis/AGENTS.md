@@ -33,7 +33,9 @@ WHEN working with PSI elements:
 - Prefer interfaces to classes for better binary compatibility
 - Properties for attributes, functions for actions with parameters
 - Return nullable types for operations that can fail (avoid exceptions for non-exceptional cases)
-- All implementations must validate lifetime ownership with `withValidityAssertion`
+- All implementations must validate lifetime ownership: `entryPointImplementation` in `KaFirSessionBoundOwner`s of the FIR
+  implementation, `withValidityAssertion` in other lifetime owners
+  (see [Lifetime Management](docs/contribution-guide/api-development.md#lifetime-management))
 - Mark experimental APIs with `@KaExperimentalApi`, implementation details with `@KaImplementationDetail`
 
 ## Working with Test Data
