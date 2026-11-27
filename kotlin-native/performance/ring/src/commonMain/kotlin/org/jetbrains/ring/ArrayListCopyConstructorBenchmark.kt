@@ -8,7 +8,7 @@ package org.jetbrains.ring
 import kotlinx.benchmark.*
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+@Measurement(time = 500, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class ArrayListCopyConstructorBenchmark {
     @Param(
             "ArrayList",
