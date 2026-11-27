@@ -42,12 +42,14 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     /**
      * Include source information in generated code.
      *
+     * Defaults to true for JVM/Android and false for other targets unless explicitly set.
+     *
      * Records source information that can be used for tooling to determine the source location of the corresponding composable function.
      * By default, this function is declared as having no side effects. It is safe for code shrinking tools (such as R8 or ProGuard) to
      * remove it. This option does NOT impact the presence of symbols or line information normally added by the Kotlin compiler; this option
      * controls only additional source information added by the Compose Compiler.
      */
-    val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
+    val includeSourceInformation: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     /**
      * Save Compose build metrics to this folder.
@@ -110,13 +112,15 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
     /**
      * Include composition trace markers in the generated code.
      *
+     * Defaults to true for JVM/Android and false for other targets unless explicitly set.
+     *
      * When `true`, this flag tells the Compose compiler to inject additional tracing information into the bytecode, which allows showing
      * composable functions in the Android Studio system trace profiler.
      *
      * For more information, see this link:
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
-    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
+    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     /**
      * A set of Kotlin platforms to which the Compose compiler plugin will be applied.
