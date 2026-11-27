@@ -263,6 +263,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
             registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerResolveComponents(
+                configuration.parseTreeKind,
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
                 configuration.importTracker,

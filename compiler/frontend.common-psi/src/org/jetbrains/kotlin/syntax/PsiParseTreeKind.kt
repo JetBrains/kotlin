@@ -16,4 +16,6 @@ object PsiParseTreeKind : ParseTreeKind() {
 
     override val PositioningStrategyKind.positioningStrategy: PsiPositioningStrategy<*>
         get() = PsiPositioningStrategies[this]
+
+    override fun createSourcesToPathsMapper(): SourcesToPathsMapper = PsiSourcesToPathsMapper()
 }

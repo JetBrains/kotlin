@@ -16,4 +16,6 @@ object KmpParseTreeKind : ParseTreeKind() {
 
     override val PositioningStrategyKind.positioningStrategy: KmpPositioningStrategy
         get() = KmpPositioningStrategies[this]
+
+    override fun createSourcesToPathsMapper(): SourcesToPathsMapper = KmpSourcesToPathsMapper()
 }

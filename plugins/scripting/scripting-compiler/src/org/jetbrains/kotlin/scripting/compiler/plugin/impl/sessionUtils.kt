@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
@@ -132,7 +133,7 @@ internal fun createScriptAnnotationResolutionSession(
         moduleData.bindSession(this@session)
         registerModuleData(moduleData)
         registerCliCompilerAndCommonComponents(configuration.languageVersionSettings, isMetadataCompilation = false)
-        registerResolveComponents()
+        registerResolveComponents(configuration.parseTreeKind)
         registerCliCompilerOnlyResolveComponents(
             configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration")
         )

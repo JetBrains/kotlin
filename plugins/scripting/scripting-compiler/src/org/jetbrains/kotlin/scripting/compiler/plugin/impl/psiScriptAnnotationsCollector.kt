@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJavaInterop
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
@@ -258,6 +257,5 @@ fun SourceCode.convertToFirViaPsi(
     val builder = PsiRawFirBuilder(session, session.kotlinScopeProvider)
     return builder.buildFirFile(ktFile).also { firFile ->
         (session.firProvider as FirProviderImpl).recordFile(firFile)
-        session.sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
     }
 }

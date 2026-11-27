@@ -16,4 +16,6 @@ object LightTreeParseTreeKind : ParseTreeKind() {
 
     override val PositioningStrategyKind.positioningStrategy: LightTreePositioningStrategy
         get() = LightTreePositioningStrategies[this]
+
+    override fun createSourcesToPathsMapper(): SourcesToPathsMapper = LightTreeSourcesToPathsMapper()
 }

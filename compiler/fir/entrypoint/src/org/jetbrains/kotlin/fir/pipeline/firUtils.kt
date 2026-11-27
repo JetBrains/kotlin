@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import org.jetbrains.kotlin.syntax.NonPsiSourcesToPathsMapper
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
@@ -47,6 +48,7 @@ fun FirSession.buildFirViaLightTree(
         }
         builder.buildFirFile(code, file, linesMapping).also { firFile ->
             firProvider.recordFile(firFile)
+            require(sourcesToPathsMapper is NonPsiSourcesToPathsMapper<*>)
             sourcesToPathsMapper.registerFileSource(firFile.source!!, file.path ?: file.name, linesMapping)
         }
     }
