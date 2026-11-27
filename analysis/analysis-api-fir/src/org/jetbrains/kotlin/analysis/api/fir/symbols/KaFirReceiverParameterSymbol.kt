@@ -49,9 +49,6 @@ internal class KaFirReceiverParameterSymbol private constructor(
             }
         }
 
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
-
     override val backingPsi: KtTypeReference? = owningBackingPsi?.receiverTypeReference
 
     override val lazyFirSymbol: Lazy<FirReceiverParameterSymbol>
@@ -75,7 +72,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
-                KaFirEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(this.token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol = firSymbol, builder = analysisSession.firSymbolBuilder)
         }

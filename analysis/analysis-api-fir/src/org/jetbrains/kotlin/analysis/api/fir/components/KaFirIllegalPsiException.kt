@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSessionBoundOwner
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -83,9 +84,9 @@ private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 /**
  * **Important**: this function has to be guarded by [withValidityAssertion]
  */
-context(component: KaFirSessionComponent)
+context(owner: KaFirSessionBoundOwner)
 internal fun PsiElement.checkValidity() {
-    val session: KaSession = component.analysisSession
+    val session: KaSession = owner.analysisSession
     val canBeAnalyzed = if (session is KaInternals) {
         session.analysisScopeProvider.canBeAnalysedImpl(this)
     } else {

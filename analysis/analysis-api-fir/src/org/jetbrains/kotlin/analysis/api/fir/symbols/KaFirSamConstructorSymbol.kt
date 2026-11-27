@@ -25,7 +25,6 @@ internal class KaFirSamConstructorSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
     override val analysisSession: KaFirSession,
 ) : KaSamConstructorSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
-    override val token: KaLifetimeToken get() = builder.token
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

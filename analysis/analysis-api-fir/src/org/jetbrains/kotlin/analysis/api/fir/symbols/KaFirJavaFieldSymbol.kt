@@ -26,7 +26,6 @@ internal class KaFirJavaFieldSymbol(
     override val firSymbol: FirFieldSymbol,
     override val analysisSession: KaFirSession,
 ) : KaJavaFieldSymbol(), KaFirSymbol<FirFieldSymbol> {
-    override val token: KaLifetimeToken get() = builder.token
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
