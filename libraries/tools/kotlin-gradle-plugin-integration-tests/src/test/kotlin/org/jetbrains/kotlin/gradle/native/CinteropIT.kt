@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -22,10 +24,12 @@ import kotlin.io.path.deleteIfExists
 import kotlin.test.assertEquals
 
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class CinteropIT : KGPBaseTest() {
 
     @TestMetadata("cinterop-kt-53191")
     @GradleTest
+    @MustRunOnChangesInNative
     fun `rerun cinterop after a header changing`(gradleVersion: GradleVersion) {
         nativeProject("cinterop-kt-53191", gradleVersion = gradleVersion) {
             val headerFile = projectPath.resolve("native_lib/nlib.h").toFile()
@@ -53,6 +57,7 @@ class CinteropIT : KGPBaseTest() {
     @TestMetadata("cinterop-fmodules")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @MustRunOnChangesInNative
     fun `cinterop gives hint about -fmodules`(gradleVersion: GradleVersion) {
         nativeProject("cinterop-fmodules", gradleVersion = gradleVersion) {
             val defFile = projectPath.resolve("native_lib/nlib.def").toFile()
@@ -93,6 +98,7 @@ class CinteropIT : KGPBaseTest() {
     @TestMetadata("cinterop-with-header")
     @DisplayName("KT-62800: passing header to cinterop instead of passing def file")
     @GradleTest
+    @MustRunOnChangesInNative
     fun cinteropWithExplicitPassingHeader(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {
             val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().normalizedAbsolutePath().toString()
