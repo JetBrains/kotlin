@@ -6,12 +6,19 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.metadata.ClassKind
 import kotlin.metadata.KmClass
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -34,7 +41,16 @@ internal interface MutableCollectionKClass<T : Any> : KClass<T>, TypeConstructor
 internal class MutableCollectionKClassImpl<T : Any>(
     override val readonlyClass: KClassImpl<T>,
     val mutableClassId: ClassId,
-) : KClass<T> by readonlyClass, MutableCollectionKClass<T> {
+) : MemberContainer<T>(), MutableCollectionKClass<T>, KClass<T> by readonlyClass {
+    override val jClass: Class<T>
+        get() = readonlyClass.jClass
+
+    override val classId: ClassId
+        get() = mutableClassId
+
+    override val classKind: ClassKind
+        get() = readonlyClass.classKind
+
     override val qualifiedName: String
         get() = mutableClassId.asSingleFqName().asString()
 
@@ -46,8 +62,11 @@ internal class MutableCollectionKClassImpl<T : Any>(
             ?: throw KotlinReflectionInternalError("Builtin class metadata not found for $mutableClassId.")
     }
 
-    private val typeParameterTable: TypeParameterTable by lazy(PUBLICATION) {
-        TypeParameterTable.create(mutableKmClass.typeParameters, parent = null, readonlyClass, readonlyClass.java.safeClassLoader)
+    override val kmClass: KmClass
+        get() = mutableKmClass
+
+    override val typeParameterTable: TypeParameterTable by lazy(PUBLICATION) {
+        TypeParameterTable.create(mutableKmClass.typeParameters, parent = null, this, readonlyClass.java.safeClassLoader)
     }
 
     override val typeParameters: List<KTypeParameter>
@@ -58,6 +77,32 @@ internal class MutableCollectionKClassImpl<T : Any>(
             it.toKType(readonlyClass.java.safeClassLoader, typeParameterTable)
         }
     }
+
+    override val functionsMetadata get() = mutableKmClass.functions
+    override val propertiesMetadata get() = mutableKmClass.properties
+    override val constructorsMetadata get() = mutableKmClass.constructors
+    override val constructorDescriptors: Collection<ConstructorDescriptor> get() = emptyList()
+
+    override fun getProperties(name: Name): Collection<PropertyDescriptor> = emptyList()
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = emptyList()
+    override fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor? = null
+    override fun getLocalPropertyMetadata(index: Int) = null
+
+    override val declaredMemberNames: Set<String> by lazy(PUBLICATION, ::computeDeclaredMemberNamesFromMetadata)
+
+    override val additionalFunctions: Collection<ReflectKCallable<*>> by lazy(PUBLICATION, ::getAdditionalFunctions)
+
+    override val members: Collection<KCallable<*>> by lazy(PUBLICATION, ::computeAllMembers)
+
+    override fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
+        computeDeclaredMembersFromMetadata(name)
+
+    override fun getMembersByName(name: String): Collection<ReflectKCallable<*>> = computeMembersByName(name)
+
+    private val fakeOverrideMembersByName = ConcurrentHashMap<String, MembersJavaSignatureMap>()
+
+    override fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
+        fakeOverrideMembersByName.getOrPut(name) { computeFakeOverrideMembersForName(this, name) }
 
     override fun equals(other: Any?): Boolean = other is MutableCollectionKClass<*> && readonlyClass == other.readonlyClass
     override fun hashCode(): Int = readonlyClass.hashCode()

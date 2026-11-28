@@ -1,0 +1,234 @@
+FILE fqName:<root> fileName:/iterators.kt
+  CLASS CLASS name:KotlinIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinIterator
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinIterator [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator
+    FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.String>
+      overridden:
+        public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.Iterator>): kotlin.Unit declared in kotlin.collections.Iterator
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.Iterator
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.Iterator
+    FUN name:hasNext visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinIterator
+      overridden:
+        public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.KotlinIterator'
+          CONST Boolean type=kotlin.Boolean value=false
+    FUN name:next visibility:public modality:OPEN returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinIterator
+      overridden:
+        public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun next (): kotlin.String declared in <root>.KotlinIterator'
+          CONST String type=kotlin.String value=""
+  CLASS CLASS name:KotlinListIterator modality:ABSTRACT visibility:public superTypes:[kotlin.collections.ListIterator<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinListIterator
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinListIterator [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinListIterator modality:ABSTRACT visibility:public superTypes:[kotlin.collections.ListIterator<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.String>
+      overridden:
+        public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.ListIterator>): kotlin.Unit declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:hasPrevious visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun hasPrevious (): kotlin.Boolean declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:next visibility:public modality:ABSTRACT returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun next (): T of kotlin.collections.ListIterator declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:nextIndex visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun nextIndex (): kotlin.Int declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:previous visibility:public modality:ABSTRACT returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun previous (): T of kotlin.collections.ListIterator declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:previousIndex visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun previousIndex (): kotlin.Int declared in kotlin.collections.ListIterator
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.ListIterator
+  CLASS CLASS name:KotlinMutableIterator modality:FINAL visibility:public superTypes:[kotlin.collections.MutableIterator<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinMutableIterator
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinMutableIterator [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinMutableIterator modality:FINAL visibility:public superTypes:[kotlin.collections.MutableIterator<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.MutableIterator
+    FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.String>
+      overridden:
+        public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.MutableIterator>): kotlin.Unit declared in kotlin.collections.MutableIterator
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableIterator
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.MutableIterator
+    FUN name:hasNext visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinMutableIterator
+      overridden:
+        public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.MutableIterator
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.KotlinMutableIterator'
+          CONST Boolean type=kotlin.Boolean value=false
+    FUN name:next visibility:public modality:OPEN returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinMutableIterator
+      overridden:
+        public abstract fun next (): T of kotlin.collections.MutableIterator declared in kotlin.collections.MutableIterator
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun next (): kotlin.String declared in <root>.KotlinMutableIterator'
+          CONST String type=kotlin.String value=""
+    FUN name:remove visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinMutableIterator
+      overridden:
+        public abstract fun remove (): kotlin.Unit declared in kotlin.collections.MutableIterator
+      BLOCK_BODY
+  CLASS CLASS name:KotlinMutableListIterator modality:ABSTRACT visibility:public superTypes:[kotlin.collections.MutableListIterator<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinMutableListIterator
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinMutableListIterator [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinMutableListIterator modality:ABSTRACT visibility:public superTypes:[kotlin.collections.MutableListIterator<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableListIterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.String
+      overridden:
+        public abstract fun add (element: T of kotlin.collections.MutableListIterator): kotlin.Unit declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] kotlin.String>
+      overridden:
+        public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] T of kotlin.collections.MutableListIterator>): kotlin.Unit declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableListIterator<kotlin.String>
+      overridden:
+        public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:hasPrevious visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun hasPrevious (): kotlin.Boolean declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:next visibility:public modality:ABSTRACT returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableListIterator<kotlin.String>
+      overridden:
+        public abstract fun next (): T of kotlin.collections.MutableListIterator declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:nextIndex visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun nextIndex (): kotlin.Int declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:previous visibility:public modality:ABSTRACT returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun previous (): T of kotlin.collections.MutableListIterator declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:previousIndex visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.ListIterator<kotlin.String>
+      overridden:
+        public abstract fun previousIndex (): kotlin.Int declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableListIterator<kotlin.String>
+      overridden:
+        public abstract fun remove (): kotlin.Unit declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableListIterator<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.String
+      overridden:
+        public abstract fun set (element: T of kotlin.collections.MutableListIterator): kotlin.Unit declared in kotlin.collections.MutableListIterator
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.MutableListIterator
+  CLASS CLASS name:KotlinSubclassOfJava modality:FINAL visibility:public superTypes:[<root>.JavaIteratorWithRemove]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinSubclassOfJava
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinSubclassOfJava [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaIteratorWithRemove'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinSubclassOfJava modality:FINAL visibility:public superTypes:[<root>.JavaIteratorWithRemove]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterator<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] @[FlexibleNullability] kotlin.String?>
+      overridden:
+        public open fun forEachRemaining (p0: @[EnhancedNullability] java.util.function.Consumer<in @[EnhancedNullability] @[FlexibleNullability] kotlin.String?>): kotlin.Unit declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:hasNext visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.JavaIterator
+      annotations:
+        Override
+      overridden:
+        public open fun hasNext (): kotlin.Boolean declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:next visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.String? [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.JavaIterator
+      annotations:
+        Override
+      overridden:
+        public open fun next (): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.JavaIteratorWithRemove
+      annotations:
+        Override
+      overridden:
+        public open fun remove (): kotlin.Unit declared in <root>.JavaIteratorWithRemove
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.JavaIteratorWithRemove
