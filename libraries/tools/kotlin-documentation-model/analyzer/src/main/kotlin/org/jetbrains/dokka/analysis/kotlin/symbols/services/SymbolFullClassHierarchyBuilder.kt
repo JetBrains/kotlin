@@ -61,6 +61,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         }
     }
 
+    context(_: KaSession)
     private fun collectSupertypesFromPsiClass(
         driWithPsiClass: Pair<DRI, PsiClass>,
         supersMap: MutableMap<DRI, Supertypes>
@@ -68,7 +69,9 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         val (dri, psiClass) = driWithPsiClass
         val supertypes = psiClass.superTypes.mapNotNull { it.resolve() }
             .filterNot { it.qualifiedName == "java.lang.Object" }
-        val supertypesDriWithPsiClass = supertypes.map { DRI.from(it) to it }
+        val supertypesDriWithPsiClass = supertypes.mapNotNull { supertype ->
+            DRI.from(supertype)?.let { it to supertype }
+        }
 
         if (supersMap[dri] == null) {
             supersMap[dri] = supertypesDriWithPsiClass.map { it.first }
@@ -96,7 +99,9 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
                     }
                 } else if (source is PsiDocumentableSource) {
                     val psi = source.psi as PsiClass
-                    hierarchy[sourceSet]?.let { collectSupertypesFromPsiClass(documentable.dri to psi, it) }
+                    analyze(kotlinAnalysis.getModule(sourceSet)) {
+                        hierarchy[sourceSet]?.let { collectSupertypesFromPsiClass(documentable.dri to psi, it) }
+                    }
                 }
             }
         }

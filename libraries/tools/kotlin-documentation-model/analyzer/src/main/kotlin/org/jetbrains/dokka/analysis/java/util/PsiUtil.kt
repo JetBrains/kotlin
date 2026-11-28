@@ -4,76 +4,155 @@
 
 package org.jetbrains.dokka.analysis.java.util
 
-import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.dokka.InternalDokkaApi
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.DocumentableSource
-import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.scopes.*
+import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDeclaration
 
-// TODO [beresnev] copy-paste
 
 internal val PsiElement.parentsWithSelf: Sequence<PsiElement>
     get() = generateSequence(this) { if (it is PsiFile) null else it.parent }
 
-@InternalDokkaApi
-internal fun DRI.Companion.from(psi: PsiElement): DRI = psi.parentsWithSelf.run {
-    if (psi is PsiPackage) {
-        return@run DRI(
-            packageName = psi.qualifiedName,
-        )
+/**
+ * Creates a [DRI] for the given resolved [psi] element using Analysis API symbols exclusively,
+ * or `null` if no symbol can be obtained for [psi].
+ *
+ * Requires an ambient [KaSession] which must see [psi] (for binary declarations,
+ * a session of a source module that has the declaration on its classpath). Elements outside
+ * the session's analysis scope (e.g. a source class of another module) have no symbol and
+ * yield `null`.
+ */
+context(_: KaSession)
+internal fun DRI.Companion.from(psi: PsiElement): DRI? {
+    val symbol = psi.toKaSymbol() ?: return null
+    return getDRIFromSymbol(symbol)
+}
+
+/**
+ * Overload for callers without an ambient [KaSession]:
+ * the analysis is performed from [useSite]'s module instead.
+ * [useSite] must be an element from a source file (a doc tag, an annotation, etc.).
+ */
+internal fun DRI.Companion.from(psi: PsiElement, useSite: PsiElement): DRI? =
+    analyze(useSite) { from(psi) }
+
+/**
+ * Returns a [KaSymbol] corresponding to the given [PsiElement].
+ *
+ * Kotlin light elements (Javadoc references on Kotlin declarations are resolved to those)
+ * are unwrapped to their original Kotlin PSI, so both Kotlin and Java declarations
+ * are represented by symbols.
+ */
+context(_: KaSession)
+private fun PsiElement.toKaSymbol(): KaSymbol? {
+    val kotlinOrigin = (this as? KtLightElement<*, *>)?.kotlinOrigin
+    return when {
+        kotlinOrigin is KtDeclaration -> kotlinOrigin.symbol
+        // A JVM file facade (e.g. `example.TestKt`) has no class symbol: its declarations are
+        // top-level callables of the package, so the package symbol is the closest representation.
+        this is KtLightClassForFacade -> findPackage(facadeClassFqName.parent())
+        this is PsiPackage -> findPackage(FqName(qualifiedName))
+        this is PsiTypeParameter -> (containingDeclarationSymbol() as? KaDeclarationSymbol)
+            ?.typeParameters?.firstOrNull { it.psi == this }
+        this is PsiParameter -> (containingDeclarationSymbol() as? KaFunctionSymbol)
+            ?.valueParameters?.firstOrNull { it.psi == this }
+        this is PsiClass -> classSymbol()
+        this is PsiMember -> memberSymbol()
+        else -> null
     }
-    val psiMethod = firstIsInstanceOrNull<PsiMethod>()
-    val psiField = firstIsInstanceOrNull<PsiField>()
-    val classes = filterIsInstance<PsiClass>().filterNot { it is PsiTypeParameter }
-        .toList() // We only want exact PsiClass types, not PsiTypeParameter subtype
-    val additionalClasses = if (psi is PsiEnumConstant) listOfNotNull(psiField?.name) else emptyList()
-    DRI(
-        packageName = classes.lastOrNull()?.qualifiedName?.substringBeforeLast('.', "") ?: "",
-        classNames = (additionalClasses + classes.mapNotNull { it.name }).takeIf { it.isNotEmpty() }
-            ?.asReversed()?.joinToString("."),
-        // The fallback strategy test whether psi is not `PsiEnumConstant`. The reason behind this is that
-        // we need unified DRI for both Java and Kotlin enums, so we can link them properly and treat them alike.
-        // To achieve that, we append enum name to classNames list and leave the callable part set to null. For Kotlin enums
-        // it is by default, while for Java enums we have to explicitly test for that in this `takeUnless` condition.
-        callable = psiMethod?.let { Callable.from(it) } ?: psiField?.takeUnless { psi is PsiEnumConstant }?.let { Callable.from(it) },
-        target = DriTarget.from(psi),
-        extra = if (psi is PsiEnumConstant)
-            DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-        else null
-    )
 }
 
-internal fun Callable.Companion.from(psi: PsiMethod) = with(psi) {
-    Callable(
-        name,
-        receiver = null,
-        params = parameterList.parameters.map { param -> JavaClassReference(param.type.canonicalText) },
-        isProperty = false,
-        isCompanion = hasModifier(JvmModifier.STATIC)
-    )
-}
-
-internal fun Callable.Companion.from(psi: PsiField): Callable {
-    return Callable(
-        name = psi.name,
-        receiver = null,
-        params = emptyList(),
-        isProperty = true,
-        isCompanion = psi.hasModifier(JvmModifier.STATIC)
-    )
-}
-
-internal fun DriTarget.Companion.from(psi: PsiElement): DriTarget = psi.parentsWithSelf.run {
-    return when (psi) {
-        is PsiTypeParameter -> PointingToGenericParameters(psi.index)
-        else -> firstIsInstanceOrNull<PsiParameter>()?.let {
-            val callable = firstIsInstanceOrNull<PsiMethod>()
-            val params = (callable?.parameterList?.parameters).orEmpty()
-            PointingToCallableParameters(params.indexOf(it))
-        } ?: PointingToDeclaration
+/**
+ * Returns a class symbol for the given [PsiClass].
+ *
+ * Classes from compiled class files (e.g. the JDK or other libraries) have no PSI-based symbol,
+ * so they are resolved by [ClassId] instead.
+ */
+context(_: KaSession)
+private fun PsiClass.classSymbol(): KaNamedClassSymbol? {
+    if (containingFile is ClsFileImpl) {
+        // TODO KT-92120: decompiled classes are outside every module's analysis scope, so
+        //  `namedClassSymbol` throws for them; they are resolved by `ClassId` instead.
+        return classIdOrNull()?.let { findClass(it) }
     }
+    // `namedClassSymbol` throws `KaFirIllegalPsiException` for PSI outside the session's analysis scope
+    // (e.g. a source class of another source set, resolved via a Javadoc link). Resolving such a class
+    // by `ClassId` does not help either: the foreign source PSI shadows the classpath candidate for the
+    // class finder, so the lookup yields nothing. Instead of failing the whole run, the failure is caught
+    // and the link degrades to an unresolved-link warning.
+    return runCatching { namedClassSymbol }.getOrNull()
+}
+
+context(_: KaSession)
+private fun PsiClass.classIdOrNull(): ClassId? {
+    val name = name ?: return null
+    val outerClassId = containingClass?.classIdOrNull()
+    if (outerClassId != null) {
+        return outerClassId.createNestedClassId(Name.identifier(name))
+    }
+    val qualifiedName = qualifiedName ?: return null
+    return ClassId(FqName(qualifiedName.substringBeforeLast('.', "")), FqName(name), false)
+}
+
+/**
+ * Returns a callable symbol for the given [PsiMember].
+ *
+ * Members of decompiled classes (Cls PSI, e.g. Javadoc references to JDK members) are resolved
+ * through the owner class symbol by name/signature: decompiled files are outside every module's
+ * analysis scope, so `callableSymbol` throws there, and PSI identity is unreliable for them
+ * (the same declaration can be represented by distinct Cls PSI trees).
+ *
+ * For source members, [org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol] is used;
+ * other out-of-scope PSI (e.g. a source class of another source set) yields no symbol.
+ *
+ * Java enum constants are represented by [KaEnumEntrySymbol], so their DRI is generated
+ * the same way as for Kotlin enum entries.
+ */
+context(_: KaSession)
+private fun PsiMember.memberSymbol(): KaCallableSymbol? {
+    val ownerClass = containingClass ?: return null
+
+    // TODO KT-92120: once the Analysis API supports creating symbols from decompiled Java PSI,
+    //  drop this branch and use `callableSymbol` for Cls PSI as well.
+    if (containingFile is ClsFileImpl) {
+        val owner = ownerClass.classSymbol() ?: return null
+        if (this is PsiMethod && isConstructor) {
+            val constructors = owner.combinedDeclaredMemberScope.constructors.toList()
+            return constructors.firstOrNull { it.psi == this }
+                ?: constructors.firstOrNull { it.valueParameters.size == parameterList.parametersCount }
+        }
+
+        val memberName = name?.let(Name::identifier) ?: return null
+        val callables = owner.staticDeclaredMemberScope.callables(memberName).toList() +
+                owner.declaredMemberScope.callables(memberName).toList()
+        return callables.firstOrNull { it.psi == this } ?: callables.firstOrNull()
+    }
+
+    // `callableSymbol` throws `KaFirIllegalPsiException` for PSI outside the session's analysis
+    // scope (see [classSymbol]); for such members (e.g. a source class of another source set)
+    // no symbol is resolvable, and the link degrades to an unresolved-link warning.
+    return runCatching { callableSymbol }.getOrNull()
+}
+
+context(_: KaSession)
+private fun PsiElement.containingDeclarationSymbol(): KaSymbol? {
+    val owner = parentsWithSelf.drop(1).firstOrNull { it is PsiClass || it is PsiMethod } ?: return null
+    return owner.toKaSymbol()
 }
 
 // TODO [beresnev] copy-paste

@@ -28,20 +28,24 @@ internal class SyntheticElementDocumentationProvider(
     fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
         val psiMethod = psiElement as? PsiMethod ?: return null
         return when {
-            psiMethod.isSyntheticEnumValuesMethod() -> getDocumentationForEnumValuesMethod(sourceSet)
-            psiMethod.isSyntheticEnumValueOfMethod() -> getDocumentationForEnumValueOfMethod(sourceSet)
+            psiMethod.isSyntheticEnumValuesMethod() -> getDocumentationForEnumValuesMethod(sourceSet, psiMethod)
+            psiMethod.isSyntheticEnumValueOfMethod() -> getDocumentationForEnumValueOfMethod(sourceSet, psiMethod)
             else ->  null
         }
     }
 
-    fun getDocumentationForEnumValuesMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+    /**
+     * The synthetic doc comment is created from a template and belongs to no module,
+     * so [useSite] must be a real declaration the analysis can be performed from.
+     */
+    fun getDocumentationForEnumValuesMethod(sourceSet: DokkaSourceSet, useSite: PsiElement): DocumentationNode? {
         val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUES_TEMPLATE_PATH) ?: return null
-        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
+        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet, useSite)
     }
 
-    fun getDocumentationForEnumValueOfMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+    fun getDocumentationForEnumValueOfMethod(sourceSet: DokkaSourceSet, useSite: PsiElement): DocumentationNode? {
         val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUEOF_TEMPLATE_PATH) ?: return null
-        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
+        return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet, useSite)
     }
 
     private fun loadSyntheticDoc(path: String): PsiMethod? {

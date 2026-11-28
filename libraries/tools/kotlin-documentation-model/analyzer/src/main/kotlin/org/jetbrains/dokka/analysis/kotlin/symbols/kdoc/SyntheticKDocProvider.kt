@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.java.SyntheticElementDocumentationProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
@@ -63,14 +64,24 @@ internal fun getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJava
     return when (symbol) {
         is KaNamedFunctionSymbol -> {
             when {
-                isEnumValuesMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet)
-                isEnumValueOfMethod(symbol) -> syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet)
+                isEnumValuesMethod(symbol) -> useSitePsi(symbol)?.let { syntheticJavaDocProvider.getDocumentationForEnumValuesMethod(sourceSet, it) }
+                isEnumValueOfMethod(symbol) -> useSitePsi(symbol)?.let { syntheticJavaDocProvider.getDocumentationForEnumValueOfMethod(sourceSet, it) }
                 else -> null
             }
         }
         else -> null
     }
 }
+
+/**
+ * For synthetic origins (e.g. enum `values()`/`valueOf()`) the Analysis API makes no consistent
+ * guarantees about [KaSymbol.psi] — it may be null or non-null (currently a synthetic `PsiMethod`
+ * for Java enums). `realPsi` is null for such symbols. So fall back to the containing declaration,
+ * which the javadoc parser uses only as a use-site to resolve references from.
+ */
+context(_: KaSession)
+private fun useSitePsi(symbol: KaSymbol): PsiElement? =
+    symbol.psi ?: (symbol as? KaDeclarationSymbol)?.containingSymbol?.psi
 
 context(_: KaSession)
 private fun loadTemplate(filePath: String): DocumentationNode {

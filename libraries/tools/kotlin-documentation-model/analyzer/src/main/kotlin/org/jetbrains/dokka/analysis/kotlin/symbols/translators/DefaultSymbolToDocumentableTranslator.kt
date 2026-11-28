@@ -827,6 +827,7 @@ internal class DokkaSymbolVisitor(
         return psiHelper.getConstantExpression(psiField)
     }
 
+    context(_: KaSession)
     private fun getCheckedExceptions(functionSymbol: KaFunctionSymbol): CheckedExceptions? {
         val psiMethod = functionSymbol.psi as? PsiMethod ?: return null
         val driList = psiHelper.getCheckedExceptionDRIs(psiMethod)
