@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 
 internal class SyntheticArgumentInterface(
     val name: String,
@@ -15,6 +16,16 @@ internal class SyntheticArgumentInterface(
     val parentInterfaces: List<SyntheticArgumentInterface>,
     val concreteClassName: String? = null,
     val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
+    /**
+     * The version the interface became available in, for the case when it's introduced later than the [level] it's based on.
+     * By default, the interface is considered available since the same version as the [level].
+     */
+    val since: KotlinReleaseVersion? = null,
+    /**
+     * Whether the interface is experimental, for the case when its stability differs from the [level] it's based on.
+     * By default, the interface is experimental if the [level] is experimental.
+     */
+    val experimental: Boolean = false,
 )
 
 private fun SyntheticArgumentInterface.toLevel(): KotlinCompilerArgumentsLevel =
@@ -60,6 +71,8 @@ object SyntheticArgumentNames {
     const val wasmCompilerArguments = "WasmCompilerArguments"
     const val wasmCompilerKlibArguments = "WasmCompilerKlibArguments"
     const val wasmCompilerLinkingArguments = "WasmCompilerLinkingArguments"
+    const val nativeCompilerArguments = "NativeCompilerArguments"
+    const val nativeCompilerKlibArguments = "NativeCompilerKlibArguments"
 }
 
 internal val syntheticArgumentInterfaces = buildList {
@@ -67,6 +80,7 @@ internal val syntheticArgumentInterfaces = buildList {
     val commonJsAndWasmArguments = findMergedLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments)
     val jsArguments = findMergedLevel(CompilerArgumentsLevelNames.jsArguments)
     val wasmArguments = findMergedLevel(CompilerArgumentsLevelNames.wasmArguments)
+    val nativeArguments = findMergedLevel(CompilerArgumentsLevelNames.nativeArguments)
 
     val commonKlibBasedCompilerArguments = SyntheticArgumentInterface(
         SyntheticArgumentNames.commonKlibBasedArguments,
@@ -156,6 +170,22 @@ internal val syntheticArgumentInterfaces = buildList {
         listOf(wasmCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
         "WasmArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
+
+    val nativeCompilerArguments = SyntheticArgumentInterface(
+        SyntheticArgumentNames.nativeCompilerArguments,
+        nativeArguments,
+        listOf(commonKlibBasedCompilerArguments),
+        "NativeArgumentsImpl",
+    ).also(::add)
+
+    // There is no Kotlin/Native linking operation yet, so the linking arguments interface is not generated
+    SyntheticArgumentInterface(
+        SyntheticArgumentNames.nativeCompilerKlibArguments,
+        nativeArguments,
+        listOf(nativeCompilerArguments, commonKlibBasedCompilerKlibArguments),
+        "NativeArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
     ).also(::add)
 }
 

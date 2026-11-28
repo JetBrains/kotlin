@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -75,6 +76,8 @@ internal class JsLinkingOperationImpl : BaseCompilationOperationImpl<JsArguments
     override fun getRootProjectDir(): Path? {
         return null
     }
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.BACKEND_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): K2JSCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->

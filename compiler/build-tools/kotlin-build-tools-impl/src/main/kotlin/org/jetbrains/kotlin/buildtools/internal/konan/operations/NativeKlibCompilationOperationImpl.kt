@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.NativeArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.bc.K2Native
@@ -28,6 +30,8 @@ internal class NativeKlibCompilationOperationImpl :
     override val options: Options
     override val sources: List<Path>
     override val destination: Path
+
+    @OptIn(ExperimentalCompilerArgument::class)
     override val compilerArguments: NativeArgumentsImpl
     private val compilerVersion: String
 
@@ -85,6 +89,8 @@ internal class NativeKlibCompilationOperationImpl :
     }
 
     override fun getRootProjectDir(): Path? = null
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.KLIB_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): K2NativeCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->

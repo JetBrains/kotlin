@@ -16,12 +16,28 @@ import kotlinx.serialization.Serializable
 internal sealed class RestrictedArgViolation {
     abstract val message: String
 
+    /**
+     * The only compiler phase the argument is restricted in, or `null` if the argument is restricted regardless of the phase.
+     *
+     * The arguments are not aware of the operation they are used by, so such violations are collected unconditionally
+     * and filtered out by the operations performing a different phase.
+     */
+    abstract val phase: CompilerPhase?
+
     /** The argument usage should be reported as a warning to the user. */
     @Serializable
-    data class Warning(override val message: String) : RestrictedArgViolation()
+    data class Warning(override val message: String, override val phase: CompilerPhase? = null) : RestrictedArgViolation()
 
     /** The argument usage should cause a build failure. */
     @Serializable
-    data class Error(override val message: String) : RestrictedArgViolation()
+    data class Error(override val message: String, override val phase: CompilerPhase? = null) : RestrictedArgViolation()
 }
 
+/**
+ * The phase of the compilation pipeline of the klib-based platforms performed by an operation.
+ */
+@Serializable
+internal enum class CompilerPhase {
+    KLIB_COMPILATION,
+    BACKEND_COMPILATION,
+}

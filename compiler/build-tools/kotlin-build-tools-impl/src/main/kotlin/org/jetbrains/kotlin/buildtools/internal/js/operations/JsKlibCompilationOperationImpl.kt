@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
@@ -115,6 +116,8 @@ internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsA
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
     }
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.KLIB_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): K2JSCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->

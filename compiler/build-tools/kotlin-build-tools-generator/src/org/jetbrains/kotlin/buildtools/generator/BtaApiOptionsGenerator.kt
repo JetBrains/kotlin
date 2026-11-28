@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -64,7 +65,8 @@ internal class BtaApiOptionsGenerator(
                         }
                         if (!level.isLeaf()) {
                             addKdoc("\n\n")
-                            addKdoc(KDOC_SINCE_2_4_20)
+                            // builders of non-leaf levels were introduced in 2.4.20, levels added later have them from the start
+                            addKdoc(if (level.hadBuildersIntroducedLater) KDOC_SINCE_2_4_20 else levelsSince.getValue(level.name))
                         }
                         returns(ClassName(targetPackage, className))
                     }
@@ -110,7 +112,8 @@ internal class BtaApiOptionsGenerator(
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
                 @Suppress("UNCHECKED_CAST")
                 enumConstants as List<WithStringRepresentation>
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level, type.toBtaEnumClassName())
+                enumsToGenerate[type] =
+                    generateEnumTypeBuilder(enumConstants, level, type.toBtaEnumClassName(), kotlinVersion, markDeprecatedEntries = true)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -131,6 +134,10 @@ internal class BtaApiOptionsGenerator(
                 if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
                     return@forEach
                 }
+            }
+
+            if (argument.wasRemovedBeforeIntroductionOf(level)) {
+                return@forEach
             }
 
             val wasDeprecatedInVersion =
@@ -162,7 +169,7 @@ internal class BtaApiOptionsGenerator(
                 // inserting a zero-width space is not ideal, but we do actually have one compiler argument that breaks the KDoc without it
                 addKdoc(argument.description.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
                 maybeAddExperimentalAnnotation(experimental)
-                maybeAddDeprecatedAnnotation(argument.removedSinceVersion, wasDeprecatedInVersion)
+                maybeAddDeprecatedAnnotation(argument.removedSinceVersion, wasDeprecatedInVersion, kotlinVersion, kdocPrefix = "\n\n")
 
                 val introducedVersion = argument.introducedSinceVersion
                 initializer(
@@ -189,22 +196,6 @@ internal class BtaApiOptionsGenerator(
         if (experimental) {
             addAnnotation(ANNOTATION_EXPERIMENTAL)
             addKdoc("\n\nWARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.")
-        }
-    }
-
-    private fun PropertySpec.Builder.maybeAddDeprecatedAnnotation(
-        removedVersion: KotlinReleaseVersion?,
-        wasDeprecatedInVersion: KotlinReleaseVersion?,
-    ) {
-        if (removedVersion != null && removedVersion <= kotlinVersion) {
-            annotation(ClassName(API_PACKAGE, "RemovedCompilerArgument")) {}
-            if (wasDeprecatedInVersion != null) {
-                addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
-            }
-            addKdoc("\n\nRemoved in Kotlin version ${removedVersion.releaseName}.")
-        } else if (wasDeprecatedInVersion != null) {
-            addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
-            annotation(ClassName(API_PACKAGE, "DeprecatedCompilerArgument")) {}
         }
     }
 
@@ -396,10 +387,41 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
     }
 }
 
+/**
+ * Marks an argument or an enum entry as deprecated or removed, depending on the state it has in the [kotlinVersion].
+ *
+ * @param kdocPrefix the text separating the added KDoc from the already existing one
+ */
+private fun <T> T.maybeAddDeprecatedAnnotation(
+    removedVersion: KotlinReleaseVersion?,
+    wasDeprecatedInVersion: KotlinReleaseVersion?,
+    kotlinVersion: KotlinReleaseVersion,
+    kdocPrefix: String,
+) where T : Annotatable.Builder<T>, T : Documentable.Builder<T> {
+    val paragraphs = mutableListOf<String>()
+    if (wasDeprecatedInVersion != null) {
+        paragraphs += "Deprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}."
+    }
+    if (removedVersion != null && removedVersion <= kotlinVersion) {
+        addAnnotation(ClassName(API_PACKAGE, "RemovedCompilerArgument"))
+        paragraphs += "Removed in Kotlin version ${removedVersion.releaseName}."
+    } else if (wasDeprecatedInVersion != null) {
+        addAnnotation(ClassName(API_PACKAGE, "DeprecatedCompilerArgument"))
+    }
+    if (paragraphs.isNotEmpty()) {
+        addKdoc("%L%L", kdocPrefix, paragraphs.joinToString("\n\n"))
+    }
+}
+
+/**
+ * @param markDeprecatedEntries whether to mark the entries deprecated or removed in the [kotlinVersion] as such
+ */
 fun <T> generateEnumTypeBuilder(
     sourceEnum: Collection<T>,
     level: KotlinCompilerArgumentsLevel,
-    className: ClassName
+    className: ClassName,
+    kotlinVersion: KotlinReleaseVersion,
+    markDeprecatedEntries: Boolean = false,
 ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
     return TypeSpec.enumBuilder(className).apply {
         property<String>("stringValue") {
@@ -412,10 +434,21 @@ fun <T> generateEnumTypeBuilder(
         }
         primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
         val nameAccessor = WithStringRepresentation::stringRepresentation
-        sourceEnum.forEach {
+        sourceEnum.filterNot { it.isRemovedFor(level, kotlinVersion) }.forEach { entry ->
             addEnumConstant(
-                it.name.uppercase(),
-                TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%S", nameAccessor.get(it)).build()
+                entry.name.uppercase(),
+                TypeSpec.anonymousClassBuilder().apply {
+                    addSuperclassConstructorParameter("%S", nameAccessor.get(entry))
+                    val lifecycle = (entry as? WithKotlinReleaseVersionsMetadata)?.releaseVersionsMetadata
+                    if (markDeprecatedEntries && lifecycle != null) {
+                        maybeAddDeprecatedAnnotation(
+                            removedVersion = lifecycle.removedVersion,
+                            wasDeprecatedInVersion = lifecycle.deprecatedVersion?.takeIf { it <= kotlinVersion },
+                            kotlinVersion = kotlinVersion,
+                            kdocPrefix = "",
+                        )
+                    }
+                }.build()
             )
         }
     }

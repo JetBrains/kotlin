@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.NativeCompilerKlibArguments
 import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain.Companion.native
 import org.jetbrains.kotlin.buildtools.api.konan.nativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
@@ -21,7 +23,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import kotlin.io.path.Path
+import kotlin.io.path.walk
 
+@OptIn(ExperimentalCompilerArgument::class)
 @MustRunAlways
 @Disabled("KT-91839")
 @DisplayName("Smoke tests for Kotlin/Native klib compilation")
@@ -52,6 +57,24 @@ class NativeKlibCompilationSmokeTest : BaseCompilationTest() {
             module1.compile()
             module2.compile {
                 assertOutputs("basic-multimodule-project_module-2.klib")
+            }
+        }
+    }
+
+    @Test
+    @TestMetadata("basic-multimodule-project")
+    @DisplayName("Applies a klib compilation argument set via the typed API")
+    fun testTypedKlibArgument() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        nativeProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
+            val module1 = module("basic-multimodule-project/module-1")
+            module1.compile(compilationConfigAction = {
+                it.compilerArguments[NativeCompilerKlibArguments.NOPACK] = true
+            }) {
+                val manifest = Path("default", "manifest")
+                assertTrue(module1.outputDirectory.walk().any { it.endsWith(manifest) }) {
+                    "Expected an unpacked klib in ${module1.outputDirectory}"
+                }
             }
         }
     }

@@ -157,6 +157,10 @@ class SerializationTest {
         val error = RestrictedArgViolation.Error("error message")
         val deserializedError = serializer.serializeAndDeserialize<RestrictedArgViolation.Error>(error)
         assertEquals(error, deserializedError)
+
+        val phaseScopedError = RestrictedArgViolation.Error("error message", CompilerPhase.KLIB_COMPILATION)
+        val deserializedPhaseScopedError = serializer.serializeAndDeserialize<RestrictedArgViolation.Error>(phaseScopedError)
+        assertEquals(phaseScopedError, deserializedPhaseScopedError)
     }
 
     @Test

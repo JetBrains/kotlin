@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilatio
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinNativeStdlibKlibLocation
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.isKotlinNativeCompilerAvailable
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 
@@ -71,5 +72,6 @@ fun BaseCompilationTest.nativeProject(
 }
 
 fun BaseCompilationTest.nativeProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: NativeProject.() -> Unit) {
+    assumeTrue(isKotlinNativeCompilerAvailable) { "The Kotlin/Native compiler is not available" }
     nativeProject(executionStrategy.first, executionStrategy.second, action)
 }

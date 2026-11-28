@@ -23,11 +23,16 @@ sealed interface ArgumentTransform {
      * Like [Drop], the argument is not exposed in the public API.
      * Additionally, attempts to set this argument via [applyArgumentStrings][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyArgumentStrings]
      * will produce a warning (starting from [warningSince]) or an error (starting from [errorSince], if specified).
+     *
+     * If [onlyInPhase] is specified, that happens only in the operations performing that compiler phase.
+     * Note that it affects only the arguments passed as strings: for the argument to stay available in the typed API
+     * of the other phase, it must not be restricted in the synthetic level of that phase.
      */
     class Restrict(
         val reason: String? = null,
         val warningSince: KotlinReleaseVersion,
         val errorSince: KotlinReleaseVersion? = null,
+        val onlyInPhase: KotlinCompilerPhase? = null,
     ) : ArgumentTransform
 
     class CustomArgument(val argument: CustomCompilerArgument) : ArgumentTransform
@@ -208,6 +213,33 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             )
         }
     })
+    put(SyntheticArgumentNames.nativeCompilerArguments, buildMap {
+        with(syntheticLevels.getValue(SyntheticArgumentNames.nativeCompilerArguments)) {
+            restrict(
+                "output",
+                reason = "The destination is configured via the destination parameter of nativeKlibCompilationOperationBuilder.",
+                warningSince = KotlinReleaseVersion.v2_5_20,
+                errorSince = KotlinReleaseVersion.v2_5_20
+            ) // configured explicitly when instantiating operations
+        }
+    })
+    put(actualNativeArguments.name, buildMap {
+        with(actualNativeArguments) {
+            restrict(
+                "output",
+                reason = "The destination is configured via the destination parameter of nativeKlibCompilationOperationBuilder.",
+                warningSince = KotlinReleaseVersion.v2_5_20,
+                errorSince = KotlinReleaseVersion.v2_5_20
+            ) // configured explicitly when instantiating operations
+            restrict(
+                "produce",
+                reason = "Klib compilation always produces a library.",
+                warningSince = KotlinReleaseVersion.v2_5_20,
+                errorSince = KotlinReleaseVersion.v2_5_20,
+                onlyInPhase = KotlinCompilerPhase.KLIB_COMPILATION
+            ) // for Klib compilation, it's always 'library', while linking is free to choose the kind of the output
+        }
+    })
 }
 
 context(level: KotlinCompilerArgumentsLevel)
@@ -222,9 +254,10 @@ private fun MutableMap<String, ArgumentTransform>.restrict(
     reason: String? = null,
     warningSince: KotlinReleaseVersion,
     errorSince: KotlinReleaseVersion? = null,
+    onlyInPhase: KotlinCompilerPhase? = null,
 ) {
     require(level.arguments.any { it.name == name }) { "Argument $name is not found in level $level" }
-    put(name, ArgumentTransform.Restrict(reason, warningSince, errorSince))
+    put(name, ArgumentTransform.Restrict(reason, warningSince, errorSince, onlyInPhase))
 }
 
 context(level: KotlinCompilerArgumentsLevel)
@@ -292,6 +325,7 @@ internal data class RestrictedArgInfo(
     val reason: String?,
     val warningSince: KotlinReleaseVersion,
     val errorSince: KotlinReleaseVersion?,
+    val onlyInPhase: KotlinCompilerPhase?,
 )
 
 /**
@@ -312,6 +346,7 @@ internal fun collectRestrictedArgInfo(level: KotlinCompilerArgumentsLevel): List
                 reason = transform.reason,
                 warningSince = transform.warningSince,
                 errorSince = transform.errorSince,
+                onlyInPhase = transform.onlyInPhase,
             )
         )
     }
