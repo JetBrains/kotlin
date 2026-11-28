@@ -87,16 +87,19 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
 
         LookupTrackerAdapter(tracker)
     } ?: operation.lookupTracker?.let(::LookupTrackerAdapter)
+    val fileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter)
+    val compilerReferenceIndexCollector = createCompilerReferenceIndexCollector(lookupTracker, fileMappingTracker)
 
     return JpsManagedCompilerServicesWithResultsFacade(
         messageCollector,
         incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
-        lookupTracker = lookupTracker,
+        lookupTracker = compilerReferenceIndexCollector?.lookupTracker ?: lookupTracker,
         inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
         enumWhenTracker = this[ENUM_WHEN_TRACKER]?.let(::EnumWhenTrackerAdapter),
         importTracker = this[IMPORT_TRACKER]?.let(::ImportTrackerAdapter),
-        icFileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter),
-        compilationCanceledStatus = compilationCanceledStatus
+        icFileMappingTracker = compilerReferenceIndexCollector?.fileMappingTracker ?: fileMappingTracker,
+        compilationCanceledStatus = compilationCanceledStatus,
+        compilerReferenceIndexCollector = compilerReferenceIndexCollector,
     )
 }
 

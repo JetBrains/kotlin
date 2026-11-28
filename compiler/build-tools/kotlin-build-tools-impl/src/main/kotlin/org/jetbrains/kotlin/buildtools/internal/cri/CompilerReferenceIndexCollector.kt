@@ -26,6 +26,14 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectories
 
 /**
+ * Implemented by the compiler services facade of a JPS-managed daemon compilation, which collects the index, so
+ * [org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl] can write it after a successful compilation.
+ */
+internal interface CompilerReferenceIndexCollectorHolder {
+    val compilerReferenceIndexCollector: CompilerReferenceIndexCollector?
+}
+
+/**
  * A collector of the compiler reference index for a compilation without incremental caches.
  *
  * Lookups come from [lookupTracker], and subtypes from the Kotlin metadata of the class files reported to

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jps
 
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollectorHolder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
@@ -23,7 +25,10 @@ internal class JpsManagedCompilerServicesWithResultsFacade(
     importTracker: ImportTracker? = null,
     icFileMappingTracker: ICFileMappingTracker? = null,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
-) : JpsCompilerServicesFacade, CompilerCallbackServicesFacadeServer(
+    override val compilerReferenceIndexCollector: CompilerReferenceIndexCollector? = null,
+) : JpsCompilerServicesFacade,
+    CompilerReferenceIndexCollectorHolder,
+    CompilerCallbackServicesFacadeServer(
     incrementalCompilationComponents,
     lookupTracker,
     compilationCanceledStatus,
