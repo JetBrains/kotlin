@@ -28,14 +28,11 @@ fun box() = abiTest {
     expectSuccess(3) { ClassWithInternalPAShadowingOpen().test() }
     expectSuccess(3) { ClassWithInternalPAShadowingAbstract().test() }
 
-    if (testMode.isJs) {
-        // In JS all methods are open, so even Kotlin `final` memeber may be accitentally overridden by a one with the same siganture.
-        expectSuccess(3) { ClassWithInternalShadowingFinal().test() }
-    } else {
-        expectSuccess(2) { ClassWithInternalShadowingFinal().test() }
+    expectSuccess(2) { ClassWithInternalShadowingFinal().test() }
+    expectSuccess(2) { ClassWithInternalShadowingOpen().test() }
+    expectFailure(linkage("Abstract function 'foo' is not implemented in non-abstract class 'ClassWithInternalShadowingAbstract'")) {
+        ClassWithInternalShadowingAbstract().test()
     }
-    expectSuccess(3) { ClassWithInternalShadowingOpen().test() }
-    expectSuccess(3) { ClassWithInternalShadowingAbstract().test() }
 
     expectSuccess(2) { ClassWithPrivateShadowingFinal().test() }
     expectSuccess(2) { ClassWithPrivateShadowingOpen().test() }
