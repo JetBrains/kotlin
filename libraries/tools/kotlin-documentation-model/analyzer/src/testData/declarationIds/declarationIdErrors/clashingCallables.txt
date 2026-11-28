@@ -1,0 +1,4 @@
+sample
+sample#c#kind=property;   // REDECLARATION
+sample#c#kind=function;
+sample#c#kind=function; parameters=[kotlin/Int];

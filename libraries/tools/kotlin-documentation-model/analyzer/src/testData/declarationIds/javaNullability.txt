@@ -1,0 +1,13 @@
+sample
+sample/JavaClass
+sample/JavaClass#none#kind=function; parameters=[(kotlin/String..kotlin/String?)];
+sample/JavaClass#notNull#kind=function; parameters=[kotlin/String];
+sample/JavaClass#nullable#kind=function; parameters=[kotlin/String?];
+sample/JavaClass#staticNone#kind=function; parameters=[(kotlin/String..kotlin/String?)]; companion;
+sample/JavaClass#staticNotNull#kind=function; parameters=[kotlin/String]; companion;
+sample/JavaClass##kind=function;
+org.jetbrains.annotations
+org.jetbrains.annotations/NotNull
+org.jetbrains.annotations/NotNull##kind=function;
+org.jetbrains.annotations/Nullable
+org.jetbrains.annotations/Nullable##kind=function;

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.kotlin.documentation.*
 import org.jetbrains.kotlin.documentation.analyzer.internal.visitElementIds

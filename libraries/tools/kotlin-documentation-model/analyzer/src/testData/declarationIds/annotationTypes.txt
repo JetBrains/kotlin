@@ -1,0 +1,25 @@
+sample
+sample/Marker
+sample/Marker##kind=function;
+sample/Levelled
+sample/Levelled##kind=function; parameters=[kotlin/Int];
+sample/Levelled#level#kind=property;
+sample/Composed
+sample/Composed##kind=function; parameters=[sample/Levelled, kotlin/String];
+sample/Composed#first#kind=property;
+sample/Composed#message#kind=property;
+sample#marked#kind=function;
+sample#heavilyAnnotated#kind=function; parameters=[kotlin/String];
+sample#markerParameter#kind=function; parameters=[sample/Marker];
+sample#levelledParameter#kind=function; parameters=[sample/Levelled];
+sample#nullableMarkerParameter#kind=function; parameters=[sample/Marker?];
+sample#annotationList#kind=function; parameters=[kotlin.collections/List<sample/Levelled>];
+sample/MarkerAlias
+sample#viaAlias#kind=function; parameters=[sample/MarkerAlias];
+sample#annotatedGetter#kind=property;
+sample#annotatedAccessors#kind=property;
+sample#annotatedReceiver#kind=function; receiver=sample/Marker;
+sample/Carrying
+sample/Carrying##kind=function; parameters=[kotlin/Int];
+sample/Carrying#method#kind=function;
+sample/Carrying#value#kind=property;

@@ -1,0 +1,21 @@
+sample
+sample/Outer
+sample/Outer#sameName#kind=function; parameters=[kotlin/Int];
+sample/Outer#CONSTANT#kind=property; companion;
+sample/Outer#mutable#kind=property; companion;
+sample/Outer#sameName#kind=function; companion;
+sample/Outer#genericMember#kind=function; typeParameters=[<T1_0>: ]; parameters=[<T1_0>]; companion;
+sample/Outer##kind=function;
+sample/Named
+sample/Named#namedMember#kind=function; companion;
+sample/Named##kind=function;
+sample/TwoBlocks
+sample/TwoBlocks#Zero#kind=property; companion;
+sample/TwoBlocks#normalize#kind=function;
+sample/TwoBlocks#Dimensions#kind=property; companion;
+sample/TwoBlocks##kind=function;
+sample/WithCompanion
+sample/WithCompanion#interfaceCompanionMember#kind=function; companion;
+sample#topLevelExtension#kind=function; receiver=sample/Outer; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#topLevelExtensionProperty#kind=property; receiver=sample/Outer; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#extensionOnNamed#kind=function; receiver=sample/Named; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION

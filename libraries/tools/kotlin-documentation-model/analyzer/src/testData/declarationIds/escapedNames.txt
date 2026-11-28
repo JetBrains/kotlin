@@ -1,0 +1,13 @@
+sample%23
+sample%23/A%23B
+sample%23/A%23B##kind=function;
+sample%23/A%2523B
+sample%23/A%2523B##kind=function;
+sample%23#foo%23bar#kind=function;
+sample%23/when  // CONFLICTING_OVERLOADS
+sample%23/when##kind=function;
+sample%23#when#kind=function;   // CONFLICTING_OVERLOADS
+sample%23#with%20spaces#kind=property;
+sample%23#say%2520hello%2521#kind=function;
+sample%23#hashedClass#kind=function; parameters=[sample%23/A%23B];
+sample%23#escapedHashClass#kind=function; parameters=[sample%23/A%2523B];

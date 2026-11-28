@@ -1,0 +1,6 @@
+kotlin.jvm
+kotlin.jvm/JvmName
+kotlin.jvm/JvmName##kind=function; parameters=[kotlin/String];
+kotlin.jvm/JvmName#name#kind=property;
+sample
+sample#g#kind=function; parameters=[kotlin/String];   // CONFLICTING_OVERLOADS

@@ -1,0 +1,31 @@
+sample
+sample/Outer
+sample/Outer.Nested
+sample/Outer.Nested##kind=function;
+sample/Outer.Alias
+sample/Outer#value#kind=property;
+sample/Outer#value#kind=function;
+sample/Outer.Companion
+sample/Outer.Companion#member#kind=function;
+sample/Outer.Companion##kind=function;
+sample/Outer##kind=function;
+sample/Alias
+sample/Choice
+sample/Choice#ENTRY#kind=enum-entry; companion;
+sample/Choice#values#kind=function; companion;
+sample/Choice#valueOf#kind=function; parameters=[kotlin/String]; companion;
+sample/Choice#entries#kind=property; companion;
+sample/Choice##kind=function;
+sample#top#kind=function;
+sample#top#kind=property;
+sample/JavaClass
+sample/JavaClass#field#kind=property;
+sample/JavaClass#staticField#kind=property; companion;
+sample/JavaClass#method#kind=function;
+sample/JavaClass#staticMethod#kind=function; companion;
+sample/JavaClass#getText#kind=function;
+sample/JavaClass##kind=function;
+sample/JavaClass#text#kind=property;
+/
+/RootClass
+/RootClass##kind=function;

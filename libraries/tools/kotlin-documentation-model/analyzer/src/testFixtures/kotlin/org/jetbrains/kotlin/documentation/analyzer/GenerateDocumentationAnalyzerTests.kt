@@ -37,6 +37,9 @@ fun main(args: Array<String>) {
             testClass<AbstractKdmKotlinSourceRoundTripTest> {
                 model("roundTrip")
             }
+            testClass<AbstractUniqueDeclarationIdGoldenTest> {
+                model("declarationIds")
+            }
         }
     }
 }
