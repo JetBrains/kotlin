@@ -38,6 +38,12 @@
 -dontwarn org.jetbrains.kotlin.backend.common.serialization.metadata.**
 -dontwarn com.intellij.**
 -dontwarn org.jetbrains.kotlin.com.google.common.hash.**
+# Guava uses JDK 9+ APIs only when they are available at runtime,
+# but they are absent from the JDK 8 library jars ProGuard runs against
+-dontwarn org.jetbrains.kotlin.com.google.common.io.FileBackedOutputStream
+-dontwarn org.jetbrains.kotlin.com.google.common.primitives.UnsignedBytes$ArraysCompareUnsignedComparator
+-dontwarn org.jetbrains.kotlin.com.google.common.util.concurrent.AbstractFutureState$VarHandleAtomicHelper
+-dontwarn org.jetbrains.kotlin.com.google.common.util.concurrent.ClosingFuture$ReachabilityFenceCaller*
 -dontwarn org.jetbrains.kotlin.org.apache.log4j.**
 -dontwarn org.jetbrains.kotlin.cli.**
 -dontwarn org.jetbrains.kotlin.serialization.**

@@ -90,6 +90,14 @@
 -dontwarn org.checkerframework.checker.nullness.qual.Nullable
 -dontwarn org.checkerframework.checker.nullness.qual.MonotonicNonNull
 -dontwarn org.checkerframework.checker.nullness.qual.NonNull
+-dontwarn org.jspecify.annotations.*
+
+# Guava uses JDK 9+ APIs only when they are available at runtime,
+# but they are absent from the JDK 8 library jars ProGuard runs against
+-dontwarn com.google.common.hash.Hashing$ChecksumType*
+-dontwarn com.google.common.hash.LittleEndianByteArray$VarHandleLittleEndianBytes*
+-dontwarn com.google.common.io.FileBackedOutputStream
+-dontwarn com.google.common.primitives.UnsignedBytes$ArraysCompareUnsignedComparator
 
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*

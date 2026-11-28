@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaModule;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -33,7 +33,7 @@ public final class DumbJavaModuleGraphHelper extends JavaModuleGraphHelper {
     @Override
     public boolean isAccessible(
             @NotNull String targetPackageName,
-            @org.jetbrains.annotations.Nullable PsiFile targetFile,
+            @Nullable PsiFile targetFile,
             @NotNull PsiElement place
     ) {
         return false;

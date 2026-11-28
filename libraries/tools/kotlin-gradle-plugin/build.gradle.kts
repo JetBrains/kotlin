@@ -115,7 +115,10 @@ dependencies {
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
     }
-    commonCompileOnly(libs.guava)
+    commonCompileOnly(libs.guava) {
+        // The Gradle API requires jspecify strictly; it is already on the compile classpath
+        exclude(group = "org.jspecify", module = "jspecify")
+    }
     commonCompileOnly(libs.org.jetbrains.annotations)
     commonCompileOnly(project(":daemon-common")) {
         isTransitive = false
