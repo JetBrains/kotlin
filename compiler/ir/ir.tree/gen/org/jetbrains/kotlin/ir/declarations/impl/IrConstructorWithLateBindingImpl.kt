@@ -10,13 +10,10 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -50,10 +47,6 @@ class IrConstructorWithLateBindingImpl @IrImplementationDetail constructor(
     override lateinit var returnType: IrType
 
     override var body: IrBody? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor
-        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     override val symbol: IrConstructorSymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")

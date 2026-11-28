@@ -10,10 +10,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -32,10 +30,6 @@ class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrAnnotation> = emptyList()
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor
-        get() = symbol.descriptor
 
     override lateinit var body: IrBlockBody
 

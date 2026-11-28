@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.ir.util
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.applyIf
 import org.jetbrains.kotlin.DeprecatedCompilerApi
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.AbstractIrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -691,12 +688,6 @@ internal fun IrValueParameter.renderValueParameterName(options: DumpIrTreeOption
 
     return name
 }
-
-internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
-    if (descriptor is ReceiverParameterDescriptor)
-        "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
-    else
-        render(descriptor)
 
 private fun IrFile.renderLineStartOffsets(options: DumpIrTreeOptions): String =
     if (options.printSourceOffsets)

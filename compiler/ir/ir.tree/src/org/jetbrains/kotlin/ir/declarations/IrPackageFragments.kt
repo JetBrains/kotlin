@@ -10,20 +10,13 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 
 @ObsoleteDescriptorBasedAPI
 val IrPackageFragment.packageFragmentDescriptor: PackageFragmentDescriptor
     get() = symbol.descriptor
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrExternalPackageFragment.containerSource: DeserializedContainerSource?
-    get() = (symbol.descriptor as? DescriptorWithContainerSource)?.containerSource
 
 val IrPackageFragment.moduleDescriptor: ModuleDescriptor
     get() = module.descriptor

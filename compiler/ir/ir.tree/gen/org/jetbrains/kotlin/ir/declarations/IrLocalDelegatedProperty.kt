@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -19,9 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
  */
 abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName, IrSymbolOwner, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: VariableDescriptorWithAccessors
-
     abstract override val symbol: IrLocalDelegatedPropertySymbol
 
     abstract var type: IrType

@@ -260,7 +260,7 @@ fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
     if (this is IrBasedClassConstructorDescriptor) {
         // E.g. in case of K2.
         // The constructedClass has empty member scope, so we have to delegate to IR to find the init method.
-        return this.owner.getObjCInitMethod()?.descriptor
+        return this.owner.getObjCInitMethod()?.symbol?.descriptor
     }
 
     return this.annotations.findAnnotation(objCConstructorFqName)?.let {

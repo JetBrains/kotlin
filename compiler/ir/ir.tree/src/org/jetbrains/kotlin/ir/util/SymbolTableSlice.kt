@@ -163,8 +163,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
             currentScope = currentScope?.parent
 
             if (currentScope != null && unboundSymbols.isNotEmpty()) {
-                @OptIn(ObsoleteDescriptorBasedAPI::class)
-                error("Local scope contains unbound symbols: ${unboundSymbols.joinToString { it.descriptor.toString() }}")
+                error("Local scope contains unbound symbols: ${unboundSymbols.joinToString { it.signature.toString() }}")
             }
         }
 
