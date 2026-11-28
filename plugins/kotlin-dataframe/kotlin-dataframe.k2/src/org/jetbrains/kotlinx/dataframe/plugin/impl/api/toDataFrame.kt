@@ -155,6 +155,15 @@ class ToDataFrameDslAdd : AbstractInterpreter<Unit>() {
     }
 }
 
+class ToDataFrameDslExpr : AbstractInterpreter<ColumnType>() {
+    val Arguments.infer by ignore()
+    val Arguments.expression: ColumnType by type()
+
+    override fun Arguments.interpret(): ColumnType {
+        return expression
+    }
+}
+
 fun SimpleCol.toPathToColPair() = pathOf(name) to this
 
 class ToDataFrameFrom : AbstractInterpreter<Unit>() {

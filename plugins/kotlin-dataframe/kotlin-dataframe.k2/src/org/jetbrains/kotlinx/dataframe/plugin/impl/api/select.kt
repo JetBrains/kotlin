@@ -17,6 +17,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 /**
@@ -771,6 +772,15 @@ internal class ColumnPathInvokeTyped : AbstractInterpreter<SingleColumnApproxima
     }
 }
 
+// myGroup()
+internal class ColumnReferenceInvokeGroup : AbstractInterpreter<SingleColumnApproximation>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+
+    override fun Arguments.interpret(): SingleColumnApproximation {
+        return receiver
+    }
+}
+
 // "group"["myCol"]
 internal class StringGetColumn : AbstractInterpreter<ColumnPathApproximation>() {
     val Arguments.receiver: String by arg()
@@ -1035,3 +1045,343 @@ fun ResolvedDataColumn.changeType(newType: ColumnType): ResolvedDataColumn {
     val mapped = col.copy(column = simpleColumnOf(before.name, newType.coneType))
     return ResolvedDataColumn(mapped)
 }
+
+// region cols overload receivers convention:
+// 0 - ColumnsSelectionDsl, 1 - SingleColumn, 2 - String, 3 - ColumnPath
+
+private fun KotlinTypeFacade.columnsOfNames(names: List<String>): ColumnsResolver {
+    return object : ColumnsResolver, ColumnsList<Any?> {
+        override val columns = names.map { stringApiColumnResolver(pathOf(it), StandardTypes.NullableAny) }
+
+        override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+            return columns.flatMap { it.resolve(df) }
+        }
+    }
+}
+
+// cols("a", "b")
+internal class DslColsString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.firstCol: String by arg()
+    val Arguments.otherCols: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsOfNames(listOf(firstCol) + otherCols)
+    }
+}
+
+// myGroup.cols("a", "b")
+internal class SingleColumnColsString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+    val Arguments.firstCol: String by arg()
+    val Arguments.otherCols: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.asColumnGroup().cols(firstCol, *otherCols.toTypedArray()) }
+    }
+}
+
+// "group".cols("a", "b")
+internal class StringColsString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.firstCol: String by arg()
+    val Arguments.otherCols: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.cols(firstCol, *otherCols.toTypedArray()) }
+    }
+}
+
+// pathOf("group").cols("a", "b")
+internal class ColumnPathColsString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.firstCol: String by arg()
+    val Arguments.otherCols: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.path.cols(firstCol, *otherCols.toTypedArray()) }
+    }
+}
+
+private fun List<Interpreter.Success<*>>.columnPaths(): List<ColumnPath> {
+    return map { (it.value as ColumnPathApproximation).path }
+}
+
+// cols(pathOf("a"), pathOf("b"))
+internal class DslColsColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.firstCol: ColumnPathApproximation by arg()
+    val Arguments.otherCols: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return object : ColumnsResolver, ColumnsList<Any?> {
+            override val columns = listOf(firstCol) + otherCols.map { it.value as ColumnPathApproximation }
+
+            override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
+                return columns.flatMap { it.resolve(df) }
+            }
+        }
+    }
+}
+
+// myGroup.cols(pathOf("a"), pathOf("b"))
+internal class SingleColumnColsColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+    val Arguments.firstCol: ColumnPathApproximation by arg()
+    val Arguments.otherCols: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver {
+            receiver.asColumnGroup().cols(firstCol.path, *otherCols.columnPaths().toTypedArray())
+        }
+    }
+}
+
+// "group".cols(pathOf("a"), pathOf("b"))
+internal class StringColsColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.firstCol: ColumnPathApproximation by arg()
+    val Arguments.otherCols: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver {
+            receiver.cols(firstCol.path, *otherCols.columnPaths().toTypedArray())
+        }
+    }
+}
+
+// pathOf("group").cols(pathOf("a"), pathOf("b"))
+internal class ColumnPathColsColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.firstCol: ColumnPathApproximation by arg()
+    val Arguments.otherCols: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver {
+            receiver.path.cols(firstCol.path, *otherCols.columnPaths().toTypedArray())
+        }
+    }
+}
+
+// endregion
+
+// region colsOfKind, colsInGroups, all*(ColumnPath/String)
+
+private fun List<Interpreter.Success<*>>.toColumnKinds(): Array<ColumnKind> {
+    return map { (it.value as DataFrameCallableId).toEnumValue() as ColumnKind }.toTypedArray()
+}
+
+/**
+ * Only the default `filter` of `colsOfKind` can be interpreted: an explicit lambda may exclude columns,
+ * which can't be known at compile time, so the interpretation must fail instead of producing a wider schema.
+ */
+private fun requireNoColumnFilter(filter: Any?) {
+    require(filter == null) { "colsOfKind with an explicit filter can't be interpreted" }
+}
+
+// colsOfKind(ColumnKind.Value, ColumnKind.Frame)
+internal class DslColsOfKind : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.kind: ColumnKind by enum()
+    val Arguments.others: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+    val Arguments.filter: Any? by arg(lens = Interpreter.Id, defaultValue = Present(null))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        requireNoColumnFilter(filter)
+        val others = others.toColumnKinds()
+        return columnsResolver { colsOfKind(kind, *others) }
+    }
+}
+
+// myGroup.colsOfKind(...)
+internal class SingleColumnColsOfKind : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+    val Arguments.kind: ColumnKind by enum()
+    val Arguments.others: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+    val Arguments.filter: Any? by arg(lens = Interpreter.Id, defaultValue = Present(null))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        requireNoColumnFilter(filter)
+        val others = others.toColumnKinds()
+        return columnsResolver { receiver.asColumnGroup().colsOfKind(kind, *others) }
+    }
+}
+
+// "group".colsOfKind(...)
+internal class StringColsOfKind : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+    val Arguments.kind: ColumnKind by enum()
+    val Arguments.others: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+    val Arguments.filter: Any? by arg(lens = Interpreter.Id, defaultValue = Present(null))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        requireNoColumnFilter(filter)
+        val others = others.toColumnKinds()
+        return columnsResolver { receiver.colsOfKind(kind, *others) }
+    }
+}
+
+// pathOf("group").colsOfKind(...)
+internal class ColumnPathColsOfKind : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+    val Arguments.kind: ColumnKind by enum()
+    val Arguments.others: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+    val Arguments.filter: Any? by arg(lens = Interpreter.Id, defaultValue = Present(null))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        requireNoColumnFilter(filter)
+        val others = others.toColumnKinds()
+        return columnsResolver { receiver.path.colsOfKind(kind, *others) }
+    }
+}
+
+// all().colsOfKind(...)
+internal class ColumnSetColsOfKind : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnsResolver by arg()
+    val Arguments.kind: ColumnKind by enum()
+    val Arguments.others: List<Interpreter.Success<*>> by arg(defaultValue = Present(emptyList()))
+    val Arguments.filter: Any? by arg(lens = Interpreter.Id, defaultValue = Present(null))
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        requireNoColumnFilter(filter)
+        val others = others.toColumnKinds()
+        return columnsResolver { receiver.colsOfKind(kind, *others) }
+    }
+}
+
+// colsInGroups()
+internal class DslColsInGroups : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { colsInGroups() }
+    }
+}
+
+// myGroup.colsInGroups()
+internal class SingleColumnColsInGroups : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: SingleColumnApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.asColumnGroup().colsInGroups() }
+    }
+}
+
+// "group".colsInGroups()
+internal class StringColsInGroups : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.colsInGroups() }
+    }
+}
+
+// pathOf("group").colsInGroups()
+internal class ColumnPathColsInGroups : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.path.colsInGroups() }
+    }
+}
+
+// all().colsInGroups()
+internal class ColumnSetColsInGroups : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.colsInGroups() }
+    }
+}
+
+// allAfter("myColumn")
+internal class AllAfterString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allAfter(column) }
+    }
+}
+
+// allBefore("myColumn")
+internal class AllBeforeString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allBefore(column) }
+    }
+}
+
+// allUpTo("myColumn")
+internal class AllUpToString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allUpTo(column) }
+    }
+}
+
+// all().allFrom("myColumn")
+internal class AllFromString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver: ColumnsResolver by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { receiver.allFrom(column) }
+    }
+}
+
+// allAfter(pathOf("myColumn"))
+internal class AllAfterColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allAfter(column.path) }
+    }
+}
+
+// allFrom(pathOf("myColumn"))
+internal class AllFromColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allFrom(column.path) }
+    }
+}
+
+// allFrom("myColumn")
+internal class AllFromDslString : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allFrom(column) }
+    }
+}
+
+// allBefore(pathOf("myColumn"))
+internal class AllBeforeColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allBefore(column.path) }
+    }
+}
+
+// allUpTo(pathOf("myColumn"))
+internal class AllUpToColumnPath : AbstractInterpreter<ColumnsResolver>() {
+    val Arguments.receiver by ignore()
+    val Arguments.column: ColumnPathApproximation by arg()
+
+    override fun Arguments.interpret(): ColumnsResolver {
+        return columnsResolver { allUpTo(column.path) }
+    }
+}
+
+// endregion

@@ -16,6 +16,26 @@ fun box(): String {
         df.select { name },
     )
 
+    compareSchemas(
+        df.select { age and weight },
+        df.select { cols("age", "weight") },
+        df.select { cols(pathOf("age"), pathOf("weight")) },
+    )
+
+    compareSchemas(
+        df.select { name.firstName },
+        df.select { name.cols("firstName") },
+        df.select { "name".cols("firstName") },
+        df.select { pathOf("name").cols("firstName") },
+    )
+
+    compareSchemas(
+        df.select { name.firstName and name.lastName },
+        df.select { name.cols(pathOf("firstName"), pathOf("lastName")) },
+        df.select { "name".cols(pathOf("firstName"), pathOf("lastName")) },
+        df.select { pathOf("name").cols(pathOf("firstName"), pathOf("lastName")) },
+    )
+
     val df2 = dataFrameOf(
         "test" to columnOf("a"),
         "group" to columnOf(
