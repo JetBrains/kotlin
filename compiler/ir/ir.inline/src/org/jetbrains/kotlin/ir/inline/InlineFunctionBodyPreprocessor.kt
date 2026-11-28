@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -63,6 +65,39 @@ internal class InlineFunctionBodyPreprocessor(
             return super.getReferencedTypeParameter(symbol)
         }
     }
+
+    /**
+     * Type arguments of a type that represents a class consist of
+     * * type parameters of that class
+     * * type parameters of all the outer scopes (an outer class or an outer function)
+     *
+     * For example
+     * ```
+     * inline fun <R> test(r: R) = object { // anomymous object capture `R`
+     *     fun run(): R {
+     *         class Local() { // `Local` captures `R`
+     *             fun foo(): R = r
+     *         }
+     *         return Local().foo() // Here the result typy of `Local()` call is `Local<R>` despite the fact that `Local` has no type parameters.
+     *     }
+     * }
+     * ```
+     *
+     * When a class is inlined its scope changes, so the `IrType` of that class must also be changed.
+     * We remove these out of scope type parameters of a type with this substitutor.
+     */
+    private val typeParameterRemoverInLocalClasses: AbstractIrTypeSubstitutor = object : AbstractIrTypeSubstitutor() {
+        override fun substitute(type: IrType): IrType {
+            if (type !is IrSimpleType) return type
+            if (symbolRemapper.getReferencedClassifier(type.classifier) == type.classifier) return type
+
+            val newArgs = type.arguments
+                .filter { it is IrSimpleType && it.classifier !in typeArguments.keys }
+                .map { arg -> arg.typeOrNull?.let { substitute(it) } ?: arg }
+            return type.toBuilder().apply { arguments = newArgs }.buildSimpleType()
+        }
+    }
+
     private val nonReifiedTypeParameterSubstitutor: AbstractIrTypeSubstitutor = object : BaseIrTypeSubstitutor() {
         private val inProgress = mutableSetOf<IrTypeParameterSymbol>()
         // We need to avoid computing erasures for unused parameters, as they still exist in functions
@@ -110,14 +145,17 @@ internal class InlineFunctionBodyPreprocessor(
      *
      * To achieve this, we have several type substitutors and use appropriate ones in different places.
      *
-     * 1. [nonReifiedTypeParameterSubstitutor] substitutes type parameters with their erasure, when it's required
-     * 2. [reifiedTypeParameterSubstitutor] substitutes type parameters with their call-site value when it's required.
-     * 3. [allTypeParameterSubstitutor] do both 1 and 2 at the same time.
-     * 4. Type remapper within [DeepCopyIrTreeWithSymbols] remaps all kinds of local symbols (both type parameters and local classes)
+     * 1. [typeParameterRemoverInLocalClasses] removes type parameters from local classes that will become out of scope.
+     * 2. [nonReifiedTypeParameterSubstitutor] substitutes type parameters with their erasure, when it's required
+     * 3. [reifiedTypeParameterSubstitutor] substitutes type parameters with their call-site value when it's required.
+     * 4. [allTypeParameterSubstitutor] does 1, 2 and 3 at the same time.
+     * 5. Type remapper within [DeepCopyIrTreeWithSymbols] remaps all kinds of local symbols (both type parameters and local classes)
      *    * [symbolRemapper] is it's part, and can be used separately if needed to do this substitution on classifiers.
      *    * As a special case [symbolRemapper] keeps references to erased symbols in place. See comments inside it for details.
      */
-    private val allTypeParameterSubstitutor = reifiedTypeParameterSubstitutor.chainedWith(nonReifiedTypeParameterSubstitutor)
+    private val allTypeParameterSubstitutor = typeParameterRemoverInLocalClasses
+        .chainedWith(reifiedTypeParameterSubstitutor)
+        .chainedWith(nonReifiedTypeParameterSubstitutor)
 
     private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, null) {
 

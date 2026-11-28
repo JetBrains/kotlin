@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR_ES6
 // ISSUE: KT-91509
 
 // MODULE: lib
