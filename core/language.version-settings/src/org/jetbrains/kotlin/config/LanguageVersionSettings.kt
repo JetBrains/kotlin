@@ -592,6 +592,7 @@ enum class LanguageFeature(
     EnforceMissingNamedArgumentsOnJavaAnnotation(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     ReportUpperBoundViolatedWithSamTypealiasedConstructors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-435"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
+    ReportDeprecationsOnDeserializedEnumEntries(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-91195"),
     ReportDeprecationsOnSamConstructorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-433"),
     ReportMissingErrorsOnForLoopOperatorCalls(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KTLC-432"),
     ProhibitVarInJsModuleFile(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-88343"),

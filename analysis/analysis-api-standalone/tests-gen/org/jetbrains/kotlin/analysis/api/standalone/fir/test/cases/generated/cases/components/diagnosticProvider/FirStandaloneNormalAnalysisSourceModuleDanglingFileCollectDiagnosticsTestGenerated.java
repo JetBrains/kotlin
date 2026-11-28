@@ -195,6 +195,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("enumEntryDeprecation.kt")
+  public void testEnumEntryDeprecation() {
+    run("enumEntryDeprecation.kt");
+  }
+
+  @Test
+  @TestMetadata("enumInAnotherModule.kt")
+  public void testEnumInAnotherModule() {
+    run("enumInAnotherModule.kt");
+  }
+
+  @Test
   @TestMetadata("equalityBoundFromLibrary.kt")
   public void testEqualityBoundFromLibrary() {
     run("equalityBoundFromLibrary.kt");
