@@ -130,7 +130,8 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     }
 
     private boolean isLocalProperty() {
-        return signature.startsWith("<v#");
+        String signature = getSignature();
+        return signature != null && signature.startsWith("<v#");
     }
 
     /**
