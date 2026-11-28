@@ -74,6 +74,47 @@ class AssociateCompilationsTest {
     }
 
     @Test
+    fun `test - KT-91337 associated JS compilation output is not in dependency configurations`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
+        }
+        val kotlin = project.applyMultiplatformPlugin()
+        val js = kotlin.js { nodejs() }
+        val main = js.compilations.main
+        val foo = js.compilations.create("foo")
+        val bar = js.compilations.create("bar")
+
+        foo.defaultSourceSet.dependencies {
+            implementation(project.files("foo.klib"))
+        }
+        bar.defaultSourceSet.dependencies {
+            implementation(project.files("bar.klib"))
+        }
+
+        foo.associateWith(main)
+        foo.associateWith(bar)
+
+        val declaredDependencies = project.files("bar.klib", "foo.klib")
+        assertEquals(
+            listOf(bar.output.classesDirs, main.output.classesDirs, declaredDependencies).flatten(),
+            foo.compileDependencyFiles.files.toList(),
+        )
+        assertEquals(
+            listOf(bar.output.allOutputs, main.output.allOutputs, declaredDependencies).flatten(),
+            foo.runtimeDependencyFiles.files.toList(),
+        )
+        assertEquals(
+            declaredDependencies.files,
+            project.configurations.getByName(foo.compileDependencyConfigurationName).files,
+        )
+        assertEquals(
+            declaredDependencies.files,
+            project.configurations.getByName(foo.runtimeDependencyConfigurationName).files,
+        )
+    }
+
+    @Test
     fun `test - KT-86015 associated K-N compilation inherits main cinterop klibs in compile dependency files`() {
         val project = buildProjectWithMPP {
             configureRepositoriesForTests()

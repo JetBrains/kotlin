@@ -115,7 +115,6 @@ internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsI
         attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
         listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE).forEach { scope ->
-            // TODO(KT-91337): for associated compilations, this holds main output and triggers main compile.
             extendsFrom(compilationDependencyConfigurationByScope(compilation, scope))
         }
     }
