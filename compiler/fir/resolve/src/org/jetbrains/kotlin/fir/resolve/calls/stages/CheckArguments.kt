@@ -79,6 +79,8 @@ internal object CheckArguments : ResolutionStage() {
                 sink.reportDiagnostic(LowerPriorityForNumericClassConversion)
             }
         }
+
+        sink.yieldIfNeed()
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
