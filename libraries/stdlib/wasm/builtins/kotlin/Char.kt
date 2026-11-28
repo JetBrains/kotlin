@@ -44,6 +44,7 @@ public actual class Char private constructor(private val value: Char) : Comparab
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Char =
         (this.code + 1).toChar()
 
@@ -52,6 +53,7 @@ public actual class Char private constructor(private val value: Char) : Comparab
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Char =
         (this.code - 1).toChar()
 

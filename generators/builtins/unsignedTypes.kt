@@ -207,6 +207,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         for (name in listOf("inc", "dec")) {
             out.printDoc(BasePrimitivesGenerator.incDecOperatorsDoc(name), "    ")
             out.println("    @kotlin.internal.InlineOnly")
+            out.println("    @kotlin.internal.IntrinsicConstEvaluation")
             out.println("    public inline operator fun $name(): $className = $className(data.$name())")
             out.println()
         }

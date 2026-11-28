@@ -238,6 +238,7 @@ public expect class Byte : Number, Comparable<Byte> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Byte
 
     /**
@@ -245,6 +246,7 @@ public expect class Byte : Number, Comparable<Byte> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Byte
 
     /** Returns this value. */
@@ -608,6 +610,7 @@ public expect class Short : Number, Comparable<Short> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Short
 
     /**
@@ -615,6 +618,7 @@ public expect class Short : Number, Comparable<Short> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Short
 
     /** Returns this value. */
@@ -976,6 +980,7 @@ public expect class Int : Number, Comparable<Int> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Int
 
     /**
@@ -983,6 +988,7 @@ public expect class Int : Number, Comparable<Int> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Int
 
     /** Returns this value. */
@@ -1390,6 +1396,7 @@ public expect class Long : Number, Comparable<Long> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Long
 
     /**
@@ -1397,6 +1404,7 @@ public expect class Long : Number, Comparable<Long> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Long
 
     /** Returns this value. */
@@ -1822,6 +1830,7 @@ public expect class Float : Number, Comparable<Float> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Float
 
     /**
@@ -1829,6 +1838,7 @@ public expect class Float : Number, Comparable<Float> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Float
 
     /** Returns this value. */
@@ -2155,6 +2165,7 @@ public expect class Double : Number, Comparable<Double> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun inc(): Double
 
     /**
@@ -2162,6 +2173,7 @@ public expect class Double : Number, Comparable<Double> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun dec(): Double
 
     /** Returns this value. */

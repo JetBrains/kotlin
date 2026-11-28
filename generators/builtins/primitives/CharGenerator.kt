@@ -208,6 +208,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         """.trimIndent()
         method {
             appendDoc(doc)
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 isOperator = true
                 methodName = "inc"
@@ -224,6 +225,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         """.trimIndent()
         method {
             appendDoc(doc)
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 isOperator = true
                 methodName = "dec"
