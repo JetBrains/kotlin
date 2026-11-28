@@ -10,11 +10,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
-import kotlin.coroutines.resume
 
 class ResolutionStageRunner {
     fun processCandidate(
@@ -26,37 +21,18 @@ class ResolutionStageRunner {
         val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
         val inferenceLogger = candidate.callInfo.session.inferenceLogger
         inferenceLogger?.logCandidate(candidate)
-        var finished = false
 
-        sink.continuation = suspend {
-            // Multiple runs on the same candidate are possible,
-            // that's why we have to skip already processed stages on the next run.
-            // Neither regular `for` loop nor iterating by index don't work here,
-            // because we have to start from the next unprocessed stage and mutate `Candidate.passedStages` on every iteration.
-            val resolutionSequence = candidate.callInfo.callKind.let {
-                if (runAdditionalStages) it.resolutionSequenceWithAdditionalStages
-                else it.resolutionSequence
-            }
-            while (candidate.passedStages < resolutionSequence.size) {
-                val nextStage = resolutionSequence[candidate.passedStages++]
-                inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
-                nextStage.check(candidate, sink = sink, context = context)
-            }
-        }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
-            override val context: CoroutineContext
-                get() = EmptyCoroutineContext
-
-            override fun resumeWith(result: Result<Unit>) {
-                result.exceptionOrNull()?.let { throw it }
-                finished = true
-            }
-        })
-
-        while (!finished) {
-            sink.continuation!!.resume(Unit)
-            if (!candidate.isSuccessful) {
-                break
-            }
+        // Multiple runs on the same candidate are possible,
+        // that's why we have to skip already processed stages on the next run.
+        val resolutionSequence = candidate.callInfo.callKind.let {
+            if (runAdditionalStages) it.resolutionSequenceWithAdditionalStages
+            else it.resolutionSequence
+        }
+        while (candidate.passedStages < resolutionSequence.size) {
+            val nextStage = resolutionSequence[candidate.passedStages++]
+            inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
+            nextStage.check(candidate, sink = sink, context = context)
+            if (sink.needYielding) break
         }
         return candidate.lowestApplicability
     }

@@ -57,12 +57,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class ResolutionStage {
     context(sink: CheckerSink, context: ResolutionContext)
-    abstract suspend fun check(candidate: Candidate)
+    abstract fun check(candidate: Candidate)
 }
 
 object CheckExtensionReceiver : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val callSite = candidate.callInfo.callSite
 
         if (callSite is FirImplicitInvokeCall) {
@@ -124,7 +124,7 @@ object CheckExtensionReceiver : ResolutionStage() {
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
-    private suspend fun resolveExtensionReceiver(
+    private fun resolveExtensionReceiver(
         receiver: ImplicitArgumentDescription,
         candidate: Candidate,
         expectedType: ConeKotlinType
@@ -183,7 +183,7 @@ private data class ImplicitArgumentDescription(
 
 object CheckDispatchReceiver : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val explicitReceiverExpression = candidate.callInfo.explicitReceiver
         if (explicitReceiverExpression is FirSuperReceiverExpression) {
             val status = candidate.symbol.fir as? FirMemberDeclaration
@@ -244,7 +244,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
 object CheckContextArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val contextSymbols = candidate.obtainInvokeContextParametersOrNull()
             ?: candidate.obtainRegularContextParametersOrNull()
             ?: return
@@ -400,7 +400,7 @@ object CheckContextArguments : ResolutionStage() {
 
 object TypeVariablesInExplicitReceivers : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (candidate.callInfo.callSite.isAnyOfDelegateOperators()) return
 
         val explicitReceiver = candidate.callInfo.explicitReceiver ?: return checkOtherCases(candidate)
@@ -438,7 +438,7 @@ private enum class ImplicitKind {
 
 object CheckShadowedImplicits : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         candidate.dispatchReceiver?.let { checkImpl(it, candidate, kind = ImplicitKind.DispatchReceiver) }
         candidate.chosenExtensionReceiver?.let { checkImpl(it, candidate, kind = ImplicitKind.ExtensionReceiver) }
         candidate.contextArguments?.forEach { checkImpl(it, candidate, kind = ImplicitKind.ContextArgument) }
@@ -707,7 +707,7 @@ private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol
 
 internal object MapArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
         // We could write simply
@@ -855,7 +855,7 @@ private fun Candidate.isJavaApplicableCandidate(): Boolean {
 
 internal object EagerResolveOfCallableReferences : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
             if (atom is ConeResolvedCallableReferenceAtom) {
@@ -895,7 +895,7 @@ internal abstract class EagerResolveOfAtomWithExpectedTypeAsStaticReceiver<A : C
     protected abstract fun resolve(candidate: Candidate, state: StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected<A>)
 
     context(sink: CheckerSink, context: ResolutionContext)
-    final override suspend fun check(candidate: Candidate): Unit = context(context.typeContext) {
+    final override fun check(candidate: Candidate): Unit = context(context.typeContext) {
         if (candidate.postponedAtoms.isEmpty()) return
         for (postponedAtom in candidate.postponedAtoms) {
             val atom = postponedAtom.asRelevantAtom() ?: continue
@@ -944,7 +944,7 @@ internal object EagerResolveOfContextSensitiveSimpleName :
 
 internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val symbol = candidate.symbol
         if (symbol is FirSimpleSyntheticPropertySymbol) {
             sink.reportDiagnostic(ResolvedWithSynthetic)
@@ -958,7 +958,7 @@ internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() 
 }
 
 internal object CheckVisibility : ResolutionStage() {
-    private suspend fun CheckerSink.yieldVisibilityError(callInfo: CallInfo) {
+    private fun CheckerSink.yieldVisibilityError(callInfo: CallInfo) {
         // The containing declarations structure with the code fragment is always the following:
         // FirFile
         //     FirCodeFragment
@@ -968,7 +968,7 @@ internal object CheckVisibility : ResolutionStage() {
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val visibilityChecker = candidate.callInfo.session.visibilityChecker
         val declaration = candidate.symbol.fir as? FirMemberDeclaration ?: return
 
@@ -994,7 +994,7 @@ internal object CheckVisibility : ResolutionStage() {
 
 internal object CheckLowPriorityInOverloadResolution : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val annotations = when (val fir = candidate.symbol.fir) {
             is FirNamedFunction -> fir.annotations
             is FirProperty -> fir.annotations
@@ -1010,7 +1010,7 @@ internal object CheckLowPriorityInOverloadResolution : ResolutionStage() {
 
 internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate): Unit =
+    override fun check(candidate: Candidate): Unit =
         with(candidate.system.asConstraintSystemCompleterContext()) {
             for (variableWithConstraints in candidate.system.notFixedTypeVariables.values) {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
@@ -1042,7 +1042,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
 
 internal object CheckCallModifiers : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (candidate.callInfo.callSite is FirFunctionCall) {
             when (val functionSymbol = candidate.symbol) {
                 is FirNamedFunctionSymbol -> when {
@@ -1070,7 +1070,7 @@ internal object CheckCallModifiers : ResolutionStage() {
 
 internal object CheckHiddenDeclaration : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val symbol = candidate.symbol
 
         if (symbol !is FirCallableSymbol<*>) {
@@ -1146,7 +1146,7 @@ private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DY
 
 internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (candidate.symbol.origin === FirDeclarationOrigin.DynamicScope) return
         val extensionReceiver = candidate.chosenExtensionReceiver?.expression ?: return
         val argumentIsDynamic = extensionReceiver.resolvedType is ConeDynamicType
@@ -1161,7 +1161,7 @@ internal object ProcessDynamicExtensionAnnotation : ResolutionStage() {
 
 internal object LowerPriorityIfDynamic : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         when {
             candidate.symbol.origin is FirDeclarationOrigin.DynamicScope ->
                 candidate.addDiagnostic(LowerPriorityForDynamic)
@@ -1173,7 +1173,7 @@ internal object LowerPriorityIfDynamic : ResolutionStage() {
 
 internal object ConstraintSystemForks : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (candidate.system.hasContradiction) return
 
         if (candidate.system.areThereContradictionsInForks()) {
@@ -1192,7 +1192,7 @@ internal object ConstraintSystemForks : ResolutionStage() {
 
 internal object TypeParameterAsCallable : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val symbol = candidate.symbol
         if (symbol is FirTypeParameterSymbol && !(candidate.callInfo.isUsedAsGetClassReceiver && symbol.isReified)) {
             sink.yieldDiagnostic(TypeParameterAsExpression)
@@ -1202,7 +1202,7 @@ internal object TypeParameterAsCallable : ResolutionStage() {
 
 internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (!LanguageFeature.CheckLambdaAgainstTypeVariableContradictionInResolution.isEnabled()) return
 
         val csBuilder = candidate.csBuilder

@@ -37,7 +37,7 @@ sealed class TypeArgumentMapping {
 
 internal object MapTypeArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val typeArguments = candidate.callInfo.typeArguments
         val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
@@ -89,7 +89,7 @@ internal object MapTypeArguments : ResolutionStage() {
 
 internal object NoTypeArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
         if (candidate.callInfo.typeArguments.isNotEmpty()) {
             sink.yieldDiagnostic(InapplicableCandidate)
@@ -99,7 +99,7 @@ internal object NoTypeArguments : ResolutionStage() {
 
 internal object InitializeEmptyArgumentMap : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         candidate.initializeArgumentMapping(arguments = emptyList(), argumentMapping = LinkedHashMap())
     }
 }
