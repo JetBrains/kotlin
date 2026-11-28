@@ -211,7 +211,7 @@ class AssertContainsTest {
     @Test
     @OptIn(ExperimentalStdlibApi::class)
     fun assertContainsOpenRange() {
-        val range = 0.0.rangeUntil(1.0) // TODO: replace with ..< by 1.8
+        val range = 0.0..<1.0
         assertContains(range, 0.99)
 
         val one = 1.0
