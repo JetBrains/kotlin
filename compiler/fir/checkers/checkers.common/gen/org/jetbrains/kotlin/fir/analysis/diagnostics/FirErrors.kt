@@ -1160,6 +1160,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val NON_FINAL_RICH_ERROR_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_FINAL_RICH_ERROR_CLASS", ERROR, PositioningStrategyKinds.MODALITY_MODIFIER, getRendererFactory())
     val ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
     val TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val MERGED_ERRORS_IN_SAFE_CALL: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory3("MERGED_ERRORS_IN_SAFE_CALL", WARNING, PositioningStrategyKinds.SELECTOR_BY_QUALIFIED, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

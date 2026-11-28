@@ -1,0 +1,3 @@
+/traceabilityWarnings.kt:10:11: warning: Error component 'AccessDenied' from safe call receiver of type 'User | AccessDenied' is merged into return type of the call 'String | AccessDenied'.
+
+/traceabilityWarnings.kt:11:8: warning: Error component 'AccessDenied' from safe call receiver of type 'T (of fun <T : User | AccessDenied> foo)' is merged into return type of the call 'String | AccessDenied'.

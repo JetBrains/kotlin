@@ -8814,6 +8814,17 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MergedErrorsInSafeCall : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<MergedErrorsInSafeCall>
+            get() = MergedErrorsInSafeCall::class
+
+        public val receiverType: KaType
+        public val selectorReturnType: KaType
+        public val mergedErrorType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<OverrideCannotBeStatic>
             get() = OverrideCannotBeStatic::class

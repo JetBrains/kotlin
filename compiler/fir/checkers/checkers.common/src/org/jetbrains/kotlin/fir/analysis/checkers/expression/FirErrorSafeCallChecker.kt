@@ -14,18 +14,42 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallKind
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.types.ConeUnionType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.unionSuperTypeOrNull
 
 object FirErrorSafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirSafeCallExpression) {
-        if (expression.kind == FirSafeCallKind.ErrorSafe && LanguageFeature.RichErrors.isDisabled()) {
+        if (expression.kind != FirSafeCallKind.ErrorSafe) return
+
+        if (LanguageFeature.RichErrors.isDisabled()) {
             reporter.reportOn(
                 withSyntax { expression.source?.getChild(KotlinSyntaxTokenIds.ERROR_SAFE_ACCESS, depth = 1) },
                 FirErrors.UNSUPPORTED_FEATURE,
-                LanguageFeature.RichErrors to context.languageVersionSettings)
+                LanguageFeature.RichErrors to context.languageVersionSettings
+            )
+        }
+
+        val selectorReturnType = (expression.selector as? FirExpression)?.resolvedType as? ConeUnionType ?: return
+        val receiverUnionSuperType = expression.receiver.resolvedType.unionSuperTypeOrNull(context.session) ?: return
+        val receiverErrorClassIds = receiverUnionSuperType.richErrorTypes.mapNotNull { it.classId }
+
+        for (selectorErrorComponent in selectorReturnType.richErrorTypes) {
+            if (selectorErrorComponent.classId in receiverErrorClassIds) {
+                reporter.reportOn(
+                    expression.source,
+                    FirErrors.MERGED_ERRORS_IN_SAFE_CALL,
+                    expression.receiver.resolvedType,
+                    selectorReturnType,
+                    selectorErrorComponent
+                )
+            }
         }
     }
 }

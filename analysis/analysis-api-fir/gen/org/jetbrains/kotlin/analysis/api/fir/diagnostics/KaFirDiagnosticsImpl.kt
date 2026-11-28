@@ -6223,6 +6223,14 @@ internal class TypealiasToUnionTypeAsQualifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasToUnionTypeAsQualifier
 
+internal class MergedErrorsInSafeCallImpl(
+    override val receiverType: KaType,
+    override val selectorReturnType: KaType,
+    override val mergedErrorType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MergedErrorsInSafeCall
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

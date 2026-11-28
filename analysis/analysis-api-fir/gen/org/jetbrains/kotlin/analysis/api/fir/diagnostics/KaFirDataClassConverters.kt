@@ -6944,6 +6944,15 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
             token,
         )
     }
+    add(FirErrors.MERGED_ERRORS_IN_SAFE_CALL) { firDiagnostic ->
+        MergedErrorsInSafeCallImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.NON_DATA_CLASS_JVM_RECORD) { firDiagnostic ->
         NonDataClassJvmRecordImpl(
             firDiagnostic as KtDiagnosticWithSource,
