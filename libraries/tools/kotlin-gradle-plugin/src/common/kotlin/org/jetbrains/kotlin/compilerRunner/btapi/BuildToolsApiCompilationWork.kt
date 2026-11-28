@@ -257,6 +257,14 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             ) {
                 reportArgumentsRejected(buildSession, rejection = null)
             }
+            // A pinned compiler older than KGP may not know a flag that enables a newer feature; it only warns
+            // (CLI_UNKNOWN_EXTRA_ARGUMENT) and drops it, so the feature then fails as an ordinary source error (KT-83263).
+            if (compilationResult == CompilationResult.COMPILATION_ERROR &&
+                compilerMessageRenderer.hasUnknownFlagWarning() &&
+                buildSession.kotlinToolchains.isOlderThan(workArguments.kotlinPluginVersion)
+            ) {
+                reportFlagIgnoredByOlderCompiler(buildSession)
+            }
             throwExceptionIfCompilationFailed(compilationResult.asExitCode, executionStrategy)
         } catch (e: CompilerArgumentsParseException) {
             reportArgumentsRejected(buildSession, e.message)
@@ -350,7 +358,22 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         )
     }
 
+    private fun reportFlagIgnoredByOlderCompiler(buildSession: KotlinToolchains.BuildSession) {
+        val compilerVersion = buildSession.kotlinToolchains.getCompilerVersion()
+        val pluginVersion = workArguments.kotlinPluginVersion
+        parameters.toolingDiagnosticsCollector.orNull?.report(
+            parameters,
+            KotlinToolingDiagnostics.KotlinCompilerFlagIgnoredByOlderCompiler(compilerVersion, pluginVersion),
+        )
+    }
+
     private fun String.toToolingVersionOrNull(): KotlinToolingVersion? = runCatching { KotlinToolingVersion(this) }.getOrNull()
+
+    private fun KotlinToolchains.isOlderThan(pluginVersion: String): Boolean {
+        val compiler = getCompilerVersion().toToolingVersionOrNull() ?: return false
+        val plugin = pluginVersion.toToolingVersionOrNull() ?: return false
+        return compiler < plugin
+    }
 
     private fun obtainBuildSession(): KotlinToolchains.BuildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
         parameters.classLoadersCachingService.get(),

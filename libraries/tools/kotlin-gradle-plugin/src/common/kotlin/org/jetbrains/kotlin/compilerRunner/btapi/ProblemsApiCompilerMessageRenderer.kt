@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblem
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 
+// org.jetbrains.kotlin.cli.CliDiagnostics.CLI_UNKNOWN_EXTRA_ARGUMENT.name; that module is not on this
+// module's compile classpath (KGP depends on compiler modules as non-transitive compileOnly).
+private const val CLI_UNKNOWN_EXTRA_ARGUMENT_ID = "CLI_UNKNOWN_EXTRA_ARGUMENT"
+
 private data class BufferedDiagnostic(
     val severity: CompilerMessageRenderer.Severity,
     val message: String,
@@ -53,6 +57,10 @@ internal class ProblemsApiCompilerMessageRenderer(
     }
 
     fun hasRenderedErrors(): Boolean = bufferedDiagnostics.any { it.severity == CompilerMessageRenderer.Severity.ERROR }
+
+    // Reported by the compiler (CLI_UNKNOWN_EXTRA_ARGUMENT) when it silently drops a flag it does not know,
+    // for example one introduced by a newer compiler than the pinned one (KT-83263).
+    fun hasUnknownFlagWarning(): Boolean = bufferedDiagnostics.any { it.diagnosticId == CLI_UNKNOWN_EXTRA_ARGUMENT_ID }
 
     override fun render(
         severity: CompilerMessageRenderer.Severity,
