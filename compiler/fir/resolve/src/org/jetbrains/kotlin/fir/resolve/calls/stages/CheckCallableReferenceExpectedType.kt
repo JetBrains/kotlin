@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         candidate.callInfo as CallableReferenceInfo
         val expectedType = candidate.callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return

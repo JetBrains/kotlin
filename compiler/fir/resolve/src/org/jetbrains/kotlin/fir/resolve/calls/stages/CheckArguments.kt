@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 internal object CheckArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType

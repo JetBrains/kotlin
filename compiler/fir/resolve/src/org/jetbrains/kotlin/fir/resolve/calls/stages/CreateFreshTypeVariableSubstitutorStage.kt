@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldDiagnostic
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldIfNeed
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {

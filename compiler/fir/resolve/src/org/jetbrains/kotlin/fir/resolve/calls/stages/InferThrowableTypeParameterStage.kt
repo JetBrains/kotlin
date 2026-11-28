@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.model.typeConstructor
  */
 internal object InferThrowableTypeParameterToUpperBound : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
+    override fun check(candidate: Candidate) {
         if (LanguageFeature.InferThrowableTypeParameterToUpperBound.isDisabled()) return
         if (!candidate.symbol.isJavaOrEnhancement) {
             // Also handle typealias constructors pointing to Java classes
