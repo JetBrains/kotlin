@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.ViaTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.syntax.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -54,9 +54,8 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
-import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -332,15 +331,12 @@ val FirFunctionCall.isIterator: Boolean
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
     session.builtinTypes.throwableType.coneType.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
-private val VAL_VAR = SyntaxIdSet.of(KotlinSyntaxTokenIds.VAL_KEYWORD, KotlinSyntaxTokenIds.VAR_KEYWORD)
-
 context(syntax: FirSyntaxComponent<*>)
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
         // TODO: use `with(syntax) { source.findValOrVarKeywordSource() }` that traverses only direct children (depth = 1), KT-91790
-        // And remove `VAL_VAR` set above.
-        return source.getChild(VAL_VAR) != null
+        return source.getChild(KotlinSyntaxIdSets.VAL_VAR) != null
     }
 
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =

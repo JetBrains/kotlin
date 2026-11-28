@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.makeScriptCompilerArguments
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -754,7 +755,7 @@ internal class LLFirSessionFactory(
     ) {
         registerIdeComponents(project, languageVersionSettings, annotationSearchScope)
         registerCommonComponents(languageVersionSettings, isMetadataCompilation = isMetadataSession)
-        registerResolveComponents()
+        registerResolveComponents(PsiParseTreeKind)
     }
 
     private fun LLFirSession.registerSourceLikeComponents(conflictsExtension: LLFirConflictsFromDifferentModuleExtension? = null) {

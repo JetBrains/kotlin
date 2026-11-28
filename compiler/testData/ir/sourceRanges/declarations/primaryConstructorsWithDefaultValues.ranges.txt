@@ -1,0 +1,99 @@
+@0:0..9:0 FILE fqName:<root> fileName:/primaryConstructorsWithDefaultValues.kt
+  @0:0..27 CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @0:11..27 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
+      @0:12..26 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+        @0:25..26 EXPRESSION_BODY
+          @0:25..26 CONST Int type=kotlin.Int value=1
+      @0:11..27 BLOCK_BODY
+        @0:0..27 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:0..27 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    @0:12..26 PROPERTY name:x visibility:public modality:FINAL [val]
+      @0:12..26 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        @0:12..26 EXPRESSION_BODY
+          @0:12..26 GET_VAR 'x: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      @0:12..22 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> (<this>:<root>.Test1) returnType:kotlin.Int
+        @0:12..22 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test1
+        @0:12..22 BLOCK_BODY
+          @0:12..22 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
+            @0:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              @0:12..22 GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @0:0..27 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test1
+  @2:0..6:1 CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @2:11..6:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:<root>.Test2 [primary]
+      @3:4..18 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+        @3:17..18 EXPRESSION_BODY
+          @3:17..18 CONST Int type=kotlin.Int value=1
+      @4:4..5:10 VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.String
+        @5:8..10 EXPRESSION_BODY
+          @5:8..10 CONST String type=kotlin.String value=""
+      @2:11..6:1 BLOCK_BODY
+        @2:0..6:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @2:0..6:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    @3:4..18 PROPERTY name:x visibility:public modality:FINAL [var]
+      @3:4..18 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+        @3:4..18 EXPRESSION_BODY
+          @3:4..18 GET_VAR 'x: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      @3:4..14 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> (<this>:<root>.Test2) returnType:kotlin.Int
+        @3:4..14 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test2
+        @3:4..14 BLOCK_BODY
+          @3:4..14 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2'
+            @3:4..14 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              @3:4..14 GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
+      @3:4..14 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL <> (<this>:<root>.Test2, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        @3:4..14 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test2
+        @3:4..14 VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        @3:4..14 BLOCK_BODY
+          @3:4..14 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            @3:4..14 GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-x>' type=<root>.Test2 origin=null
+            @3:4..14 GET_VAR '<set-?>: kotlin.Int declared in <root>.Test2.<set-x>' type=kotlin.Int origin=null
+    @4:4..5:10 PROPERTY name:y visibility:public modality:FINAL [val]
+      @4:4..5:10 FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]
+        @4:4..5:10 EXPRESSION_BODY
+          @4:4..5:10 GET_VAR 'y: kotlin.String declared in <root>.Test2.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      @4:4..17 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> (<this>:<root>.Test2) returnType:kotlin.String
+        @4:4..17 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test2
+        @4:4..17 BLOCK_BODY
+          @4:4..17 RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.String declared in <root>.Test2'
+            @4:4..17 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              @4:4..17 GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-y>' type=<root>.Test2 origin=null
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @2:0..6:1 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test2
+  @8:0..41 CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @8:11..41 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test3 [primary]
+      @8:12..40 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+        @8:39..40 EXPRESSION_BODY
+          @8:39..40 CONST Int type=kotlin.Int value=1
+      @8:11..41 BLOCK_BODY
+        @8:0..41 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @8:0..41 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    @8:12..40 PROPERTY name:x visibility:public modality:FINAL [val]
+      @8:12..40 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        @8:12..40 EXPRESSION_BODY
+          @8:12..40 GET_VAR 'x: kotlin.Int declared in <root>.Test3.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      @8:12..22 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> (<this>:<root>.Test3) returnType:kotlin.Int
+        @8:12..22 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test3
+        @8:12..22 BLOCK_BODY
+          @8:12..22 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test3'
+            @8:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              @8:12..22 GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-x>' type=<root>.Test3 origin=null
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @8:0..41 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test3

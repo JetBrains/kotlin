@@ -11,11 +11,12 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
+import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.util.getChildren
@@ -34,6 +35,11 @@ abstract class AbstractLightTreeRawFirBuilder(
 
     override fun KtSourceElement.toNode(): LighterASTNode {
         return (this as KtLightSourceElement).lighterASTNode
+    }
+
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        require(this is KtLightSourceElement)
+        return treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
     }
 
     override val LighterASTNode.elementType: IElementType
@@ -76,7 +82,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
 
     override val LighterASTNode.indexExpressions: List<LighterASTNode>?
-        get() = getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
+        get() = getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.INDICES)?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
     override fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)

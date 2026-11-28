@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
@@ -54,8 +55,6 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.PsiParseTreeKind
@@ -207,8 +206,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
             .mapValues { [_, value] -> value.toSet() }
 
+        val syntax = firFile.moduleData.session.syntaxComponent
         val consumer = DebugDiagnosticConsumer(
-            result,
+            syntax, result,
             diagnosedRangesToDiagnosticNames,
             NonSuppressingDiagnosticContext(
                 containingFile = null,
@@ -282,13 +282,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val target = when (calleeDeclaration.name) {
                     OperatorNameConventions.INVOKE -> when {
                         isInvokeCallWithDynamicReceiver -> source
-                        else -> source?.parentAsSourceElement ?: source
+                        else -> context(syntax) { source?.parentAsSourceElement() } ?: source
                     }
                     in OperatorNameConventions.ALL_BINARY_OPERATION_NAMES,
                     in OperatorNameConventions.UNARY_OPERATION_NAMES,
                     in OperatorNameConventions.ASSIGNMENT_OPERATIONS,
                     OperatorNameConventions.GET, OperatorNameConventions.SET -> {
-                        source?.operatorSignIfBinary ?: source
+                        context(syntax) { source?.operatorSignIfBinary() } ?: source
                     }
                     else -> {
                         source
@@ -450,26 +450,20 @@ private fun ConeKotlinType.isFunctionTypeWithDynamicReceiver(session: FirSession
     return hasExplicitDynamicReceiver || hasImplicitDynamicReceiver
 }
 
-private val KtSourceElement.parentAsSourceElement: KtSourceElement?
-    get() = when (syntaxId) {
-        KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION -> when (this) {
-            is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
-            is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
-        }
-        else -> null
-    }
+context(syntax: FirSyntaxComponent<*>)
+private fun KtSourceElement.parentAsSourceElement(): KtSourceElement? = when (syntaxId) {
+    KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION -> with(syntax) { findParentSource(kind) }
+    else -> null
+}
 
-private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
-    get() = when (syntaxId) {
-        KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> when (this) {
-            is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
-            is KtLightSourceElement -> treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)
-                ?.toKtLightSourceElement(treeStructure, kind)
-        }
-        else -> null
-    }
+context(syntax: FirSyntaxComponent<*>)
+private fun KtSourceElement.operatorSignIfBinary(): KtSourceElement? = when (syntaxId) {
+    KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> with(syntax) { findOperationReferenceSource(kind) }
+    else -> null
+}
 
 private class DebugDiagnosticConsumer(
+    private val syntax: FirSyntaxComponent<*>,
     private val result: MutableList<KtDiagnostic>,
     private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>,
     private val diagnosticContext: DiagnosticContext,
@@ -557,22 +551,7 @@ private class DebugDiagnosticConsumer(
         return if (this === KtDebugInfoDiagnostics.CALL
             && (elementTypeId == KotlinSyntaxNodeTypeIds.DOT_QUALIFIED_EXPRESSION || elementTypeId == KotlinSyntaxNodeTypeIds.SAFE_ACCESS_EXPRESSION)
         ) {
-            if (sourceElement is KtPsiSourceElement) {
-                val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
-            } else {
-                val tree = sourceElement.treeStructure
-                val selector = tree.selector(sourceElement.lighterASTNode)
-                if (selector == null) {
-                    sourceElement
-                } else {
-                    val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(sourceElement.lighterASTNode)
-                    val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(sourceElement.lighterASTNode)
-                    KtLightSourceElement(
-                        selector, sourceElement.startOffset + startDelta, sourceElement.endOffset + endDelta, tree
-                    )
-                }
-            }
+            with(syntax) { sourceElement.findSelectorOfQualifiedSource() } ?: sourceElement
         } else {
             sourceElement
         }

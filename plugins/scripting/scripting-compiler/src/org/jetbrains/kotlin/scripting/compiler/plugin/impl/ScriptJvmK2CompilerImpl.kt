@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefi
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
+import org.jetbrains.kotlin.syntax.NonPsiSourcesToPathsMapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -264,6 +265,7 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
     }
     return builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->
         (session.firProvider as FirProviderImpl).recordFile(firFile)
+        require(sourcesToPathsMapper is NonPsiSourcesToPathsMapper<*>)
         sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!, linesMapping)
     }
 }

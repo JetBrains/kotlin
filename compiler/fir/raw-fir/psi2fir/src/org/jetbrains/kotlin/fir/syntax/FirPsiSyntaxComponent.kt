@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.ParseTreeKind
@@ -70,6 +72,10 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
         ) {
             processChild(it.toKtPsiSourceElement())
         }
+    }
+
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        return unwrap().psi.containingFile == fileSource.unwrap().psi
     }
 
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
@@ -126,6 +132,20 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
         return unwrap().psi.getExplicitReceiverOfDotQualified()?.toKtPsiSourceElement()
+    }
+
+    override fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement? {
+        val source = unwrap()
+        val selectorExpression = (source.psi as? KtQualifiedExpression)?.selectorExpression
+        return selectorExpression?.let { KtRealPsiSourceElement(it) }
+    }
+
+    override fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement? {
+        return unwrap().psi.parent?.toKtPsiSourceElement(newKind)
+    }
+
+    override fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement? {
+        return (unwrap().psi as? KtOperationExpression)?.operationReference?.toKtPsiSourceElement(newKind)
     }
 
     override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
@@ -231,6 +251,14 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
                 process(rawExpression.toKtPsiSourceElement(), operation)
             }
         }
+    }
+
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        return unwrap().psi.parent is KtForExpression
+    }
+
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
+        return unwrap().psi.startOffsetSkippingComments
     }
 
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {

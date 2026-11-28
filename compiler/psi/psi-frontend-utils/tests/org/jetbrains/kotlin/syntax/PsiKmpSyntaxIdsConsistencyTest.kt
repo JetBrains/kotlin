@@ -97,6 +97,8 @@ class PsiKmpSyntaxIdsConsistencyTest {
             KotlinSyntaxIdSets::UNWRAPPABLE_TOKEN_TYPES.name to UNWRAPPABLE_TOKEN_TYPES,
             KotlinSyntaxIdSets::VISIBILITY_MODIFIERS.name to KtTokens.VISIBILITY_MODIFIERS,
             KotlinSyntaxIdSets::MODALITY_MODIFIERS.name to KtTokens.MODALITY_MODIFIERS,
+            KotlinSyntaxIdSets::VAL_VAR.name to KtTokens.VAL_VAR,
+            KotlinSyntaxIdSets::WHITE_SPACE_OR_COMMENT_BIT_SET.name to KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET,
         )
 
         for (idSetProperty in KotlinSyntaxIdSets::class.declaredMemberProperties) {

@@ -5,30 +5,35 @@
 
 package org.jetbrains.kotlin.kapt.util
 
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.diagnostics.findChildrenByType
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
+import org.jetbrains.kotlin.fir.syntax.forEachChildOfType
+import org.jetbrains.kotlin.fir.syntax.getChild
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
 /** Source ranges of supertypes written as constructor calls, e.g. `Foo()`. */
+context(syntax: FirSyntaxComponent<*>)
 fun KtSourceElement.superTypeCallEntryRanges(): List<IntRange> {
-    val superTypeList = treeStructure.findChildByType(lighterASTNode, KtNodeTypes.SUPER_TYPE_LIST) ?: return emptyList()
+    val superTypeList = getChild(KotlinSyntaxNodeTypeIds.SUPER_TYPE_LIST, depth = 1) ?: return emptyList()
 
-    return treeStructure.findChildrenByType(superTypeList, KtNodeTypes.SUPER_TYPE_CALL_ENTRY)
-        .map { it.startOffset..it.endOffset }
+    return buildList {
+        superTypeList.forEachChildOfType(SUPER_TYPE_CALL_ENTRY, depth = 1) { add(it.startOffset..it.endOffset) }
+    }
 }
 
+private val SUPER_TYPE_CALL_ENTRY = SyntaxIdSet.of(KotlinSyntaxNodeTypeIds.SUPER_TYPE_CALL_ENTRY)
+
 /** Full KDoc text attached to this declaration, delimiters included. */
+context(syntax: FirSyntaxComponent<*>)
 fun KtSourceElement.kdocText(): String? {
-    val docComment = treeStructure.findChildByType(lighterASTNode, KtTokens.DOC_COMMENT)
+    val docComment = getChild(KotlinSyntaxTokenIds.DOC_COMMENT, depth = 1)
     // KDoc before modifiers is nested under the modifier list.
-        ?: treeStructure.findChildByType(lighterASTNode, KtNodeTypes.MODIFIER_LIST)
-            ?.let { treeStructure.findChildByType(it, KtTokens.DOC_COMMENT) }
+        ?: getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxTokenIds.DOC_COMMENT, depth = 1)
         ?: return null
 
-    // Works for both light-tree and PSI-backed nodes.
-    return treeStructure.toString(docComment).toString()
+    return docComment.text.toString()
 }
 
 /** Strips KDoc delimiters and leading asterisks from raw KDoc text. */

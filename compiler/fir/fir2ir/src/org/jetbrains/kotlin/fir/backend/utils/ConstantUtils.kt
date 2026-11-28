@@ -34,6 +34,7 @@ fun FirLiteralExpression.getIrConstKind(): IrConstKind = when (kind) {
     else -> kind.toIrConstKind()
 }
 
+context(c: Fir2IrComponents)
 fun FirLiteralExpression.toIrConst(irType: IrType): IrConst {
     return convertWithOffsets { startOffset, endOffset ->
         val kind = getIrConstKind()

@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.syntax.KmpParseTreeKind
 import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
+import org.jetbrains.kotlin.syntax.NonPsiSourcesToPathsMapper
 import org.jetbrains.kotlin.syntax.ParseTreeKind
 import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 
@@ -218,6 +219,7 @@ fun FirSession.registerJavaComponents(
  */
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerResolveComponents(
+    parseTreeKind: ParseTreeKind,
     lookupTracker: LookupTracker? = null,
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
@@ -226,13 +228,13 @@ fun FirSession.registerResolveComponents(
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(FirModuleVisibilityChecker::class, FirModuleVisibilityChecker.Standard(this))
-    register(SourcesToPathsMapper::class, SourcesToPathsMapper())
+    register(FirSourcesToPathsMapperHolder::class, FirSourcesToPathsMapperHolder(parseTreeKind.createSourcesToPathsMapper()))
     if (lookupTracker != null) {
         val firFileToPath: (KtSourceElement) -> String? = {
             sourcesToPathsMapper.getSourceFilePath(it)
         }
         val firFileToLinesMapping: (KtSourceElement) -> KtSourceFileLinesMapping? = {
-            sourcesToPathsMapper.getSourceFileLinesMapping(it)
+            (sourcesToPathsMapper as? NonPsiSourcesToPathsMapper<*>)?.getSourceFileLinesMapping(it)
         }
         register(
             FirLookupTrackerComponent::class,

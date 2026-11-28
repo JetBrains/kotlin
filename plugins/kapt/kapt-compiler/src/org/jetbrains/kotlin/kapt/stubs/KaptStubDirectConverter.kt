@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.kapt.util.isEnum
 import org.jetbrains.kotlin.kapt.util.isInterface
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.kapt.util.kdocText
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -112,7 +113,8 @@ class KaptStubDirectConverter(
             return
         }
 
-        val docComment = source.kdocText() ?: return
+        val session = kaptContext.firSession ?: return
+        val docComment = context(session.syntaxComponent) { source.kdocText() } ?: return
         appendKDocComment(extractComment(docComment))
     }
 

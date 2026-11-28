@@ -11,7 +11,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
@@ -1569,12 +1568,6 @@ object LightTreePositioningStrategies : PositioningStrategyRegistry<LightTreePos
     }.registerAs(PositioningStrategyKinds.DEPRECATION)
 }
 
-fun KtSourceElement.hasValOrVar(): Boolean =
-    treeStructure.valOrVarKeyword(lighterASTNode) != null
-
-fun KtSourceElement.hasVar(): Boolean =
-    treeStructure.findChildByType(lighterASTNode, VAR_KEYWORD) != null
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.companionKeyword(node: LighterASTNode): LighterASTNode? =
     modifierList(node)?.let { findChildByType(it, COMPANION_KEYWORD) }
 
@@ -1615,10 +1608,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: Lighte
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
-
-fun LighterASTNode.isExpression(): Boolean {
-    return isExpression()
-}
 
 /**
  * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for diagnostics
@@ -1736,26 +1725,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
         return child
     }
     return null
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    val children = childrenRef.get() ?: return null
-    var dotOrDoubleColonFound = false
-    for (child in children) {
-        if (child == null) continue
-        val tokenType = child.tokenType
-        if (tokenType == DOT || tokenType == COLONCOLON || tokenType == SAFE_ACCESS || tokenType == ERROR_SAFE_ACCESS) {
-            dotOrDoubleColonFound = true
-            continue
-        }
-        if (dotOrDoubleColonFound && child.isExpression()) {
-            return child
-        }
-    }
-    return null
-
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.firstChildExpression(node: LighterASTNode): LighterASTNode? {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -73,17 +74,9 @@ fun markSingleElement(
     return TextRange(startDelta + startOffset, endDelta + endOffset)
 }
 
-private val DOC_AND_COMMENT_TOKENS = setOf(
+private val DOC_AND_COMMENT_TOKENS = TokenSet.create(
     WHITE_SPACE, KtTokens.IDENTIFIER,
     KtTokens.EOL_COMMENT, KtTokens.BLOCK_COMMENT, KtTokens.SHEBANG_COMMENT, KtTokens.DOC_COMMENT
-)
-
-private val FILLER_TOKENS = setOf(
-    KtTokens.WHITE_SPACE,
-    KtTokens.EOL_COMMENT,
-    KtTokens.BLOCK_COMMENT,
-    KtTokens.SHEBANG_COMMENT,
-    KtTokens.DOC_COMMENT,
 )
 
 private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
@@ -92,7 +85,7 @@ private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeS
 internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).lastOrNull { !it.isFiller() } ?: this
 
-fun LighterASTNode.isFiller(): Boolean = tokenType in FILLER_TOKENS
+fun LighterASTNode.isFiller(): Boolean = tokenType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
 
 internal fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
@@ -103,13 +96,3 @@ internal fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStr
         tokenType !is KtSingleValueToken && tokenType !in DOC_AND_COMMENT_TOKENS
     }?.let { hasSyntaxErrors(it, tree) } == true
 }
-
-val KtLightSourceElement.startOffsetSkippingComments: Int
-    get() {
-        val children = lighterASTNode.getChildren(treeStructure)
-
-        // The solution to find first non comment children will not work here. `treeStructure` can have different root
-        // than original program. Because of that `startOffset` is relative and not in absolute value.
-        val comments = children.takeWhile { it.tokenType in FILLER_TOKENS }
-        return startOffset + comments.sumOf { it.textLength }
-    }

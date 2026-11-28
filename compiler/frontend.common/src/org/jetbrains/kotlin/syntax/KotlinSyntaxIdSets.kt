@@ -29,4 +29,17 @@ object KotlinSyntaxIdSets {
         KotlinSyntaxTokenIds.SEALED_MODIFIER,
         KotlinSyntaxTokenIds.OPEN_MODIFIER,
     )
+
+    val VAL_VAR: SyntaxIdSet = SyntaxIdSet.of(
+        KotlinSyntaxTokenIds.VAL_KEYWORD,
+        KotlinSyntaxTokenIds.VAR_KEYWORD,
+    )
+
+    val WHITE_SPACE_OR_COMMENT_BIT_SET: SyntaxIdSet = SyntaxIdSet.of(
+        BasicSyntaxElementTypeIds.WHITE_SPACE,
+        KotlinSyntaxTokenIds.EOL_COMMENT,
+        KotlinSyntaxTokenIds.BLOCK_COMMENT,
+        KotlinSyntaxTokenIds.DOC_COMMENT,
+        KotlinSyntaxTokenIds.SHEBANG_COMMENT,
+    )
 }

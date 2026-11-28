@@ -24,6 +24,11 @@ abstract class ParseTreeKind {
      * The implementation of this parse-tree agnostic positioning strategy for the concrete parse tree.
      */
     abstract val PositioningStrategyKind.positioningStrategy: PositioningStrategy
+
+    /**
+     * Creates a new mapper for the sources of this parse tree kind.
+     */
+    abstract fun createSourcesToPathsMapper(): SourcesToPathsMapper
 }
 
 object NoParseTreeKind : ParseTreeKind() {
@@ -32,4 +37,5 @@ object NoParseTreeKind : ParseTreeKind() {
     override val isPsi: Boolean get() = shouldNotBeCalled(REASON)
     override val isKmp: Boolean get() = shouldNotBeCalled(REASON)
     override val PositioningStrategyKind.positioningStrategy: PositioningStrategy get() = shouldNotBeCalled(REASON)
+    override fun createSourcesToPathsMapper(): SourcesToPathsMapper = shouldNotBeCalled(REASON)
 }

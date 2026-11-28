@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.util
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi
@@ -17,7 +15,6 @@ val Throwable.classNameAndMessage get() = "${this::class.qualifiedName}: $messag
 class SourceCodeAnalysisException(val source: KtSourceElement, override val cause: Throwable) : Exception() {
     override val message get() = cause.classNameAndMessage
 }
-
 
 fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?): Throwable =
     if (this is SourceCodeAnalysisException || shouldIjPlatformExceptionBeRethrown(this) || this is VirtualMachineError) {
@@ -41,9 +38,14 @@ class FileAnalysisException(
         }
 }
 
+/**
+ * @param isInsideFile Returns whether the given source element belongs to the file with [fileSource].
+ * It depends on the parse tree of the file, so it's provided by the caller.
+ */
 fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     filePath: String?,
     fileSource: KtSourceElement?,
+    isInsideFile: (KtSourceElement) -> Boolean,
     linesMapping: (Int) -> Pair<Int, Int>?,
 ) = when {
     filePath == null || fileSource == null -> when (this) {
@@ -52,23 +54,13 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     }
     this is SourceCodeAnalysisException -> when {
         fileSource == source -> FileAnalysisException(filePath, cause)
-        source.isDefinitelyNotInsideFile(fileSource) -> reportFileMismatch(source, fileSource, cause)
+        !isInsideFile(source) -> reportFileMismatch(source, fileSource, cause)
         else -> FileAnalysisException(filePath, cause, linesMapping(source.startOffset))
     }
     shouldIjPlatformExceptionBeRethrown(this) -> this
     this is FileAnalysisException -> this
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)
-}
-
-private fun KtSourceElement.isDefinitelyNotInsideFile(fileSource: KtSourceElement): Boolean {
-    val thisPsi = psi
-    val otherPsi = fileSource.psi
-
-    return when {
-        thisPsi != null && otherPsi != null -> thisPsi.containingFile != otherPsi
-        else -> !lighterASTNode.isInside(fileSource.lighterASTNode, treeStructure)
-    }
 }
 
 private fun reportFileMismatch(source: KtSourceElement, fileSource: KtSourceElement, cause: Throwable): Throwable {
@@ -92,10 +84,6 @@ private fun reportFileMismatch(source: KtSourceElement, fileSource: KtSourceElem
 
 private val CharSequence.asQuote: String
     get() = split("\n").joinToString("\n") { "> $it" }
-
-private fun LighterASTNode.isInside(other: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-    return generateSequence(tree.getParent(this)) { tree.getParent(it) }.any { it == other }
-}
 
 inline fun <R> withSourceCodeAnalysisExceptionUnwrapping(block: () -> R): R {
     return try {

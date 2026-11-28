@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
+import org.jetbrains.kotlin.syntax.isExpression
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 

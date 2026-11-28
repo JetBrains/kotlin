@@ -12,17 +12,19 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.diagnostics.annotations
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.diagnostics.getChildrenArray
+import org.jetbrains.kotlin.diagnostics.isExpression
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
+import org.jetbrains.kotlin.diagnostics.selector
 import org.jetbrains.kotlin.diagnostics.userType
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -73,6 +75,13 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         ) {
             processChild(it.toKtLightSourceElement(tree))
         }
+    }
+
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        val source = unwrap()
+        val fileNode = fileSource.unwrap().lighterASTNode
+        val tree = source.treeStructure
+        return generateSequence(tree.getParent(source.lighterASTNode)) { tree.getParent(it) }.any { it == fileNode }
     }
 
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
@@ -155,6 +164,31 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
             source.lighterASTNode.tokenType == DOT_QUALIFIED_EXPRESSION -> source.lighterASTNode.getChildren(tree).firstOrNull()
             else -> null
         }?.toKtLightSourceElement(tree)
+    }
+
+    override fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement? {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val selector = tree.selector(source.lighterASTNode)
+        return runIf(selector != null) {
+            val startDelta = tree.getStartOffset(selector) - tree.getStartOffset(source.lighterASTNode)
+            val endDelta = tree.getEndOffset(selector) - tree.getEndOffset(source.lighterASTNode)
+            KtLightSourceElement(
+                selector, source.startOffset + startDelta, source.endOffset + endDelta, tree
+            )
+        }
+    }
+
+    override fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement? {
+        val source = unwrap()
+        val tree = source.treeStructure
+        return tree.getParent(source.lighterASTNode)?.toKtLightSourceElement(tree, newKind)
+    }
+
+    override fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement? {
+        val source = unwrap()
+        val tree = source.treeStructure
+        return tree.findChildByType(source.lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)?.toKtLightSourceElement(tree, newKind)
     }
 
     override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
@@ -326,6 +360,20 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
                 process(KtLightSourceElement(expression, offset + expression.startOffset, offset + expression.endOffset, tree), operation)
             }
         }
+    }
+
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        val source = unwrap()
+        return source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.FOR
+    }
+
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
+        val unwrap = unwrap()
+        val children = unwrap.lighterASTNode.getChildren(unwrap.treeStructure)
+        // The solution to find first non comment children will not work here. `treeStructure` can have different root
+        // than original program. Because of that `startOffset` is relative and not in absolute value.
+        val comments = children.takeWhile { it.tokenType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
+        return unwrap.startOffset + comments.sumOf { it.textLength }
     }
 
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {

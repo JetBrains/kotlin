@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -353,9 +354,13 @@ object FirCliExceptionHandler : FirExceptionHandler() {
 
     override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
         if (throwable is VirtualMachineError) throw throwable
+        val fileSource = file.source
         throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
             file.sourceFile?.path,
-            file.source,
+            fileSource,
+            isInsideFile = { source ->
+                fileSource != null && with(file.moduleData.session.syntaxComponent) { source.isInsideFile(fileSource) }
+            },
         ) { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) }
     }
 }

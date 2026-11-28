@@ -499,8 +499,8 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         visitElement(literalExpression)
 
         if (literalExpression.kind == ConstantValueKind.String) {
-            tags += if (literalExpression.source?.lighterASTNode.toString().contains("\"\"\"")) FirTags.MULTILINE_STRING_LITERAL
-            else FirTags.STRING_LITERAL
+            val isMultiline = literalExpression.source?.text?.contains("\"\"\"") == true
+            tags += if (isMultiline) FirTags.MULTILINE_STRING_LITERAL else FirTags.STRING_LITERAL
         }
 
         if (literalExpression.kind == ConstantValueKind.UnsignedByte ||

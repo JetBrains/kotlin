@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.hasValOrVar
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 
 object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -38,7 +39,7 @@ object FirDataClassPrimaryConstructorChecker : FirRegularClassChecker(MppChecker
             if (parameter.isVararg) {
                 reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_VARARG_PARAMETER)
             }
-            if (parameter.source?.hasValOrVar() != true) {
+            if (withSyntax { parameter.source?.hasValOrVar() } != true) {
                 reporter.reportOn(parameter.source, FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER)
             }
         }

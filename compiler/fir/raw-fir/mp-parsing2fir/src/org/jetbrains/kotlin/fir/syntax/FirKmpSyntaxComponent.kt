@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.syntax.KmpParseTreeKind
@@ -38,6 +39,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.extractModifierList(): FirModifierList? {
         notYetImplemented()
     }
@@ -59,6 +64,18 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
     }
 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement? {
         notYetImplemented()
     }
 
@@ -115,6 +132,14 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
     }
 
     override fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit) {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getStartOffsetSkippingComments(): Int {
         notYetImplemented()
     }
 

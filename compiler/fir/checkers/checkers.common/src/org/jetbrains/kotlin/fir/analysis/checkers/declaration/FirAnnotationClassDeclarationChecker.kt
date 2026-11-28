@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.hasValOrVar
-import org.jetbrains.kotlin.diagnostics.hasVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.canBeEvaluated
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER_ERROR
 import org.jetbrains.kotlin.fir.declarations.*
@@ -26,10 +20,12 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.types.Variance
 
 object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
@@ -63,9 +59,10 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             is FirConstructorSymbol if member.isPrimary -> {
                 for (parameter in member.valueParameterSymbols) {
                     val source = parameter.source ?: continue
-                    if (!source.hasValOrVar()) {
+                    val valOrVarKeyword = withSyntax { source.valOrVarKeyword }
+                    if (valOrVarKeyword == null) {
                         reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
-                    } else if (source.hasVar()) {
+                    } else if (valOrVarKeyword == ValOrVarKeyword.VAR) {
                         reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER)
                     }
                     if (parameter.hasDefaultValue && parameter.resolvedDefaultValue != null && !canBeEvaluated(parameter.resolvedDefaultValue!!)) {

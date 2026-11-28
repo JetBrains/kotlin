@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
 import org.jetbrains.kotlin.kmp.lexer.BasicElementTypes
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
@@ -22,7 +21,9 @@ import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.isExpression
 
 @Suppress("UnstableApiUsage")
 abstract class AbstractMultiplatformParsingRawFirBuilder(
@@ -44,8 +45,10 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return BasicElementTypes.getElementTypeId(this)
     }
 
-    override fun KtSourceElement.isChildInParentheses(): Boolean =
-        (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        require(this is KtLightSourceElement)
+        return (treeStructure.getParent(lighterASTNode) as? KotlinLightAstNode)?.node?.tokenType == KtNodeTypes.PARENTHESIZED
+    }
 
     override fun LightNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
         val startOffset = tree.getStartOffset(this)
@@ -91,8 +94,8 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         }
 
     override val LightNode.indexExpressions: List<LightNode>?
-        get() = getLastChildExpression()?.let { lastChild ->
-            tree.getChildren(lastChild).filter { it.toTokenId().isExpression() }
+        get() = getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.INDICES)?.let { indices ->
+            tree.getChildren(indices).filter { it.toTokenId().isExpression() }
         }
 
     override fun LightNode.getParent(): LightNode? {

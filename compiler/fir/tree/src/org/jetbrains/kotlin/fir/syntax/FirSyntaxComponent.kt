@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -103,6 +104,11 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
         }
     }
 
+    /**
+     * Returns whether the element belongs to the file with the [fileSource] source.
+     */
+    abstract fun KtSourceElement.isInsideFile(fileSource: KtSourceElement): Boolean
+
     abstract fun KtSourceElement.extractModifierList(): FirModifierList?
 
     abstract fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement>
@@ -118,6 +124,23 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.findValOrVarKeywordSource(): KtSourceElement?
 
     abstract fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement?
+
+    /**
+     * Returns the selector of a qualified expression (`b` in `a.b` or `a?.b`), or `null` if it's missing.
+     * This should only be called for a source element corresponding to a qualified expression.
+     */
+    abstract fun KtSourceElement.findSelectorOfQualifiedSource(): KtSourceElement?
+
+    /**
+     * Returns the parent of the element in the syntax tree as a source element of the given [newKind], or `null` if it's the root.
+     */
+    abstract fun KtSourceElement.findParentSource(newKind: KtSourceElementKind): KtSourceElement?
+
+    /**
+     * Returns the operation reference of an operation expression (`+` in `a + b`, `!` in `!a`, `as` in `a as T`, `is` in `a is T`)
+     * as a source element of the given [newKind], or `null` if the element is not an operation expression.
+     */
+    abstract fun KtSourceElement.findOperationReferenceSource(newKind: KtSourceElementKind): KtSourceElement?
 
     /**
      * Returns whether the operand of this assignment is parenthesized, labeled or annotated.
@@ -224,6 +247,16 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
      * ```
      */
     abstract fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit)
+
+    /**
+     * Returns whether the element is a direct child of a `for` loop (e.g., the loop parameter).
+     */
+    abstract fun KtSourceElement.isChildOfForLoop(): Boolean
+
+    /**
+     * Returns the start offset of the element, skipping its leading comments (e.g., KDoc) and the whitespace after them.
+     */
+    abstract fun KtSourceElement.getStartOffsetSkippingComments(): Int
 
     /**
      * Finds the annotations on [typeArgument] of the call if it's an underscore type argument (`_`).
