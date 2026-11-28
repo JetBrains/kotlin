@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.backend.common.diagnostics
 
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationDiagnosticRenderers.CONFLICTING_KLIB_SIGNATURES_DATA
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.error1
+import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -22,6 +29,9 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 
 object SerializationErrors : KtDiagnosticsContainer() {
     val CONFLICTING_KLIB_SIGNATURES_ERROR by error1<ConflictingKlibSignaturesData>()
+    val DOT_IN_TOP_LEVEL_DECLARATION_NAME by error1<String>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
+    val LEADING_LESS_THAN_IN_DECLARATION_NAME by error1<String>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
+    val SLASH_IN_DECLARATION_NAME by error1<String>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
     val KLIB_LOADING_ERROR by errorWithoutSource()
     val KLIB_LOADING_WARNING by strongWarningWithoutSource()
     val KLIB_LOADING_INFO = KtSourcelessDiagnosticFactory("KLIB_LOADING_INFO", Severity.INFO, getRendererFactory())
@@ -37,6 +47,21 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
             SerializationErrors.CONFLICTING_KLIB_SIGNATURES_ERROR,
             "Platform declaration clash: {0}",
             CONFLICTING_KLIB_SIGNATURES_DATA,
+        )
+        map.put(
+            SerializationErrors.DOT_IN_TOP_LEVEL_DECLARATION_NAME,
+            "Name ''{0}'' of a top-level declaration cannot contain ''.'' because it is not supported by the KLIB format.",
+            CommonRenderers.STRING,
+        )
+        map.put(
+            SerializationErrors.LEADING_LESS_THAN_IN_DECLARATION_NAME,
+            "Name ''{0}'' of this declaration cannot start with ''<'' because it is not supported by the KLIB format.",
+            CommonRenderers.STRING,
+        )
+        map.put(
+            SerializationErrors.SLASH_IN_DECLARATION_NAME,
+            "Name ''{0}'' of this declaration cannot contain ''/'' because it is not supported by the KLIB format.",
+            CommonRenderers.STRING,
         )
         map.put(SerializationErrors.KLIB_LOADING_ERROR, "{0}")
         map.put(SerializationErrors.KLIB_LOADING_WARNING, "{0}")

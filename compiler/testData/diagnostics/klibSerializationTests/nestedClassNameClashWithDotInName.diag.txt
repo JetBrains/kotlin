@@ -1,0 +1,26 @@
+Module: lib
+/lib.kt:12:5: error: Platform declaration clash: The following declarations have the same IR signature (lib/A.B.C.<init>|<init>(){}[0]):
+    constructor(): A.B.C defined in lib in module <lib>
+    constructor(): A.B.C defined in lib in module <lib>
+
+/lib.kt:12:5: error: Platform declaration clash: The following declarations have the same IR signature (lib/A.B.C|null[0]):
+    class B.C : Any defined in lib in module <lib>
+    class C : Any defined in lib in module <lib>
+
+/lib.kt:13:9: error: Platform declaration clash: The following functions have the same IR signature (lib/A.B.C.value|value(){}[0]):
+    fun value(): String defined in lib in module <lib>
+    fun value(): String defined in lib in module <lib>
+
+/lib.kt:17:9: error: Platform declaration clash: The following declarations have the same IR signature (lib/A.B.C.<init>|<init>(){}[0]):
+    constructor(): A.B.C defined in lib in module <lib>
+    constructor(): A.B.C defined in lib in module <lib>
+
+/lib.kt:17:9: error: Platform declaration clash: The following declarations have the same IR signature (lib/A.B.C|null[0]):
+    class B.C : Any defined in lib in module <lib>
+    class C : Any defined in lib in module <lib>
+
+/lib.kt:18:13: error: Platform declaration clash: The following functions have the same IR signature (lib/A.B.C.value|value(){}[0]):
+    fun value(): String defined in lib in module <lib>
+    fun value(): String defined in lib in module <lib>
+Module: main
+/main.kt:29:13: error: Unresolved reference 'C'.

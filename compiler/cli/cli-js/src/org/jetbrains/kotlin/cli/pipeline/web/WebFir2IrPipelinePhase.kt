@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.backend.common.checkers.KlibDeclarationNamesChecker
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -147,4 +148,5 @@ private fun runWebKlibCallCheckers(
     }
 
     irModuleFragment.acceptVoid(checker)
+    KlibDeclarationNamesChecker.check(irModuleFragment, irDiagnosticReporter)
 }

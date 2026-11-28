@@ -1,0 +1,4 @@
+compiler/testData/cli/declarationNameWithLeadingLessThan.kt:2:5: error: name '<function' of this declaration cannot start with '<' because it is not supported by the KLIB format.
+fun `<function`() {}
+    ^^^^^^^^^^^
+COMPILATION_ERROR

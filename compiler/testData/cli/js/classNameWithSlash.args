@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../classNameWithSlash.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+classNameWithSlash.kt
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

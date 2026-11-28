@@ -1,0 +1,4 @@
+compiler/testData/cli/topLevelDeclarationNameWithDot.kt:2:5: error: name 'MyClass.field' of a top-level declaration cannot contain '.' because it is not supported by the KLIB format.
+val `MyClass.field` = 1
+    ^^^^^^^^^^^^^^^
+COMPILATION_ERROR
