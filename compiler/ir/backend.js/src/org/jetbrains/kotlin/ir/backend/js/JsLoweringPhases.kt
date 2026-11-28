@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveUnusedDelegatedPropertyReferencesLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
@@ -70,6 +71,9 @@ fun jsLoweringsOfTheFirstPhase(
         if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
             this += ::createJsCodeOutliningPhaseOnFirstStage
         }
+
+        // Inspect delegated operator calls before the shared first-stage passes inline them.
+        this += ::RemoveUnusedDelegatedPropertyReferencesLowering
         this += loweringsOfTheFirstPhase(languageVersionSettings)
         this += ::TailrecCheckerLowering
     }
