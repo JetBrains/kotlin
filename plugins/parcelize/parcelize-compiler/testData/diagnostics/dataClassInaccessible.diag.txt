@@ -1,0 +1,3 @@
+/dataClassInaccessible.kt:16:17: error: Type is not directly supported by 'Parcelize' because it contains an instance of Secret. Add the '@TypeParceler<Secret, ...>' annotation to provide the missing serialization logic.
+
+/dataClassInaccessible.kt:17:20: error: Type is not directly supported by 'Parcelize' because it contains an instance of Secret. Add the '@TypeParceler<Secret, ...>' annotation to provide the missing serialization logic.

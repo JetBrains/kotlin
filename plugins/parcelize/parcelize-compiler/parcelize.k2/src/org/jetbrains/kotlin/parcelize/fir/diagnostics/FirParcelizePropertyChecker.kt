@@ -85,10 +85,11 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val source = property.returnTypeRef.source
         val unsubstitutedType = UnsubstitutedTypeWithOrigin(type, origin = null)
         val unsupported = checkParcelableType(type, ParcelizeTypeCheckState(context, customParcelerTypes, source, unsubstitutedType))
-        // A property type which is unsupported as a whole is reported with a single diagnostic, which suggests adding '@RawValue'.
-        // That suggestion does not apply to recursive data classes, nor to types which already have '@RawValue', so these are
-        // reported by the loop below instead, like the unsupported types inside the property type.
-        val isUnsupportedType = unsupported.any { it.type == type && it.reason != UnsupportedType.Reason.RECURSIVE_DATA_CLASS }
+        // A property type which is not supported as a whole is reported with a single diagnostic, which suggests adding '@RawValue'.
+        // That suggestion does not apply to data classes which are serialized property by property, since '@RawValue' does not change
+        // that, nor to types which already have '@RawValue', so these are reported by the loop below instead, like the unsupported
+        // types inside the property type.
+        val isUnsupportedType = unsupported.any { it.type == type && it.reason == UnsupportedType.Reason.NOT_SUPPORTED }
         if (isUnsupportedType && !type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES, session)) {
             reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
             return
