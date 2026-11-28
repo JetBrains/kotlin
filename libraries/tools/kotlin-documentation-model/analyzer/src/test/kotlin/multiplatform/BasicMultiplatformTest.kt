@@ -4,10 +4,9 @@
 
 package multiplatform
 
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -59,7 +58,8 @@ class BasicMultiplatformTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = {
                 val fn = it.dfs { it is DFunction && it.name == "fn" } as DFunction
-                assertEquals(DRI("multiplatform", "A"), fn.parameters.firstOrNull()?.type?.driOrNull)
+                val paramType = fn.parameters.firstOrNull()?.type as? GenericTypeConstructor
+                assertEquals(KdElementId("multiplatform/A"), paramType?.declarationId)
             }
         }
     }

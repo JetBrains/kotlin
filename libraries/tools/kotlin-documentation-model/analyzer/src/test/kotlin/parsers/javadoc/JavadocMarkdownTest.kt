@@ -5,9 +5,6 @@
 package parsers.javadoc
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.A
 import org.jetbrains.dokka.model.doc.BlockQuote
@@ -34,6 +31,7 @@ import org.jetbrains.dokka.model.doc.Th
 import org.jetbrains.dokka.model.doc.THead
 import org.jetbrains.dokka.model.doc.Tr
 import org.jetbrains.dokka.model.doc.Ul
+import org.jetbrains.kotlin.documentation.KdElementId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -120,10 +118,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                             children = listOf(
                                 Text("Returns a hash code value for the object. This method is supported for the benefit of hash tables such as those provided by "),
                                 DocumentationLink(
-                                    dri = DRI(
-                                        packageName = "java.util",
-                                        classNames = "HashMap"
-                                    ),
+                                    declarationId = KdElementId("java.util/HashMap"),
                                     children = listOf(Text("java.util.HashMap"))
                                 ),
                                 Text(".")
@@ -160,14 +155,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("If two objects are equal according to the "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "Object",
-                                                callable = Callable(
-                                                    name = "equals",
-                                                    params = listOf(JavaClassReference("java.lang.Object"))
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/Object#equals#M6SLt1k650Y"),
                                             children = listOf(Text("equals"))
                                         ),
                                         Text(" method, then calling the "),
@@ -186,14 +174,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                         ),
                                         Text(" required that if two objects are unequal according to the "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "Object",
-                                                callable = Callable(
-                                                    name = "equals",
-                                                    params = listOf(JavaClassReference("java.lang.Object"))
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/Object#equals#M6SLt1k650Y"),
                                             children = listOf(Text("equals"))
                                         ),
                                         Text(" method, then calling the "),
@@ -227,14 +208,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                 val see1Root = getFirstClassDocumentationNodeChildren(modules, 2)
                 assertTrue { see1Root is See }
                 assertEquals(
-                    DRI(
-                        packageName = "java.lang",
-                        classNames = "Object",
-                        callable = Callable(
-                            name = "equals",
-                            params = listOf(JavaClassReference("java.lang.Object"))
-                        )
-                    ),
+                    KdElementId("java.lang/Object#equals#M6SLt1k650Y"),
                     (see1Root as See).address
                 )
 
@@ -242,16 +216,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                 val see2Root = getFirstClassDocumentationNodeChildren(modules, 3)
                 assertTrue { see2Root is See }
                 assertEquals(
-                    DRI(
-                        packageName = "java.lang",
-                        classNames = "System",
-                        callable = Callable(
-                            name = "identityHashCode",
-                            params = listOf(JavaClassReference("java.lang.Object")),
-                            isProperty = false,
-                            isCompanion = true
-                        )
-                    ),
+                    KdElementId("java.lang/System#identityHashCode#04oK_c6gg6I"),
                     (see2Root as See).address
                 )
             }
@@ -354,7 +319,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("a package "),
                                         DocumentationLink(
-                                            dri = DRI(packageName = "java.util"),
+                                            declarationId = KdElementId("java.util"),
                                             children = listOf(Text("java.util"))
                                         )
                                     )
@@ -363,10 +328,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("a class "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String"
-                                            ),
+                                            declarationId = KdElementId("java.lang/String"),
                                             children = listOf(Text("String"))
                                         )
                                     )
@@ -375,16 +337,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("a field "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String",
-                                                callable = Callable(
-                                                    name = "CASE_INSENSITIVE_ORDER",
-                                                    params = emptyList(),
-                                                    isProperty = true,
-                                                    isCompanion = true
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/String#CASE_INSENSITIVE_ORDER#IfqD6rn7vBU"),
                                             children = listOf(Text("String#CASE_INSENSITIVE_ORDER"))
                                         )
                                     )
@@ -393,14 +346,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("a method "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String",
-                                                callable = Callable(
-                                                    name = "isEmpty",
-                                                    params = emptyList()
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/String#isEmpty#KK4ERoLQuv0"),
                                             children = listOf(Text("String#isEmpty()"))
                                         )
                                     )
@@ -408,7 +354,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                 Li(
                                     children = listOf(
                                         DocumentationLink(
-                                            dri = DRI(packageName = "java.util"),
+                                            declarationId = KdElementId("java.util"),
                                             children = listOf(Text("the java.util package"))
                                         )
                                     )
@@ -416,10 +362,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                 Li(
                                     children = listOf(
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String"
-                                            ),
+                                            declarationId = KdElementId("java.lang/String"),
                                             children = listOf(Text("a class"))
                                         )
                                     )
@@ -427,16 +370,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                 Li(
                                     children = listOf(
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String",
-                                                callable = Callable(
-                                                    name = "CASE_INSENSITIVE_ORDER",
-                                                    params = emptyList(),
-                                                    isProperty = true,
-                                                    isCompanion = true
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/String#CASE_INSENSITIVE_ORDER#IfqD6rn7vBU"),
                                             children = listOf(Text("a field"))
                                         )
                                     )
@@ -444,14 +378,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                 Li(
                                     children = listOf(
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String",
-                                                callable = Callable(
-                                                    name = "isEmpty",
-                                                    params = emptyList()
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/String#isEmpty#KK4ERoLQuv0"),
                                             children = listOf(Text("a method"))
                                         )
                                     )
@@ -460,16 +387,7 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                     children = listOf(
                                         Text("escaped square brackets in reference "),
                                         DocumentationLink(
-                                            dri = DRI(
-                                                packageName = "java.lang",
-                                                classNames = "String",
-                                                callable = Callable(
-                                                    name = "copyValueOf",
-                                                    params = listOf(JavaClassReference("char[]")),
-                                                    isProperty = false,
-                                                    isCompanion = true
-                                                )
-                                            ),
+                                            declarationId = KdElementId("java.lang/String#copyValueOf#MsupeU4AnAY"),
                                             children = listOf(Text("String#copyValueOf(char[])"))
                                         )
                                     )

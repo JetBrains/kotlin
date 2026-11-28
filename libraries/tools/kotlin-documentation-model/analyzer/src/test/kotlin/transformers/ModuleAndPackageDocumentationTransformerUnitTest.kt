@@ -9,7 +9,6 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationTransformer
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.SourceSetDependent
@@ -17,6 +16,7 @@ import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.documentation.KdElementId
 import testApi.testRunner.dPackage
 import testApi.testRunner.sourceSet
 import kotlin.test.Test
@@ -135,10 +135,10 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                 override fun read(module: DModule): SourceSetDependent<DocumentationNode> = emptyMap()
                 override fun read(pkg: DPackage): SourceSetDependent<DocumentationNode> {
                     /* Only attach documentation to packages with 'attach' */
-                    if ("attach" !in pkg.dri.packageName.orEmpty()) return emptyMap()
+                    if ("attach" !in pkg.packageName) return emptyMap()
                     /* Only attach documentation to two source sets */
                     return pkg.sourceSets.take(2).associateWith { sourceSet ->
-                        documentationNode("doc:${sourceSet.displayName}:${pkg.dri.packageName}")
+                        documentationNode("doc:${sourceSet.displayName}:${pkg.packageName}")
                     }
                 }
                 override fun read(module: DokkaConfiguration.DokkaModuleDescription): DocumentationNode = throw NotImplementedError()
@@ -153,21 +153,21 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                     sourceSets = emptySet(),
                     packages = listOf(
                         dPackage(
-                            dri = DRI("com.sample"),
+                            declarationId = KdElementId("com.sample"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.sample")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                         ),
                         dPackage(
-                            dri = DRI("com.attach"),
+                            declarationId = KdElementId("com.attach"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C"))
                         ),
                         dPackage(
-                            dri = DRI("com.attach.sub"),
+                            declarationId = KdElementId("com.attach.sub"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach.sub"),
                                 sourceSet("B") to documentationNode("pre-existing:B:com.attach.sub"),
@@ -183,18 +183,18 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
         result.single().packages.forEach { pkg ->
             assertEquals(
                 setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")), pkg.sourceSets,
-                "Expected source sets A, B, C for package ${pkg.dri.packageName}"
+                "Expected source sets A, B, C for package "
             )
         }
 
-        val comSample = result.single().packages.single { it.dri.packageName == "com.sample" }
+        val comSample = result.single().packages.single { it.packageName == "com.sample" }
         assertEquals(
             mapOf(sourceSet("A") to documentationNode("pre-existing:A:com.sample")),
             comSample.documentation,
             "Expected no documentation added to package 'com.sample' because of wrong package"
         )
 
-        val comAttach = result.single().packages.single { it.dri.packageName == "com.attach" }
+        val comAttach = result.single().packages.single { it.packageName == "com.attach" }
         assertEquals(
             mapOf(
                 sourceSet("A") to documentationNode("pre-existing:A:com.attach", "doc:A:com.attach"),
@@ -211,7 +211,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                 sourceSets = emptySet(),
                 packages = listOf(
                     dPackage(
-                        dri = DRI("com.sample"),
+                        declarationId = KdElementId("com.sample"),
                         documentation = mapOf(
                             /* No documentation added, since in wrong package */
                             sourceSet("A") to documentationNode("pre-existing:A:com.sample")
@@ -220,7 +220,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
 
                         ),
                     dPackage(
-                        dri = DRI("com.attach"),
+                        declarationId = KdElementId("com.attach"),
                         documentation = mapOf(
                             /* Documentation added */
                             sourceSet("A") to documentationNode("pre-existing:A:com.attach", "doc:A:com.attach"),
@@ -229,7 +229,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                         sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                     ),
                     dPackage(
-                        dri = DRI("com.attach.sub"),
+                        declarationId = KdElementId("com.attach.sub"),
                         documentation = mapOf(
                             /* Documentation added */
                             sourceSet("A") to documentationNode(

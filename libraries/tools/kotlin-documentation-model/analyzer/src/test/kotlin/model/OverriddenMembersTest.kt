@@ -6,8 +6,9 @@
 package model
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.*
 
@@ -64,13 +65,13 @@ internal class OverriddenMembersTest : BaseAbstractTest() {
                 val sourceSet = derived.sourceSets.single().sourceSetID.sourceSetName
                 for (name in listOf("foo", "bar")) {
                     assertTrue(root.member(name).overridens(sourceSet).isEmpty())
-                    assertEquals(listOf(root.member(name).dri), left.member(name).overridens(sourceSet))
-                    assertEquals(listOf(root.member(name).dri), right.member(name).overridens(sourceSet))
+                    assertEquals(listOf(root.member(name).declarationId), left.member(name).overridens(sourceSet))
+                    assertEquals(listOf(root.member(name).declarationId), right.member(name).overridens(sourceSet))
                     assertEquals(
-                        setOf(left.member(name).dri, right.member(name).dri),
+                        setOf(left.member(name).declarationId, right.member(name).declarationId),
                         derived.member(name).overridens(sourceSet).toSet(),
                     )
-                    assertEquals(derived.member(name).dri, inherited.member(name).dri)
+                    assertEquals(derived.member(name).declarationId, inherited.member(name).declarationId)
                     assertEquals(derived.member(name).overridens(sourceSet), inherited.member(name).overridens(sourceSet))
                 }
                 assertTrue(derived.member("unrelated").overridens(sourceSet).isEmpty())
@@ -106,7 +107,7 @@ internal class OverriddenMembersTest : BaseAbstractTest() {
             documentablesMergingStage = { module ->
                 val classes = module.packages.single().classlikes.associateBy { it.name }
                 fun declaredFoo(owner: String): DFunction = classes.getValue(owner).functions.single {
-                    it.name == "foo" && it.dri.classNames == owner
+                    it.name == "foo" && declarationIdToClassNames(it.declarationId) == owner
                 }
 
                 val root = declaredFoo("Root")
@@ -114,8 +115,8 @@ internal class OverriddenMembersTest : BaseAbstractTest() {
                 val child = declaredFoo("Child")
                 val sourceSet = child.sourceSets.single().sourceSetID.sourceSetName
                 assertTrue(root.overridens(sourceSet).isEmpty())
-                assertEquals(listOf(root.dri), base.overridens(sourceSet))
-                assertEquals(listOf(base.dri), child.overridens(sourceSet))
+                assertEquals(listOf(root.declarationId), base.overridens(sourceSet))
+                assertEquals(listOf(base.declarationId), child.overridens(sourceSet))
             }
         }
     }
@@ -166,9 +167,9 @@ internal class OverriddenMembersTest : BaseAbstractTest() {
                     val members = derived.flatMap { it.functions + it.properties }.filter { it.name == name }
                     val common = members.single { member -> member.sourceSets.any { it.sourceSetID.sourceSetName == "common" } }
                     val jvm = members.single { member -> member.sourceSets.any { it.sourceSetID.sourceSetName == "jvm" } }
-                    assertEquals(common.dri, jvm.dri)
-                    assertEquals(listOf("Root"), common.overridens("common").map { it.classNames })
-                    assertEquals(listOf("Base"), jvm.overridens("jvm").map { it.classNames })
+                    assertEquals(common.declarationId, jvm.declarationId)
+                    assertEquals(listOf("Root"), common.overridens("common").mapNotNull { declarationIdToClassNames(it) })
+                    assertEquals(listOf("Base"), jvm.overridens("jvm").mapNotNull { declarationIdToClassNames(it) })
                 }
             }
             documentablesCreationStage = { checkTargets(it) }
@@ -179,7 +180,7 @@ internal class OverriddenMembersTest : BaseAbstractTest() {
     private fun DClasslike.member(name: String): Documentable =
         (functions + properties).single { it.name == name }
 
-    private fun Documentable.overridens(sourceSetName: String): List<DRI> {
+    private fun Documentable.overridens(sourceSetName: String): List<KdElementId> {
         val extra = when (this) {
             is DFunction -> extra[OverriddenMembers]
             is DProperty -> extra[OverriddenMembers]

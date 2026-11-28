@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -64,22 +65,8 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
         if (isUndocumented(documentable, sourceSet)) {
             val documentableDescription = with(documentable) {
                 buildString {
-                    dri.packageName?.run {
-                        append(this)
-                        append("/")
-                    }
-
-                    dri.classNames?.run {
-                        append(this)
-                        append("/")
-                    }
-
-                    dri.callable?.run {
-                        append(name)
-                        append("/")
-                        append(signature())
-                        append("/")
-                    }
+                    append(declarationId)
+                    append("/")
 
                     val sourceSetName = sourceSet.displayName
                     if (sourceSetName != null.toString()) {
@@ -135,7 +122,7 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
         dokkaSourceSet: DokkaSourceSet,
         documentable: Documentable
     ): DokkaConfiguration.PackageOptions? {
-        val packageName = documentable.dri.packageName ?: return null
+        val packageName = declarationIdToPackageName(documentable.declarationId).ifEmpty { null } ?: return null
         return dokkaSourceSet.perPackageOptions
             .filter { packageOptions -> Regex(packageOptions.matchingRegex).matches(packageName) }
             .maxByOrNull { packageOptions -> packageOptions.matchingRegex.length }

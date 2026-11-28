@@ -9,13 +9,14 @@ package org.jetbrains.kotlin.documentation.analyzer.internal
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.kotlin.documentation.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.documentation.analyzer.KdAnalyzerSourceSet
+import org.jetbrains.kotlin.documentation.analyzer.ids.reownDeclarationId
 
 /**
  * Converts a single, merged [DModule] (the result of the internal Dokka analysis/merge pipeline, see
@@ -32,19 +33,20 @@ internal class DocumentableConverter(
     private val fragmentNames = sourceSets.map { it.name }
 
     /**
-     * A member's [InheritedMember.inheritedFrom] whose (package, class) isn't in this set points at a declaration
-     * outside the analyzed module (JDK, Kotlin stdlib, any other classpath dependency), which needs
+     * A member's [InheritedMember.inheritedFrom] or a supertype whose declaration ID isn't in this set points at
+     * a declaration outside the analyzed module (JDK, Kotlin stdlib, any other classpath dependency), which needs
      * [KdFragment.embeddedElements] support.
      */
-    private val internalClasslikeDris: Set<Pair<String?, String?>> = buildSet {
+    private val internalClasslikeIds: Set<KdElementId> = buildSet {
         fun visit(node: Documentable) {
-            if (node is DClasslike) add(node.dri.packageName to node.dri.classNames)
+            if (node is DClasslike) add(node.declarationId)
             node.children.forEach(::visit)
         }
         visit(module)
     }
 
-    private fun isExternalClass(dri: DRI): Boolean = (dri.packageName to dri.classNames) !in internalClasslikeDris
+    /** Whether the classlike with the given declaration ID is outside the analyzed module. */
+    private fun isExternalClass(declarationId: KdElementId): Boolean = declarationId !in internalClasslikeIds
 
     private fun pickDeclaredSourceSetOrDependent(d: Documentable, fragmentName: String): DokkaConfiguration.DokkaSourceSet =
         d.sourceSets.firstOrNull { it.sourceSetID.sourceSetName == fragmentName } ?: // exact source set
@@ -108,7 +110,7 @@ internal class DocumentableConverter(
                     ?.let { module.extra.annotationsIn(it) }.orEmpty(),
                 documentation = KdDocumentation.EMPTY,
             )
-            elements.putElement(module.dri.toKdElementId(), element)
+            elements.putElement(module.declarationId, element)
         }
 
         // embed external elements
@@ -125,15 +127,15 @@ internal class DocumentableConverter(
         embeddedElements: MutableMap<KdElementId, KdElement>,
     ) {
         val provider = context.plugin<KotlinAnalysisPlugin>().querySingle { externalDocumentableProvider }
-        val visited = mutableSetOf<Pair<DRI, DokkaConfiguration.DokkaSourceSet>>()
+        val visited = mutableSetOf<Pair<KdElementId, DokkaConfiguration.DokkaSourceSet>>()
         fun visit(node: Documentable) {
             if (node is WithSupertypes) {
                 val ss = pickDeclaredSourceSetOrNull(node.supertypes.keys, fragmentName)
                 if (ss != null) {
-                    for (dri in node.supertypes.getValue(ss).map { it.typeConstructor.dri }) {
-                        if (!isExternalClass(dri) || !visited.add(dri to ss)) continue
-                        val external = provider.getClasslike(dri, ss) ?: continue
-                        val id = dri.toKdElementId()
+                    for (superId in node.supertypes.getValue(ss).map { it.typeConstructor.declarationId }) {
+                        if (!isExternalClass(superId) || !visited.add(superId to ss)) continue
+                        val external = provider.getClasslike(superId, ss) ?: continue
+                        val id = external.declarationId
                         if (id !in elements && id !in embeddedElements) {
                             val members = linkedMapOf<KdElementId, KdElement>()
                             val declarations = visitClasslikeChildren(external, fragmentName, members, members)
@@ -151,7 +153,7 @@ internal class DocumentableConverter(
         require(embeddedElements.keys.none { it in elements })
     }
 
-    fun assumeUniqueDRIinEachSourceSet(documentables: List<Documentable>): Boolean {
+    fun assumeUniqueDeclarationIdInEachSourceSet(documentables: List<Documentable>): Boolean {
         /** TODO KT-91717 case
          *
          *```
@@ -169,10 +171,10 @@ internal class DocumentableConverter(
          */
         val filteredDocumentables = documentables.filter { (it as? DClasslike)?.let { node -> actualTypealias(node) } == null }
 
-        val seen = mutableSetOf<Pair<DRI, DokkaSourceSetID>>()
+        val seen = mutableSetOf<Pair<KdElementId, DokkaSourceSetID>>()
         return filteredDocumentables.all { documentable ->
             documentable.sourceSets.all { sourceSet ->
-                seen.add(documentable.dri to sourceSet.sourceSetID)
+                seen.add(documentable.declarationId to sourceSet.sourceSetID)
             }
         }
     }
@@ -185,7 +187,7 @@ internal class DocumentableConverter(
     ): KdElementId? {
         if (!isVisibleFromDependentSourceSet(pkg, fragmentName)) return null
 
-        require(assumeUniqueDRIinEachSourceSet(pkg.children))
+        require(assumeUniqueDeclarationIdInEachSourceSet(pkg.children))
 
         val declarations = mutableListOf<KdElementId>()
 
@@ -194,8 +196,8 @@ internal class DocumentableConverter(
         pkg.classlikes.forEach { visitClasslike(it, fragmentName, elements, embeddedElements)?.let(declarations::add) }
         pkg.typealiases.forEach { visitTypealias(it, fragmentName, elements)?.let(declarations::add) }
 
-        // The root package and the module have the same textual DRI.
-        val id = if (pkg.packageName.isEmpty()) KdElementId("package:${pkg.dri}") else pkg.dri.toKdElementId()
+        // The root package's ID is `/` and the module's is `#module`, so they never clash.
+        val id = pkg.declarationId
         val element = KdPackage(
             name = pkg.packageName,
             declarations = declarations,
@@ -225,11 +227,11 @@ internal class DocumentableConverter(
     ): KdElementId? {
         if (shouldBeTakenFromDeclaredSourceSets) {
             val declaredSourceSet = pickDeclaredSourceSetOrNull(node.sourceSets, fragmentName) ?: return null
-            return elements.putElement(node.dri.toKdElementId(), build(node, declaredSourceSet))
+            return elements.putElement(node.declarationId, build(node, declaredSourceSet))
         } else if (!isVisibleFromDependentSourceSet(node, fragmentName)) return null
 
         return elements.putIfRefined(node, fragmentName)
-            ?: elements.putElement(node.dri.toKdElementId(), build(node, pickDeclaredSourceSetOrDependent(node, fragmentName)))
+            ?: elements.putElement(node.declarationId, build(node, pickDeclaredSourceSetOrDependent(node, fragmentName)))
     }
 
     private fun <T : Documentable> MutableMap<KdElementId, KdElement>.putIfRefined(
@@ -239,13 +241,13 @@ internal class DocumentableConverter(
         val ownerName = pickDeclaredSourceSetOrNull(node.sourceSets, fragmentName)
         if (ownerName != null) return null
         val original = pickDeclaredSourceSetOrDependent(node, fragmentName).sourceSetID.sourceSetName
-        val id = node.dri.toKdElementId()
-        putElement(node.dri.toKdElementId(), KdRefinedElement(original))
+        val id = node.declarationId
+        putElement(id, KdRefinedElement(original))
         return id
     }
 
     /**
-     * [c] is every raw Dokka sibling sharing [DClasslike.dri]: normally just one, but
+     * [c] is every raw Dokka sibling sharing [DClasslike.declarationId]: normally just one, but
      * reanalysing common sources can provide a class-like declaration in every source set from which it is accessible
      */
     private fun visitClasslike(
@@ -262,7 +264,7 @@ internal class DocumentableConverter(
             return null
         }
 
-        val id = c.dri.toKdElementId()
+        val id = c.declarationId
         val childIds = visitClasslikeChildren(c, fragmentName, elements, embeddedElements)
 
         val element = buildClassElement(c, ownSourceSet, childIds, isCompanion)
@@ -278,7 +280,7 @@ internal class DocumentableConverter(
         elements: MutableMap<KdElementId, KdElement>,
         embeddedElements: MutableMap<KdElementId, KdElement>,
     ): List<KdElementId> = buildList {
-        val companionDri = (node as? WithCompanion)?.companion?.dri
+        val companionId = (node as? WithCompanion)?.companion?.declarationId
         val sourceSetName = pickDeclaredSourceSetOrDependent(node, fragmentName).sourceSetID.sourceSetName
 
         fun Documentable.isPresent(): Boolean = sourceSets.any { it.sourceSetID.sourceSetName == sourceSetName }
@@ -288,15 +290,15 @@ internal class DocumentableConverter(
             visitConstructor(it, fragmentName, elements)?.let(::add)
         }
         node.functions.filter { it.isPresent() }.forEach {
-            visitFunction(it, fragmentName, elements, embeddedElements, node.dri)?.let(::add)
+            visitFunction(it, fragmentName, elements, embeddedElements, node.declarationId)?.let(::add)
         }
         node.properties.filter { it.isPresent() }.forEach {
-            visitProperty(it, fragmentName, elements, embeddedElements, node.dri)?.let(::add)
+            visitProperty(it, fragmentName, elements, embeddedElements, node.declarationId)?.let(::add)
         }
         node.classlikes.forEach {
             visitClasslike(
                 it, fragmentName, elements, embeddedElements,
-                isCompanion = it.dri == companionDri,
+                isCompanion = it.declarationId == companionId,
             )?.let(::add)
         }
         (node as? WithTypealiases)?.typealiases?.forEach { visitTypealias(it, fragmentName, elements)?.let(::add) }
@@ -307,34 +309,29 @@ internal class DocumentableConverter(
         fragmentName: String,
         elements: MutableMap<KdElementId, KdElement>,
         embeddedElements: MutableMap<KdElementId, KdElement>,
-        containingClassDri: DRI? = null,
+        containingClassId: KdElementId? = null,
     ): KdElementId? {
-        if (containingClassDri == null) {
+        if (containingClassId == null) {
             return addDeclaration(f, fragmentName, elements, build = ::buildFunctionElement)
         }
         // members have always source sets from which they are accessible
         val ownerSs = pickDeclaredSourceSetOrNull(f.sourceSets, fragmentName) ?: return null
-        val inheritedFrom = f.extra[InheritedMember]?.inheritedFrom?.get(ownerSs)?.takeUnless {
-            it.packageName == containingClassDri.packageName && it.classNames == containingClassDri.classNames
-        }
-        val originalId = f.dri.toKdElementId()
+        val inheritedFrom = f.extra[InheritedMember]?.inheritedFrom?.get(ownerSs)?.takeUnless { it == containingClassId }
+        val originalId = f.declarationId
 
         if (inheritedFrom != null && isExternalClass(inheritedFrom)) {
-            val originalId = f.dri.toKdElementId()
             embeddedElements[originalId] = buildFunctionElement(f, ownerSs)
-            val perClassId =
-                f.dri.copy(packageName = containingClassDri.packageName, classNames = containingClassDri.classNames).toKdElementId()
+            val perClassId = reownDeclarationId(f.declarationId, containingClassId)
             elements.putElement(perClassId, KdInheritedMember(originalId))
             return perClassId
         } else if (inheritedFrom != null) {
-            val perClassId =
-                f.dri.copy(packageName = containingClassDri.packageName, classNames = containingClassDri.classNames).toKdElementId()
+            val perClassId = reownDeclarationId(f.declarationId, containingClassId)
             elements.putElement(perClassId, KdInheritedMember(originalId))
             return perClassId
         }
 
         return elements.putIfRefined(f, fragmentName)
-            ?: elements.putElement(f.dri.toKdElementId(), buildFunctionElement(f, ownerSs))
+            ?: elements.putElement(f.declarationId, buildFunctionElement(f, ownerSs))
     }
 
     private fun visitProperty(
@@ -342,36 +339,34 @@ internal class DocumentableConverter(
         fragmentName: String,
         elements: MutableMap<KdElementId, KdElement>,
         embeddedElements: MutableMap<KdElementId, KdElement>,
-        containingClassDri: DRI? = null,
+        containingClassId: KdElementId? = null,
     ): KdElementId? {
-        if (containingClassDri == null) {
+        if (containingClassId == null) {
             return addDeclaration(f, fragmentName, elements) { f, ss ->
-                val accessors = visitAccessors(f, ss, fragmentName, elements, embeddedElements, containingClassDri)
+                val accessors = visitAccessors(f, ss, fragmentName, elements, embeddedElements, containingClassId)
                 buildPropertyElement(f, ss, accessors.getter, accessors.setter)
             }
         }
         // members have always source sets from which they are accessible
         val ownerSs = pickDeclaredSourceSetOrNull(f.sourceSets, fragmentName) ?: return null
-        val inheritedFrom = f.extra[InheritedMember]?.inheritedFrom?.get(ownerSs)
-        val originalId = f.dri.toKdElementId()
+        val inheritedFrom = f.extra[InheritedMember]?.inheritedFrom?.get(ownerSs)?.takeUnless { it == containingClassId }
+        val originalId = f.declarationId
 
         if (inheritedFrom != null && isExternalClass(inheritedFrom)) {
-            val accessors = visitAccessors(f, ownerSs, fragmentName, elements, embeddedElements, containingClassDri)
+            val accessors = visitAccessors(f, ownerSs, fragmentName, elements, embeddedElements, containingClassId)
             embeddedElements[originalId] = buildPropertyElement(f, ownerSs, accessors.getter, accessors.setter)
-            val perClassId =
-                f.dri.copy(packageName = containingClassDri.packageName, classNames = containingClassDri.classNames).toKdElementId()
+            val perClassId = reownDeclarationId(f.declarationId, containingClassId)
             elements.putElement(perClassId, KdInheritedMember(originalId))
             return perClassId
         } else if (inheritedFrom != null) {
-            val perClassId =
-                f.dri.copy(packageName = containingClassDri.packageName, classNames = containingClassDri.classNames).toKdElementId()
+            val perClassId = reownDeclarationId(f.declarationId, containingClassId)
             elements.putElement(perClassId, KdInheritedMember(originalId))
             return perClassId
         }
 
         elements.putIfRefined(f, fragmentName)?.let { return originalId }
 
-        val accessors = visitAccessors(f, ownerSs, fragmentName, elements, embeddedElements, containingClassDri)
+        val accessors = visitAccessors(f, ownerSs, fragmentName, elements, embeddedElements, containingClassId)
         val element = buildPropertyElement(f, ownerSs, accessors.getter, accessors.setter)
 
         return elements.putElement(originalId, element)
@@ -399,13 +394,18 @@ internal class DocumentableConverter(
         fragmentName: String,
         elements: MutableMap<KdElementId, KdElement>,
         embeddedElements: MutableMap<KdElementId, KdElement>,
-        containingClassDri: DRI?,
+        containingClassId: KdElementId?,
     ): AccessorIds {
-        val getterId = p.getter?.takeIf { isNonDefaultAccessor(it, p, ss) }
-            ?.let { visitFunction(it, fragmentName, elements, embeddedElements, containingClassDri) }
-        val setterId = p.setter?.takeIf { isNonDefaultAccessor(it, p, ss) }
-            ?.let { visitFunction(it, fragmentName, elements, embeddedElements, containingClassDri) }
-        return AccessorIds(getterId, setterId)
+        // Accessors are not declarations and share their property's declaration ID, so they cannot be
+        // emitted as separate elements (the property's own element occupies that ID). When an accessor is
+        // non-default, the corresponding `KdProperty` field references the property's own element instead.
+        val hasNonDefaultGetter = p.getter?.let { isNonDefaultAccessor(it, p, ss) } == true
+        val hasNonDefaultSetter = p.setter?.let { isNonDefaultAccessor(it, p, ss) } == true
+        val accessorId = p.declarationId.takeIf { hasNonDefaultGetter || hasNonDefaultSetter }
+        return AccessorIds(
+            getter = if (hasNonDefaultGetter) accessorId else null,
+            setter = if (hasNonDefaultSetter) accessorId else null,
+        )
     }
 
     /**
@@ -424,21 +424,21 @@ internal class DocumentableConverter(
 
     /** Records expect/actual relationships even when Dokka merges their declarations into a single ID. */
     private fun collectExpectActualMappings(): List<KdExpectActualMapping> {
-        val expectIds = linkedMapOf<DRI, MutableMap<KdFragmentName, KdElementId>>()
-        val actualIds = linkedMapOf<DRI, MutableMap<KdFragmentName, KdElementId>>()
+        val expectIds = linkedMapOf<KdElementId, MutableMap<KdFragmentName, KdElementId>>()
+        val actualIds = linkedMapOf<KdElementId, MutableMap<KdFragmentName, KdElementId>>()
         fun visit(node: Documentable) {
             val actualTypealias = (node as? DClasslike)?.let(::actualTypealias)
             val expectSourceSet = node.expectPresentInSet
             if (expectSourceSet != null && (node as? WithIsExpectActual)?.isExpectActual == true) {
-                val id = node.dri.toKdElementId()
-                expectIds.getOrPut(node.dri) { linkedMapOf() }[expectSourceSet.sourceSetID.sourceSetName] = id
-                val actuals = actualIds.getOrPut(node.dri) { linkedMapOf() }
+                val id = node.declarationId
+                expectIds.getOrPut(node.declarationId) { linkedMapOf() }[expectSourceSet.sourceSetID.sourceSetName] = id
+                val actuals = actualIds.getOrPut(node.declarationId) { linkedMapOf() }
                 for (sourceSet in node.sourceSets - expectSourceSet) {
                     actuals[sourceSet.sourceSetID.sourceSetName] = id
                 }
                 actualTypealias?.typeAlias?.let { typeAlias ->
                     for (sourceSet in typeAlias.sourceSets) {
-                        actuals[sourceSet.sourceSetID.sourceSetName] = typeAlias.dri.toKdElementId()
+                        actuals[sourceSet.sourceSetID.sourceSetName] = typeAlias.declarationId
                     }
                 }
             }

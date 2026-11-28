@@ -1,5 +1,5 @@
 fragment main
-interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+interface Base [example/Base].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,12 +8,12 @@ interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBo
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": true,
   "annotations": []
 }
 
-constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+constructor(value: T) [example/Types##QyF3JRolhKo].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -22,29 +22,29 @@ constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequenc
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+constructor(value: T) [example/Types##QyF3JRolhKo].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/Types///PointingToDeclaration/",
+  "containerElementId": "example/Types",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-val value: T [example/Types/value/#/PointingToDeclaration/].type:
+val value: T [example/Types#value#ctE8McQtNZQ].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/Types///PointingToDeclaration/",
+  "containerElementId": "example/Types",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-val nullable: String? [example/Types/nullable/#/PointingToDeclaration/].type:
+val nullable: String? [example/Types#nullable#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -53,12 +53,12 @@ val nullable: String? [example/Types/nullable/#/PointingToDeclaration/].type:
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String",
   "isMarkedNullable": true,
   "annotations": []
 }
 
-val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/].type:
+val nested: Map<String, List<T?>> [example/Types#nested#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -75,7 +75,7 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -93,7 +93,7 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
                     "type": {
                       "kind": "typeParameter",
                       "name": "T",
-                      "containerElementId": "example/Types///PointingToDeclaration/",
+                      "containerElementId": "example/Types",
                       "isMarkedNullable": true,
                       "annotations": []
                     }
@@ -101,7 +101,7 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
                 ]
               }
             ],
-            "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+            "classLikeId": "kotlin.collections/List",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -109,12 +109,12 @@ val nested: Map<String, List<T?>> [example/Types/nested/#/PointingToDeclaration/
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/Map///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/Map",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-val projections: Map<in String, out List<*>> [example/Types/projections/#/PointingToDeclaration/].type:
+val projections: Map<in String, out List<*>> [example/Types#projections#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -131,7 +131,7 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -150,7 +150,7 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
                 ]
               }
             ],
-            "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+            "classLikeId": "kotlin.collections/List",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -158,12 +158,12 @@ val projections: Map<in String, out List<*>> [example/Types/projections/#/Pointi
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/Map///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/Map",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+class Types [example/Types].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -172,11 +172,11 @@ class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBoun
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-class Types [example/Types///PointingToDeclaration/].superTypes[0]:
+class Types [example/Types].superTypes[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -196,7 +196,7 @@ class Types [example/Types///PointingToDeclaration/].superTypes[0]:
                     "type": {
                       "kind": "typeParameter",
                       "name": "T",
-                      "containerElementId": "example/Types///PointingToDeclaration/",
+                      "containerElementId": "example/Types",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -204,7 +204,7 @@ class Types [example/Types///PointingToDeclaration/].superTypes[0]:
                 ]
               }
             ],
-            "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+            "classLikeId": "kotlin.collections/List",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -212,12 +212,12 @@ class Types [example/Types///PointingToDeclaration/].superTypes[0]:
       ]
     }
   ],
-  "classLikeId": "example/Base///PointingToDeclaration/",
+  "classLikeId": "example/Base",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+fun transform(value: R): T [example/MultipleBounds#transform#jcNo03en_rY].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -226,11 +226,11 @@ fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+fun transform(value: R): T [example/MultipleBounds#transform#jcNo03en_rY].typeParameters[0].upperBounds[1]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -242,7 +242,7 @@ fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[
           "type": {
             "kind": "typeParameter",
             "name": "R",
-            "containerElementId": "example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/",
+            "containerElementId": "example/MultipleBounds#transform#jcNo03en_rY",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -250,28 +250,28 @@ fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[
       ]
     }
   ],
-  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "classLikeId": "kotlin/Comparable",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].valueParameters[0].type:
+fun transform(value: R): T [example/MultipleBounds#transform#jcNo03en_rY].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "R",
-  "containerElementId": "example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/",
+  "containerElementId": "example/MultipleBounds#transform#jcNo03en_rY",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun transform(value: R): T [example/MultipleBounds/transform/#TypeParam(bounds=[kotlin.CharSequence, kotlin.Comparable[^]])/PointingToDeclaration/].returnType:
+fun transform(value: R): T [example/MultipleBounds#transform#jcNo03en_rY].returnType:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/MultipleBounds///PointingToDeclaration/",
+  "containerElementId": "example/MultipleBounds",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+interface MultipleBounds [example/MultipleBounds].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -280,11 +280,11 @@ interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeP
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+interface MultipleBounds [example/MultipleBounds].typeParameters[0].upperBounds[1]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -296,7 +296,7 @@ interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeP
           "type": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/MultipleBounds///PointingToDeclaration/",
+            "containerElementId": "example/MultipleBounds",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -304,8 +304,7 @@ interface MultipleBounds [example/MultipleBounds///PointingToDeclaration/].typeP
       ]
     }
   ],
-  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "classLikeId": "kotlin/Comparable",
   "isMarkedNullable": false,
   "annotations": []
 }
-

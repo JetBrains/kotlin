@@ -2,22 +2,20 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-@file:OptIn(ExperimentalDokkaApi::class)
-
 package model
 
-import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.IsCompanion
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.GenericTypeConstructor
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 /**
@@ -26,10 +24,10 @@ import kotlin.test.assertTrue
  *
  * They are represented in Dokka in the same way as Java static declarations and
  * enum synthetic declarations (`values` / `valueOf` / `entries`):
- *   - the [org.jetbrains.dokka.links.DRI]'s [org.jetbrains.dokka.links.Callable.isCompanion] is `true`
- *   - the documentable carries [IsCompanion] in its extra container
+ * the documentable carries [IsCompanion] in its extra container (companion-ness also
+ * participates in the callable's declaration ID through the signature hash).
  *
- * See [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md).
+ * See [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companion-block-extension.md).
  */
 @MustRunOnChangesInAnalysisApi
 class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.kt", "companions") {
@@ -50,7 +48,6 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
                 val unit = functions.firstOrNull { it.name == "unit" }
                     .assertNotNull("companion-block function 'unit'")
                 unit.extra[IsCompanion].assertNotNull("CompanionBlockMember on 'unit'")
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) unit.dri.callable?.isCompanion, "DRI for 'unit' should be marked isStatic=true")
             }
         }
     }
@@ -75,8 +72,6 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
 
                 zero.extra[IsCompanion].assertNotNull("CompanionBlockMember on 'Zero'")
                 dimensions.extra[IsCompanion].assertNotNull("CompanionBlockMember on 'Dimensions'")
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) zero.dri.callable?.isCompanion)
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) dimensions.dri.callable?.isCompanion)
             }
         }
     }
@@ -101,15 +96,13 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
                     .assertNotNull("instance property 'name'")
 
                 assertEquals(null, length.extra[IsCompanion])
-                assertEquals(false, @OptIn(ExperimentalDokkaApi::class) length.dri.callable?.isCompanion)
                 assertEquals(null, name.extra[IsCompanion])
-                assertEquals(false, @OptIn(ExperimentalDokkaApi::class) name.dri.callable?.isCompanion)
             }
         }
     }
 
     @Test
-    fun `companion-block and instance with same name have distinct DRIs`() {
+    fun `companion-block and instance with same name have distinct declaration ids`() {
         inlineModelTest(
             """
             |class Holder {
@@ -128,16 +121,11 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
                 val instance = foos.single { it.extra[IsCompanion] == null }
                 val companion = foos.single { it.extra[IsCompanion] != null }
 
-                assertEquals(false, @OptIn(ExperimentalDokkaApi::class) instance.dri.callable?.isCompanion)
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) companion.dri.callable?.isCompanion)
-                assertTrue(
-                    instance.dri.callable?.signature() != companion.dri.callable?.signature(),
-                    "Callable signatures must differ between instance and companion-block members"
-                )
-                assertEquals(
-                    true,
-                    companion.dri.callable?.signature()?.endsWith("/companion"),
-                    "Companion-block signature must end with the /companion marker"
+                // The companion marker is part of the hashed signature, so the IDs differ
+                assertNotEquals(
+                    instance.declarationId,
+                    companion.declarationId,
+                    "Declaration IDs must differ between instance and companion-block members"
                 )
             }
         }
@@ -158,8 +146,6 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
 
                 values.extra[IsCompanion].assertNotNull("CompanionBlockMember on 'values'")
                 valueOf.extra[IsCompanion].assertNotNull("CompanionBlockMember on 'valueOf'")
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) values.dri.callable?.isCompanion)
-                assertEquals(true, @OptIn(ExperimentalDokkaApi::class) valueOf.dri.callable?.isCompanion)
             }
         }
     }
@@ -193,7 +179,7 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
     // `companion` modifier, e.g. `companion fun Vector.unit(): Vector`.
     //
     // They are represented in Dokka the same way as companion-block members:
-    // the documentable carries the [CompanionBlockMember] extra (driven by
+    // the documentable carries the [IsCompanion] extra (driven by
     // the Analysis API's `KaCallableSymbol.isCompanion` flag).
     // ----------------------------------------------------------------------
 
@@ -212,7 +198,7 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
             ext.extra[IsCompanion].assertNotNull("CompanionBlockMember on companion extension 'unit'")
             // sanity-check it is in fact an extension: receiver is non-null and resolves to Vector
             assertTrue(ext.receiver != null, "companion extension must keep its receiver in the documentable")
-            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver.type)
+            assertEquals(GenericTypeConstructor(KdElementId("companions/Vector"), emptyList()), ext.receiver.type)
         }
     }
 
@@ -228,9 +214,9 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
             val pkg = packages.single()
             val ext = pkg.properties.firstOrNull { it.name == "UnitX" }
                 .assertNotNull("top-level companion extension property 'UnitX'")
-            ext.extra[IsCompanion].assertNotNull("CompanionBlockMember on companion extension 'UnitX'")
+            ext.extra[IsCompanion].assertNotNull("CompanionBlockMember on companion extension property 'UnitX'")
             assertTrue(ext.receiver != null, "companion extension property must keep its receiver")
-            assertEquals(GenericTypeConstructor(DRI("companions", "Vector"), emptyList()), ext.receiver.type)
+            assertEquals(GenericTypeConstructor(KdElementId("companions/Vector"), emptyList()), ext.receiver.type)
         }
     }
 
@@ -250,8 +236,8 @@ class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.k
             val nameExt = pkg.properties.firstOrNull { it.name == "name" }
                 .assertNotNull("plain extension property 'name'")
 
-            assertEquals(null, @OptIn(ExperimentalDokkaApi::class) length.extra[IsCompanion])
-            assertEquals(null, @OptIn(ExperimentalDokkaApi::class) nameExt.extra[IsCompanion])
+            assertEquals(null, length.extra[IsCompanion])
+            assertEquals(null, nameExt.extra[IsCompanion])
         }
     }
 

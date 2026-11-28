@@ -5,7 +5,7 @@
 package translators
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -41,7 +41,7 @@ class Bug1341 : BaseAbstractTest() {
             configuration
         ) {
             this.documentablesMergingStage = { module ->
-                assertEquals(DRI("com.sample"), module.packages.single().dri)
+                assertEquals(KdElementId("com.sample"), module.packages.single().declarationId)
             }
         }
     }

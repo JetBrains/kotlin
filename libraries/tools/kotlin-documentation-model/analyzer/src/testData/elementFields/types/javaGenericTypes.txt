@@ -1,5 +1,5 @@
 fragment main
-constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+constructor() [example/JavaTypes##BQUPY8Hx2_4].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,11 +8,11 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+constructor() [example/JavaTypes##BQUPY8Hx2_4].typeParameters[0].upperBounds[1]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -24,7 +24,7 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
           "type": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "containerElementId": "example/JavaTypes",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -32,12 +32,12 @@ constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParamet
       ]
     }
   ],
-  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "classLikeId": "kotlin/Comparable",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+fun convert(input: R): R [example/JavaTypes#convert#QePe2yUvK20].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -46,11 +46,11 @@ fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].t
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Number///PointingToDeclaration/",
+  "classLikeId": "kotlin/Number",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+fun convert(input: R): R [example/JavaTypes#convert#QePe2yUvK20].typeParameters[0].upperBounds[1]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -62,7 +62,7 @@ fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].t
           "type": {
             "kind": "typeParameter",
             "name": "R",
-            "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+            "containerElementId": "example/JavaTypes#convert#QePe2yUvK20",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -70,37 +70,37 @@ fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].t
       ]
     }
   ],
-  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "classLikeId": "kotlin/Comparable",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].valueParameters[0].type:
+fun convert(input: R): R [example/JavaTypes#convert#QePe2yUvK20].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "R",
-  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "containerElementId": "example/JavaTypes#convert#QePe2yUvK20",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].returnType:
+fun convert(input: R): R [example/JavaTypes#convert#QePe2yUvK20].returnType:
 {
   "kind": "typeParameter",
   "name": "R",
-  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "containerElementId": "example/JavaTypes#convert#QePe2yUvK20",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var typeParameter: T [example/JavaTypes/typeParameter/#/PointingToDeclaration/].type:
+var typeParameter: T [example/JavaTypes#typeParameter#ctE8McQtNZQ].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+  "containerElementId": "example/JavaTypes",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/PointingToDeclaration/].type:
+var parameterized: MutableList<String> [example/JavaTypes#parameterized#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -117,7 +117,7 @@ var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/Pointi
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -125,12 +125,12 @@ var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/Pointi
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableList",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/PointingToDeclaration/].type:
+var nested: MutableMap<String, MutableList<T>> [example/JavaTypes#nested#ctE8McQtNZQ].type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -147,7 +147,7 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -165,7 +165,7 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
                     "type": {
                       "kind": "typeParameter",
                       "name": "T",
-                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "containerElementId": "example/JavaTypes",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -173,7 +173,7 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
                 ]
               }
             ],
-            "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+            "classLikeId": "kotlin.collections/MutableList",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -181,12 +181,12 @@ var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/Point
       ]
     }
   ],
-  "classLikeId": "kotlin.collections/MutableMap///PointingToDeclaration/",
+  "classLikeId": "kotlin.collections/MutableMap",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+class JavaTypes [example/JavaTypes].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -195,11 +195,11 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+class JavaTypes [example/JavaTypes].typeParameters[0].upperBounds[1]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -211,7 +211,7 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
           "type": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "containerElementId": "example/JavaTypes",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -219,11 +219,11 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].u
       ]
     }
   ],
-  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "classLikeId": "kotlin/Comparable",
   "isMarkedNullable": false,
   "annotations": []
 }
-class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
+class JavaTypes [example/JavaTypes].superTypes[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -243,7 +243,7 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
                     "type": {
                       "kind": "typeParameter",
                       "name": "T",
-                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "containerElementId": "example/JavaTypes",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -251,7 +251,7 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
                 ]
               }
             ],
-            "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+            "classLikeId": "kotlin.collections/MutableList",
             "isMarkedNullable": false,
             "annotations": []
           }
@@ -259,12 +259,12 @@ class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
       ]
     }
   ],
-  "classLikeId": "example/Base///PointingToDeclaration/",
+  "classLikeId": "example/Base",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+interface Base [example/Base].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -273,8 +273,7 @@ interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBo
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": false,
   "annotations": []
 }
-

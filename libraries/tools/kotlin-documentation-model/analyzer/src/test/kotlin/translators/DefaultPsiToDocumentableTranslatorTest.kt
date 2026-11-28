@@ -8,10 +8,12 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaConfiguration.Visibility
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
+import org.jetbrains.kotlin.documentation.analyzer.ids.ownerDeclarationIdOf
 import kotlin.test.*
 
 class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
@@ -191,7 +193,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 assertEquals(
-                    Annotations.Annotation(DRI("sample", "PackageAnnotation"), emptyMap()),
+                    Annotations.Annotation(KdElementId("sample/PackageAnnotation"), emptyMap()),
                     module.packages.single().extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 )
             }
@@ -304,7 +306,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 val annotation = (testedClass as DClass).extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertNotNull(annotation)
 
-                assertEquals("JavaAnnotation", annotation.dri.classNames)
+                assertEquals("JavaAnnotation", declarationIdToClassNames(annotation.classLikeId))
 
                 assertEquals(IntValue(3), annotation.params["byteValue"])
                 assertEquals(IntValue(4), annotation.params["shortValue"])
@@ -443,7 +445,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 val setter = property.setter
                 assertNotNull(setter)
                 assertEquals(1, setter.parameters.size)
-                assertEquals(GenericTypeConstructor(DRI("kotlin", "Int"), emptyList(), null), setter.parameters[0].type)
+                assertEquals(GenericTypeConstructor(KdElementId("kotlin/Int"), emptyList(), null), setter.parameters[0].type)
 
                 val regularSetterFunctions = testClass.functions.filter { it.name == "setA" }
                 assertEquals(4, regularSetterFunctions.size)
@@ -715,11 +717,11 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
         ) {
             documentablesMergingStage = { module ->
                 val expectedType = GenericTypeConstructor(
-                    dri = DRI(packageName = "test", classNames = "JavaEnum", target = PointingToDeclaration),
+                    declarationId = KdElementId("test/JavaEnum"),
                     projections = emptyList()
                 )
                 val expectedArrayType = GenericTypeConstructor(
-                    dri = DRI("kotlin", "Array", target = PointingToDeclaration),
+                    declarationId = KdElementId("kotlin/Array"),
                     projections = listOf(Invariance(expectedType))
                 )
 
@@ -788,17 +790,11 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 assertEquals(expectedDocumentation, valuesFunction.documentation.values.single())
 
                 val expectedValuesType = GenericTypeConstructor(
-                    dri = DRI(
-                        packageName = "kotlin",
-                        classNames = "Array"
-                    ),
+                    declarationId = KdElementId("kotlin/Array"),
                     projections = listOf(
                         Invariance(
                             GenericTypeConstructor(
-                                dri = DRI(
-                                    packageName = "test",
-                                    classNames = "JavaEnum"
-                                ),
+                                declarationId = KdElementId("test/JavaEnum"),
                                 projections = emptyList()
                             )
                         )
@@ -858,11 +854,7 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                     ),
                     Throws(
                         name = "java.lang.IllegalArgumentException",
-                        exceptionAddress = DRI(
-                            packageName = "java.lang",
-                            classNames = "IllegalArgumentException",
-                            target = PointingToDeclaration
-                        ),
+                        exceptionAddress = KdElementId("java.lang/IllegalArgumentException"),
                         root = CustomDocTag(
                             children = listOf(
                                 P(listOf(
@@ -876,17 +868,14 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                 assertEquals(expectedDocumentation, valueOfFunction.documentation.values.single())
 
                 val expectedValueOfType = GenericTypeConstructor(
-                    dri = DRI(
-                        packageName = "test",
-                        classNames = "JavaEnum"
-                    ),
+                    declarationId = KdElementId("test/JavaEnum"),
                     projections = emptyList()
                 )
                 assertEquals(expectedValueOfType, valueOfFunction.type)
 
-                val valueOfParamDRI = (valueOfFunction.parameters.single().type as GenericTypeConstructor).dri
+                val valueOfParamId = (valueOfFunction.parameters.single().type as GenericTypeConstructor).declarationId
                 // Symbols analysis maps the java.lang.String parameter of the synthetic valueOf to kotlin.String
-                assertEquals(DRI(packageName = "kotlin", classNames = "String"), valueOfParamDRI)
+                assertEquals(KdElementId("kotlin/String"), valueOfParamId)
             }
         }
     }
@@ -1021,9 +1010,9 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
                 assertEquals(1, testedClass.constructors.size, "Expect 1 default constructor")
 
-                val constructorDRI = testedClass.constructors.first().dri
-                assertEquals("org.test", constructorDRI.packageName)
-                assertEquals("A", constructorDRI.classNames)
+                val constructorId = testedClass.constructors.first().declarationId
+                assertEquals("org.test", declarationIdToPackageName(ownerDeclarationIdOf(constructorId)))
+                assertEquals("A", declarationIdToClassNames(ownerDeclarationIdOf(constructorId)))
             }
         }
     }

@@ -1,0 +1,9 @@
+sample
+sample/Bar
+sample/Bar##kind=function; typeParameters=[<T0_0>: ];
+sample/ReBarBar
+sample/ReBarBar##kind=function;
+sample/Foo
+sample/Foo##kind=function; typeParameters=[<T0_0>: kotlin/Comparable<*>, <T0_1>: kotlin.collections/List<sample/Bar<*>>];
+sample#qux#kind=function; typeParameters=[<T0_0>: kotlin/Comparable<kotlin/Any?>]; receiver=sample/Foo<<T0_0>, *>;
+sample#qux#kind=function; typeParameters=[<T0_0>: kotlin/Comparable<*>]; receiver=sample/Foo<<T0_0>, *>;

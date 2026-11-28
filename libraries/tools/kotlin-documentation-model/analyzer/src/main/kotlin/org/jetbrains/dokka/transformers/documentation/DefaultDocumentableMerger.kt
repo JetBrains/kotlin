@@ -52,7 +52,7 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
     }
 
     private fun <T : Documentable> merge(elements: List<T>, reducer: (T, T) -> T): List<T> =
-        elements.groupingBy { it.dri }
+        elements.groupingBy { it.declarationId }
             .reduce { _, left, right -> reducer(left, right) }
             .values.toList()
 
@@ -66,43 +66,43 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
                 val merged = listOfDocumentableToSSIds.map { (documentable, sourceSets) ->
                     when (documentable) {
                         is DClass -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DObject -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DAnnotation -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DInterface -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DEnum -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DFunction -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DProperty -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         is DTypeAlias -> documentable.copy(
-                            extra = documentable.extra + ClashingDriIdentifier(
-                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            extra = documentable.extra + ClashingDeclarationId(
+                                sourceSets + (documentable.extra[ClashingDeclarationId]?.value ?: emptySet())
                             )
                         )
                         else -> documentable
@@ -113,8 +113,8 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
             }
 
 
-        fun analyzeExpectActual(sameDriElements: List<T>): List<T> {
-            val (expects, actuals) = sameDriElements.partition { it.expectPresentInSet != null }
+        fun analyzeExpectActual(sameIdElements: List<T>): List<T> {
+            val (expects, actuals) = sameIdElements.partition { it.expectPresentInSet != null }
             // It's possible that there are no `expect` declarations, but there are `actual` declarations,
             // e.g. in case `expect` is `internal` or filtered previously for some other reason.
             // In this case we just merge `actual` declarations without `expect`
@@ -141,8 +141,8 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
             (it as? WithIsExpectActual)?.isExpectActual ?: false
         }.let { (expectActuals, notExpectActuals) ->
             notExpectActuals.map { it to it.sourceSets }
-                .groupBy { it.first.dri }.values.flatMap(::mergeClashingElements) +
-                    expectActuals.groupBy { it.dri }.values.flatMap(::analyzeExpectActual)
+                .groupBy { it.first.declarationId }.values.flatMap(::mergeClashingElements) +
+                    expectActuals.groupBy { it.declarationId }.values.flatMap(::analyzeExpectActual)
         }
     }
 
@@ -303,16 +303,16 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
     ).mergeExtras(this, other)
 }
 
-internal data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
-    companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
+internal data class ClashingDeclarationId(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
+    companion object : ExtraProperty.Key<Documentable, ClashingDeclarationId> {
         override fun mergeStrategyFor(
-            left: ClashingDriIdentifier,
-            right: ClashingDriIdentifier
+            left: ClashingDeclarationId,
+            right: ClashingDeclarationId
         ): MergeStrategy<Documentable> =
-            MergeStrategy.Replace(ClashingDriIdentifier(left.value + right.value))
+            MergeStrategy.Replace(ClashingDeclarationId(left.value + right.value))
     }
 
-    override val key: ExtraProperty.Key<Documentable, *> = ClashingDriIdentifier
+    override val key: ExtraProperty.Key<Documentable, *> = ClashingDeclarationId
 }
 
 // TODO [beresnev] remove this copy-paste and use the same method from stdlib instead after updating to 1.5

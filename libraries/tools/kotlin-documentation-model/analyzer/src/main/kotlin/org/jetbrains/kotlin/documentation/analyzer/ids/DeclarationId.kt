@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSo
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -60,8 +61,8 @@ internal fun generateDeclarationId(
     symbol: KaSymbol,
     typeAliasClassId: ClassId? = null,
     hashSignature: Boolean = true,
-): String = when (symbol) {
-    is KaPackageSymbol -> symbol.fqName.escapePackageId()
+): KdElementId = when (symbol) {
+    is KaPackageSymbol -> symbol.fqName.toPackageDeclarationId()
     is KaNamedClassSymbol -> {
         symbol.classId?.escape() ?: throw IllegalStateException(
             "Non-local classifier has no ClassId: ${@OptIn(KaExperimentalApi::class) symbol.render()}"
@@ -72,22 +73,65 @@ internal fun generateDeclarationId(
             "Non-local type alias has no ClassId: ${@OptIn(KaExperimentalApi::class) symbol.render()}"
         )
     }
-    is KaCallableSymbol -> generateCallableId(symbol, typeAliasClassId, hashSignature)
+    is KaCallableSymbol -> generateCallableId(symbol, typeAliasClassId, hashSignature).value
     else -> throw IllegalArgumentException(
         "Unknown symbol kind: $symbol"
     )
+}.let { KdElementId(it) }
+
+
+/**
+ * Like [generateDeclarationId], but resolves fake overrides (substitution/intersection), synthetic and
+ * delegating callables to the declaration they are a copy of, so inherited copies share the declaring
+ * member's ID. Mirrors the normalization the DRI-based translator performed via `createDRIWithOverridden`.
+ */
+context(session: KaSession)
+internal fun generateDeclarationIdWithOverridden(callableSymbol: KaCallableSymbol): KdElementId =
+    if (callableSymbol.isDeclaration()) {
+        generateDeclarationId(callableSymbol)
+    } else {
+        callableSymbol.directlyOverriddenSymbols.firstOrNull()
+            ?.let { generateDeclarationIdWithOverridden(it) }
+            ?: generateDeclarationId(callableSymbol)
+    }
+
+private fun KaCallableSymbol.isDeclaration(): Boolean =
+    origin == KaSymbolOrigin.SOURCE || origin == KaSymbolOrigin.LIBRARY ||
+            origin == KaSymbolOrigin.JAVA_SOURCE || origin == KaSymbolOrigin.JAVA_LIBRARY
+
+/**
+ * The declaration ID of the declaration that owns [symbol] — e.g. the function declaring a type parameter —
+ * with fake-override normalization applied to callable owners.
+ */
+context(session: KaSession)
+internal fun generateOwnerDeclarationId(symbol: KaSymbol): KdElementId = when (symbol) {
+    is KaCallableSymbol -> generateDeclarationIdWithOverridden(symbol)
+    else -> generateDeclarationId(symbol)
 }
+
+/**
+ * The declaration ID of the enum entry [entryName] of [enumClassId]. Enum entries have a constant
+ * signature (`kind=enum-entry; companion; ` — no type or value parameters; `companion; ` is always
+ * present because [KaEnumEntrySymbol.isCompanion] is unconditionally true), so the entry's ID can
+ * be reconstructed from the class ID and the entry name alone, without the symbol.
+ *
+ * For example, the Analysis API does not resolve annotations to symbols.
+ * Sometimes their symbols are unavailable due to transitive runtime dependencies.
+ */
+internal fun enumEntryDeclarationId(enumClassId: ClassId, entryName: String): KdElementId = KdElementId(
+    "${enumClassId.escape()}#${entryName.escapeName()}#${("kind=" + CallableKind.ENUM_ENTRY.id + "; companion; ").shortHash()}"
+)
 
 context(session: KaSession)
 private fun generateCallableId(
     symbol: KaCallableSymbol,
     typeAliasClassId: ClassId?,
     hashSignature: Boolean,
-): String {
+): KdElementId {
     val kind = callableKind(symbol)
     val prefix = callableIdPrefix(symbol, typeAliasClassId)
     val signature = callableSignature(symbol, kind)
-    return "$prefix#${if (hashSignature) signature.shortHash() else signature}"
+    return KdElementId("$prefix#${if (hashSignature) signature.shortHash() else signature}")
 }
 
 /**
@@ -255,12 +299,13 @@ context(session: KaSession)
 private fun hasObjCSelectorNames(symbol: KaFunctionSymbol): Boolean =
     symbol.isObjCImported() || symbol.allOverriddenSymbols.any { it.isObjCImported() }
 
-private fun ClassId.escape(): String = packageFqName.escape() + "/" + relativeClassName.escape()
+/** The classifier declaration ID of [this] class ID, as produced by [generateDeclarationId] for classifier symbols. */
+internal fun ClassId.escape(): String = packageFqName.escape() + "/" + relativeClassName.escape()
 
 private fun FqName.escape(): String = pathSegments().joinToString(".") { it.asString().escapeName() }
 
 /** The root package's name is empty, so it is identified by the `/` separator alone. */
-private fun FqName.escapePackageId(): String = if (isRoot) "/" else escape()
+internal fun FqName.toPackageDeclarationId(): String = if (isRoot) "/" else escape()
 
 /** Normalize form encoding to preserve percent-encoded spaces and escaped structural separators. */
 private fun String.escapeName(): String =

@@ -7,7 +7,7 @@ package transformers
 import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -44,12 +44,12 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
                 assertEquals(1, module.packages.size, "Expected just a single package in module")
 
                 val pkg = module.packages.single()
-                assertEquals("default", pkg.dri.packageName, "Expected 'default' package in module")
+                assertEquals("default", pkg.packageName, "Expected 'default' package in module")
                 assertEquals(1, pkg.children.size, "Expected just a single child in 'default' package")
                 assertEquals(1, pkg.classlikes.size, "Expected just a single child in 'default' package")
 
                 val classlike = pkg.classlikes.single()
-                assertEquals(DRI("default", "Default"), classlike.dri, "Expected 'Default' class in 'default' package")
+                assertEquals(KdElementId("default/Default"), classlike.declarationId, "Expected 'Default' class in 'default' package")
             }
         }
     }
@@ -94,8 +94,8 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
             documentablesMergingStage = { module ->
                 assertEquals(2, module.packages.size, "Expected two packages in module")
                 assertEquals(
-                    listOf(DRI("parent.some"), DRI("parent.other.default")).sortedBy { it.packageName },
-                    module.packages.map { it.dri }.sortedBy { it.packageName },
+                    listOf("parent.some", "parent.other.default").sorted(),
+                    module.packages.map { it.packageName }.sorted(),
                     "Expected 'parent.some' and 'parent.other.default' packages to be not suppressed"
                 )
             }
@@ -130,12 +130,12 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
                 assertEquals(1, module.packages.size, "Expected just a single package in module")
 
                 val pkg = module.packages.single()
-                assertEquals("default", pkg.dri.packageName, "Expected 'default' package in module")
+                assertEquals("default", pkg.packageName, "Expected 'default' package in module")
                 assertEquals(1, pkg.children.size, "Expected just a single child in 'default' package")
                 assertEquals(1, pkg.classlikes.size, "Expected just a single child in 'default' package")
 
                 val classlike = pkg.classlikes.single()
-                assertEquals(DRI("default", "Default"), classlike.dri, "Expected 'Default' class in 'default' package")
+                assertEquals(KdElementId("default/Default"), classlike.declarationId, "Expected 'Default' class in 'default' package")
             }
         }
     }
@@ -168,12 +168,12 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
                 assertEquals(1, module.packages.size, "Expected just a single package in module")
 
                 val pkg = module.packages.single()
-                assertEquals("default", pkg.dri.packageName, "Expected 'default' package in module")
+                assertEquals("default", pkg.packageName, "Expected 'default' package in module")
                 assertEquals(1, pkg.children.size, "Expected just a single child in 'default' package")
                 assertEquals(1, pkg.classlikes.size, "Expected just a single child in 'default' package")
 
                 val classlike = pkg.classlikes.single()
-                assertEquals(DRI("default", "Default"), classlike.dri, "Expected 'Default' class in 'default' package")
+                assertEquals(KdElementId("default/Default"), classlike.declarationId, "Expected 'Default' class in 'default' package")
             }
         }
     }

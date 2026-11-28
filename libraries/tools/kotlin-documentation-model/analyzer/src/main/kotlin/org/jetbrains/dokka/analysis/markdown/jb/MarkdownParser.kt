@@ -16,16 +16,15 @@ import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.intellij.markdown.html.HtmlGenerator
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.markdown.jb.factories.DocTagsFromIElementFactory
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import java.net.MalformedURLException
 import java.net.URL
 import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 @InternalDokkaApi
 internal open class MarkdownParser(
-    private val externalDri: (String) -> DRI?,
+    private val externalDeclarationId: (String) -> KdElementId?,
     private val kdocLocation: String?,
 ) : Parser() {
 
@@ -54,7 +53,7 @@ internal open class MarkdownParser(
                 See(
                     parseStringToDocNode(content.substringAfter(' ')),
                     referencedName,
-                    externalDri(referencedName)
+                    externalDeclarationId(referencedName)
                 )
             }
             "throws", "exception" -> {
@@ -62,7 +61,7 @@ internal open class MarkdownParser(
                 Throws(
                     parseStringToDocNode(content.substringAfter(' ')),
                     referencedName,
-                    externalDri(referencedName)
+                    externalDeclarationId(referencedName)
                 )
             }
             else -> super.parseTagWithBody(tagName, content)
@@ -193,7 +192,7 @@ internal open class MarkdownParser(
         )
     }
 
-    private fun resolveDRI(mdLink: String): DRI? =
+    private fun resolveDeclarationId(mdLink: String): KdElementId? =
         mdLink
             .removePrefix("[")
             .removeSuffix("]")
@@ -202,7 +201,7 @@ internal open class MarkdownParser(
                     URL(link)
                     null
                 } catch (e: MalformedURLException) {
-                    externalDri(link)
+                    externalDeclarationId(link)
                 }
             }
 
@@ -255,7 +254,7 @@ internal open class MarkdownParser(
     }
 
     private fun linksHandler(linkText: ASTNode, link: String?, linkTitle: ASTNode? = null): List<DocTag> {
-        val dri: DRI? = link?.let { resolveDRI(it) }
+        val declarationId: KdElementId? = link?.let { resolveDeclarationId(it) }
         val linkOrEmpty = link ?: ""
         val linkTextString =
             if (linkTitle == null) linkOrEmpty else text.substring(linkTitle.startOffset + 1, linkTitle.endOffset - 1)
@@ -265,7 +264,7 @@ internal open class MarkdownParser(
         else
             mapOf("href" to linkOrEmpty, "title" to linkTextString)
 
-        return if (link != null && dri == null && !linkOrEmpty.isRemoteLink()) {
+        return if (link != null && declarationId == null && !linkOrEmpty.isRemoteLink()) {
             DocTagsFromIElementFactory.getInstance(
                 MarkdownTokenTypes.TEXT,
                 params = params,
@@ -277,7 +276,7 @@ internal open class MarkdownParser(
                 MarkdownElementTypes.INLINE_LINK,
                 params = params,
                 children = linkText.children.drop(1).dropLast(1).evaluateChildren(),
-                dri = dri
+                declarationId = declarationId
             )
         }
     }
@@ -547,15 +546,6 @@ internal open class MarkdownParser(
 
 
     companion object {
-        fun DRI.fqDeclarationName(): String? {
-            if (this.target !is PointingToDeclaration) {
-                return null
-            }
-            return listOfNotNull(this.packageName, this.classNames, this.callable?.name)
-                .joinToString(separator = ".")
-                .takeIf { it.isNotBlank() }
-        }
-
         // Note: Regex creation is a complex operation, and so it should be created once
         private val blockquoteNewLineRegex = Regex("\n>+ ")
 

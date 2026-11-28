@@ -4,8 +4,8 @@
 
 package org.jetbrains.dokka.model.doc
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.WithChildren
+import org.jetbrains.kotlin.documentation.KdElementId
 
 internal sealed class DocTag : WithChildren<DocTag> {
     public abstract val params: Map<String, String>
@@ -89,7 +89,8 @@ internal data class Dl(
 ) : DocTag()
 
 internal data class DocumentationLink(
-    val dri: DRI,
+    /** The declaration ID of the linked declaration, degraded to its owner classlike for non-classlikes. */
+    val declarationId: KdElementId,
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()

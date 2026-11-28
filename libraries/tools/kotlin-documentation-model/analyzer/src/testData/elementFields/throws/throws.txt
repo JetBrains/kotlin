@@ -1,77 +1,55 @@
 fragment main
-fun annotated(): Unit [sample//annotated/#/PointingToDeclaration/].throws:
+fun annotated(): Unit [sample#annotated#KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/"
+    "classLikeId": "sample/FirstException"
   },
   {
-    "classLikeId": "sample/SecondException///PointingToDeclaration/"
+    "classLikeId": "sample/SecondException"
   }
 ]
 
-fun externalException(): Unit [sample//externalException/#/PointingToDeclaration/].throws:
+fun externalException(): Unit [sample#externalException#KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "java.io/IOException///PointingToDeclaration/"
+    "classLikeId": "java.io/IOException"
   }
 ]
 
-fun getDocumentedProperty(): String [sample//getDocumentedProperty/#/PointingToDeclaration/].throws:
+val documentedProperty: String [sample#documentedProperty#ctE8McQtNZQ].throws:
 [
   {
-    "classLikeId": "sample/SecondException///PointingToDeclaration/"
+    "classLikeId": "sample/SecondException"
   }
 ]
 
-val documentedProperty: String [sample//documentedProperty/#/PointingToDeclaration/].throws:
+constructor() [sample/Constructed##KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "sample/SecondException///PointingToDeclaration/"
+    "classLikeId": "sample/FirstException"
   }
 ]
 
-fun getAccessors(): String [sample//getAccessors/#/PointingToDeclaration/].throws:
+constructor() [sample/JavaDeclarations##KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/"
+    "classLikeId": "sample/FirstException"
   }
 ]
 
-fun setAccessors(value: String): Unit [sample//setAccessors/#kotlin.String/PointingToDeclaration/].throws:
+fun declared(): Unit [sample/JavaDeclarations#declared#KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "sample/SecondException///PointingToDeclaration/"
-  }
-]
-
-constructor() [sample/Constructed/Constructed/#/PointingToDeclaration/].throws:
-[
-  {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/"
-  }
-]
-
-constructor() [sample/JavaDeclarations/JavaDeclarations/#/PointingToDeclaration/].throws:
-[
-  {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/"
-  }
-]
-
-fun declared(): Unit [sample/JavaDeclarations/declared/#/PointingToDeclaration/].throws:
-[
-  {
-    "classLikeId": "sample/FirstException///PointingToDeclaration/"
+    "classLikeId": "sample/FirstException"
   },
   {
-    "classLikeId": "sample/SecondException///PointingToDeclaration/"
+    "classLikeId": "sample/SecondException"
   }
 ]
 
-fun externalException(): Unit [sample/JavaDeclarations/externalException/#/PointingToDeclaration/].throws:
+fun externalException(): Unit [sample/JavaDeclarations#externalException#KK4ERoLQuv0].throws:
 [
   {
-    "classLikeId": "java.io/IOException///PointingToDeclaration/"
+    "classLikeId": "java.io/IOException"
   }
 ]
-

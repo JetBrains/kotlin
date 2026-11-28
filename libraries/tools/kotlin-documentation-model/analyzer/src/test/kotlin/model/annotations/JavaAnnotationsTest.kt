@@ -6,8 +6,10 @@ package model.annotations
 
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import translators.findClasslike
 import translators.findPackage
@@ -57,8 +59,8 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val annotation =
                     annotatedFunction.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
                 assertNotNull(annotation, "Expected to find an annotation on simpleAnnotation function, found none")
-                assertEquals("annotation", annotation.dri.packageName)
-                assertEquals("SimpleAnnotation", annotation.dri.classNames)
+                assertEquals("annotation", declarationIdToPackageName(annotation.classLikeId))
+                assertEquals("SimpleAnnotation", declarationIdToClassNames(annotation.classLikeId))
                 assertEquals(1, annotation.params.size)
 
                 val param = annotation.params.values.single()
@@ -66,8 +68,8 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 // should probably be Array instead
                 // String matches parsing of Kotlin sources as of now
                 assertEquals("String", param.className)
-                assertEquals("java.lang", param.classDRI.packageName)
-                assertEquals("String", param.classDRI.classNames)
+                assertEquals("java.lang", declarationIdToPackageName(param.classLikeId))
+                assertEquals("String", declarationIdToClassNames(param.classLikeId))
             }
         }
     }
@@ -119,7 +121,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
 
                 val annotation = contentField.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
                 assertNotNull(annotation, "Expected to find an annotation on content field, found none")
-                assertEquals("XmlElementRefs", annotation.dri.classNames)
+                assertEquals("XmlElementRefs", declarationIdToClassNames(annotation.classLikeId))
                 assertEquals(1, annotation.params.size)
 
                 val arrayParam = annotation.params.values.single()
@@ -131,7 +133,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
 
                 val arrayParamAnnotationValue = arrayParamValue.annotation
                 assertEquals(4, arrayParamAnnotationValue.params.size)
-                assertEquals("XmlElementRef", arrayParamAnnotationValue.dri.classNames)
+                assertEquals("XmlElementRef", declarationIdToClassNames(arrayParamAnnotationValue.classLikeId))
 
                 val annotationParams = arrayParamAnnotationValue.params.values.toList()
 
@@ -146,8 +148,8 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val typeParam = annotationParams[2]
                 assertTrue(typeParam is ClassValue)
                 assertEquals("JAXBElement", typeParam.className)
-                assertEquals("annotation", typeParam.classDRI.packageName)
-                assertEquals("JAXBElement", typeParam.classDRI.classNames)
+                assertEquals("annotation", declarationIdToPackageName(typeParam.classLikeId))
+                assertEquals("JAXBElement", declarationIdToClassNames(typeParam.classLikeId))
 
                 val requiredParam = annotationParams[3]
                 assertTrue(requiredParam is BooleanValue)
@@ -186,7 +188,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val annotation = testClass.extra[Annotations]?.directAnnotations?.entries?.single()?.value?.single()
                 assertNotNull(annotation, "Expected to find an annotation on TestClass, found none")
 
-                assertEquals("TestAnnotate", annotation.dri.classNames)
+                assertEquals("TestAnnotate", declarationIdToClassNames(annotation.classLikeId))
                 assertEquals(1, annotation.params.size)
 
                 val valueParameter = annotation.params.values.single()
@@ -194,8 +196,8 @@ class JavaAnnotationsTest : BaseAbstractTest() {
 
                 assertEquals("Breaking", valueParameter.className)
 
-                assertEquals("annotation", valueParameter.classDRI.packageName)
-                assertEquals("Breaking", valueParameter.classDRI.classNames)
+                assertEquals("annotation", declarationIdToPackageName(valueParameter.classLikeId))
+                assertEquals("Breaking", declarationIdToClassNames(valueParameter.classLikeId))
             }
         }
     }
@@ -237,7 +239,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val annotation = setter.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
-                        dri = DRI("javax.management", "DescriptorKey"),
+                        classLikeId = KdElementId("javax.management/DescriptorKey"),
                         params = mapOf("value" to StringValue("")),
                         mustBeDocumented = true
                     ), annotation
@@ -248,7 +250,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 val annotation2 = member.extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 assertEquals(
                     Annotations.Annotation(
-                        dri = DRI("javax.management", "DescriptorKey"),
+                        classLikeId = KdElementId("javax.management/DescriptorKey"),
                         params = mapOf("value" to StringValue("")),
                         mustBeDocumented = true
                     ), annotation2
@@ -278,7 +280,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 assertNotNull(pkgAnnotations)
                 val sourceSetPkgAnnotations = pkgAnnotations.directAnnotations.values.single()
                 assertEquals(sourceSetPkgAnnotations.size, 1)
-                assertEquals(sourceSetPkgAnnotations.single().dri.classNames, "Deprecated")
+                assertEquals(declarationIdToClassNames(sourceSetPkgAnnotations.single().classLikeId), "Deprecated")
             }
         }
     }
@@ -308,7 +310,7 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                 assertNotNull(pkgAnnotations)
                 val sourceSetPkgAnnotations = pkgAnnotations.directAnnotations.values.single()
                 assertEquals(sourceSetPkgAnnotations.size, 1)
-                assertEquals(sourceSetPkgAnnotations.single().dri.classNames, "Deprecated")
+                assertEquals(declarationIdToClassNames(sourceSetPkgAnnotations.single().classLikeId), "Deprecated")
             }
         }
     }

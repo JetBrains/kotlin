@@ -66,7 +66,7 @@ internal fun getKDocDocumentationFrom(
 
     parseFromKDocTag(
         kDocTag = kDocContent.primaryTag,
-        externalDri = { resolveKDocLink(it, logger, sourceSet) },
+        externalDeclarationId = { resolveKDocLink(it, logger, sourceSet) },
         kdocLocation = kdocLocation
     )
 }

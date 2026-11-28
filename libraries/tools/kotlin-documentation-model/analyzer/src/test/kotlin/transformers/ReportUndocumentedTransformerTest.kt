@@ -37,7 +37,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = {
                 assertNoUndocumentedReport(Regex("init"))
-                assertSingleUndocumentedReport(Regex("""sample/X/"""))
+                assertSingleUndocumentedReport(Regex("""sample/X"""))
             }
         }
     }
@@ -93,7 +93,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
-                assertSingleUndocumentedReport(Regex("X/x"))
+                assertSingleUndocumentedReport(Regex("X#x"))
             }
         }
     }
@@ -123,7 +123,7 @@ class ReportUndocumentedTransformerTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = {
                 assertSingleUndocumentedReport(Regex("X"))
-                assertSingleUndocumentedReport(Regex("X/x"))
+                assertSingleUndocumentedReport(Regex("X#x"))
             }
         }
     }

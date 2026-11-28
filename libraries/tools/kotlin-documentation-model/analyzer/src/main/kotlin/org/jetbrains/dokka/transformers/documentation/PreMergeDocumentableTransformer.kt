@@ -10,6 +10,7 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.DocumentableSource
 import org.jetbrains.dokka.model.WithSources
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 
 internal interface PreMergeDocumentableTransformer {
     operator fun invoke(modules: List<DModule>): List<DModule>
@@ -29,7 +30,7 @@ internal fun PreMergeDocumentableTransformer.sourceSet(documentable: Documentabl
  * @return The [PackageOptions] associated with this documentable, or null
  */
 internal fun PreMergeDocumentableTransformer.perPackageOptions(documentable: Documentable): PackageOptions? {
-    val packageName = documentable.dri.packageName ?: return null
+    val packageName = declarationIdToPackageName(documentable.declarationId).ifEmpty { null } ?: return null
     return sourceSet(documentable).perPackageOptions
         .sortedByDescending { packageOptions -> packageOptions.matchingRegex.length }
         .firstOrNull { packageOptions -> Regex(packageOptions.matchingRegex).matches(packageName) }

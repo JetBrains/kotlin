@@ -5,9 +5,9 @@
 package testApi.testRunner
 
 import org.jetbrains.dokka.*
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.CustomDocTag
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
@@ -172,7 +172,7 @@ internal fun dModule(
 )
 
 internal fun dPackage(
-    dri: DRI,
+    declarationId: KdElementId,
     functions: List<DFunction> = emptyList(),
     properties: List<DProperty> = emptyList(),
     classlikes: List<DClasslike> = emptyList(),
@@ -182,7 +182,7 @@ internal fun dPackage(
     sourceSets: Set<DokkaConfiguration.DokkaSourceSet> = emptySet(),
     extra: PropertyContainer<DPackage> = PropertyContainer.empty()
 ): DPackage = DPackage(
-    dri = dri,
+    declarationId = declarationId,
     functions = functions,
     properties = properties,
     classlikes = classlikes,

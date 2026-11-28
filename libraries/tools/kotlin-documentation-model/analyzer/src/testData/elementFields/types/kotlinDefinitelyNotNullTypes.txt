@@ -1,5 +1,5 @@
 fragment main
-fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+fun definitelyNotNull(value: R & Any): R & Any [example/Types#definitelyNotNull#BDrl6pvGZaM].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,30 +8,29 @@ fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": true,
   "annotations": []
 }
-fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/].valueParameters[0].type:
+fun definitelyNotNull(value: R & Any): R & Any [example/Types#definitelyNotNull#BDrl6pvGZaM].valueParameters[0].type:
 {
   "kind": "definitelyNotNull",
   "original": {
     "kind": "typeParameter",
     "name": "R",
-    "containerElementId": "example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/",
+    "containerElementId": "example/Types#definitelyNotNull#BDrl6pvGZaM",
     "isMarkedNullable": false,
     "annotations": []
   }
 }
-fun definitelyNotNull(value: R & Any): R & Any [example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/].returnType:
+fun definitelyNotNull(value: R & Any): R & Any [example/Types#definitelyNotNull#BDrl6pvGZaM].returnType:
 {
   "kind": "definitelyNotNull",
   "original": {
     "kind": "typeParameter",
     "name": "R",
-    "containerElementId": "example/Types/definitelyNotNull/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/",
+    "containerElementId": "example/Types#definitelyNotNull#BDrl6pvGZaM",
     "isMarkedNullable": false,
     "annotations": []
   }
 }
-

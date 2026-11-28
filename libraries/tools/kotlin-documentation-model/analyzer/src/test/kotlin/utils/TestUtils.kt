@@ -8,6 +8,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
 import kotlin.collections.orEmpty
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -105,7 +106,7 @@ internal val Bound.name: String?
         is DefinitelyNonNullable -> inner.name
         is TypeParameter -> name
         is PrimitiveJavaType -> name
-        is TypeConstructor -> dri.classNames
+        is TypeConstructor -> declarationIdToClassNames(declarationId)
         is JavaObject -> "Object"
         is Void -> "void"
         is Dynamic -> "dynamic"

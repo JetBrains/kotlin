@@ -32,7 +32,7 @@ internal fun PsiDocTag.contentElementsWithSiblingIfNeeded(): List<PsiElement> = 
 }
 
 internal fun PsiDocTag.resolveToElement(): PsiElement? =
-    dataElements.firstOrNull()?.firstChild?.referenceElementOrSelf()?.resolveToGetDri()
+    dataElements.firstOrNull()?.firstChild?.referenceElementOrSelf()?.resolveToGetDeclarationId()
 
 internal fun PsiDocTag.referenceElement(): PsiElement? =
     linkElement()?.referenceElementOrSelf()

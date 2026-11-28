@@ -5,9 +5,9 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.kotlin.documentation.KdElementId
 
 internal class KotlinArrayDocumentableReplacerTransformer(
     context: DokkaContext
@@ -17,42 +17,42 @@ internal class KotlinArrayDocumentableReplacerTransformer(
         sourceSets.any{ it.analysisPlatform == Platform.jvm }
 
     override fun processGenericTypeConstructor(genericTypeConstructor: GenericTypeConstructor): AnyWithChanges<GenericTypeConstructor> =
-        genericTypeConstructor.takeIf { genericTypeConstructor.dri == DRI("kotlin", "Array") }
+        genericTypeConstructor.takeIf { it.declarationId == KdElementId("kotlin/Array") }
             ?.let {
                 with(it.projections.firstOrNull() as? Variance<Bound>) {
                     with(this?.inner as? GenericTypeConstructor) {
-                        when (this?.dri) {
-                            DRI("kotlin", "Int") ->
+                        when (this?.declarationId) {
+                            KdElementId("kotlin/Int") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/IntArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Boolean") ->
+                            KdElementId("kotlin/Boolean") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "BooleanArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/BooleanArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Float") ->
+                            KdElementId("kotlin/Float") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "FloatArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/FloatArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Double") ->
+                            KdElementId("kotlin/Double") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "DoubleArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/DoubleArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Long") ->
+                            KdElementId("kotlin/Long") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "LongArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/LongArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Short") ->
+                            KdElementId("kotlin/Short") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "ShortArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/ShortArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Char") ->
+                            KdElementId("kotlin/Char") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "CharArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/CharArray"), emptyList()),
                                     true)
-                            DRI("kotlin", "Byte") ->
+                            KdElementId("kotlin/Byte") ->
                                 AnyWithChanges(
-                                    GenericTypeConstructor(DRI("kotlin", "ByteArray"), emptyList()),
+                                    GenericTypeConstructor(KdElementId("kotlin/ByteArray"), emptyList()),
                                     true)
                             else -> null
                         }

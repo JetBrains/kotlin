@@ -5,8 +5,6 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.withEnumEntryExtra
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.ClassValue
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -21,6 +19,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.documentation.analyzer.ids.UNRESOLVED_DECLARATION_ID
+import org.jetbrains.kotlin.documentation.analyzer.ids.enumEntryDeclarationId
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.escape
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -83,11 +85,11 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
     context(_: KaSession)
     private fun toDokkaAnnotation(annotation: KaAnnotation) =
         Annotations.Annotation(
-            dri = run {
+            classLikeId = run {
                 val classId = annotation.classId
                 // classId might be null on a non-existing annotation call,
                 if (classId != null && classId != errorClassId) {
-                    classId.createDRI()
+                    KdElementId(classId.escape())
                 } else {
                     val psi = annotation.psi
                     val location = psi?.let { getLocation(it) }
@@ -97,7 +99,7 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
                         "Unknown annotation `$text` in ${location}\n" + Thread.currentThread().stackTrace.drop(1)
                             .joinToString("\n")
                     )
-                    DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                    UNRESOLVED_DECLARATION_ID
                 }
             },
             params = annotation.arguments.associate {
@@ -135,17 +137,24 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
                 }
             }
 
-            is KaAnnotationValue.EnumEntryValue -> EnumValue(
-                with(annotationValue.callableId) { this?.className?.asString() + "." + this?.callableName?.asString() },
-                getDRIFrom(annotationValue)
-            )
+            is KaAnnotationValue.EnumEntryValue -> {
+                val callableId = annotationValue.callableId
+                    ?: throw IllegalStateException("Can't get `callableId` for enum entry from annotation")
+                EnumValue(
+                    callableId.className?.asString().orEmpty() + "." + callableId.callableName.asString(),
+                    enumEntryDeclarationId(
+                        ClassId(callableId.packageName, callableId.className ?: error("Enum entry `$callableId` has no class name"), false),
+                        callableId.callableName.asString()
+                    )
+                )
+            }
 
             is KaAnnotationValue.ArrayValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it, containingAnnotation) })
             is KaAnnotationValue.NestedAnnotationValue -> AnnotationValue(toDokkaAnnotation(annotationValue.annotation))
             is KaAnnotationValue.ClassLiteralValue -> when (val type: KaType = annotationValue.type) {
                 is KaClassType -> ClassValue(
                     type.classId.relativeClassName.asString(),
-                    type.classId.createDRI()
+                    KdElementId(type.classId.escape())
                 )
                 else -> {
                     val psi = annotationValue.sourcePsi ?: containingAnnotation.psi
@@ -154,7 +163,7 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
 
                     ClassValue(
                         type.toString(),
-                        DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                        UNRESOLVED_DECLARATION_ID
                     )
                 }
             }
@@ -165,19 +174,10 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
 
                 ClassValue(
                     "<Unsupported Annotation Value>",
-                    DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                    UNRESOLVED_DECLARATION_ID
                 )
             }
         }
-
-    private fun getDRIFrom(enumEntry: KaAnnotationValue.EnumEntryValue): DRI {
-        val callableId =
-            enumEntry.callableId ?: throw IllegalStateException("Can't get `callableId` for enum entry from annotation")
-        return DRI(
-            packageName = callableId.packageName.asString(),
-            classNames = callableId.className?.asString() + "." + callableId.callableName.asString(),
-        ).withEnumEntryExtra()
-    }
 
     companion object {
         val errorClassId = ClassId.fromString("<error>") // https://youtrack.jetbrains.com/issue/KT-84186/Unresolved-annotation-ClassId-returns-error

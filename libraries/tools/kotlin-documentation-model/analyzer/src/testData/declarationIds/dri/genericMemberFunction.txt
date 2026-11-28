@@ -1,0 +1,4 @@
+example
+example/Sample
+example/Sample##kind=function; typeParameters=[<T0_0>: ]; parameters=[<T0_0>];
+example/Sample#genericFun#kind=function; typeParameters=[<T1_0>: ]; parameters=[kotlin/String];   // UNRESOLVED_REFERENCE

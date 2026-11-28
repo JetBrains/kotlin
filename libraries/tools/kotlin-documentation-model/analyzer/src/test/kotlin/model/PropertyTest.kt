@@ -6,15 +6,16 @@ package model
 
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
+import utils.assertIsInstance
 import utils.assertNotNull
 import utils.name
 import utils.text
 import kotlin.test.Test
 import org.jetbrains.dokka.ExperimentalDokkaApi
-import org.jetbrains.dokka.links.Nullable
-import org.jetbrains.dokka.links.TypeConstructor
-import org.jetbrains.dokka.links.TypeParam
-import org.jetbrains.dokka.links.TypeReference
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.callableNameOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
 @MustRunOnChangesInAnalysisApi
@@ -134,7 +135,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
         ) {
             with((this / "property").cast<DPackage>()) {
                 with((this / "Foo" / "property").cast<DProperty>()) {
-                    dri.classNames equals "Foo"
+                    declarationIdToClassNames(declarationId) equals "Foo"
                     name equals "property"
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
@@ -142,7 +143,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                     }
                 }
                 with((this / "Bar" / "property").cast<DProperty>()) {
-                    dri.classNames equals "Bar"
+                    declarationIdToClassNames(declarationId) equals "Bar"
                     name equals "property"
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
@@ -193,19 +194,19 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
         ) {
             with((this / "property").cast<DPackage>()) {
                 with((this / "Bar" / "property").cast<DProperty>()) {
-                    dri.classNames equals "Foo"
+                    declarationIdToClassNames(declarationId) equals "Foo"
                     name equals "property"
                     children counts 0
                     with(getter.assertNotNull("Getter")) {
                         type.name equals "Int"
                         extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
-                            classNames equals "Foo"
-                            callable equals null
+                            declarationIdToClassNames(this) equals "Foo"
+                            callableNameOf(this) equals null
                         }
                     }
                     extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
-                        classNames equals "Foo"
-                        callable equals null
+                        declarationIdToClassNames(this) equals "Foo"
+                        callableNameOf(this) equals null
                     }
                 }
             }
@@ -227,20 +228,20 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                     with(getter.assertNotNull("Getter")) {
                         type.name equals "Int"
                         extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
-                            classNames equals "Foo"
-                            callable equals null
+                            declarationIdToClassNames(this) equals "Foo"
+                            callableNameOf(this) equals null
                         }
                     }
                     with(setter.assertNotNull("Setter")) {
                         type.name equals "Unit"
                         extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
-                            classNames equals "Foo"
-                            callable equals null
+                            declarationIdToClassNames(this) equals "Foo"
+                            callableNameOf(this) equals null
                         }
                     }
                     extra[InheritedMember]?.inheritedFrom?.values?.single()?.run {
-                        classNames equals "Foo"
-                        callable equals null
+                        declarationIdToClassNames(this) equals "Foo"
+                        callableNameOf(this) equals null
                     }
                 }
             }
@@ -262,7 +263,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "SinceKotlin"
+                        declarationIdToClassNames(classLikeId) equals "SinceKotlin"
                         params.entries counts 1
                         (params["version"].assertNotNull("version") as StringValue).value equals "1.1"
                     }
@@ -290,7 +291,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "Strictfp"
+                        declarationIdToClassNames(classLikeId) equals "Strictfp"
                         params.entries counts 0
                     }
                 }
@@ -343,50 +344,33 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                 }
                 with(getter.assertNotNull("Getter")) {
                     type.name equals "T"
-                    val receiver = TypeConstructor(
-                        "kotlin.collections.List",
-                        listOf(
-                            TypeParam(
-                                name = "T",
-                                bounds = listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))
-                            )
-                        )
-                    )
 
-                    // In K1 a name of an accessor is `<get-sampleProperty>`, in K2 - `getSampleProperty`
-                    this.dri.packageName equals "property"
-                    this.dri.classNames equals "XD"
-                    this.dri.callable?.receiver equals receiver
-                    this.dri.callable?.params equals emptyList<TypeReference>()
+                    // An accessor is not a declaration: it shares the property's ID,
+                    // and therefore the property's package, owner and receiver.
+                    declarationIdToPackageName(declarationId) equals "property"
+                    declarationIdToClassNames(declarationId) equals "XD"
+                    parameters counts 0
+
+                    val receiverType = receiver.assertNotNull("Getter receiver").type
+                    receiverType.assertIsInstance<GenericTypeConstructor>()
+                    receiverType.declarationId equals KdElementId("kotlin.collections/List")
+                    val projection = receiverType.projections.single() as Invariance<*>
+                    projection.inner.assertIsInstance<TypeParameter>().name equals "T"
                 }
                 with(setter.assertNotNull("Setter")) {
                     type.name equals "Unit"
 
-                    val receiver = TypeConstructor(
-                        "kotlin.collections.List",
-                        listOf(
-                            TypeParam(
-                                name = "T",
-                                bounds = listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))
-                            )
-                        )
-                    )
-                    this.dri.packageName equals "property"
-                    this.dri.classNames equals "XD"
-                    this.dri.callable?.receiver equals receiver
-                    this.dri.callable?.params equals listOf(
-                        TypeParam(
-                            name = "T",
-                            bounds = listOf(
-                                Nullable(
-                                    TypeConstructor(
-                                        "kotlin.Any",
-                                        emptyList()
-                                    )
-                                )
-                            )
-                        )
-                    )
+                    declarationIdToPackageName(declarationId) equals "property"
+                    declarationIdToClassNames(declarationId) equals "XD"
+
+                    val receiverType = receiver.assertNotNull("Setter receiver").type
+                    receiverType.assertIsInstance<GenericTypeConstructor>()
+                    receiverType.declarationId equals KdElementId("kotlin.collections/List")
+
+                    parameters counts 1
+                    val parameterType = parameters.single().type
+                    parameterType.assertIsInstance<TypeParameter>()
+                    parameterType.name equals "T"
                 }
                 generics counts 0
                 visibility.values allEquals KotlinVisibility.Public
@@ -423,7 +407,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
     }
 
     @Test
-    fun `property with context parameters should have them, correct DRI, and documentation`() {
+    fun `property with context parameters should have them, correct declaration id, and documentation`() {
         inlineModelTest(
             """
             |/src/sample/ParentInKotlin.kt
@@ -434,16 +418,10 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
             """.trimIndent()
         ) {
             with((this / "sample" / "prop").cast<DProperty>()) {
-                dri.callable equals org.jetbrains.dokka.links.Callable(
-                    name = "prop",
-                    receiver = TypeConstructor("kotlin.Int", emptyList()),
-                    params = emptyList(),
-                    contextParameters = listOf(
-                        TypeConstructor("kotlin.String", emptyList()),
-                        TypeConstructor("kotlin.Int", emptyList())
-                    ),
-                    isProperty = true
-                )
+                callableNameOf(declarationId) equals "prop"
+                with(receiver.assertNotNull("property receiver")) {
+                    type.name equals "Int"
+                }
                 documentation.values.single().children.single().text() equals "Some doc\n"
                 contextParameters counts 2
                 contextParameters[0].name equals "s"
@@ -457,9 +435,6 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
 
                 getter?.contextParameters counts 0
                 setter?.contextParameters counts 0
-
-                getter?.dri?.callable?.contextParameters counts 2
-                setter?.dri?.callable?.contextParameters counts 2
             }
         }
     }

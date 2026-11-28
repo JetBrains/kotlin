@@ -4,11 +4,11 @@
 
 package org.jetbrains.dokka.model
 
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 
 internal const val JVM_FIELD_PACKAGE_NAME: String = "kotlin.jvm"
 internal const val JVM_FIELD_CLASS_NAMES: String = "JvmField"
 
-internal fun DRI.isJvmField(): Boolean = packageName == JVM_FIELD_PACKAGE_NAME && classNames == JVM_FIELD_CLASS_NAMES
+internal val JVM_FIELD_DECLARATION_ID = KdElementId("$JVM_FIELD_PACKAGE_NAME/$JVM_FIELD_CLASS_NAMES")
 
-internal fun Annotations.Annotation.isJvmField(): Boolean = dri.isJvmField()
+internal fun Annotations.Annotation.isJvmField(): Boolean = classLikeId == JVM_FIELD_DECLARATION_ID

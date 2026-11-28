@@ -9,7 +9,7 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiReference
 
 // TODO [beresnev] get rid of
-internal fun PsiElement.resolveToGetDri(): PsiElement? =
+internal fun PsiElement.resolveToGetDeclarationId(): PsiElement? =
     reference?.resolveToDocumentedElement()
 
 /**

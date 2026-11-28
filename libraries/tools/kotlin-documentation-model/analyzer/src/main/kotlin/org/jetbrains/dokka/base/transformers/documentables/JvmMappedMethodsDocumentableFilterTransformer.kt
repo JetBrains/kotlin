@@ -5,13 +5,15 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.links.DRI
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.StringValue
 import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 
 /**
  *  Filter out methods and synthetic properties that come from [mapping to Java](https://kotlinlang.org/docs/java-interop.html#mapped-types)
@@ -242,7 +244,6 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
         )
 
 
-    private val deprecationAnnotationDRI = DRI("kotlin", "Deprecated")
 
     /**
      * KT-65438: In K1, such methods (e.g. translateEscapes, formatted... in java.lang.String) have the NOT_CONSIDERED status,
@@ -252,7 +253,7 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
      */
     private fun DFunction.hasDeprecated(): Boolean = this.extra[Annotations]?.directAnnotations?.any {
         it.value.any {
-            it.dri == deprecationAnnotationDRI && it.params["message"] == StringValue("This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version")
+            it.classLikeId == KdElementId("kotlin/Deprecated") && it.params["message"] == StringValue("This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version")
         }
     } ?: false
 
@@ -262,9 +263,50 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
     private fun DFunction.shouldBeSuppressed() = if (this.hasDeprecated())
         true
     else {
-        val fqn = this.dri.let { it.packageName + "." + it.classNames + "." + it.callable?.name }
-        fqn in VISIBLE_METHOD_SIGNATURES || fqn in MUTABLE_METHOD_SIGNATURES || fqn in DEPRECATED_LIST_METHODS || fqn in HIDDEN_METHOD_SIGNATURES || fqn in NOT_CONSIDER_METHOD_SIGNATURES
+        val id = declarationId
+        // Accessors share their property's ID, whose callable name is the property name, so the
+        // function's own name is used: it is the JVM method name for synthetic properties
+        // (e.g. `getLocalizedMessage` for the `localizedMessage` property).
+        val fqn = listOfNotNull(
+            declarationIdToPackageName(id).ifEmpty { null },
+            declarationIdToClassNames(id),
+            name.takeIf { it.isNotEmpty() },
+        ).joinToString(".")
+        // The declaring member keeps its Java owner in the ID (e.g. `java.lang.Throwable` for
+        // `getMessage`), but the signature lists use the Kotlin-mapped owner names.
+        val kotlinMappedFqn = kotlinMappedOwnerOf(fqn)
+        kotlinMappedFqn in VISIBLE_METHOD_SIGNATURES || kotlinMappedFqn in MUTABLE_METHOD_SIGNATURES ||
+                kotlinMappedFqn in DEPRECATED_LIST_METHODS || kotlinMappedFqn in HIDDEN_METHOD_SIGNATURES ||
+                kotlinMappedFqn in NOT_CONSIDER_METHOD_SIGNATURES
     }
+
+    /**
+     * The FQN with the Java owner of the declaring member replaced by the Kotlin type it is
+     * [mapped to](https://kotlinlang.org/docs/java-interop.html#mapped-types), so signature lists written
+     * against Kotlin-mapped owners (e.g. `kotlin.Throwable.getMessage`) also match members inherited from
+     * the Java class (`java.lang.Throwable.getMessage`). FQNs with other owners are returned unchanged.
+     */
+    private fun kotlinMappedOwnerOf(fqn: String): String {
+        val owner = fqn.substringBeforeLast('.', "")
+        val name = fqn.substringAfterLast('.', "")
+        val mappedOwner = JAVA_OWNERS_TO_KOTLIN_MAPPED[owner] ?: return fqn
+        return "$mappedOwner.$name"
+    }
+
+    private val JAVA_OWNERS_TO_KOTLIN_MAPPED = mapOf(
+        "java.lang.CharSequence" to "kotlin.CharSequence",
+        "java.lang.Throwable" to "kotlin.Throwable",
+        "java.lang.Iterable" to "kotlin.collections.Iterable",
+        "java.lang.String" to "kotlin.String",
+        "java.lang.Enum" to "kotlin.Enum",
+        "java.lang.Double" to "kotlin.Double",
+        "java.lang.Float" to "kotlin.Float",
+        "java.util.List" to "kotlin.collections.List",
+        "java.util.Collection" to "kotlin.collections.Collection",
+        "java.util.Set" to "kotlin.collections.Set",
+        "java.util.Map" to "kotlin.collections.Map",
+        "java.util.Iterator" to "kotlin.collections.Iterator",
+    )
 
     override fun shouldBeSuppressed(d: Documentable): Boolean =
         if (d.isOnlyInJVM()) {

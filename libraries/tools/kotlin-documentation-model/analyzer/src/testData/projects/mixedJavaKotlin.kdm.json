@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "example//toRecord/example.JavaBean#/PointingToDeclaration/": {
+        "example#toRecord#Y0FmK4DJGVk": {
           "kind": "function",
           "name": "toRecord",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+            "classLikeId": "example/KotlinRecord",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -38,7 +38,7 @@
                   "typeArguments": []
                 }
               ],
-              "classLikeId": "example/JavaBean///PointingToDeclaration/",
+              "classLikeId": "example/JavaBean",
               "isMarkedNullable": false,
               "annotations": []
             },
@@ -53,7 +53,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRecord/KotlinRecord/#kotlin.String/PointingToDeclaration/": {
+        "example/KotlinRecord##P7n-P2YFLsg": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -70,7 +70,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -87,7 +87,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRecord/name/#/PointingToDeclaration/": {
+        "example/KotlinRecord#name#ctE8McQtNZQ": {
           "kind": "property",
           "name": "name",
           "isLateinit": false,
@@ -109,7 +109,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -124,7 +124,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRecord///PointingToDeclaration/": {
+        "example/KotlinRecord": {
           "kind": "class",
           "name": "KotlinRecord",
           "classKind": "CLASS",
@@ -139,8 +139,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "example/KotlinRecord/KotlinRecord/#kotlin.String/PointingToDeclaration/",
-            "example/KotlinRecord/name/#/PointingToDeclaration/"
+            "example/KotlinRecord##P7n-P2YFLsg",
+            "example/KotlinRecord#name#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -148,7 +148,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/KotlinBase/KotlinBase/#/PointingToDeclaration/": {
+        "example/KotlinBase##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -161,7 +161,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinBase/describe/#example.KotlinRecord/PointingToDeclaration/": {
+        "example/KotlinBase#describe#_rtriva8J_Y": {
           "kind": "function",
           "name": "describe",
           "isCompanion": false,
@@ -180,7 +180,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -196,7 +196,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+                "classLikeId": "example/KotlinRecord",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -217,7 +217,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinBase///PointingToDeclaration/": {
+        "example/KotlinBase": {
           "kind": "class",
           "name": "KotlinBase",
           "classKind": "CLASS",
@@ -232,8 +232,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "example/KotlinBase/KotlinBase/#/PointingToDeclaration/",
-            "example/KotlinBase/describe/#example.KotlinRecord/PointingToDeclaration/"
+            "example/KotlinBase##KK4ERoLQuv0",
+            "example/KotlinBase#describe#_rtriva8J_Y"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -241,7 +241,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/KotlinRepository/KotlinRepository/#/PointingToDeclaration/": {
+        "example/KotlinRepository##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -254,7 +254,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRepository/find/#kotlin.String/PointingToDeclaration/": {
+        "example/KotlinRepository#find#P7n-P2YFLsg": {
           "kind": "function",
           "name": "find",
           "isCompanion": false,
@@ -273,7 +273,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+            "classLikeId": "example/KotlinRecord",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -289,7 +289,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -303,7 +303,7 @@
           "extensionReceiverParameter": null,
           "contextParameters": [],
           "overridens": [
-            "example/JavaRepository/find/#java.lang.String/PointingToDeclaration/"
+            "example/JavaRepository#find#VMudsCHwk_c"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -312,7 +312,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRepository/save/#example.KotlinRecord/PointingToDeclaration/": {
+        "example/KotlinRepository#save#_rtriva8J_Y": {
           "kind": "function",
           "name": "save",
           "isCompanion": false,
@@ -331,7 +331,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+            "classLikeId": "kotlin/Unit",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -347,7 +347,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+                "classLikeId": "example/KotlinRecord",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -361,7 +361,7 @@
           "extensionReceiverParameter": null,
           "contextParameters": [],
           "overridens": [
-            "example/JavaRepository/save/#T/PointingToDeclaration/"
+            "example/JavaRepository#save#CeXHNJTbLxc"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -370,7 +370,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinRepository///PointingToDeclaration/": {
+        "example/KotlinRepository": {
           "kind": "class",
           "name": "KotlinRepository",
           "classKind": "CLASS",
@@ -400,7 +400,7 @@
                             "typeArguments": []
                           }
                         ],
-                        "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+                        "classLikeId": "example/KotlinRecord",
                         "isMarkedNullable": false,
                         "annotations": []
                       }
@@ -408,15 +408,15 @@
                   ]
                 }
               ],
-              "classLikeId": "example/JavaRepository///PointingToDeclaration/",
+              "classLikeId": "example/JavaRepository",
               "isMarkedNullable": false,
               "annotations": []
             }
           ],
           "declarations": [
-            "example/KotlinRepository/KotlinRepository/#/PointingToDeclaration/",
-            "example/KotlinRepository/find/#kotlin.String/PointingToDeclaration/",
-            "example/KotlinRepository/save/#example.KotlinRecord/PointingToDeclaration/"
+            "example/KotlinRepository##KK4ERoLQuv0",
+            "example/KotlinRepository#find#P7n-P2YFLsg",
+            "example/KotlinRepository#save#_rtriva8J_Y"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -424,7 +424,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/KotlinBean/KotlinBean/#kotlin.String/PointingToDeclaration/": {
+        "example/KotlinBean##P7n-P2YFLsg": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -441,7 +441,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -458,7 +458,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinBean/rename/#kotlin.String/PointingToDeclaration/": {
+        "example/KotlinBean#rename#P7n-P2YFLsg": {
           "kind": "function",
           "name": "rename",
           "isCompanion": false,
@@ -477,7 +477,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -493,7 +493,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -514,15 +514,15 @@
           "throws": [],
           "annotations": []
         },
-        "example/KotlinBean/name/#/PointingToDeclaration/": {
+        "example/KotlinBean#name#ctE8McQtNZQ": {
           "kind": "inheritedMember",
-          "originalId": "example/JavaBean/name/#/PointingToDeclaration/"
+          "originalId": "example/JavaBean#name#ctE8McQtNZQ"
         },
-        "example/KotlinBean/count/#/PointingToDeclaration/": {
+        "example/KotlinBean#count#ctE8McQtNZQ": {
           "kind": "inheritedMember",
-          "originalId": "example/JavaBean/count/#/PointingToDeclaration/"
+          "originalId": "example/JavaBean#count#ctE8McQtNZQ"
         },
-        "example/KotlinBean///PointingToDeclaration/": {
+        "example/KotlinBean": {
           "kind": "class",
           "name": "KotlinBean",
           "classKind": "CLASS",
@@ -544,16 +544,16 @@
                   "typeArguments": []
                 }
               ],
-              "classLikeId": "example/JavaBean///PointingToDeclaration/",
+              "classLikeId": "example/JavaBean",
               "isMarkedNullable": false,
               "annotations": []
             }
           ],
           "declarations": [
-            "example/KotlinBean/KotlinBean/#kotlin.String/PointingToDeclaration/",
-            "example/KotlinBean/rename/#kotlin.String/PointingToDeclaration/",
-            "example/KotlinBean/name/#/PointingToDeclaration/",
-            "example/KotlinBean/count/#/PointingToDeclaration/"
+            "example/KotlinBean##P7n-P2YFLsg",
+            "example/KotlinBean#rename#P7n-P2YFLsg",
+            "example/KotlinBean#name#ctE8McQtNZQ",
+            "example/KotlinBean#count#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -561,7 +561,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/JavaBean/JavaBean/#kotlin.String/PointingToDeclaration/": {
+        "example/JavaBean##VMudsCHwk_c": {
           "kind": "constructor",
           "isPrimary": false,
           "isExternal": false,
@@ -578,7 +578,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -595,7 +595,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaBean/name/#/PointingToDeclaration/": {
+        "example/JavaBean#name#ctE8McQtNZQ": {
           "kind": "property",
           "name": "name",
           "isLateinit": false,
@@ -617,7 +617,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -632,7 +632,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaBean/count/#/PointingToDeclaration/": {
+        "example/JavaBean#count#ctE8McQtNZQ": {
           "kind": "property",
           "name": "count",
           "isLateinit": false,
@@ -654,7 +654,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -669,7 +669,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaBean/DEFAULT_COUNT/#/companion/PointingToDeclaration/": {
+        "example/JavaBean#DEFAULT_COUNT#IfqD6rn7vBU": {
           "kind": "property",
           "name": "DEFAULT_COUNT",
           "isLateinit": false,
@@ -691,7 +691,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -706,7 +706,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaBean///PointingToDeclaration/": {
+        "example/JavaBean": {
           "kind": "class",
           "name": "JavaBean",
           "classKind": "CLASS",
@@ -721,10 +721,10 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "example/JavaBean/JavaBean/#kotlin.String/PointingToDeclaration/",
-            "example/JavaBean/name/#/PointingToDeclaration/",
-            "example/JavaBean/count/#/PointingToDeclaration/",
-            "example/JavaBean/DEFAULT_COUNT/#/companion/PointingToDeclaration/"
+            "example/JavaBean##VMudsCHwk_c",
+            "example/JavaBean#name#ctE8McQtNZQ",
+            "example/JavaBean#count#ctE8McQtNZQ",
+            "example/JavaBean#DEFAULT_COUNT#IfqD6rn7vBU"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -732,7 +732,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/JavaRepository/find/#java.lang.String/PointingToDeclaration/": {
+        "example/JavaRepository#find#VMudsCHwk_c": {
           "kind": "function",
           "name": "find",
           "isCompanion": false,
@@ -746,7 +746,7 @@
           "returnType": {
             "kind": "typeParameter",
             "name": "T",
-            "containerElementId": "example/JavaRepository///PointingToDeclaration/",
+            "containerElementId": "example/JavaRepository",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -762,7 +762,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -783,7 +783,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaRepository/save/#T/PointingToDeclaration/": {
+        "example/JavaRepository#save#CeXHNJTbLxc": {
           "kind": "function",
           "name": "save",
           "isCompanion": false,
@@ -802,7 +802,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+            "classLikeId": "kotlin/Unit",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -813,7 +813,7 @@
               "type": {
                 "kind": "typeParameter",
                 "name": "T",
-                "containerElementId": "example/JavaRepository///PointingToDeclaration/",
+                "containerElementId": "example/JavaRepository",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -834,7 +834,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaRepository///PointingToDeclaration/": {
+        "example/JavaRepository": {
           "kind": "class",
           "name": "JavaRepository",
           "classKind": "INTERFACE",
@@ -859,7 +859,7 @@
                       "typeArguments": []
                     }
                   ],
-                  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                  "classLikeId": "kotlin/Any",
                   "isMarkedNullable": false,
                   "annotations": []
                 }
@@ -870,8 +870,8 @@
           ],
           "superTypes": [],
           "declarations": [
-            "example/JavaRepository/find/#java.lang.String/PointingToDeclaration/",
-            "example/JavaRepository/save/#T/PointingToDeclaration/"
+            "example/JavaRepository#find#VMudsCHwk_c",
+            "example/JavaRepository#save#CeXHNJTbLxc"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -879,7 +879,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "example/JavaConsumer/JavaConsumer/#/PointingToDeclaration/": {
+        "example/JavaConsumer##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -892,7 +892,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaConsumer/load/#example.JavaRepository<example.KotlinRecord>/PointingToDeclaration/": {
+        "example/JavaConsumer#load#1d-ZiVzAUls": {
           "kind": "function",
           "name": "load",
           "isCompanion": false,
@@ -911,7 +911,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+            "classLikeId": "example/KotlinRecord",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -935,7 +935,7 @@
                               "typeArguments": []
                             }
                           ],
-                          "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+                          "classLikeId": "example/KotlinRecord",
                           "isMarkedNullable": false,
                           "annotations": []
                         }
@@ -943,7 +943,7 @@
                     ]
                   }
                 ],
-                "classLikeId": "example/JavaRepository///PointingToDeclaration/",
+                "classLikeId": "example/JavaRepository",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -964,7 +964,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaConsumer/describe/#example.KotlinRecord/PointingToDeclaration/": {
+        "example/JavaConsumer#describe#_rtriva8J_Y": {
           "kind": "function",
           "name": "describe",
           "isCompanion": false,
@@ -983,7 +983,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -999,7 +999,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+                "classLikeId": "example/KotlinRecord",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -1013,7 +1013,7 @@
           "extensionReceiverParameter": null,
           "contextParameters": [],
           "overridens": [
-            "example/KotlinBase/describe/#example.KotlinRecord/PointingToDeclaration/"
+            "example/KotlinBase#describe#_rtriva8J_Y"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -1022,7 +1022,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaConsumer/convert/#example.JavaBean/PointingToDeclaration/": {
+        "example/JavaConsumer#convert#uL6C83dCPWk": {
           "kind": "function",
           "name": "convert",
           "isCompanion": false,
@@ -1041,7 +1041,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "example/KotlinRecord///PointingToDeclaration/",
+            "classLikeId": "example/KotlinRecord",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -1057,7 +1057,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "example/JavaBean///PointingToDeclaration/",
+                "classLikeId": "example/JavaBean",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -1078,7 +1078,7 @@
           "throws": [],
           "annotations": []
         },
-        "example/JavaConsumer///PointingToDeclaration/": {
+        "example/JavaConsumer": {
           "kind": "class",
           "name": "JavaConsumer",
           "classKind": "CLASS",
@@ -1100,16 +1100,16 @@
                   "typeArguments": []
                 }
               ],
-              "classLikeId": "example/KotlinBase///PointingToDeclaration/",
+              "classLikeId": "example/KotlinBase",
               "isMarkedNullable": false,
               "annotations": []
             }
           ],
           "declarations": [
-            "example/JavaConsumer/JavaConsumer/#/PointingToDeclaration/",
-            "example/JavaConsumer/load/#example.JavaRepository<example.KotlinRecord>/PointingToDeclaration/",
-            "example/JavaConsumer/describe/#example.KotlinRecord/PointingToDeclaration/",
-            "example/JavaConsumer/convert/#example.JavaBean/PointingToDeclaration/"
+            "example/JavaConsumer##KK4ERoLQuv0",
+            "example/JavaConsumer#load#1d-ZiVzAUls",
+            "example/JavaConsumer#describe#_rtriva8J_Y",
+            "example/JavaConsumer#convert#uL6C83dCPWk"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -1117,26 +1117,26 @@
           "deprecated": null,
           "annotations": []
         },
-        "example////PointingToDeclaration/": {
+        "example": {
           "kind": "package",
           "name": "example",
           "declarations": [
-            "example//toRecord/example.JavaBean#/PointingToDeclaration/",
-            "example/KotlinRecord///PointingToDeclaration/",
-            "example/KotlinBase///PointingToDeclaration/",
-            "example/KotlinRepository///PointingToDeclaration/",
-            "example/KotlinBean///PointingToDeclaration/",
-            "example/JavaBean///PointingToDeclaration/",
-            "example/JavaRepository///PointingToDeclaration/",
-            "example/JavaConsumer///PointingToDeclaration/"
+            "example#toRecord#Y0FmK4DJGVk",
+            "example/KotlinRecord",
+            "example/KotlinBase",
+            "example/KotlinRepository",
+            "example/KotlinBean",
+            "example/JavaBean",
+            "example/JavaRepository",
+            "example/JavaConsumer"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "mixedJavaKotlin",
           "packages": [
-            "example////PointingToDeclaration/"
+            "example"
           ],
           "annotations": []
         }

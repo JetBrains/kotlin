@@ -1,0 +1,2 @@
+toplevel
+toplevel#doSomethingWithNullable#kind=function; typeParameters=[<T0_0>: kotlin/Comparable<<T0_0>>]; receiver=<T0_0>?;   // IMPLICIT_NOTHING_RETURN_TYPE

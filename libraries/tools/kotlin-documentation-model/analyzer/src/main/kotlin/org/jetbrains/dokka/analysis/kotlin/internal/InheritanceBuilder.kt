@@ -5,21 +5,21 @@
 package org.jetbrains.dokka.analysis.kotlin.internal
 
 import org.jetbrains.dokka.InternalDokkaApi
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.kotlin.documentation.KdElementId
 
 @InternalDokkaApi
 internal interface InheritanceBuilder {
-    fun build(documentables: Map<DRI, Documentable>): List<InheritanceNode>
+    fun build(documentables: Map<KdElementId, Documentable>): List<InheritanceNode>
 }
 
 @InternalDokkaApi
 internal data class InheritanceNode(
-    val dri: DRI,
+    val declarationId: KdElementId,
     val children: List<InheritanceNode> = emptyList(),
-    val interfaces: List<DRI> = emptyList(),
+    val interfaces: List<KdElementId> = emptyList(),
     val isInterface: Boolean = false
 ) {
-    override fun equals(other: Any?): Boolean = other is InheritanceNode && other.dri == dri
-    override fun hashCode(): Int = dri.hashCode()
+    override fun equals(other: Any?): Boolean = other is InheritanceNode && other.declarationId == declarationId
+    override fun hashCode(): Int = declarationId.hashCode()
 }

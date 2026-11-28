@@ -5,13 +5,11 @@
 package parsers.javadoc
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
+import org.jetbrains.kotlin.documentation.KdElementId
 import utils.docs
 import utils.text
 import kotlin.test.Test
@@ -476,18 +474,11 @@ class JavadocParserTest : BaseAbstractTest() {
                 val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }
                     .find { it.name == "getProperty" && it.parameters.count() == 1 }
                 val seeTag = functionWithSeeTag?.docs()?.firstIsInstanceOrNull<See>()
-                val expectedLinkDestinationDRI = DRI(
-                    packageName = "example",
-                    classNames = "Source",
-                    callable = Callable(
-                        name = "getProperty",
-                        params = listOf(JavaClassReference("java.lang.String"), JavaClassReference("java.lang.String"))
-                    )
-                )
+                val expectedLinkDestinationId = KdElementId("example/Source#getProperty#vJHTbITZvm8")
 
                 assertNotNull(seeTag)
                 assertEquals("getProperty(String, String)", seeTag.name)
-                assertEquals(expectedLinkDestinationDRI, seeTag.address)
+                assertEquals(expectedLinkDestinationId, seeTag.address)
                 assertEquals(emptyList<DocTag>(), seeTag.children)
             }
         }
@@ -514,18 +505,11 @@ class JavadocParserTest : BaseAbstractTest() {
                 val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }
                     .find { it.name == "getProperty" && it.parameters.size == 1 }
                 val seeTag = functionWithSeeTag?.docs()?.firstIsInstanceOrNull<See>()
-                val expectedLinkDestinationDRI = DRI(
-                    packageName = "example",
-                    classNames = "Source",
-                    callable = Callable(
-                        name = "getProperty",
-                        params = listOf(JavaClassReference("java.lang.String"), JavaClassReference("java.lang.String"))
-                    )
-                )
+                val expectedLinkDestinationId = KdElementId("example/Source#getProperty#vJHTbITZvm8")
 
                 assertNotNull(seeTag)
                 assertEquals("getProperty(String, String)", seeTag.name)
-                assertEquals(expectedLinkDestinationDRI, seeTag.address)
+                assertEquals(expectedLinkDestinationId, seeTag.address)
                 assertEquals(
                     "this is a reference to a method that is present on the same class.",
                     seeTag.children.first().text().trim()

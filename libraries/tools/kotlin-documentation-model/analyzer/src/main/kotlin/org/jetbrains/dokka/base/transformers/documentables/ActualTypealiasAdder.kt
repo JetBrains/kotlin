@@ -4,8 +4,8 @@
 
 package org.jetbrains.dokka.base.transformers.documentables
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
@@ -27,17 +27,17 @@ internal class ActualTypealiasAdder : DocumentableTransformer {
         }
     }
 
-    private fun DModule.generateTypealiasesMap(): Map<DRI, DTypeAlias> =
+    private fun DModule.generateTypealiasesMap(): Map<KdElementId, DTypeAlias> =
         packages.flatMap { pkg ->
             pkg.typealiases.map { typeAlias ->
-                typeAlias.dri to typeAlias
+                typeAlias.declarationId to typeAlias
             }
         }.toMap()
 
 
     private fun addActualTypeAliasToClasslikes(
         elements: Iterable<DClasslike>,
-        typealiases: Map<DRI, DTypeAlias>
+        typealiases: Map<KdElementId, DTypeAlias>
     ): List<DClasslike> = elements.flatMap {
         when (it) {
             is DClass -> addActualTypeAlias(
@@ -76,11 +76,11 @@ internal class ActualTypealiasAdder : DocumentableTransformer {
 
     private fun <T> addActualTypeAlias(
         elements: Iterable<T>,
-        typealiases: Map<DRI, DTypeAlias>
+        typealiases: Map<KdElementId, DTypeAlias>
     ): List<T> where T : DClasslike, T : WithExtraProperties<T>, T : WithSources =
         elements.map { element ->
             if (element.expectPresentInSet != null) {
-                typealiases[element.dri]?.let { ta ->
+                typealiases[element.declarationId]?.let { ta ->
                     val actualTypealiasExtra = ActualTypealias(ta.copy(expectPresentInSet = element.expectPresentInSet))
                     val merged = element.withNewExtras(element.extra + actualTypealiasExtra).let {
                         when (it) {

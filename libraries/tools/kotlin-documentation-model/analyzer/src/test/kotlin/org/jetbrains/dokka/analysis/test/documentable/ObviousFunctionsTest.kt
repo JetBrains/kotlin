@@ -7,9 +7,9 @@ package org.jetbrains.dokka.analysis.test.documentable
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.parse
 import org.jetbrains.dokka.analysis.test.api.useServices
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.ObviousMember
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.junit.jupiter.api.Nested
 import java.lang.System.clearProperty
 import java.lang.System.setProperty
@@ -74,7 +74,7 @@ class ObviousFunctionsTest {
 
         project.useServices {
             val any = externalDocumentableProvider.getClasslike(
-                DRI("kotlin", "Any"),
+                KdElementId("kotlin/Any"),
                 it.context.configuration.sourceSets.single()
             )
             assertNotNull(any)
@@ -106,7 +106,7 @@ class ObviousFunctionsTest {
 
             project.useServices {
                 val enum = externalDocumentableProvider.getClasslike(
-                    DRI("kotlin", "Enum"),
+                    KdElementId("kotlin/Enum"),
                     it.context.configuration.sourceSets.single()
                 )
                 assertNotNull(enum)

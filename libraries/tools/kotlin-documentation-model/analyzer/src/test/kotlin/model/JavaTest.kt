@@ -7,11 +7,13 @@ package model
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
-import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
@@ -51,6 +53,17 @@ class JavaTest : BaseAbstractTest() {
     private infix fun Any?.equals(other: Any?) = assertEquals(other, this)
     private infix fun <T> Collection<T>?.counts(n: Int) =
         assertEquals(n, this.orEmpty().size, "Expected $n, got ${this.orEmpty().size}")
+
+    /** The classifier declaration ID of a (possibly nullable) class type. */
+    private fun Bound.classifierDeclarationId(): KdElementId {
+        val bound = if (this is Nullable) inner else this
+        return (bound as? GenericTypeConstructor)?.declarationId
+            ?: throw AssertionError("Expected a class type, got $this")
+    }
+
+    /** The declaration ID of [entry] in the [enumClass] Java enum, without resolving the symbol. */
+    private fun javaEnumEntryId(enumClass: String, entry: String): KdElementId =
+        enumEntryDeclarationId(ClassId.topLevel(FqName(enumClass)), entry)
 
     @Test
     @MustRunAlways
@@ -106,7 +119,8 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Tested").cast<DClass>()) {
-                    extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }
+                    extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value
+                        ?.mapNotNull { declarationIdToClassNames(it.declarationId) }
                         ?.sorted() equals listOf("Highest", "Lower").sorted()
                 }
             }
@@ -134,7 +148,7 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Tested").cast<DClass>()) {
                     val implementedInterfaces = extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value!!
-                    implementedInterfaces.map { it.dri.sureClassNames }.sorted() equals listOf(
+                    implementedInterfaces.mapNotNull { declarationIdToClassNames(it.declarationId) }.sorted() equals listOf(
                         "Highest",
                         "Lower"
                     ).sorted()
@@ -169,10 +183,10 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Tested").cast<DClass>()) {
-                    supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }
-                        .sortedBy { it.first } equals listOf(
-                        "Extendable" to JavaClassKindTypes.CLASS,
-                        "Lower" to JavaClassKindTypes.INTERFACE
+                    supertypes.entries.single().value.map { it.typeConstructor.declarationId to it.kind }
+                        .sortedBy { it.first.value } equals listOf(
+                        KdElementId("java/Extendable") to JavaClassKindTypes.CLASS,
+                        KdElementId("java/Lower") to JavaClassKindTypes.INTERFACE
                     )
                 }
             }
@@ -195,10 +209,10 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "Foo").cast<DClass>()) {
                     val interfaceType = supertypes.values.flatten().single()
                     assertEquals(interfaceType.kind, JavaClassKindTypes.INTERFACE)
-                    assertEquals(interfaceType.typeConstructor.dri.classNames, "Bar")
+                    assertEquals("Bar", declarationIdToClassNames(interfaceType.typeConstructor.declarationId))
                     val generic =
                         (interfaceType.typeConstructor.projections.single() as Invariance<*>).inner as GenericTypeConstructor
-                    assertEquals(generic.dri.classNames, "String")
+                    assertEquals("String", declarationIdToClassNames(generic.declarationId))
                 }
             }
         }
@@ -217,7 +231,7 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "Foo").cast<DClass>()) {
                     val sups = listOf("Exception", "Cloneable")
                     assertTrue(
-                        sups.all { s -> supertypes.values.flatten().any { it.typeConstructor.dri.classNames == s } },
+                        sups.all { s -> supertypes.values.flatten().any { declarationIdToClassNames(it.typeConstructor.declarationId) == s } },
                         "Foo must extend ${sups.joinToString(", ")}"
                     )
                 }
@@ -241,10 +255,10 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "Foo").cast<DClass>()) {
                     val superclassType = supertypes.values.flatten().single()
                     assertEquals(superclassType.kind, JavaClassKindTypes.CLASS)
-                    assertEquals(superclassType.typeConstructor.dri.classNames, "Bar")
+                    assertEquals("Bar", declarationIdToClassNames(superclassType.typeConstructor.declarationId))
                     val generic =
                         (superclassType.typeConstructor.projections.single() as Invariance<*>).inner as GenericTypeConstructor
-                    assertEquals(generic.dri.classNames, "String")
+                    assertEquals("String", declarationIdToClassNames(generic.declarationId))
                 }
             }
         }
@@ -295,11 +309,12 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Foo").cast<DClass>()) {
                     generics counts 1
-                    generics[0].dri.classNames equals "Foo"
-                    (functions[0].type as? TypeParameter)?.dri?.run {
-                        packageName equals "java"
-                        name equals "Foo"
-                        callable?.name equals "foo"
+                    // A type parameter is not a declaration: its ID hangs off the owning class's ID
+                    ownerDeclarationIdOf(generics[0].declarationId) equals KdElementId("java/Foo")
+                    (functions[0].type as? TypeParameter)?.containerDeclarationId?.run {
+                        // the type parameter `E` is declared by the `foo` method
+                        declarationIdToPackageName(this) equals "java"
+                        callableNameOf(this) equals "foo"
                     }
                 }
             }
@@ -332,12 +347,13 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "DocumentClassFactory").cast<DInterface>()) {
                     generics counts 1
-                    generics[0].dri.classNames equals "DocumentClassFactory"
+                    ownerDeclarationIdOf(generics[0].declarationId) equals KdElementId("java/DocumentClassFactory")
                 }
                 with((module / "java" / "DocumentClassFactoryRegistry").cast<DClass>()) {
                     functions.forEach {
-                        (it.type as GenericTypeConstructor).dri.classNames equals "DocumentClassFactory"
-                        ((it.type.projections[0] as Invariance<*>).inner as TypeParameter).dri.classNames equals "DocumentClassFactoryRegistry"
+                        declarationIdToClassNames((it.type as GenericTypeConstructor).declarationId) equals "DocumentClassFactory"
+                        val typeParameter = (it.type.projections[0] as Invariance<*>).inner as TypeParameter
+                        declarationIdToClassNames(typeParameter.containerDeclarationId) equals "DocumentClassFactoryRegistry"
                     }
                 }
             }
@@ -495,11 +511,6 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "C" / "foo").cast<DFunction>()) {
                     @OptIn(ExperimentalDokkaApi::class)
                     extra[IsCompanion].assertNotNull("CompanionBlockMember on Java static method")
-                    assertEquals(
-                        true,
-                        @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion,
-                        "Java static method's DRI.callable should be marked isStatic=true"
-                    )
                 }
             }
         }
@@ -519,7 +530,6 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "C" / "instanceFoo").cast<DFunction>()) {
                     @OptIn(ExperimentalDokkaApi::class) assertEquals(null, extra[IsCompanion])
-                    assertEquals(false, @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion)
                 }
             }
         }
@@ -541,15 +551,9 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "C" / "s").cast<DProperty>()) {
                     @OptIn(ExperimentalDokkaApi::class)
                     extra[IsCompanion].assertNotNull("CompanionBlockMember on Java static field")
-                    assertEquals(
-                        true,
-                        @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion,
-                        "Java static field's DRI.callable should be marked isStatic=true"
-                    )
                 }
                 with((module / "java" / "C" / "i").cast<DProperty>()) {
                     @OptIn(ExperimentalDokkaApi::class) assertEquals(null, extra[IsCompanion])
-                    assertEquals(false, @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion)
                 }
             }
         }
@@ -575,16 +579,6 @@ class JavaTest : BaseAbstractTest() {
 
                     @OptIn(ExperimentalDokkaApi::class) values.extra[IsCompanion].assertNotNull("CompanionBlockMember on enum 'values'")
                     @OptIn(ExperimentalDokkaApi::class) valueOf.extra[IsCompanion].assertNotNull("CompanionBlockMember on enum 'valueOf'")
-                    assertEquals(
-                        true,
-                        @OptIn(ExperimentalDokkaApi::class) values.dri.callable?.isCompanion,
-                        "DRI for 'values' should be marked isStatic=true"
-                    )
-                    assertEquals(
-                        true,
-                        @OptIn(ExperimentalDokkaApi::class) valueOf.dri.callable?.isCompanion,
-                        "DRI for 'valueOf' should be marked isStatic=true"
-                    )
                 }
             }
         }
@@ -605,10 +599,10 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "C" / "foo").cast<DFunction>()) {
                     with(extra[CheckedExceptions]?.exceptions?.entries?.single()?.value.assertNotNull("CheckedExceptions")) {
                         this counts 2
-                        first().packageName equals "java.io"
-                        first().classNames equals "IOException"
-                        get(1).packageName equals "java.lang"
-                        get(1).classNames equals "ArithmeticException"
+                        declarationIdToPackageName(first()) equals "java.io"
+                        declarationIdToClassNames(first()) equals "IOException"
+                        declarationIdToPackageName(get(1)) equals "java.lang"
+                        declarationIdToClassNames(get(1)) equals "ArithmeticException"
                     }
                 }
             }
@@ -633,11 +627,11 @@ class JavaTest : BaseAbstractTest() {
                 with((module / "java" / "Attribute").cast<DAnnotation>()) {
                     with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                         with(single()) {
-                            dri.classNames equals "Target"
+                            classLikeId equals KdElementId("java.lang.annotation/Target")
                             (params["value"].assertNotNull("value") as ArrayValue).value equals listOf(
-                                EnumValue("ElementType.FIELD", DRI("java.lang.annotation", "ElementType")),
-                                EnumValue("ElementType.TYPE", DRI("java.lang.annotation", "ElementType")),
-                                EnumValue("ElementType.METHOD", DRI("java.lang.annotation", "ElementType"))
+                                EnumValue("ElementType.FIELD", javaEnumEntryId("java.lang.annotation.ElementType", "FIELD")),
+                                EnumValue("ElementType.TYPE", javaEnumEntryId("java.lang.annotation.ElementType", "TYPE")),
+                                EnumValue("ElementType.METHOD", javaEnumEntryId("java.lang.annotation.ElementType", "METHOD"))
                             )
                         }
                     }
@@ -659,7 +653,8 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Test" / "fn").cast<DFunction>()) {
-                    assertEquals(DRI("kotlin", "Any"), type.driOrNull)
+                    // Java `Object` is mapped to `kotlin.Any` by the Analysis API
+                    assertEquals(KdElementId("kotlin/Any"), type.classifierDeclarationId())
                 }
             }
         }
@@ -703,12 +698,12 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "InheritorLinks").cast<DClass>()) {
-                    val dri = (this / "Bar").assertNotNull("Foo dri").dri
+                    val barId = (this / "Bar").assertNotNull("Bar").declarationId
                     with((this / "Foo").cast<DClass>()) {
                         with(extra[InheritorsInfo].assertNotNull("InheritorsInfo")) {
                             with(value.values.flatten().distinct()) {
                                 this counts 1
-                                first() equals dri
+                                first() equals barId
                             }
                         }
                     }
@@ -738,21 +733,53 @@ class JavaTest : BaseAbstractTest() {
                         ?.firstOrNull()?.value //First sourceset
                         ?.firstOrNull()
 
-                    val expectedDri = DRI("java.lang.annotation", "Retention", null, PointingToDeclaration)
+                    val expectedAnnotationId = KdElementId("java.lang.annotation/Retention")
                     val expectedParams = "value" to EnumValue(
                         "RUNTIME",
-                        DRI(
-                            "java.lang.annotation",
-                            "RetentionPolicy.RUNTIME",
-                            null,
-                            PointingToDeclaration,
-                            DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-                        )
+                        javaEnumEntryId("java.lang.annotation.RetentionPolicy", "RUNTIME")
                     )
 
-                    assertEquals(expectedDri, annotation?.dri)
+                    assertEquals(expectedAnnotationId, annotation?.classLikeId)
                     assertEquals(expectedParams.first, annotation?.params?.entries?.first()?.key)
                     assertEquals(expectedParams.second, annotation?.params?.entries?.first()?.value)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `source enum constant in annotation param gets canonical enum-entry id`() {
+        testInline(
+            """
+            |/src/java/Level.java
+            |package java;
+            |public enum Level {
+            |    LOW, HIGH
+            |}
+            |
+            |/src/java/Marker.java
+            |package java;
+            |public @interface Marker {
+            |    Level value();
+            |}
+            |
+            |/src/java/Annotated.java
+            |package java;
+            |@Marker(Level.HIGH)
+            |public class Annotated {
+            |}
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                with((module / "java" / "Annotated").cast<DClass>()) {
+                    val annotation = extra[Annotations]?.directAnnotations?.entries
+                        ?.firstOrNull()?.value // First source set
+                        ?.firstOrNull()
+
+                    assertEquals(
+                        "Marker" to EnumValue("Level.HIGH", javaEnumEntryId("java.Level", "HIGH")),
+                        annotation?.let { declarationIdToClassNames(it.classLikeId) to it.params.entries.firstOrNull()?.value }
+                    )
                 }
             }
         }
@@ -787,13 +814,13 @@ class JavaTest : BaseAbstractTest() {
                             "superBound" -> {
                                 assertTrue(variance is Contravariance<*>)
                                 val bound = variance.inner
-                                assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
+                                assertEquals("String", declarationIdToClassNames((bound as GenericTypeConstructor).declarationId))
                             }
 
                             "extendsBound" -> {
                                 assertTrue(variance is Covariance<*>)
                                 val bound = variance.inner
-                                assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
+                                assertEquals("String", declarationIdToClassNames((bound as GenericTypeConstructor).declarationId))
                             }
 
                             "unbounded" -> {
@@ -822,11 +849,7 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Foo").cast<DClass>()) {
                     val doc = this.documentation.values.single()
-                    val expectedDRI = DRI(
-                        packageName = "java", classNames = null,
-                        target = PointingToDeclaration,
-                    )
-                    assertEquals(expectedDRI, (doc.dfs { it is See } as See).address)
+                    assertEquals(KdElementId("java"), (doc.dfs { it is See } as See).address)
                 }
             }
         }
@@ -845,7 +868,7 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Foo" / "a").cast<DProperty>()) {
-                    assertEquals(DRI("kotlin", "String"), this.type.driOrNull)
+                    assertEquals(KdElementId("kotlin/String"), type.classifierDeclarationId())
                 }
             }
         }
@@ -873,10 +896,10 @@ class JavaTest : BaseAbstractTest() {
                 val child = module / "test" / "Child"
 
                 // Java types are mapped to Kotlin types by the Analysis API
-                (child / "s").cast<DProperty>().type.driOrNull equals DRI("kotlin", "String")
-                (child / "i").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
-                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
-                (child / "method").cast<DFunction>().type.driOrNull equals DRI("kotlin", "Int")
+                (child / "s").cast<DProperty>().type.classifierDeclarationId() equals KdElementId("kotlin/String")
+                (child / "i").cast<DProperty>().type.classifierDeclarationId() equals KdElementId("kotlin/Int")
+                (child / "integer").cast<DProperty>().type.classifierDeclarationId() equals KdElementId("kotlin/Int")
+                (child / "method").cast<DFunction>().type.classifierDeclarationId() equals KdElementId("kotlin/Int")
             }
         }
     }

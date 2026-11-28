@@ -11,10 +11,10 @@ import com.intellij.lang.jvm.annotation.JvmAnnotationEnumFieldValue
 import com.intellij.psi.*
 import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.BreakingAbstractionKotlinLightMethodChecker
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.DokkaLogger
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.documentation.KdElementId
 
 @InternalDokkaApi
 internal class PsiHelper(
@@ -22,15 +22,15 @@ internal class PsiHelper(
     private val lightMethodChecker: BreakingAbstractionKotlinLightMethodChecker
 ) {
     /**
-     * Extracts a list of [DRI]s for checked exceptions from a [PsiMethod]'s throws clause.
+     * Extracts the declaration IDs of the checked exceptions from a [PsiMethod]'s throws clause.
      */
     context(_: KaSession)
-    fun getCheckedExceptionDRIs(psiMethod: PsiMethod): List<DRI> =
-        psiMethod.throwsList.toDriList()
+    fun getCheckedExceptionDeclarationIds(psiMethod: PsiMethod): List<KdElementId> =
+        psiMethod.throwsList.toDeclarationIdList()
 
     context(_: KaSession)
-    private fun PsiReferenceList.toDriList(): List<DRI> =
-        referenceElements.mapNotNull { it?.resolve()?.let { resolved -> DRI.from(resolved) } }
+    private fun PsiReferenceList.toDeclarationIdList(): List<KdElementId> =
+        referenceElements.mapNotNull { it?.resolve()?.let { resolved -> declarationIdFrom(resolved) } }
 
     context(_: KaSession)
     fun convertAnnotations(annotations: Collection<PsiAnnotation>): List<Annotations.Annotation> =
@@ -52,8 +52,9 @@ internal class PsiHelper(
     context(_: KaSession)
     private fun JvmAnnotationAttributeValue.toValue(): AnnotationParameterValue? {
         return when (this) {
-            is JvmAnnotationEnumFieldValue -> (field as? PsiElement)?.let { DRI.from(it) }
-                ?.let { dri -> EnumValue(fieldName ?: "", dri) }
+            is JvmAnnotationEnumFieldValue -> (field as? PsiField)?.let { field ->
+                declarationIdFrom(field)?.let { id -> EnumValue(fieldName ?: "", id) }
+            }
             // static import of a constant is resolved to constant value instead of a field/link
             is JvmAnnotationConstantValue -> this.constantValue?.toAnnotationLiteralValue()
             else -> null
@@ -76,7 +77,14 @@ internal class PsiHelper(
     private fun PsiAnnotationMemberValue.toValue(): AnnotationParameterValue? = when (this) {
         is PsiAnnotation -> convertAnnotation(this)?.let { AnnotationValue(it) }
         is PsiArrayInitializerMemberValue -> ArrayValue(initializers.mapNotNull { it.toValue() })
-        is PsiReferenceExpression -> psiReference?.let { DRI.from(it) }?.let { dri -> EnumValue(text ?: "", dri) }
+        // Resolve the whole expression: for a qualified reference like `ElementType.FIELD`,
+        // the first code-reference child is the `ElementType` qualifier, which would resolve
+        // to the enum class instead of the entry. Only enum entries become links; a static
+        // import of a plain constant (e.g. `static final int BYTE = 3`) falls back to the
+        // literal-value handling.
+        is PsiReferenceExpression -> resolve()?.let { resolved ->
+            (resolved as? PsiEnumConstant)?.let { field -> declarationIdFrom(field)?.let { id -> EnumValue(text ?: "", id) } }
+        }
         is PsiClassObjectAccessExpression -> {
             val parameterType = (type as? PsiClassType)?.parameters?.firstOrNull()
             val classType = when (parameterType) {
@@ -86,7 +94,9 @@ internal class PsiHelper(
                 is PsiArrayType -> (parameterType.componentType as? PsiClassType)?.resolve()
                 else -> null
             }
-            classType?.let { DRI.from(it) }?.let { dri -> ClassValue(classType.name ?: "", dri) }
+            classType?.let { classType ->
+                declarationIdFrom(classType)?.let { id -> ClassValue(classType.name ?: "", id) }
+            }
         }
 
         is PsiLiteralExpression -> toValue()
@@ -119,9 +129,9 @@ internal class PsiHelper(
         }
 
         return annotation.psiReference?.let { psiElement ->
-            DRI.from(psiElement)?.let { dri ->
+            declarationIdFrom(psiElement)?.let { classLikeId ->
                 Annotations.Annotation(
-                    dri = dri,
+                    classLikeId = classLikeId,
                     params = annotation.attributes
                         .filter { !lightMethodChecker.isLightAnnotationAttribute(it) }
                         .mapNotNull { it.attributeName to it.toValue() }

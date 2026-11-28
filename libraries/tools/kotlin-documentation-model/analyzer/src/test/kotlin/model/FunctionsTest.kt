@@ -4,12 +4,12 @@
 
 package model
 
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.DRIExtraContainer
-import org.jetbrains.dokka.links.EnumEntryDRIExtra
-import org.jetbrains.dokka.links.PointingToDeclaration
-import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.callableNameOf
+import org.jetbrains.kotlin.documentation.analyzer.ids.contextParameterDeclarationId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
+import org.jetbrains.kotlin.documentation.analyzer.ids.ownerDeclarationIdOf
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.comments
@@ -157,7 +157,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "Suppress"
+                        declarationIdToClassNames(classLikeId) equals "Suppress"
                         params.entries counts 1
                         (params["names"].assertNotNull("param") as ArrayValue).value equals listOf(StringValue("FOO"))
                     }
@@ -257,32 +257,23 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
             with((this / "function" / "Fancy").cast<DAnnotation>()) {
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 3
-                    with(associate { it.dri.classNames to it }) {
+                    with(associate { declarationIdToClassNames(it.classLikeId) to it }) {
                         with(this["Target"].assertNotNull("Target")) {
-                            (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
-                                EnumValue(
-                                    "AnnotationTarget.VALUE_PARAMETER",
-                                    DRI(
-                                        "kotlin.annotation",
-                                        "AnnotationTarget.VALUE_PARAMETER",
-                                        null,
-                                        PointingToDeclaration,
-                                        DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-                                    )
-                                )
-                            )
+                            with(params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue) {
+                                value counts 1
+                                with(value.single() as EnumValue) {
+                                    enumName equals "AnnotationTarget.VALUE_PARAMETER"
+                                    ownerDeclarationIdOf(enumEntryId) equals KdElementId("kotlin.annotation/AnnotationTarget")
+                                    callableNameOf(enumEntryId) equals "VALUE_PARAMETER"
+                                }
+                            }
                         }
                         with(this["Retention"].assertNotNull("Retention")) {
-                            (params["value"].assertNotNull("value") as EnumValue) equals EnumValue(
-                                "AnnotationRetention.SOURCE",
-                                DRI(
-                                    "kotlin.annotation",
-                                    "AnnotationRetention.SOURCE",
-                                    null,
-                                    PointingToDeclaration,
-                                    DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-                                )
-                            )
+                            with(params["value"].assertNotNull("value") as EnumValue) {
+                                enumName equals "AnnotationRetention.SOURCE"
+                                ownerDeclarationIdOf(enumEntryId) equals KdElementId("kotlin.annotation/AnnotationRetention")
+                                callableNameOf(enumEntryId) equals "SOURCE"
+                            }
                         }
                         this["MustBeDocumented"].assertNotNull("MustBeDocumented").params.entries counts 0
                     }
@@ -293,7 +284,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 with(this.extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "Fancy"
+                        declarationIdToClassNames(classLikeId) equals "Fancy"
                         params.entries counts 0
                     }
                 }
@@ -339,32 +330,23 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
 
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 3
-                    with(associate { it.dri.classNames to it }) {
+                    with(associate { declarationIdToClassNames(it.classLikeId) to it }) {
                         with(this["Target"].assertNotNull("Target")) {
-                            (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
-                                EnumValue(
-                                    "AnnotationTarget.VALUE_PARAMETER",
-                                    DRI(
-                                        "kotlin.annotation",
-                                        "AnnotationTarget.VALUE_PARAMETER",
-                                        null,
-                                        PointingToDeclaration,
-                                        DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-                                    )
-                                )
-                            )
+                            with(params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue) {
+                                value counts 1
+                                with(value.single() as EnumValue) {
+                                    enumName equals "AnnotationTarget.VALUE_PARAMETER"
+                                    ownerDeclarationIdOf(enumEntryId) equals KdElementId("kotlin.annotation/AnnotationTarget")
+                                    callableNameOf(enumEntryId) equals "VALUE_PARAMETER"
+                                }
+                            }
                         }
                         with(this["Retention"].assertNotNull("Retention")) {
-                            (params["value"].assertNotNull("value") as EnumValue) equals EnumValue(
-                                "AnnotationRetention.SOURCE",
-                                DRI(
-                                    "kotlin.annotation",
-                                    "AnnotationRetention.SOURCE",
-                                    null,
-                                    PointingToDeclaration,
-                                    DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
-                                )
-                            )
+                            with(params["value"].assertNotNull("value") as EnumValue) {
+                                enumName equals "AnnotationRetention.SOURCE"
+                                ownerDeclarationIdOf(enumEntryId) equals KdElementId("kotlin.annotation/AnnotationRetention")
+                                callableNameOf(enumEntryId) equals "SOURCE"
+                            }
                         }
                         this["MustBeDocumented"].assertNotNull("MustBeDocumented").params.entries counts 0
                     }
@@ -375,7 +357,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 with(this.extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(this.first()) {
-                        dri.classNames equals "Fancy"
+                        declarationIdToClassNames(classLikeId) equals "Fancy"
                         params.entries counts 1
                         (params["size"] as IntValue).value equals 1
                     }
@@ -459,7 +441,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
-                        dri.classNames equals "SinceKotlin"
+                        declarationIdToClassNames(classLikeId) equals "SinceKotlin"
                         params.entries counts 1
                         (params["version"].assertNotNull("version") as StringValue).value equals "1.1"
                     }
@@ -469,7 +451,7 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
     }
 
     @Test
-    fun `function with context parameters should have them, correct DRI, and documentation`() {
+    fun `function with context parameters should have them, correct declaration id, and documentation`() {
             inlineModelTest(
                 """
                 |/src/sample/ParentInKotlin.kt
@@ -481,20 +463,17 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                 """.trimIndent()
             ) {
                 with((this / "sample" / "f").cast<DFunction>()) {
-                    dri.callable equals org.jetbrains.dokka.links.Callable(
-                        name = "f",
-                        receiver = TypeConstructor("kotlin.Int", emptyList()),
-                        params = listOf(TypeConstructor("kotlin.Boolean", emptyList())),
-                        contextParameters = listOf(
-                            TypeConstructor("kotlin.String", emptyList()),
-                            TypeConstructor("kotlin.Int", emptyList())
-                        )
-                    )
-                    dri.toString() equals "sample//f/kotlin.String#kotlin.Int#kotlin.Int#kotlin.Boolean/PointingToDeclaration/"
+                    callableNameOf(declarationId) equals "f"
+                    ownerDeclarationIdOf(declarationId) equals KdElementId("sample")
+                    with(receiver.assertNotNull("receiver").type.assertNotNull("receiver type")) {
+                        name equals "Int"
+                    }
                     documentation.values.single().children.single().text() equals "Some doc\n"
                     contextParameters counts 2
                     contextParameters[0].name equals "s"
                     contextParameters[1].name equals "_"
+                    contextParameters[0].declarationId equals contextParameterDeclarationId(declarationId, 0)
+                    contextParameters[1].declarationId equals contextParameterDeclarationId(declarationId, 1)
                     with(contextParameters[0].type.assertNotNull("type")) {
                         name equals "String"
                     }

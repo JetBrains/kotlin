@@ -4,7 +4,7 @@
     {
       "name": "wasmJsMain",
       "elements": {
-        "pkg//jsConsoleLog/#kotlin.js.JsString/PointingToDeclaration/": {
+        "pkg#jsConsoleLog#TY7RSOoCfRQ": {
           "kind": "function",
           "name": "jsConsoleLog",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+            "classLikeId": "kotlin/Unit",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin.js/JsString///PointingToDeclaration/",
+                "classLikeId": "kotlin.js/JsString",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -60,7 +60,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//toJs/#kotlin.String/PointingToDeclaration/": {
+        "pkg#toJs#P7n-P2YFLsg": {
           "kind": "function",
           "name": "toJs",
           "isCompanion": false,
@@ -79,7 +79,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin.js/JsString///PointingToDeclaration/",
+            "classLikeId": "kotlin.js/JsString",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -95,7 +95,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -116,7 +116,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//toJsArray/#kotlin.collections.List[kotlin.Int]/PointingToDeclaration/": {
+        "pkg#toJsArray#HMafSLypVlU": {
           "kind": "function",
           "name": "toJsArray",
           "isCompanion": false,
@@ -143,7 +143,7 @@
                           "typeArguments": []
                         }
                       ],
-                      "classLikeId": "kotlin.js/JsNumber///PointingToDeclaration/",
+                      "classLikeId": "kotlin.js/JsNumber",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -151,7 +151,7 @@
                 ]
               }
             ],
-            "classLikeId": "kotlin.js/JsArray///PointingToDeclaration/",
+            "classLikeId": "kotlin.js/JsArray",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -175,7 +175,7 @@
                               "typeArguments": []
                             }
                           ],
-                          "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                          "classLikeId": "kotlin/Int",
                           "isMarkedNullable": false,
                           "annotations": []
                         }
@@ -183,7 +183,7 @@
                     ]
                   }
                 ],
-                "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+                "classLikeId": "kotlin.collections/List",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -204,7 +204,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//exportedSum/#kotlin.Int#kotlin.Int/PointingToDeclaration/": {
+        "pkg#exportedSum#BurVeEXUv5c": {
           "kind": "function",
           "name": "exportedSum",
           "isCompanion": false,
@@ -223,7 +223,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -239,7 +239,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -259,7 +259,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -280,7 +280,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/WasmJsOptions/title/#/PointingToDeclaration/": {
+        "pkg/WasmJsOptions#title#ctE8McQtNZQ": {
           "kind": "property",
           "name": "title",
           "isLateinit": false,
@@ -302,7 +302,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -317,11 +317,11 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/WasmJsOptions/_hashCode/#/PointingToDeclaration/": {
+        "pkg/WasmJsOptions#_hashCode#ctE8McQtNZQ": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/_hashCode/#/PointingToDeclaration/"
+          "originalId": "kotlin/Any#_hashCode#ctE8McQtNZQ"
         },
-        "pkg/WasmJsOptions///PointingToDeclaration/": {
+        "pkg/WasmJsOptions": {
           "kind": "class",
           "name": "WasmJsOptions",
           "classKind": "INTERFACE",
@@ -343,14 +343,14 @@
                   "typeArguments": []
                 }
               ],
-              "classLikeId": "kotlin.js/JsAny///PointingToDeclaration/",
+              "classLikeId": "kotlin.js/JsAny",
               "isMarkedNullable": false,
               "annotations": []
             }
           ],
           "declarations": [
-            "pkg/WasmJsOptions/title/#/PointingToDeclaration/",
-            "pkg/WasmJsOptions/_hashCode/#/PointingToDeclaration/"
+            "pkg/WasmJsOptions#title#ctE8McQtNZQ",
+            "pkg/WasmJsOptions#_hashCode#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -358,29 +358,29 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//jsConsoleLog/#kotlin.js.JsString/PointingToDeclaration/",
-            "pkg//toJs/#kotlin.String/PointingToDeclaration/",
-            "pkg//toJsArray/#kotlin.collections.List[kotlin.Int]/PointingToDeclaration/",
-            "pkg//exportedSum/#kotlin.Int#kotlin.Int/PointingToDeclaration/",
-            "pkg/WasmJsOptions///PointingToDeclaration/"
+            "pkg#jsConsoleLog#TY7RSOoCfRQ",
+            "pkg#toJs#P7n-P2YFLsg",
+            "pkg#toJsArray#HMafSLypVlU",
+            "pkg#exportedSum#BurVeEXUv5c",
+            "pkg/WasmJsOptions"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "targetWasmJs",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }
       },
       "embeddedElements": {
-        "kotlin/Any/_hashCode/#/PointingToDeclaration/": {
+        "kotlin/Any#_hashCode#ctE8McQtNZQ": {
           "kind": "property",
           "name": "_hashCode",
           "isLateinit": false,
@@ -402,7 +402,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -417,7 +417,7 @@
           "throws": [],
           "annotations": []
         },
-        "kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/": {
+        "kotlin/Any#equals#M6SLt1k650Y": {
           "kind": "function",
           "name": "equals",
           "isCompanion": false,
@@ -436,7 +436,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Boolean///PointingToDeclaration/",
+            "classLikeId": "kotlin/Boolean",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -452,7 +452,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                "classLikeId": "kotlin/Any",
                 "isMarkedNullable": true,
                 "annotations": []
               },
@@ -473,11 +473,11 @@
           "throws": [],
           "annotations": []
         },
-        "kotlin.js/JsAny/equals/#kotlin.Any?/PointingToDeclaration/": {
+        "kotlin.js/JsAny#equals#M6SLt1k650Y": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/equals/#kotlin.Any?/PointingToDeclaration/"
+          "originalId": "kotlin/Any#equals#M6SLt1k650Y"
         },
-        "kotlin/Any/hashCode/#/PointingToDeclaration/": {
+        "kotlin/Any#hashCode#KK4ERoLQuv0": {
           "kind": "function",
           "name": "hashCode",
           "isCompanion": false,
@@ -496,7 +496,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -512,11 +512,11 @@
           "throws": [],
           "annotations": []
         },
-        "kotlin.js/JsAny/hashCode/#/PointingToDeclaration/": {
+        "kotlin.js/JsAny#hashCode#KK4ERoLQuv0": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/hashCode/#/PointingToDeclaration/"
+          "originalId": "kotlin/Any#hashCode#KK4ERoLQuv0"
         },
-        "kotlin/Any/toString/#/PointingToDeclaration/": {
+        "kotlin/Any#toString#KK4ERoLQuv0": {
           "kind": "function",
           "name": "toString",
           "isCompanion": false,
@@ -535,7 +535,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -551,15 +551,15 @@
           "throws": [],
           "annotations": []
         },
-        "kotlin.js/JsAny/toString/#/PointingToDeclaration/": {
+        "kotlin.js/JsAny#toString#KK4ERoLQuv0": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/toString/#/PointingToDeclaration/"
+          "originalId": "kotlin/Any#toString#KK4ERoLQuv0"
         },
-        "kotlin.js/JsAny/_hashCode/#/PointingToDeclaration/": {
+        "kotlin.js/JsAny#_hashCode#ctE8McQtNZQ": {
           "kind": "inheritedMember",
-          "originalId": "kotlin/Any/_hashCode/#/PointingToDeclaration/"
+          "originalId": "kotlin/Any#_hashCode#ctE8McQtNZQ"
         },
-        "kotlin.js/JsAny///PointingToDeclaration/": {
+        "kotlin.js/JsAny": {
           "kind": "class",
           "name": "JsAny",
           "classKind": "INTERFACE",
@@ -574,10 +574,10 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "kotlin.js/JsAny/equals/#kotlin.Any?/PointingToDeclaration/",
-            "kotlin.js/JsAny/hashCode/#/PointingToDeclaration/",
-            "kotlin.js/JsAny/toString/#/PointingToDeclaration/",
-            "kotlin.js/JsAny/_hashCode/#/PointingToDeclaration/"
+            "kotlin.js/JsAny#equals#M6SLt1k650Y",
+            "kotlin.js/JsAny#hashCode#KK4ERoLQuv0",
+            "kotlin.js/JsAny#toString#KK4ERoLQuv0",
+            "kotlin.js/JsAny#_hashCode#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -585,7 +585,7 @@
           "deprecated": null,
           "annotations": [
             {
-              "classLikeId": "kotlin.js/ExperimentalWasmJsInterop///PointingToDeclaration/",
+              "classLikeId": "kotlin.js/ExperimentalWasmJsInterop",
               "arguments": {}
             }
           ]

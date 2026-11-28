@@ -5,9 +5,6 @@
 package translators
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.Callable
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.dfs
@@ -16,13 +13,13 @@ import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.text
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @MustRunOnChangesInAnalysisApi
 class JavadocParserTest : BaseAbstractTest() {
@@ -62,15 +59,11 @@ class JavadocParserTest : BaseAbstractTest() {
                 val  see = fn.documentation.values.single().children[1] as See
 
                 with(description.dfs { it is DocumentationLink } as DocumentationLink)  {
-                    assertEquals("List", dri.classNames)
-                    assertEquals("java.util", dri.packageName)
-                    assertNull(dri.callable)
+                    assertEquals(KdElementId("java.util/List"), declarationId)
                     assertEquals("List", this.text())
                 }
                 with(see)  {
-                    assertEquals("List", address?.classNames)
-                    assertEquals("java.util", address?.packageName)
-                    assertNull(address?.callable)
+                    assertEquals(KdElementId("java.util/List"), address)
                     assertEquals("java.util.List", name)
                 }
             }
@@ -122,15 +115,16 @@ class JavadocParserTest : BaseAbstractTest() {
 
                 // All three links must resolve, and the ones without an explicit parent class
                 // must point to the overriding (child) declaration in StringList, not the parent.
+                // Method links are degraded to the owner classlike ID, so the owners are asserted.
                 assertEquals(3, allLinks.size, "Expected all three @link references to resolve")
 
                 val noClassLink = allLinks.single { it.text().trim() == "a" }
                 val withClassLink = allLinks.single { it.text().trim() == "b" }
                 val parentLink = allLinks.single { it.text().trim() == "c" }
 
-                assertEquals(DRI("sample", "StringList", Callable("getFirst", null, emptyList())), noClassLink.dri)
-                assertEquals(DRI("sample", "StringList", Callable("getFirst", null, emptyList())), withClassLink.dri)
-                assertEquals(DRI("java.util", "LinkedList", Callable("getFirst", null, emptyList())), parentLink.dri)
+                assertEquals(KdElementId("sample/StringList"), noClassLink.declarationId)
+                assertEquals(KdElementId("sample/StringList"), withClassLink.declarationId)
+                assertEquals(KdElementId("java.util/LinkedList"), parentLink.declarationId)
 
                 assertEquals(
                     0,
@@ -181,9 +175,10 @@ class JavadocParserTest : BaseAbstractTest() {
                 description.children.forEach { collect(it) }
 
                 // A paren-less reference carries no signature to pick a specific overload. Since Dokka
-                // links to a single declaration, it must still resolve to one of the existing overloads.
+                // links to a single declaration, it must still resolve; the link is degraded to the
+                // owner classlike ID, so which overload is picked is no longer visible in the ID.
                 val link = allLinks.single { it.text().trim() == "n" }
-                assertEquals(DRI("sample", "Overloads", Callable("foo", null, listOf(JavaClassReference("int")))), link.dri)
+                assertEquals(KdElementId("sample/Overloads#foo#hDKzvCWNlUY"), link.declarationId)
 
                 assertEquals(
                     0,
@@ -345,9 +340,9 @@ class JavadocParserTest : BaseAbstractTest() {
         performJavadocTest { module ->
             val sees = module.findClasslike().documentation.values.single().childrenOfType<See>()
             assertEquals(2, sees.size)
-            assertEquals(DRI("java.text", "DateFormat"), sees[0].address)
+            assertEquals(KdElementId("java.text/DateFormat"), sees[0].address)
             assertEquals("java.text.DateFormat", sees[0].name)
-            assertEquals(DRI("java.util", "Calendar"), sees[1].address)
+            assertEquals(KdElementId("java.util/Calendar"), sees[1].address)
             assertEquals("java.util.Calendar", sees[1].name)
         }
     }

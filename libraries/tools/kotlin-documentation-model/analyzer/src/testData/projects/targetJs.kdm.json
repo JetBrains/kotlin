@@ -4,7 +4,7 @@
     {
       "name": "jsMain",
       "elements": {
-        "pkg//parseInt/#kotlin.String#kotlin.Int/PointingToDeclaration/": {
+        "pkg#parseInt#BkAGU63BPB0": {
           "kind": "function",
           "name": "parseInt",
           "isCompanion": false,
@@ -23,7 +23,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -39,7 +39,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -59,7 +59,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                "classLikeId": "kotlin/Int",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -80,7 +80,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg//toDynamic/#kotlin.Any/PointingToDeclaration/": {
+        "pkg#toDynamic#mEVIg5dwN18": {
           "kind": "function",
           "name": "toDynamic",
           "isCompanion": false,
@@ -106,7 +106,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Any///PointingToDeclaration/",
+                "classLikeId": "kotlin/Any",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -127,7 +127,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsOptions/title/#/PointingToDeclaration/": {
+        "pkg/JsOptions#title#ctE8McQtNZQ": {
           "kind": "property",
           "name": "title",
           "isLateinit": false,
@@ -149,7 +149,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -164,7 +164,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsOptions/count/#/PointingToDeclaration/": {
+        "pkg/JsOptions#count#ctE8McQtNZQ": {
           "kind": "property",
           "name": "count",
           "isLateinit": false,
@@ -186,7 +186,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": true,
             "annotations": []
           },
@@ -201,7 +201,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsOptions///PointingToDeclaration/": {
+        "pkg/JsOptions": {
           "kind": "class",
           "name": "JsOptions",
           "classKind": "INTERFACE",
@@ -216,8 +216,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JsOptions/title/#/PointingToDeclaration/",
-            "pkg/JsOptions/count/#/PointingToDeclaration/"
+            "pkg/JsOptions#title#ctE8McQtNZQ",
+            "pkg/JsOptions#count#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -225,7 +225,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/JsDate/JsDate/#kotlin.Number/PointingToDeclaration/": {
+        "pkg/JsDate##OO4YdzDdsrg": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -242,7 +242,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/Number///PointingToDeclaration/",
+                "classLikeId": "kotlin/Number",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -259,7 +259,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsDate/getTime/#/PointingToDeclaration/": {
+        "pkg/JsDate#getTime#KK4ERoLQuv0": {
           "kind": "function",
           "name": "getTime",
           "isCompanion": false,
@@ -278,7 +278,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Double///PointingToDeclaration/",
+            "classLikeId": "kotlin/Double",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -294,7 +294,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsDate///PointingToDeclaration/": {
+        "pkg/JsDate": {
           "kind": "class",
           "name": "JsDate",
           "classKind": "CLASS",
@@ -309,8 +309,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JsDate/JsDate/#kotlin.Number/PointingToDeclaration/",
-            "pkg/JsDate/getTime/#/PointingToDeclaration/"
+            "pkg/JsDate##OO4YdzDdsrg",
+            "pkg/JsDate#getTime#KK4ERoLQuv0"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -318,7 +318,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/JsGreeter/JsGreeter/#kotlin.String/PointingToDeclaration/": {
+        "pkg/JsGreeter##P7n-P2YFLsg": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -335,7 +335,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -352,7 +352,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsGreeter/greet/#kotlin.String/PointingToDeclaration/": {
+        "pkg/JsGreeter#greet#P7n-P2YFLsg": {
           "kind": "function",
           "name": "greet",
           "isCompanion": false,
@@ -371,7 +371,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -387,7 +387,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                "classLikeId": "kotlin/String",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -408,7 +408,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsGreeter/later/#/PointingToDeclaration/": {
+        "pkg/JsGreeter#later#KK4ERoLQuv0": {
           "kind": "function",
           "name": "later",
           "isCompanion": false,
@@ -435,7 +435,7 @@
                           "typeArguments": []
                         }
                       ],
-                      "classLikeId": "kotlin/String///PointingToDeclaration/",
+                      "classLikeId": "kotlin/String",
                       "isMarkedNullable": false,
                       "annotations": []
                     }
@@ -443,7 +443,7 @@
                 ]
               }
             ],
-            "classLikeId": "kotlin.js/Promise///PointingToDeclaration/",
+            "classLikeId": "kotlin.js/Promise",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -459,7 +459,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsGreeter/name/#/PointingToDeclaration/": {
+        "pkg/JsGreeter#name#ctE8McQtNZQ": {
           "kind": "property",
           "name": "name",
           "isLateinit": false,
@@ -481,7 +481,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "classLikeId": "kotlin/String",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -496,7 +496,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JsGreeter///PointingToDeclaration/": {
+        "pkg/JsGreeter": {
           "kind": "class",
           "name": "JsGreeter",
           "classKind": "CLASS",
@@ -511,10 +511,10 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JsGreeter/JsGreeter/#kotlin.String/PointingToDeclaration/",
-            "pkg/JsGreeter/greet/#kotlin.String/PointingToDeclaration/",
-            "pkg/JsGreeter/later/#/PointingToDeclaration/",
-            "pkg/JsGreeter/name/#/PointingToDeclaration/"
+            "pkg/JsGreeter##P7n-P2YFLsg",
+            "pkg/JsGreeter#greet#P7n-P2YFLsg",
+            "pkg/JsGreeter#later#KK4ERoLQuv0",
+            "pkg/JsGreeter#name#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -522,23 +522,23 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg//parseInt/#kotlin.String#kotlin.Int/PointingToDeclaration/",
-            "pkg//toDynamic/#kotlin.Any/PointingToDeclaration/",
-            "pkg/JsOptions///PointingToDeclaration/",
-            "pkg/JsDate///PointingToDeclaration/",
-            "pkg/JsGreeter///PointingToDeclaration/"
+            "pkg#parseInt#BkAGU63BPB0",
+            "pkg#toDynamic#mEVIg5dwN18",
+            "pkg/JsOptions",
+            "pkg/JsDate",
+            "pkg/JsGreeter"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "targetJs",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }

@@ -108,11 +108,10 @@ internal class HtmlToDocTagConverter(
                 A(children, params = mapOf("docref" to element.attr("docref")))
             element.hasAttr("href") ->
                 A(children, params = mapOf("href" to element.attr("href")))
-            element.hasAttr("data-dri") && docTagParserContext.getDri(element.attr("data-dri")) != null -> {
-                val referencedDriId = element.attr("data-dri")
+            element.hasAttr("data-declaration-id") && docTagParserContext.getDeclarationId(element.attr("data-declaration-id")) != null -> {
                 DocumentationLink(
-                    dri = docTagParserContext.getDri(referencedDriId)
-                        ?: error("docTagParserContext.getDri is null, TODO"), // TODO [beresnev] handle
+                    declarationId = docTagParserContext.getDeclarationId(element.attr("data-declaration-id"))
+                        ?: error("docTagParserContext.getDeclarationId is null, TODO"), // TODO [beresnev] handle
                     children = children
                 )
             }

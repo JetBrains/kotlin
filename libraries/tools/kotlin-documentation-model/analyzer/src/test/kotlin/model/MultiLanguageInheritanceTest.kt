@@ -7,12 +7,12 @@ package model
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToClassNames
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import translators.documentationOf
 import utils.docs
@@ -236,7 +236,7 @@ class MultiLanguageInheritanceTest : BaseAbstractTest() {
                                         ),
                                         Text(" with a link to "),
                                         DocumentationLink(
-                                            DRI("java.lang", "String", null, PointingToDeclaration),
+                                            KdElementId("java.lang/String"),
                                             listOf(Text("defaultString")),
                                             params = mapOf("href" to "[java.lang.String]")
                                         )
@@ -348,7 +348,7 @@ class MultiLanguageInheritanceTest : BaseAbstractTest() {
                 assertEquals("", module.documentationOf("ChildInJava"))
                 assertEquals("Start parent function docs end", docs?.root?.withDescendants()?.filter { it is Text }?.toList()?.joinToString("") { (it as Text).body })
                 assertEquals("Testing runtime", throwsTag?.root?.withDescendants()?.filter { it is Text }?.toList()?.joinToString("") { (it as Text).body })
-                assertEquals("RuntimeException", throwsTag?.exceptionAddress?.classNames)
+                assertEquals("RuntimeException", throwsTag?.exceptionAddress?.let { declarationIdToClassNames(it) })
             }
         }
     }

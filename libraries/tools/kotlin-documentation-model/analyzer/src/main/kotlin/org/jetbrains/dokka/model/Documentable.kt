@@ -6,29 +6,31 @@ package org.jetbrains.dokka.model
 
 import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
+import org.jetbrains.kotlin.documentation.analyzer.ids.MODULE_DECLARATION_ID
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.declarationIdToPackageName
 
 internal interface AnnotationTarget
 
 internal abstract class Documentable : WithChildren<Documentable>,
     AnnotationTarget {
     abstract val name: String?
-    abstract val dri: DRI
+    abstract val declarationId: KdElementId
     abstract val documentation: SourceSetDependent<DocumentationNode>
     abstract val sourceSets: Set<DokkaSourceSet>
     abstract val expectPresentInSet: DokkaSourceSet?
     abstract override val children: List<Documentable>
 
     override fun toString(): String =
-        "${javaClass.simpleName}($dri)"
+        "${javaClass.simpleName}($declarationId)"
 
     override fun equals(other: Any?): Boolean =
-        other is Documentable && this.dri == other.dri // TODO: https://github.com/Kotlin/dokka/pull/667#discussion_r382555806
+        other is Documentable && this.declarationId == other.declarationId // TODO: https://github.com/Kotlin/dokka/pull/667#discussion_r382555806
 
-    override fun hashCode(): Int = dri.hashCode()
+    override fun hashCode(): Int = declarationId.hashCode()
 }
 
 internal typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
@@ -117,7 +119,7 @@ internal data class DModule(
     override val sourceSets: Set<DokkaSourceSet>,
     override val extra: PropertyContainer<DModule> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DModule> {
-    override val dri: DRI = DRI.topLevel
+    override val declarationId: KdElementId = MODULE_DECLARATION_ID
     override val children: List<Documentable>
         get() = packages
 
@@ -125,7 +127,7 @@ internal data class DModule(
 }
 
 internal data class DPackage(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val functions: List<DFunction>,
     override val properties: List<DProperty>,
     override val classlikes: List<DClasslike>,
@@ -136,13 +138,13 @@ internal data class DPackage(
     override val extra: PropertyContainer<DPackage> = PropertyContainer.empty()
 ) : Documentable(), WithScope, WithTypealiases, WithExtraProperties<DPackage> {
 
-    val packageName: String = dri.packageName.orEmpty()
+    val packageName: String = declarationIdToPackageName(declarationId)
 
     /**
      * !!! WARNING !!!
      * This name is not guaranteed to be a be a canonical/real package name.
      * e.g. this will return a human readable version for root packages.
-     * Use [packageName] or `dri.packageName` instead to obtain the real packageName
+     * Use [packageName] instead to obtain the real packageName
      */
     override val name: String = packageName.ifBlank { "[root]" }
 
@@ -152,7 +154,7 @@ internal data class DPackage(
 }
 
 internal data class DClass(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     override val constructors: List<DFunction>,
     override val functions: List<DFunction>,
@@ -173,86 +175,6 @@ internal data class DClass(
 ) : DClasslike(), WithAbstraction, WithCompanion, WithConstructors, WithGenerics, WithSupertypes,
     WithExtraProperties<DClass>, WithTypealiases {
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        name: String,
-        constructors: List<DFunction>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        generics: List<DTypeParameter>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DClass> = PropertyContainer.empty(),
-    ) : this(
-        dri = dri,
-        name = name,
-        constructors = constructors,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        sources = sources,
-        visibility = visibility,
-        companion = companion,
-        generics = generics,
-        supertypes = supertypes,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        name: String,
-        constructors: List<DFunction>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        generics: List<DTypeParameter>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DClass> = PropertyContainer.empty(),
-    ): DClass = DClass(
-        dri = dri,
-        name = name,
-        constructors = constructors,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        sources = sources,
-        visibility = visibility,
-        companion = companion,
-        generics = generics,
-        supertypes = supertypes,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + constructors + typealiases)
 
@@ -260,7 +182,7 @@ internal data class DClass(
 }
 
 internal data class DEnum(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     val entries: List<DEnumEntry>,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -281,87 +203,11 @@ internal data class DEnum(
     override val children: List<Documentable>
         get() = (entries + functions + properties + classlikes + constructors + typealiases)
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        name: String,
-        entries: List<DEnumEntry>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        constructors: List<DFunction>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DEnum> = PropertyContainer.empty(),
-    ) : this(
-        dri = dri,
-        name = name,
-        entries = entries,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        companion = companion,
-        constructors = constructors,
-        supertypes = supertypes,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        name: String,
-        entries: List<DEnumEntry>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        constructors: List<DFunction>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DEnum> = PropertyContainer.empty(),
-    ): DEnum = DEnum(
-        dri = dri,
-        name = name,
-        entries = entries,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        companion = companion,
-        constructors = constructors,
-        supertypes = supertypes,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
     override fun withNewExtras(newExtras: PropertyContainer<DEnum>): DEnum = copy(extra = newExtras)
 }
 
 internal data class DEnumEntry(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -378,7 +224,7 @@ internal data class DEnumEntry(
 }
 
 internal data class DFunction(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     val isConstructor: Boolean,
     val parameters: List<DParameter>,
@@ -397,78 +243,6 @@ internal data class DFunction(
     override val contextParameters: List<DParameter> = emptyList(),
 ) : Documentable(), Callable, WithGenerics, WithExtraProperties<DFunction> {
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        name: String,
-        isConstructor: Boolean,
-        parameters: List<DParameter>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        type: Bound,
-        generics: List<DTypeParameter>,
-        receiver: DParameter?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DFunction> = PropertyContainer.empty()
-    ) : this(
-        dri = dri,
-        name = name,
-        isConstructor = isConstructor,
-        parameters = parameters,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        visibility = visibility,
-        type = type,
-        generics = generics,
-        receiver = receiver,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        contextParameters = emptyList()
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        name: String,
-        isConstructor: Boolean,
-        parameters: List<DParameter>,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        type: Bound,
-        generics: List<DTypeParameter>,
-        receiver: DParameter?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DFunction> = PropertyContainer.empty()
-    ): DFunction = DFunction(
-        dri = dri,
-        name = name,
-        isConstructor = isConstructor,
-        parameters = parameters,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        visibility = visibility,
-        type = type,
-        generics = generics,
-        receiver = receiver,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        contextParameters = emptyList()
-    )
-
     override val children: List<Documentable>
         get() = parameters + @OptIn(ExperimentalDokkaApi::class) contextParameters
 
@@ -476,7 +250,7 @@ internal data class DFunction(
 }
 
 internal data class DInterface(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -498,88 +272,12 @@ internal data class DInterface(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + typealiases)
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        name: String,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        generics: List<DTypeParameter>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DInterface> = PropertyContainer.empty(),
-    ) : this(
-        dri = dri,
-        name = name,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        companion = companion,
-        generics = generics,
-        supertypes = supertypes,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        name: String,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        companion: DObject?,
-        generics: List<DTypeParameter>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DInterface> = PropertyContainer.empty(),
-    ): DInterface = DInterface(
-        dri = dri,
-        name = name,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        companion = companion,
-        generics = generics,
-        supertypes = supertypes,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
     override fun withNewExtras(newExtras: PropertyContainer<DInterface>): DInterface = copy(extra = newExtras)
 }
 
 internal data class DObject(
     override val name: String?,
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
     override val sources: SourceSetDependent<DocumentableSource>,
@@ -596,76 +294,12 @@ internal data class DObject(
     override val children: List<Documentable>
         get() = (functions + properties + classlikes + typealiases)
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        name: String?,
-        dri: DRI,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DObject> = PropertyContainer.empty(),
-    ) : this(
-        name = name,
-        dri = dri,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        supertypes = supertypes,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        name: String?,
-        dri: DRI,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        functions: List<DFunction>,
-        properties: List<DProperty>,
-        classlikes: List<DClasslike>,
-        visibility: SourceSetDependent<Visibility>,
-        supertypes: SourceSetDependent<List<TypeConstructorWithKind>>,
-        sourceSets: Set<DokkaSourceSet>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DObject> = PropertyContainer.empty(),
-    ): DObject = DObject(
-        name = name,
-        dri = dri,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        functions = functions,
-        properties = properties,
-        classlikes = classlikes,
-        visibility = visibility,
-        supertypes = supertypes,
-        sourceSets = sourceSets,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        typealiases = emptyList(),
-    )
-
     override fun withNewExtras(newExtras: PropertyContainer<DObject>): DObject = copy(extra = newExtras)
 }
 
 internal data class DAnnotation(
     override val name: String,
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
     override val sources: SourceSetDependent<DocumentableSource>,
@@ -687,7 +321,7 @@ internal data class DAnnotation(
 }
 
 internal data class DProperty(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -706,78 +340,6 @@ internal data class DProperty(
     override val contextParameters: List<DParameter> = emptyList()
 ) : Documentable(), Callable, WithExtraProperties<DProperty>, WithGenerics {
 
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        name: String,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        type: Bound,
-        receiver: DParameter?,
-        setter: DFunction?,
-        getter: DFunction?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        generics: List<DTypeParameter>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DProperty> = PropertyContainer.empty()
-    ) : this(
-        dri = dri,
-        name = name,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        visibility = visibility,
-        type = type,
-        receiver = receiver,
-        setter = setter,
-        getter = getter,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        generics = generics,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        contextParameters = emptyList()
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        name: String,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        sources: SourceSetDependent<DocumentableSource>,
-        visibility: SourceSetDependent<Visibility>,
-        type: Bound,
-        receiver: DParameter?,
-        setter: DFunction?,
-        getter: DFunction?,
-        modifier: SourceSetDependent<Modifier>,
-        sourceSets: Set<DokkaSourceSet>,
-        generics: List<DTypeParameter>,
-        isExpectActual: Boolean,
-        extra: PropertyContainer<DProperty> = PropertyContainer.empty()
-    ): DProperty = DProperty(
-        dri = dri,
-        name = name,
-        documentation = documentation,
-        expectPresentInSet = expectPresentInSet,
-        sources = sources,
-        visibility = visibility,
-        type = type,
-        receiver = receiver,
-        setter = setter,
-        getter = getter,
-        modifier = modifier,
-        sourceSets = sourceSets,
-        generics = generics,
-        isExpectActual = isExpectActual,
-        extra = extra,
-        contextParameters = emptyList()
-    )
-
     override val children: List<Nothing>
         get() = emptyList()
 
@@ -786,7 +348,7 @@ internal data class DProperty(
 
 // TODO: treat named Parameters and receivers differently
 internal data class DParameter(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String?,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -801,6 +363,7 @@ internal data class DParameter(
 }
 
 internal data class DTypeParameter(
+    override val declarationId: KdElementId,
     val variantTypeParameter: Variance<TypeParameter>,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -809,25 +372,6 @@ internal data class DTypeParameter(
     override val extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DTypeParameter> {
 
-    constructor(
-        dri: DRI,
-        name: String,
-        presentableName: String?,
-        documentation: SourceSetDependent<DocumentationNode>,
-        expectPresentInSet: DokkaSourceSet?,
-        bounds: List<Bound>,
-        sourceSets: Set<DokkaSourceSet>,
-        extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
-    ) : this(
-        Invariance(TypeParameter(dri, name, presentableName)),
-        documentation,
-        expectPresentInSet,
-        bounds,
-        sourceSets,
-        extra
-    )
-
-    override val dri: DRI by variantTypeParameter.inner::dri
     override val name: String by variantTypeParameter.inner::name
 
     override val children: List<Nothing>
@@ -837,7 +381,7 @@ internal data class DTypeParameter(
 }
 
 internal data class DTypeAlias(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val name: String,
     override val type: Bound,
     val underlyingType: SourceSetDependent<Bound>,
@@ -858,7 +402,8 @@ internal data class DTypeAlias(
 internal sealed class Projection
 internal sealed class Bound : Projection()
 internal data class TypeParameter(
-    val dri: DRI,
+    /** The declaration ID of the declaration that declares this type parameter. */
+    val containerDeclarationId: KdElementId,
     val name: String,
     val presentableName: String? = null,
     override val extra: PropertyContainer<TypeParameter> = PropertyContainer.empty()
@@ -868,13 +413,14 @@ internal data class TypeParameter(
 }
 
 internal sealed class TypeConstructor : Bound(), AnnotationTarget {
-    abstract val dri: DRI
+    /** The classifier declaration ID of the type (see `generateDeclarationId`). */
+    abstract val declarationId: KdElementId
     abstract val projections: List<Projection>
     abstract val presentableName: String?
 }
 
 internal data class GenericTypeConstructor(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val projections: List<Projection>,
     override val presentableName: String? = null,
     override val extra: PropertyContainer<GenericTypeConstructor> = PropertyContainer.empty()
@@ -884,7 +430,7 @@ internal data class GenericTypeConstructor(
 }
 
 internal data class FunctionalTypeConstructor(
-    override val dri: DRI,
+    override val declarationId: KdElementId,
     override val projections: List<Projection>,
     val isExtensionFunction: Boolean = false,
     val isSuspendable: Boolean = false,
@@ -893,41 +439,6 @@ internal data class FunctionalTypeConstructor(
     @property:ExperimentalDokkaApi
     val contextParametersCount: Int = 0
 ) : TypeConstructor(), WithExtraProperties<FunctionalTypeConstructor> {
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    constructor(
-        dri: DRI,
-        projections: List<Projection>,
-        isExtensionFunction: Boolean = false,
-        isSuspendable: Boolean = false,
-        presentableName: String? = null,
-        extra: PropertyContainer<FunctionalTypeConstructor> = PropertyContainer.empty()
-    ) : this(
-        dri = dri,
-        projections = projections,
-        isExtensionFunction = isExtensionFunction,
-        isSuspendable = isSuspendable,
-        presentableName = presentableName,
-        extra = extra
-    )
-
-    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    fun copy(
-        dri: DRI,
-        projections: List<Projection>,
-        isExtensionFunction: Boolean = false,
-        isSuspendable: Boolean = false,
-        presentableName: String? = null,
-        extra: PropertyContainer<FunctionalTypeConstructor> = PropertyContainer.empty()
-    ): FunctionalTypeConstructor = FunctionalTypeConstructor(
-        dri = dri,
-        projections = projections,
-        isExtensionFunction = isExtensionFunction,
-        isSuspendable = isSuspendable,
-        presentableName = presentableName,
-        extra = extra,
-        contextParametersCount = 0
-    )
 
     override fun withNewExtras(newExtras: PropertyContainer<FunctionalTypeConstructor>): FunctionalTypeConstructor =
         copy(extra = newExtras)
@@ -993,13 +504,6 @@ internal object Star : Projection()
 
 internal object Void : Bound()
 internal object Dynamic : Bound()
-
-@Suppress("unused")
-internal fun Variance<TypeParameter>.withDri(dri: DRI): Variance<TypeParameter> = when (this) {
-    is Contravariance -> Contravariance(TypeParameter(dri, inner.name, inner.presentableName))
-    is Covariance -> Covariance(TypeParameter(dri, inner.name, inner.presentableName))
-    is Invariance -> Invariance(TypeParameter(dri, inner.name, inner.presentableName))
-}
 
 internal fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
     if (predicate(this)) {

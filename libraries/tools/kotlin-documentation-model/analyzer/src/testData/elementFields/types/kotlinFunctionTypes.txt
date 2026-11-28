@@ -1,5 +1,5 @@
 fragment main
-constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+constructor(value: T) [example/Types##QyF3JRolhKo].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -8,20 +8,20 @@ constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequenc
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+constructor(value: T) [example/Types##QyF3JRolhKo].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/Types///PointingToDeclaration/",
+  "containerElementId": "example/Types",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+fun convert(input: R?, block: (T) -> R): R [example/Types#convert#3w6crsG5h-0].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -30,19 +30,19 @@ fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bou
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "classLikeId": "kotlin/Any",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].valueParameters[0].type:
+fun convert(input: R?, block: (T) -> R): R [example/Types#convert#3w6crsG5h-0].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "R",
-  "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+  "containerElementId": "example/Types#convert#3w6crsG5h-0",
   "isMarkedNullable": true,
   "annotations": []
 }
-fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].valueParameters[1].type:
+fun convert(input: R?, block: (T) -> R): R [example/Types#convert#3w6crsG5h-0].valueParameters[1].type:
 {
   "kind": "functional",
   "returnType": {
@@ -50,7 +50,7 @@ fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bou
     "type": {
       "kind": "typeParameter",
       "name": "R",
-      "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+      "containerElementId": "example/Types#convert#3w6crsG5h-0",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -62,7 +62,7 @@ fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bou
       "type": {
         "kind": "typeParameter",
         "name": "T",
-        "containerElementId": "example/Types///PointingToDeclaration/",
+        "containerElementId": "example/Types",
         "isMarkedNullable": false,
         "annotations": []
       }
@@ -73,16 +73,16 @@ fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bou
   "isMarkedNullable": false,
   "annotations": []
 }
-fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].returnType:
+fun convert(input: R?, block: (T) -> R): R [example/Types#convert#3w6crsG5h-0].returnType:
 {
   "kind": "typeParameter",
   "name": "R",
-  "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+  "containerElementId": "example/Types#convert#3w6crsG5h-0",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].extensionReceiverParameter.type:
+fun extension(other: T): String [example/Types#extension#AdUaelOMfFo].extensionReceiverParameter.type:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -91,19 +91,19 @@ fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+fun extension(other: T): String [example/Types#extension#AdUaelOMfFo].valueParameters[0].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/Types///PointingToDeclaration/",
+  "containerElementId": "example/Types",
   "isMarkedNullable": false,
   "annotations": []
 }
-fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].returnType:
+fun extension(other: T): String [example/Types#extension#AdUaelOMfFo].returnType:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -112,21 +112,21 @@ fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "classLikeId": "kotlin/String",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-val value: T [example/Types/value/#/PointingToDeclaration/].type:
+val value: T [example/Types#value#ctE8McQtNZQ].type:
 {
   "kind": "typeParameter",
   "name": "T",
-  "containerElementId": "example/Types///PointingToDeclaration/",
+  "containerElementId": "example/Types",
   "isMarkedNullable": false,
   "annotations": []
 }
 
-val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].type:
+val function: (T) -> String [example/Types#function#ctE8McQtNZQ].type:
 {
   "kind": "functional",
   "returnType": {
@@ -139,7 +139,7 @@ val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].ty
           "typeArguments": []
         }
       ],
-      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "classLikeId": "kotlin/String",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -151,7 +151,7 @@ val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].ty
       "type": {
         "kind": "typeParameter",
         "name": "T",
-        "containerElementId": "example/Types///PointingToDeclaration/",
+        "containerElementId": "example/Types",
         "isMarkedNullable": false,
         "annotations": []
       }
@@ -163,7 +163,7 @@ val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].ty
   "annotations": []
 }
 
-val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/PointingToDeclaration/].type:
+val nullableFunction: ((T) -> String)? [example/Types#nullableFunction#ctE8McQtNZQ].type:
 {
   "kind": "functional",
   "returnType": {
@@ -176,7 +176,7 @@ val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/Pointin
           "typeArguments": []
         }
       ],
-      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "classLikeId": "kotlin/String",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -188,7 +188,7 @@ val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/Pointin
       "type": {
         "kind": "typeParameter",
         "name": "T",
-        "containerElementId": "example/Types///PointingToDeclaration/",
+        "containerElementId": "example/Types",
         "isMarkedNullable": false,
         "annotations": []
       }
@@ -200,7 +200,7 @@ val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/Pointin
   "annotations": []
 }
 
-val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/PointingToDeclaration/].type:
+val extensionFunction: String.(T) -> Int [example/Types#extensionFunction#ctE8McQtNZQ].type:
 {
   "kind": "functional",
   "returnType": {
@@ -213,7 +213,7 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
           "typeArguments": []
         }
       ],
-      "classLikeId": "kotlin/Int///PointingToDeclaration/",
+      "classLikeId": "kotlin/Int",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -228,7 +228,7 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
           "typeArguments": []
         }
       ],
-      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "classLikeId": "kotlin/String",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -239,7 +239,7 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
       "type": {
         "kind": "typeParameter",
         "name": "T",
-        "containerElementId": "example/Types///PointingToDeclaration/",
+        "containerElementId": "example/Types",
         "isMarkedNullable": false,
         "annotations": []
       }
@@ -251,7 +251,7 @@ val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/Poin
   "annotations": []
 }
 
-val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/PointingToDeclaration/].type:
+val suspendFunction: suspend (T) -> Unit [example/Types#suspendFunction#ctE8McQtNZQ].type:
 {
   "kind": "functional",
   "returnType": {
@@ -264,7 +264,7 @@ val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/Pointi
           "typeArguments": []
         }
       ],
-      "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+      "classLikeId": "kotlin/Unit",
       "isMarkedNullable": false,
       "annotations": []
     }
@@ -276,7 +276,7 @@ val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/Pointi
       "type": {
         "kind": "typeParameter",
         "name": "T",
-        "containerElementId": "example/Types///PointingToDeclaration/",
+        "containerElementId": "example/Types",
         "isMarkedNullable": false,
         "annotations": []
       }
@@ -288,7 +288,7 @@ val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/Pointi
   "annotations": []
 }
 
-class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+class Types [example/Types].typeParameters[0].upperBounds[0]:
 {
   "kind": "classLike",
   "qualifiers": [
@@ -297,8 +297,7 @@ class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBoun
       "typeArguments": []
     }
   ],
-  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "classLikeId": "kotlin/CharSequence",
   "isMarkedNullable": false,
   "annotations": []
 }
-

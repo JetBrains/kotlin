@@ -1,0 +1,2 @@
+example
+example#extensionFunction#kind=function; typeParameters=[<T0_0>: ]; receiver=kotlin.collections/List<<T0_0>>;

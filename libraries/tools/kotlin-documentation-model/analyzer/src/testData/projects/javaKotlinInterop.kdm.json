@@ -4,7 +4,7 @@
     {
       "name": "main",
       "elements": {
-        "pkg/KUser/KUser/#/PointingToDeclaration/": {
+        "pkg/KUser##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -17,7 +17,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/KUser/describe/#pkg.JPoint/PointingToDeclaration/": {
+        "pkg/KUser#describe#E_jdw9wVpXI": {
           "kind": "function",
           "name": "describe",
           "isCompanion": false,
@@ -36,7 +36,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -52,7 +52,7 @@
                     "typeArguments": []
                   }
                 ],
-                "classLikeId": "pkg/JPoint///PointingToDeclaration/",
+                "classLikeId": "pkg/JPoint",
                 "isMarkedNullable": false,
                 "annotations": []
               },
@@ -73,7 +73,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/KUser///PointingToDeclaration/": {
+        "pkg/KUser": {
           "kind": "class",
           "name": "KUser",
           "classKind": "CLASS",
@@ -88,8 +88,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/KUser/KUser/#/PointingToDeclaration/",
-            "pkg/KUser/describe/#pkg.JPoint/PointingToDeclaration/"
+            "pkg/KUser##KK4ERoLQuv0",
+            "pkg/KUser#describe#E_jdw9wVpXI"
           ],
           "visibility": "PUBLIC",
           "modality": "FINAL",
@@ -97,7 +97,7 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg/JPoint/JPoint/#/PointingToDeclaration/": {
+        "pkg/JPoint##KK4ERoLQuv0": {
           "kind": "constructor",
           "isPrimary": true,
           "isExternal": false,
@@ -110,7 +110,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JPoint/x/#/PointingToDeclaration/": {
+        "pkg/JPoint#x#ctE8McQtNZQ": {
           "kind": "property",
           "name": "x",
           "isLateinit": false,
@@ -132,7 +132,7 @@
                 "typeArguments": []
               }
             ],
-            "classLikeId": "kotlin/Int///PointingToDeclaration/",
+            "classLikeId": "kotlin/Int",
             "isMarkedNullable": false,
             "annotations": []
           },
@@ -147,7 +147,7 @@
           "throws": [],
           "annotations": []
         },
-        "pkg/JPoint///PointingToDeclaration/": {
+        "pkg/JPoint": {
           "kind": "class",
           "name": "JPoint",
           "classKind": "CLASS",
@@ -162,8 +162,8 @@
           "typeParameters": [],
           "superTypes": [],
           "declarations": [
-            "pkg/JPoint/JPoint/#/PointingToDeclaration/",
-            "pkg/JPoint/x/#/PointingToDeclaration/"
+            "pkg/JPoint##KK4ERoLQuv0",
+            "pkg/JPoint#x#ctE8McQtNZQ"
           ],
           "visibility": "PUBLIC",
           "modality": "OPEN",
@@ -171,20 +171,20 @@
           "deprecated": null,
           "annotations": []
         },
-        "pkg////PointingToDeclaration/": {
+        "pkg": {
           "kind": "package",
           "name": "pkg",
           "declarations": [
-            "pkg/KUser///PointingToDeclaration/",
-            "pkg/JPoint///PointingToDeclaration/"
+            "pkg/KUser",
+            "pkg/JPoint"
           ],
           "annotations": []
         },
-        "////PointingToDeclaration/": {
+        "#module": {
           "kind": "module",
           "name": "javaKotlinInterop",
           "packages": [
-            "pkg////PointingToDeclaration/"
+            "pkg"
           ],
           "annotations": []
         }

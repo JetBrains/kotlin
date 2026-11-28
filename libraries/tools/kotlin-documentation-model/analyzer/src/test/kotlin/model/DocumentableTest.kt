@@ -4,9 +4,10 @@
 
 package model
 
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.PropertyContainer
+import org.jetbrains.kotlin.documentation.KdElementId
+import org.jetbrains.kotlin.documentation.analyzer.ids.valueParameterDeclarationId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,8 +17,22 @@ class DocumentableTest {
 
     @Test
     fun withDescendents() {
+        val classId = KdElementId("model/TestClass")
+        val function0Id = KdElementId("model/TestClass#function0#0")
+        val function1Id = KdElementId("model/TestClass#function1#0")
+
+        fun parameter(ownerId: KdElementId, index: Int, name: String) = DParameter(
+            declarationId = valueParameterDeclarationId(ownerId, index),
+            name = name,
+            documentation = emptyMap(),
+            expectPresentInSet = null,
+            extra = PropertyContainer.empty(),
+            sourceSets = emptySet(),
+            type = Void
+        )
+
         val dClass = DClass(
-            dri = DRI(),
+            declarationId = classId,
             name = "TestClass",
             constructors = emptyList(),
             classlikes = emptyList(),
@@ -36,7 +51,7 @@ class DocumentableTest {
             isExpectActual = false,
             functions = listOf(
                 DFunction(
-                    dri = DRI(),
+                    declarationId = function0Id,
                     name = "function0",
                     documentation = emptyMap(),
                     expectPresentInSet = null,
@@ -51,28 +66,12 @@ class DocumentableTest {
                     isConstructor = false,
                     isExpectActual = false,
                     parameters = listOf(
-                        DParameter(
-                            dri = DRI(),
-                            name = "f0p0",
-                            documentation = emptyMap(),
-                            expectPresentInSet = null,
-                            extra = PropertyContainer.empty(),
-                            sourceSets = emptySet(),
-                            type = Void
-                        ),
-                        DParameter(
-                            dri = DRI(),
-                            name = "f0p1",
-                            documentation = emptyMap(),
-                            expectPresentInSet = null,
-                            extra = PropertyContainer.empty(),
-                            sourceSets = emptySet(),
-                            type = Void
-                        )
+                        parameter(function0Id, 0, "f0p0"),
+                        parameter(function0Id, 1, "f0p1")
                     )
                 ),
                 DFunction(
-                    dri = DRI(),
+                    declarationId = function1Id,
                     name = "function1",
                     documentation = emptyMap(),
                     expectPresentInSet = null,
@@ -87,24 +86,8 @@ class DocumentableTest {
                     isConstructor = false,
                     isExpectActual = false,
                     parameters = listOf(
-                        DParameter(
-                            dri = DRI(),
-                            name = "f1p0",
-                            documentation = emptyMap(),
-                            expectPresentInSet = null,
-                            extra = PropertyContainer.empty(),
-                            sourceSets = emptySet(),
-                            type = Void
-                        ),
-                        DParameter(
-                            dri = DRI(),
-                            name = "f1p1",
-                            documentation = emptyMap(),
-                            expectPresentInSet = null,
-                            extra = PropertyContainer.empty(),
-                            sourceSets = emptySet(),
-                            type = Void
-                        )
+                        parameter(function1Id, 0, "f1p0"),
+                        parameter(function1Id, 1, "f1p1")
                     )
                 )
             )

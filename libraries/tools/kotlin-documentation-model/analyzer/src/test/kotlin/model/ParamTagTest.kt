@@ -7,8 +7,8 @@ package model
 import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.documentation.KdElementId
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -53,15 +53,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "scope",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = listOf(TypeConstructor("kotlin.Int", emptyList())),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                    ),
-                                    target = PointingToContextParameters(0)
-                                ),
+                                address = KdElementId("test#foo#qQ-JzBAzlEo#context-param[0]"),
                             ),
                             Param(
                                 root = CustomDocTag(
@@ -69,15 +61,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "arg",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = listOf(TypeConstructor("kotlin.Int", emptyList())),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                    ),
-                                    target = PointingToCallableParameters(0)
-                                ),
+                                address = KdElementId("test#foo#qQ-JzBAzlEo#param[0]"),
                             )
                         )
                     ),
@@ -114,15 +98,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "scope",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = listOf(TypeConstructor("kotlin.Int", emptyList())),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                    ),
-                                    target = PointingToContextParameters(0)
-                                ),
+                                address = KdElementId("test#foo#qQ-JzBAzlEo#context-param[0]"),
                             ),
                             Param(
                                 root = CustomDocTag(
@@ -130,15 +106,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "arg",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = listOf(TypeConstructor("kotlin.Int", emptyList())),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList()))
-                                    ),
-                                    target = PointingToCallableParameters(0)
-                                ),
+                                address = KdElementId("test#foo#qQ-JzBAzlEo#param[0]"),
                             )
                         )
                     ),
@@ -174,16 +142,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "scope",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = emptyList(),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList())),
-                                        isProperty = true
-                                    ),
-                                    target = PointingToContextParameters(0)
-                                ),
+                                address = KdElementId("test#foo#JXVEV-IR234#context-param[0]"),
                             )
                         )
                     ),
@@ -219,16 +178,7 @@ class ParamTagTest : BaseAbstractTest() {
                                     name = MARKDOWN_ELEMENT_FILE_NAME
                                 ),
                                 name = "scope",
-                                address = DRI(
-                                    packageName = "test",
-                                    callable = Callable(
-                                        name = "foo",
-                                        params = emptyList(),
-                                        contextParameters = listOf(TypeConstructor("kotlin.String", emptyList())),
-                                        isProperty = true
-                                    ),
-                                    target = PointingToContextParameters(0)
-                                ),
+                                address = KdElementId("test#foo#JXVEV-IR234#context-param[0]"),
                             )
                         )
                     ),

@@ -21,7 +21,6 @@ import org.jetbrains.dokka.analysis.java.doccomment.PsiDocumentationContent
 import org.jetbrains.dokka.analysis.java.parsers.CommentResolutionContext
 import org.jetbrains.dokka.analysis.java.util.*
 import org.jetbrains.dokka.analysis.java.parsers.doctag.markdown.MarkdownToHtmlConverter
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.htmlEscape
 
@@ -170,15 +169,15 @@ internal class PsiElementToHtmlConverter(
             val displayLabel = label.ifBlank { defaultLabel().text }
             val useSite = this
 
-            val driId = reference?.resolveToDocumentedElement()?.takeIf { it !is PsiParameter }?.let {
-                DRI.from(it, useSite)?.let { dri -> docTagParserContext.store(dri) }
+            val declarationId = reference?.resolveToDocumentedElement()?.takeIf { it !is PsiParameter }?.let {
+                declarationIdFrom(it, useSite)?.let { id -> docTagParserContext.store(id) }
             } ?: run {
                 logger.warn("Couldn't resolve JavaDoc link '$displayLabel' in ${getLocation(this)}")
                 UNRESOLVED_PSI_ELEMENT
             }
 
-            // TODO [beresnev] data-dri into a constant
-            return """<a data-dri="${driId.htmlEscape()}">$displayLabel</a>"""
+            // TODO [beresnev] data-declaration-id into a constant
+            return """<a data-declaration-id="${declarationId.htmlEscape()}">$displayLabel</a>"""
         }
 
         private fun PsiMarkdownCodeBlock.toHtml() =

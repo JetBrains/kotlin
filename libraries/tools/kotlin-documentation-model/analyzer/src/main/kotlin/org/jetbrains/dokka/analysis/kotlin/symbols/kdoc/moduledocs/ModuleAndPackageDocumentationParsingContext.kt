@@ -31,7 +31,7 @@ internal fun ModuleAndPackageDocumentationParsingContext(
 ) = ModuleAndPackageDocumentationParsingContext { fragment, sourceLocation ->
 
     if (kotlinAnalysis == null || sourceSet == null) {
-        MarkdownParser(externalDri = { null }, sourceLocation)
+        MarkdownParser(externalDeclarationId = { null }, sourceLocation)
     } else {
         val sourceModule = kotlinAnalysis.getModule(sourceSet)
         val contextPackageFQN = when (fragment.classifier) {
@@ -43,7 +43,7 @@ internal fun ModuleAndPackageDocumentationParsingContext(
             Package -> "'${fragment.name}' package documentation"
         }
         MarkdownParser(
-            externalDri = { link ->
+            externalDeclarationId = { link ->
                 analyze(sourceModule) {
                     resolveKDocTextLink(link, contextPackageFQN, locationInformation, logger, sourceSet)
                 }
