@@ -525,6 +525,15 @@ class NativeSecondStageCompilationConfig(override val configuration: CompilerCon
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
+    val useKotlinLLVMDialect = configuration.get(BinaryOptions.useKotlinLLVMDialect) ?: true
+
+    val eraseKotlinLLVMDialect = configuration.get(BinaryOptions.eraseKotlinLLVMDialect)?.let {
+        if (!useKotlinLLVMDialect) {
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "eraseKotlinLLVMDialect is only supported when useKotlinLLVMDialect=true")
+            EraseKotlinLLVMDialect.NEVER
+        } else it
+    } ?: EraseKotlinLLVMDialect.NEVER
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")

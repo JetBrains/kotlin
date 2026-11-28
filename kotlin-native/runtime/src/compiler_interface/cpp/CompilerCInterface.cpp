@@ -16,7 +16,7 @@
 #define touchType(type) RUNTIME_EXPORT type touch##type;
 #define touchFunction(function) RUNTIME_EXPORT void* touch##function() { return reinterpret_cast<void*>(&::function); }
 
-// Types and functions used by the compiler (at Runtime.kt and ContextUtils.kt)
+// Types and functions used by the compiler (at Runtime.kt, ContextUtils.kt and KotlinLLVMDialect.cpp)
 #ifdef __cplusplus
 extern "C" {
 #endif

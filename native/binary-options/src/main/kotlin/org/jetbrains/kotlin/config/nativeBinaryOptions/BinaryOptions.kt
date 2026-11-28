@@ -149,6 +149,21 @@ object BinaryOptions : BinaryOptionRegistry() {
      */
     val runLLVMPassesInCompiler by booleanOption()
 
+    /**
+     * When `true`, the code generator will produce higher-level LLVM code (called Kotlin dialect), which
+     * is lowered in LLVM passes.
+     *
+     * See `kotlin-native/libllvmext/KotlinLLVMDialect.md` for details.
+     */
+    val useKotlinLLVMDialect by booleanOption()
+
+    /**
+     * When (if ever) to erase remnants of the Kotlin dialect.
+     *
+     * Used for debugging Kotlin dialect passes.
+     */
+    val eraseKotlinLLVMDialect by option<EraseKotlinLLVMDialect>()
+
     val enableReleaseBinaryCache by booleanOption()
 
     // a replacement for Apple's libtool to workaround KT-89897

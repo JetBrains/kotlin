@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.EraseKotlinLLVMDialect
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.config.saveLlvmIr
+import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.Closeable
@@ -54,6 +55,8 @@ data class LlvmPipelineConfig(
         val saveIrDirectory: java.io.File? = null,
         val runLLVMPassesInCompiler: Boolean,
         val shouldInlineSafepoints: Boolean = false,
+        val verifyIr: Boolean = false,
+        val eraseKotlinLLVMDialect: EraseKotlinLLVMDialect = EraseKotlinLLVMDialect.NEVER,
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -217,6 +220,8 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            verifyIr = config.needCompilerVerification || config.configuration.verifyBitcode,
+            eraseKotlinLLVMDialect = config.eraseKotlinLLVMDialect,
     )
 }
 
@@ -406,6 +411,30 @@ class CallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: Perfo
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-calls-checker"
     override val passes = listOf("function(kotlin-calls-checker)")
+}
+
+class KotlinLlvmDialectLoweringsPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-kotlin-dialect-lowerings"
+    override val passes = buildList {
+        if (config.verifyIr) {
+            add("kotlin-verify")
+        }
+        if (config.eraseKotlinLLVMDialect == EraseKotlinLLVMDialect.EARLY) {
+            add("kotlin-erase-dialect")
+        }
+    }
+}
+
+class LateEraseKotlinLlvmDialectPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-kotlin-dialect-late-erase"
+    override val passes = buildList {
+        require(config.eraseKotlinLLVMDialect == EraseKotlinLLVMDialect.LATE) {
+            "Unexpected eraseKotlinLLVMDialect=${config.eraseKotlinLLVMDialect}"
+        }
+        add("kotlin-erase-dialect")
+    }
 }
 
 internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =

@@ -425,11 +425,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     override val runtime get() = generationState.runtime
 
-    init {
-        LLVMSetDataLayout(module, runtime.dataLayout)
-        LLVMSetTarget(module, runtime.target)
-    }
-
     private fun importRtFunction(name: String, returnsObjectType: Boolean) = importFunction(name, runtime.llvmModule, returnsObjectType)
 
     val allocInstanceFunction = importRtFunction("AllocInstance", true)

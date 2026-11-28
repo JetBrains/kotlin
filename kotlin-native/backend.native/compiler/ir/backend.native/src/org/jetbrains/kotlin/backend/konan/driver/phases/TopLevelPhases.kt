@@ -506,6 +506,7 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
     runCodegen(module, irBuiltIns)
+    runKotlinLlvmLowerings()
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
