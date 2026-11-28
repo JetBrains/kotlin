@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -124,7 +125,7 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
     }
 
     private fun inlinedClassHasDefaultEquals(irClass: IrClass): Boolean {
-        if (!irClass.isValue) {
+        if (!irClass.isInlineClass) {
             // Implicitly-inlined class, e.g. primitive one.
             return true
         }
@@ -132,8 +133,7 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
         val equals = irClass.simpleFunctions()
                 .single { it.name.asString() == "equals" && it.parameters.size == 2 && it.overrides(anyEquals) }
 
-        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER ||
-                equals.origin == IrDeclarationOrigin.GENERATED_FULL_VALUE_CLASS_MEMBER
+        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
     }
 
     fun IrBuilderWithScope.genInlineClassEquals(

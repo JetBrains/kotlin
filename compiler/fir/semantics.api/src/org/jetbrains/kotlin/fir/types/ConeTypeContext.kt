@@ -577,9 +577,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     @Suppress("NOTHING_TO_INLINE")
     private inline fun ConeTypeParameterLookupTag.bounds(): List<FirTypeRef> = symbol.resolvedBounds
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): ConeKotlinType? {
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): ConeKotlinType? {
         require(this is ConeKotlinType)
-        return unsubstitutedUnderlyingTypeForInlineClassInJvm(session)
+        return unsubstitutedUnderlyingTypeForInlineClass(session)
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
@@ -64,11 +62,6 @@ internal class NativeBackendContext(
 
     override val optimizeLoopsOverUnsignedArrays = true
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
-    override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
-        override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isInlineClass(treatCompatibleFullValueClassesAsInline = true)
-    }
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     override val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     override val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }

@@ -788,7 +788,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return representativeUpperBound
     }
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? {
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
         require(this is KotlinType, this::errorMessage)
         return unsubstitutedUnderlyingType()
     }

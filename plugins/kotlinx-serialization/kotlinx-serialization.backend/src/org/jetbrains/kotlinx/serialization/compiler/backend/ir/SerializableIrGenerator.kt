@@ -448,7 +448,7 @@ class SerializableIrGenerator(
 
     private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
-        if (irClass.shouldHaveSpecificSyntheticMethods(isJvm = compilerContext.platform.isJvm()) { serializerDescriptor.findPluginGeneratedMethod(LOAD) }) {
+        if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(LOAD) }) {
             val constrDesc = irClass.constructors.find(IrConstructor::isSerializationCtor) ?: return
             generateInternalConstructor(constrDesc)
         }
@@ -456,7 +456,7 @@ class SerializableIrGenerator(
 
     private fun generateSyntheticMethods() {
         val serializerDescriptor = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
-        if (irClass.shouldHaveSpecificSyntheticMethods(isJvm = compilerContext.platform.isJvm()) { serializerDescriptor.findPluginGeneratedMethod(SAVE) }) {
+        if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(SAVE) }) {
             val func = irClass.findWriteSelfMethod() ?: return
             func.origin = SERIALIZATION_PLUGIN_ORIGIN
             generateWriteSelfMethod(func)

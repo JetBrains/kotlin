@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -455,11 +454,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
         this as? IrTypeParameterSymbol
 
-    val treatFullValueClassesWithOneFieldAsBasic: Boolean get() = true
-
-    @OptIn(ValueClassBackendAgnosticApi::class)
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isInlineClass(treatFullValueClassesWithOneFieldAsBasic) == true
+        (this as? IrClassSymbol)?.owner?.isInlineClass == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
         (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
@@ -473,9 +469,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: owner.superTypes.first()
 
-    @OptIn(ValueClassBackendAgnosticApi::class)
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic)?.underlyingType
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

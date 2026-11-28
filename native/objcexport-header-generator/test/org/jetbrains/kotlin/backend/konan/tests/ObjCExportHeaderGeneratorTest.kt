@@ -485,6 +485,14 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("inlineClassWithNestedClass"))
     }
 
+    /**
+     * A single-field full value class is exported as a class, like a multi-field one, and an inline value class as its underlying type.
+     */
+    @Test
+    fun `test - fullValueClasses`() {
+        doTest(headersTestDataDir.resolve("fullValueClasses"))
+    }
+
     @Test
     // A public property of a private type is not compilable Kotlin, so the test module
     // cannot be compiled in the K1 test pipeline; the Analysis API pipeline still covers it.

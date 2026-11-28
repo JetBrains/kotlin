@@ -1,0 +1,356 @@
+/**
+ * public open class Base : kotlin/Any {
+ *
+ *   // signature: <init>(LId;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+ *   public constructor(id: Id, inlineId: InlineId)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class Base {
+
+    private Base(Id id, int inlineId) {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final value class Box<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/Object;)V
+ *   public constructor(value: T#0)
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/Object;
+ *   // getter: getValue()Ljava/lang/Object;
+ *   public final val value: T#0
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Box<T extends java.lang.Object> {
+
+    public Box(T value) {
+        super();
+    }
+
+    public final T getValue() {
+        return null;
+    }
+    private final T value = null;
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Derived : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Derived extends Base {
+
+    public Derived() {
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+
+    public Id(int value) {
+        super();
+    }
+
+    public final int getValue() {
+        return 0;
+    }
+    private final int value = 0;
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * public final value class InlineBox<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/Object;)Ljava/lang/Object;
+ *   public constructor(value: T#0)
+ *
+ *   // signature: equals-impl(Ljava/lang/Object;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/Object;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/Object;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/Object;
+ *   // getter: getValue()Ljava/lang/Object;
+ *   public final val value: T#0
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: T#0
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InlineBox<T extends java.lang.Object> {
+
+    public final T getValue() {
+        return null;
+    }
+    private final T value = null;
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * public final value class InlineId : kotlin/Any {
+ *
+ *   // signature: constructor-impl(I)I
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(I)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(I)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InlineId {
+
+    public final int getValue() {
+        return 0;
+    }
+    private final int value = 0;
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Repository : kotlin/Any {
+ *
+ *   // signature: find(LId;)LId;
+ *   public abstract fun find(id: Id): Id?
+ *
+ *   // signature: findAll(Ljava/util/List;)Ljava/util/Map;
+ *   public abstract fun findAll(ids: kotlin/collections/List<Id>): kotlin/collections/Map<Id, Box<kotlin/String>>
+ *
+ *   // signature: findInline-h1tpPqw(I)LInlineId;
+ *   public abstract fun findInline(id: InlineId): InlineId?
+ *
+ *   // signature: unbox(LBox;)Ljava/util/List;
+ *   public abstract fun unbox(box: Box<kotlin/collections/List<Id>>): kotlin/collections/List<Id>
+ *
+ *   // getter: getCurrent()LId;
+ *   public abstract val current: Id
+ *     public abstract get
+ *
+ *   // getter: getCurrentInline-FwEg_Vc()I
+ *   public abstract val currentInline: InlineId
+ *     public abstract get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Repository {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Id getCurrent();
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract Id find(@org.jetbrains.annotations.NotNull()
+    Id id);
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.util.Map<Id, Box<java.lang.String>> findAll(@org.jetbrains.annotations.NotNull()
+    java.util.List<Id> ids);
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.util.List<Id> unbox(@org.jetbrains.annotations.NotNull()
+    Box<java.util.List<Id>> box);
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface Wildcards : kotlin/Any {
+ *
+ *   // signature: full(LBox;LBox;)LBox;
+ *   public abstract fun full(box: Box<kotlin/collections/List<kotlin/CharSequence>>, comparable: Box<kotlin/Comparable<kotlin/CharSequence>>): Box<kotlin/collections/List<kotlin/CharSequence>>
+ *
+ *   // signature: fullOfFunction(LBox;)LBox;
+ *   public abstract fun fullOfFunction(box: Box<kotlin/Function1<kotlin/CharSequence, kotlin/CharSequence>>): Box<Box<kotlin/CharSequence>>
+ *
+ *   // signature: inline-wwQXSok(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ *   public abstract fun inline(box: InlineBox<kotlin/collections/List<kotlin/CharSequence>>, comparable: InlineBox<kotlin/Comparable<kotlin/CharSequence>>): InlineBox<kotlin/collections/List<kotlin/CharSequence>>
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Wildcards {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Box<java.util.List<java.lang.CharSequence>> full(@org.jetbrains.annotations.NotNull()
+    Box<java.util.List<java.lang.CharSequence>> box, @org.jetbrains.annotations.NotNull()
+    Box<java.lang.Comparable<java.lang.CharSequence>> comparable);
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Box<Box<java.lang.CharSequence>> fullOfFunction(@org.jetbrains.annotations.NotNull()
+    Box<kotlin.jvm.functions.Function1<java.lang.CharSequence, java.lang.CharSequence>> box);
+}

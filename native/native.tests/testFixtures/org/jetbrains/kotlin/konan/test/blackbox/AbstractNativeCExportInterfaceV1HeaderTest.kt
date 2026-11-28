@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKi
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.HeaderTestModuleMarkers
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
@@ -46,7 +47,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         val testCase = HeaderTestModuleMarkers.createInitializedHeaderTestCase(
             testName,
             modules.toSet(),
-            freeCompilerArgs(),
+            compilerArgs(path),
             TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         )
 
@@ -73,7 +74,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         TestDataAssertions.assertEqualsToFile(goldenDataHeaderFile, headerFile.readText())
     }
 
-    private fun freeCompilerArgs() = TestCompilerArgs(listOf(
+    private fun compilerArgs(testDataFile: File) = TestCompilerArgs(listOf(
         "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
         "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
         "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
@@ -81,7 +82,14 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         "-XXLanguage:+CompanionBlocks",
         "-XXLanguage:+CompanionExtensions",
         "-Xbinary=cInterfaceMode=v1",
-    ) + additionalCompilerArgs)
+    ) + languageFeatureArgs(testDataFile) + additionalCompilerArgs)
+
+    /** `// LANGUAGE: +Feature -Feature` directives of the fixture, as compiler arguments. */
+    private fun languageFeatureArgs(testDataFile: File): List<String> =
+        InTextDirectivesUtils.findListWithPrefixes(testDataFile.readText(), "// LANGUAGE: ")
+            .flatMap { it.split(' ') }
+            .filter { it.isNotBlank() }
+            .map { "-XXLanguage:$it" }
 }
 
 /**

@@ -35,5 +35,23 @@ async function box(): Promise<string> {
     const labeled = foo.echoLabeled(new foo.Labeled<number>(42, "answer"));
     assert(labeled.value === 42 && labeled.label === "answer", "generic MFVC round-trip");
 
+    const single = new foo.Single(5);
+    assert(single.x === 5, "Single.x");
+    assert(single.equals(new foo.Single(5)), "Single.equals");
+    assert(foo.acceptSingle(foo.createSingle(6)) === 6, "single-field full value class parameter and result");
+    assert(foo.echoNullableSingle(null) == null, "nullable single-field full value class");
+    assert(foo.echoNullableSingle(single)?.x === 5, "nullable single-field full value class round-trip");
+    const singles = foo.echoSingles([single, foo.createSingle(6)]);
+    assert(singles.length === 2 && singles[1].x === 6, "single-field full value class array round-trip");
+
+    const inlineSingle = new foo.InlineSingle(7);
+    assert(inlineSingle.x === 7, "InlineSingle.x");
+    assert(inlineSingle.equals(new foo.InlineSingle(7)), "InlineSingle.equals");
+    assert(foo.acceptInlineSingle(foo.createInlineSingle(8)) === 8, "inline value class parameter and result");
+    assert(foo.echoNullableInlineSingle(null) == null, "nullable inline value class");
+    assert(foo.echoNullableInlineSingle(inlineSingle)?.x === 7, "nullable inline value class round-trip");
+    const inlineSingles = foo.echoInlineSingles([inlineSingle, foo.createInlineSingle(8)]);
+    assert(inlineSingles.length === 2 && inlineSingles[1].x === 8, "inline value class array round-trip");
+
     return "OK";
 }

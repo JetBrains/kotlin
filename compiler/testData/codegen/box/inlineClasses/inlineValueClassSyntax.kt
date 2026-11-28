@@ -7,7 +7,6 @@
 
 inline value class A(val x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
 value inline class B(val s: String)
 
 fun takeA(a: A): Int = a.x
@@ -21,7 +20,6 @@ fun takeB(b: B): String = b.s
 
 inline value class C(val a: A)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
 value inline class D(val b: B)
 
 fun takeC(c: C): Int = takeA(c.a)

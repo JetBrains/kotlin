@@ -20,7 +20,8 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     val METADATA_ONLY_COMPILATION by directive("Treats all compilations as metadata compilation")
 
     val WORKS_WHEN_VALUE_CLASS by directive(
-        "Enables `JvmInlineSourceTransformer`, which transforms the OPTIONAL_JVM_INLINE_ANNOTATION placeholder"
+        "Enables `JvmInlineSourceTransformer`, which replaces the OPTIONAL_JVM_INLINE_ANNOTATION placeholder with `@JvmInline` on JVM, " +
+                "with `inline` on other backends when `FullValueClasses` is enabled, and drops it otherwise"
     )
 
     val TARGET_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on any non-specified backends")

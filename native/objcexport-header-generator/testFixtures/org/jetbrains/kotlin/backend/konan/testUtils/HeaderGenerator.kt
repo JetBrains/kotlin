@@ -42,3 +42,16 @@ interface HeaderGenerator {
 
     fun generateHeaders(root: File, configuration: Configuration = Configuration()): ObjCHeader
 }
+
+private const val LANGUAGE_DIRECTIVE = "// LANGUAGE: "
+
+/**
+ * Language features switched in the test data [kotlinFiles] with `// LANGUAGE: +Feature -Feature` directives,
+ * each with its `+` or `-` sign.
+ */
+fun languageFeatureDirectives(kotlinFiles: List<File>): List<String> =
+    kotlinFiles.flatMap { it.readLines() }
+        .filter { it.startsWith(LANGUAGE_DIRECTIVE) }
+        .flatMap { it.removePrefix(LANGUAGE_DIRECTIVE).split(' ', ',') }
+        .filter { it.isNotBlank() }
+        .distinct()

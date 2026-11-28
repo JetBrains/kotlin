@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -233,9 +232,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         isBuiltin() && this != PrimitiveType.FLOATING_POINT_NUMBER
 
     private fun IrType.isDefaultEqualsMethod() =
-        isChar() || findEqualsMethod()?.origin.let {
-            it === IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER || it === IrDeclarationOrigin.GENERATED_FULL_VALUE_CLASS_MEMBER
-        }
+        isChar() || findEqualsMethod()?.origin === IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
 
     private fun IrExpression.isBoxIntrinsic() =
         this is IrCall && symbol == icUtils.boxIntrinsic

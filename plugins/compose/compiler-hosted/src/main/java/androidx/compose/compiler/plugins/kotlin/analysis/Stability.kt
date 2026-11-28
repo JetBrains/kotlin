@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -472,7 +471,6 @@ class StabilityInferencer(
      * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
      *   call tree that led to this call.
      */
-    @OptIn(ValueClassBackendAgnosticApi::class)
     private fun stabilityOf(
         type: IrType,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
@@ -544,7 +542,7 @@ class StabilityInferencer(
                         underlyingSubstitutions, currentlyAnalyzing, analysisEntryFile, includeKnownConstructs = false,
                     )?.let { return it }
                     stabilityOf(
-                        type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
+                        type = getInlineClassUnderlyingType(inlineClassDeclaration),
                         substitutions = underlyingSubstitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile

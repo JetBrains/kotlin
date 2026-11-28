@@ -39,6 +39,12 @@ class DefaultPointConsumer : PointConsumer {
 value class Labeled<T>(val value: T, val label: String)
 
 @JsExport
+value class Single(val x: Int)
+
+@JsExport
+inline value class InlineSingle(val x: Int)
+
+@JsExport
 fun createPoint(x: Int, y: Int): Point = Point(x, y)
 
 @JsExport
@@ -55,3 +61,27 @@ fun <T> echoLabeled(value: Labeled<T>): Labeled<T> = value
 
 @JsExport
 suspend fun pointAsync(x: Int, y: Int): Point = Point(x, y)
+
+@JsExport
+fun createSingle(x: Int): Single = Single(x)
+
+@JsExport
+fun acceptSingle(single: Single): Int = single.x
+
+@JsExport
+fun echoNullableSingle(single: Single?): Single? = single
+
+@JsExport
+fun echoSingles(singles: Array<Single>): Array<Single> = singles
+
+@JsExport
+fun createInlineSingle(x: Int): InlineSingle = InlineSingle(x)
+
+@JsExport
+fun acceptInlineSingle(single: InlineSingle): Int = single.x
+
+@JsExport
+fun echoNullableInlineSingle(single: InlineSingle?): InlineSingle? = single
+
+@JsExport
+fun echoInlineSingles(singles: Array<InlineSingle>): Array<InlineSingle> = singles
